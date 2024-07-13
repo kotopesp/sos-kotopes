@@ -31,8 +31,9 @@ func NewRouter(
 }
 
 func (r *Router) initRoutes() {
+	r.app.Get("/ping", r.ping)
+
 	v1 := r.app.Group("/api/v1")
-	v1.Get("/ping", r.ping)
 
 	// entities
 	v1.Get("/entities", r.getEntities)
