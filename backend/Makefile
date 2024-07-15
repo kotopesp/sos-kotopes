@@ -6,10 +6,10 @@ BUILD_FLAGS=
 .PHONY: run, build, lint, test, coverage, migrate-new, migrate-up, migrate-down
 
 # TODO define your envs, switch log_level to `debug` during developing
-PG_URL=postgres://postgres:postgres@localhost:5432/kotopes
+PG_URL=postgres://postgres:qwerty@localhost:5436/postgres
 
 run: ### run app
-	go run cmd/main.go -db_url '$(PG_URL)' -port localhost:8080 -log_level info
+	go run cmd/main.go -db_url '$(PG_URL)' -port localhost:8080 -log_level debug
 
 build: ### build app
 	go build ${BUILD_FLAGS} -o ${SERVICE_NAME} cmd/main.go
