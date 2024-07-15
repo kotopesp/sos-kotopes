@@ -10,6 +10,7 @@ import (
 
 func (r *Router) getEntities(ctx *fiber.Ctx) error {
 	var params entity.GetAllParams
+
 	if err := ctx.QueryParser(&params); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
