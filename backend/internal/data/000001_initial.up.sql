@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         user1_id INTEGER NOT NULL,
         user2_id INTEGER NOT NULL,
-        "type" VARCHAR,
+        "type" VARCHAR
     );
 
 ALTER TABLE messages
@@ -145,7 +145,7 @@ ADD FOREIGN KEY (user2_id) REFERENCES users (id);
 CREATE TABLE IF NOT EXISTS
     posts (
         id SERIAL PRIMARY KEY,
-        title VARCHAR() NOT NULL,
+        title VARCHAR NOT NULL,
         body TEXT,
         user_id INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL,
