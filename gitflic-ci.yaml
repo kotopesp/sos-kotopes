@@ -1,0 +1,2 @@
+job test:
+  script: echo "Testing CI on GitFlic"
