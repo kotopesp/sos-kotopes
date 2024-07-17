@@ -1,1 +1,107 @@
 /* You can add global styles to this file, and also import other style files */
+@import "fonts";
+
+:root {
+  --brown-main-color: #2D230F;
+  --brown-light-color: #4B432A;
+  --white-color: #FFF;
+  --text-brown-light-color: #443416;
+  --yellow-color-bg: #F6DE8A;
+  --pink-color-bg: #F5D3B4;
+  --green-color-bg: #86C8C0;
+  --blue-color-bg: #79B0E3;
+  --brown-bg-color: #443416;
+  --brown-hover-color: #503E00;
+  --red-hover-color: #5A2B00;
+  --red-color-button: #8A372699;
+}
+
+
+*,
+*:before,
+*:after {
+  color: var(--white-color);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+}
+
+body {
+  opacity: 0;
+  animation: ani 2.5s forwards;
+
+  @keyframes ani {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  font-family: "PT Sans Caption Regular", sans-serif;
+}
+
+
+.ft48 {
+  font-size: 48px;
+}
+
+.ft40 {
+  font-size: 40px;
+}
+
+.ft20 {
+  font-size: 20px;
+}
+
+.ft24 {
+  font-size: 24px;
+}
+
+.roboto {
+  font-family: "Roboto Slab", sans-serif;
+}
+
+.ptbold {
+  font-family: "PT Sans Caption Bold", sans-serif;
+}
+
+.fw400 {
+  font-weight: 400;
+}
+
+.fw600 {
+  font-weight: 600;
+}
+
+.fw700 {
+  font-weight: 700;
+}
+
+.lh52 {
+  line-height: 52px;
+}
+
+.y-color {
+  background: var(--yellow-color-bg);
+  color: var(--yellow-color-bg)
+}
+
+.p-color {
+  background: var(--pink-color-bg);
+  color: var(--pink-color-bg)
+}
+
+.g-color {
+  background: var(--green-color-bg);
+  color: var(--green-color-bg)
+}
+
+.b-color {
+  background: var(--blue-color-bg);
+  color: var(--blue-color-bg)
+}
+
+
