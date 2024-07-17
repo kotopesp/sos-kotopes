@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
         "description" TEXT,
-        photo VARCHAR NOT NULL,
+        photo VARCHAR(100) NOT NULL,
         password_hash VARCHAR(256) NOT NULL,
         created_at TIMESTAMP NOT NULL
     );
@@ -12,36 +12,36 @@ CREATE TABLE IF NOT EXISTS
 -- Roles
 CREATE TABLE IF NOT EXISTS
     seekers (
-        id INTEGER PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        "description" VARCHAR,
-        "location" VARCHAR,
+        "description" TEXT,
+        "location" VARCHAR(100),
         rating FLOAT
     );
 
 CREATE TABLE IF NOT EXISTS
     keepers (
-        id INTEGER PRIMARY KEY,
-        user_id INTEGER,
-        "description" VARCHAR,
-        "location" VARCHAR,
-        rating FLOAT
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        "description" TEXT,
+        "location" VARCHAR(100),
+        rating FLOAT NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     vets (
-        id INTEGER PRIMARY KEY,
-        user_id INTEGER,
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
         "description" VARCHAR,
-        "location" VARCHAR,
-        rating FLOAT
+        "location" VARCHAR(100),
+        rating FLOAT NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     roles_users (
-        id INTEGER PRIMARY KEY,
-        "role" VARCHAR(50),
-        user_id INTEGER
+        id SERIAL PRIMARY KEY,
+        "role" VARCHAR(50) NOT NULL,
+        user_id INTEGER NOT NULL
     );
 
 ALTER TABLE seekers
@@ -59,20 +59,20 @@ ADD FOREIGN KEY (user_id) REFERENCES users (id);
 -- Reviews
 CREATE TABLE IF NOT EXISTS
     vet_reviews (
-        id INTEGER PRIMARY KEY,
-        author_id INTEGER,
+        id SERIAL PRIMARY KEY,
+        author_id INTEGER NOT NULL,
         "text" VARCHAR,
-        grade INTEGER,
-        vet_id INTEGER
+        grade INTEGER NOT NULL,
+        vet_id INTEGER NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     keeper_reviews (
-        id INTEGER PRIMARY KEY,
-        author_id INTEGER,
+        id SERIAL PRIMARY KEY,
+        author_id INTEGER NOT NULL,
         "text" VARCHAR,
-        grade INTEGER,
-        keeper_id INTEGER
+        grade INTEGER NOT NULL,
+        keeper_id INTEGER NOT NULL
     );
 
 ALTER TABLE vet_reviews
@@ -96,7 +96,7 @@ CREATE TYPE animal_gender AS ENUM('male', 'female');
 
 CREATE TABLE IF NOT EXISTS
     animals (
-        id INTEGER PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
         "type" animal_type,
         age INTEGER,
         color VARCHAR(30),
@@ -104,8 +104,8 @@ CREATE TABLE IF NOT EXISTS
         "description" TEXT,
         "status" animal_status,
         keeper_id INTEGER,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL
     );
 
 ALTER TABLE animals
@@ -114,18 +114,18 @@ ADD FOREIGN KEY (keeper_id) REFERENCES keepers (id);
 -- Messeges
 CREATE TABLE IF NOT EXISTS
     messages (
-        id INTEGER PRIMARY KEY,
-        user_id INTEGER,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP,
-        conversation_id INTEGER
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
+        conversation_id INTEGER NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     conversations (
-        id INTEGER PRIMARY KEY,
-        user1_id INTEGER,
-        user2_id INTEGER,
+        id SERIAL PRIMARY KEY,
+        user1_id INTEGER NOT NULL,
+        user2_id INTEGER NOT NULL,
         "type" VARCHAR,
     );
 
@@ -144,28 +144,29 @@ ADD FOREIGN KEY (user2_id) REFERENCES users (id);
 -- Posts
 CREATE TABLE IF NOT EXISTS
     posts (
-        id INTEGER PRIMARY KEY,
+        id SERIAL PRIMARY KEY,
+        title VARCHAR() NOT NULL,
         body TEXT,
-        user_id INTEGER,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
         animal_id INTEGER
     );
 
 CREATE TABLE IF NOT EXISTS
     post_response (
-        id INTEGER PRIMARY KEY,
-        post_id INTEGER,
-        responser_id INTEGER,
-        "text" VARCHAR
+        id SERIAL PRIMARY KEY,
+        post_id INTEGER NOT NULL,
+        responser_id INTEGER NOT NULL,
+        "text" VARCHAR NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     post_likes (
-        id INTEGER PRIMARY KEY,
-        post_id INTEGER,
-        user_id INTEGER,
-        created_at TIMESTAMP
+        id SERIAL PRIMARY KEY,
+        post_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL
     );
 
 ALTER TABLE posts
@@ -189,20 +190,20 @@ ADD FOREIGN KEY (user_id) REFERENCES users (id);
 -- Comments
 CREATE TABLE IF NOT EXISTS
     "comments" (
-        id INTEGER PRIMARY KEY,
-        "text" TEXT,
-        user_id INTEGER,
-        created_at TIMESTAMP,
-        updated_at TIMESTAMP,
-        posts_id INTEGER
+        id SERIAL PRIMARY KEY,
+        "text" TEXT NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        updated_at TIMESTAMP NOT NULL,
+        posts_id INTEGER NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     comment_likes (
-        id INTEGER PRIMARY KEY,
-        comment_id INTEGER,
-        user_id INTEGER,
-        created_at TIMESTAMP
+        id SERIAL PRIMARY KEY,
+        comment_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL
     );
 
 ALTER TABLE "comments"
@@ -220,23 +221,26 @@ ADD FOREIGN KEY (user_id) REFERENCES users (id);
 -- Favourites
 CREATE TABLE IF NOT EXISTS
     favourite_persons (
-        person_id INTEGER,
-        user_id INTEGER,
-        created_at TIMESTAMP
+        id SERIAL PRIMARY KEY,
+        person_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     favourite_posts (
-        post_id INTEGER,
-        user_id INTEGER,
-        created_at TIMESTAMP
+        id SERIAL PRIMARY KEY,
+        post_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     favourite_comments (
-        comment_id INTEGER,
-        user_id INTEGER,
-        created_at TIMESTAMP
+        id SERIAL PRIMARY KEY,
+        comment_id INTEGER NOT NULL,
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL
     );
 
 ALTER TABLE favourite_posts
