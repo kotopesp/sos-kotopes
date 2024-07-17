@@ -1,0 +1,24 @@
+.main__ads {
+  background-image: url(../../../public/assets/images/bg-with-steps.png);
+  background-size: cover;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  min-height: 180vh;
+  height: fit-content;
+
+
+  .left__list {
+    width: 100%;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+  }
+
+  .main_menu_ads {
+    height: fit-content;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 20px;
+  }
+}
