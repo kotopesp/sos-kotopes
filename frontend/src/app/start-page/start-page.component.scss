@@ -52,8 +52,11 @@
   }
 
     .stickers {
-      background-image: url(../../../public/assets/images/bg-with-steps.png);
+      background-image:
+      url(../../../public/assets/images/big-steps-bg.png),
+      url(../../../public/assets/images/bg-with-steps.png);
       background-repeat: no-repeat;
+      background-size: cover;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(2, 90vh);

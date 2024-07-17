@@ -2,18 +2,23 @@
 @import "fonts";
 
 :root {
-  --brown-main-color: #2D230F;
+  --brown-main-color: #21190B;
   --brown-light-color: #4B432A;
+  --brown-button-color: #352B1A;
   --white-color: #FFF;
+  --black-color: #000;
   --text-brown-light-color: #443416;
   --yellow-color-bg: #F6DE8A;
   --pink-color-bg: #F5D3B4;
   --green-color-bg: #86C8C0;
   --blue-color-bg: #79B0E3;
-  --brown-bg-color: #443416;
+  --brown-bg-color: #312611;
   --brown-hover-color: #503E00;
   --red-hover-color: #5A2B00;
   --red-color-button: #8A372699;
+  --brown-ads-color: #2C2210;
+  --gray-color-button: #4E4E4E;
+  --gray-text-tag: #5D5D5D;
 }
 
 
@@ -104,4 +109,10 @@ body {
   color: var(--blue-color-bg)
 }
 
+.user_tag {
+  color: var(--gray-text-tag);
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+}
 
