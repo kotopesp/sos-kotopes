@@ -1,0 +1,54 @@
+.header {
+  background: var(--brown-main-color);
+  color: var(--white-color);
+  padding-bottom: 10px;
+  display: grid;
+  max-height: 100px;
+  grid-gap: 10px;
+  grid-template-columns: 7fr 4fr;
+
+  .header__buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    .header__button {
+      display: grid;
+      justify-content: center;
+      align-items: center;
+
+      .header__link {
+        text-decoration: none;
+        font-size: 20px;
+        color: var(--white-color);
+
+        .header__how-to-help {
+          background: var(--brown-light-color);
+          width: 232px;
+          height: 46px;
+          border-radius: 12px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          &:hover {
+            background: #7A6233;
+            border: 0;
+            transition: 0.3s ease;
+          }
+        }
+
+        .header__ads {
+          margin-left: 40px;
+        }
+
+        :hover {
+          border-bottom: 2px solid var(--white-color);
+          transition: 0.2s ease;
+        }
+      }
+    }
+  }
+
+  .header__logo {
+    padding: 14px 282px;
+  }
+}
+

@@ -1,0 +1,12 @@
+<div class="header">
+  <div class="header__logo">
+    <p class="ft48 fw700">LoGo</p>
+  </div>
+  <div class="header__buttons">
+    <div *ngFor="let headerItem of headerItems" class="header__button">
+      <a [routerLink]="headerItem.path" class="header__link">
+        <div [class]="headerItem.className">{{ headerItem.text }} </div>
+      </a>
+    </div>
+  </div>
+</div>
