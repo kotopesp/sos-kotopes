@@ -1,0 +1,6 @@
+.idea
+.vscode
+
+*.exe
+backend/vendor/*
+backend/internal/controller/.DS_Store

@@ -1,0 +1,69 @@
+run:
+  skip-dirs:
+    - vendor
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+  uniq-by-line: true
+  path-prefix: ""
+  sort-results: false
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - dogsled
+    - errcheck
+    - exhaustive
+    - goconst
+    - gocritic
+    - gocyclo
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - noctx
+    - rowserrcheck
+    - exportloopref
+    - staticcheck
+    - stylecheck
+    - unconvert
+    - unparam
+    - errname
+    - forcetypeassert
+linters-settings:
+  govet:
+    enable-all: true
+    disable:
+      - shadow
+      - fieldalignment
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - style
+    disabled-checks:
+      - ptrToRefParam
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+      - wrapperFunc
+  revive:
+    min-confidence: 0
+  staticcheck:
+    go: "1.22.5"
+    checks: [ "all", "-SA1019"]
+
+issues:
+  exclude-use-default: false
+  exclude:
+    - Close` is not checked
+    - ST1000
+    - ST1020
+    - ST1021
