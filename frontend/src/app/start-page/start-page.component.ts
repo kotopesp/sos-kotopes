@@ -22,7 +22,7 @@ export class StartPageComponent {
         'для связи с отловщиками, частными ветеринарами и службами ' +
         'передержки. Мы поможем вам обеспечить безопасность и защиту ' +
         'для каждого найденного или пропавшего питомца',
-      icon: 'paw-icon.png'
+      icon: 'paw-icon.svg'
     },
     {
       class: 'p-color',
@@ -33,7 +33,7 @@ export class StartPageComponent {
         ' или вы частный ветеринар, или ' +
         'отловщик, то смело нажимайте сюда и ' +
         'присоединяйтесь к нашей команде!',
-      icon: 'hand-icon.png'
+      icon: 'hand-icon.svg'
     },
     {
       class: 'g-color',
@@ -45,7 +45,7 @@ export class StartPageComponent {
         'сделать ветеринарную помощь доступной для ' +
         'каждого животного. Быстрая и качественная ' +
         'помощь – залог здоровья наших питомцев',
-      icon: 'cross-icon.png'
+      icon: 'cross-icon.svg'
     },
     {
       class: 'b-color',
@@ -60,7 +60,7 @@ export class StartPageComponent {
         'и районными администрациями. Получите ' +
         'ответы на все важные вопросы и защитите ' +
         'права животных',
-      icon: 'lawyer-icon.png'
+      icon: 'lawyer-icon.svg'
     }
   ]
 
