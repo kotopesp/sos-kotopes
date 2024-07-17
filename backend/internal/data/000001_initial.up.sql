@@ -2,8 +2,10 @@
 CREATE TABLE IF NOT EXISTS
     users (
         id SERIAL PRIMARY KEY,
-        username VARCHAR UNIQUE NOT NULL,
-        passwordHash VARCHAR NOT NULL,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        "description" TEXT,
+        photo VARCHAR NOT NULL,
+        password_hash VARCHAR(256) NOT NULL,
         created_at TIMESTAMP NOT NULL
     );
 
@@ -13,7 +15,8 @@ CREATE TABLE IF NOT EXISTS
         id INTEGER PRIMARY KEY,
         user_id INTEGER,
         "description" VARCHAR,
-        "location" VARCHAR
+        "location" VARCHAR,
+        rating FLOAT
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -21,7 +24,8 @@ CREATE TABLE IF NOT EXISTS
         id INTEGER PRIMARY KEY,
         user_id INTEGER,
         "description" VARCHAR,
-        "location" VARCHAR
+        "location" VARCHAR,
+        rating FLOAT
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -29,7 +33,8 @@ CREATE TABLE IF NOT EXISTS
         id INTEGER PRIMARY KEY,
         user_id INTEGER,
         "description" VARCHAR,
-        "location" VARCHAR
+        "location" VARCHAR,
+        rating FLOAT
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -120,7 +125,8 @@ CREATE TABLE IF NOT EXISTS
     conversations (
         id INTEGER PRIMARY KEY,
         user1_id INTEGER,
-        user2_id INTEGER
+        user2_id INTEGER,
+        "type" VARCHAR,
     );
 
 ALTER TABLE messages
