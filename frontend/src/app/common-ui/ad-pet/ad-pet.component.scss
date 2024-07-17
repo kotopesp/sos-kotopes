@@ -1,0 +1,37 @@
+.block__ad__pet {
+  display: grid;
+  grid-gap: 5px;
+
+  .block__image__pet {
+    .image__pet {
+      width: 285px;
+      height: 293px;
+      border-radius: 20px;
+    }
+  }
+
+  .block__description__pet {
+    min-height: 100px;
+  }
+
+  .block__info__pet {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: space-around;
+
+    .block__info__date {
+      width: 114px;
+      height: 38px;
+    }
+
+    //Временно
+    .propal {
+      width: 112px;
+      height: 38px;
+      text-align: center;
+      background: var(--red-color-button);
+      padding: 6px 18px;
+      border-radius: 10px;
+    }
+  }
+}
