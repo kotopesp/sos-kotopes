@@ -1,12 +1,34 @@
+- Убрать ковычки с некоторых слов +
+- Названия поля
+- Фронтенд хранит дефолтное +
+- Убрать ограничения на VARCHAR +
+- DEFAULT now()
+- имя и фамилия в юзерах
+- deleted в юзерах
+- Продумать локацию пользователей (таблица местоположений согласно дизайну)
+- Rating не должно быть
+- Roles лишняя таблица, либо можно оставить
+- References изменить 
+- content вместо text
+- Продумать удаление объектов (плохо полностью удалять из базы)
+- Найти другое слово для animal_type (чтобы не было type)
+- Опечатка сообщения Messages
+- Пока что можно удалить сообщения (спросить у лизы)
+- использовать author_id и content везде
+- Животное обязательно, оно всегда есть
+- responser_id исправить так не пишут и text на content
+- comments : posts_id
+
+
 -- Users
 CREATE TABLE IF NOT EXISTS
     users (
         id SERIAL PRIMARY KEY,
         username VARCHAR UNIQUE NOT NULL,
         description TEXT,
-        photo VARCHAR NOT NULL,
+        photo VARCHAR,
         password_hash VARCHAR NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 -- Roles
@@ -16,7 +38,8 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER,
         description TEXT,
         location VARCHAR,
-        rating FLOAT
+        rating FLOAT,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -25,7 +48,8 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL,
         description TEXT,
         location VARCHAR,
-        rating FLOAT NOT NULL
+        rating FLOAT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -34,14 +58,16 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL,
         description VARCHAR,
         location VARCHAR,
-        rating FLOAT NOT NULL
+        rating FLOAT NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 CREATE TABLE IF NOT EXISTS
     roles_users (
         id SERIAL PRIMARY KEY,
         role VARCHAR NOT NULL,
-        user_id INTEGER NOT NULL
+        user_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 ALTER TABLE seekers
@@ -63,7 +89,8 @@ CREATE TABLE IF NOT EXISTS
         author_id INTEGER NOT NULL,
         text VARCHAR,
         grade INTEGER NOT NULL,
-        vet_id INTEGER NOT NULL
+        vet_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -72,7 +99,8 @@ CREATE TABLE IF NOT EXISTS
         author_id INTEGER NOT NULL,
         text VARCHAR,
         grade INTEGER NOT NULL,
-        keeper_id INTEGER NOT NULL
+        keeper_id INTEGER NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 ALTER TABLE vet_reviews
@@ -104,7 +132,7 @@ CREATE TABLE IF NOT EXISTS
         description TEXT,
         status animal_status,
         keeper_id INTEGER,
-        created_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL
     );
 
@@ -116,7 +144,7 @@ CREATE TABLE IF NOT EXISTS
     messages (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
         conversation_id INTEGER NOT NULL
     );
@@ -126,7 +154,8 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         user1_id INTEGER NOT NULL,
         user2_id INTEGER NOT NULL,
-        type VARCHAR
+        type VARCHAR,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 ALTER TABLE messages
@@ -148,7 +177,7 @@ CREATE TABLE IF NOT EXISTS
         title VARCHAR NOT NULL,
         body TEXT,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
         animal_id INTEGER
     );
@@ -158,7 +187,8 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         post_id INTEGER NOT NULL,
         responser_id INTEGER NOT NULL,
-        text VARCHAR NOT NULL
+        text VARCHAR NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -166,7 +196,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         post_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 ALTER TABLE posts
@@ -193,7 +223,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         text TEXT NOT NULL,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
         posts_id INTEGER NOT NULL
     );
@@ -203,7 +233,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         comment_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 ALTER TABLE comments
@@ -224,7 +254,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         person_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -232,7 +262,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         post_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -240,7 +270,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         comment_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 ALTER TABLE favourite_posts
