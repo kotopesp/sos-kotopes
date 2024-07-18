@@ -1828,73 +1828,6 @@
                     "inheritPreProcessors": {},
                     "items": [
                         {
-                            "name": "Получить объявление",
-                            "api": {
-                                "id": "8536584",
-                                "method": "get",
-                                "path": "/posts/{post_id}",
-                                "parameters": {
-                                    "path": [
-                                        {
-                                            "id": "post_id#0",
-                                            "name": "post_id",
-                                            "required": true,
-                                            "description": "",
-                                            "type": "string",
-                                            "enable": true
-                                        }
-                                    ]
-                                },
-                                "auth": {},
-                                "commonParameters": {
-                                    "query": [],
-                                    "body": [],
-                                    "cookie": [],
-                                    "header": []
-                                },
-                                "responses": [
-                                    {
-                                        "id": "9415951",
-                                        "name": "Success",
-                                        "code": 200,
-                                        "contentType": "json",
-                                        "jsonSchema": {
-                                            "type": "object",
-                                            "properties": {}
-                                        }
-                                    }
-                                ],
-                                "responseExamples": [],
-                                "requestBody": {
-                                    "type": "none",
-                                    "parameters": []
-                                },
-                                "description": "",
-                                "tags": [],
-                                "status": "developing",
-                                "serverId": "",
-                                "operationId": "",
-                                "sourceUrl": "",
-                                "ordering": 10,
-                                "cases": [],
-                                "mocks": [],
-                                "customApiFields": "{}",
-                                "advancedSettings": {
-                                    "disabledSystemHeaders": {}
-                                },
-                                "mockScript": {},
-                                "codeSamples": [],
-                                "commonResponseStatus": {},
-                                "responseChildren": [
-                                    "BLANK.9415951"
-                                ],
-                                "preProcessors": [],
-                                "postProcessors": [],
-                                "inheritPostProcessors": {},
-                                "inheritPreProcessors": {}
-                            }
-                        },
-                        {
                             "name": "Получить ленту объявлений",
                             "api": {
                                 "id": "8539064",
@@ -1984,6 +1917,73 @@
                                 "commonResponseStatus": {},
                                 "responseChildren": [
                                     "BLANK.9418934"
+                                ],
+                                "preProcessors": [],
+                                "postProcessors": [],
+                                "inheritPostProcessors": {},
+                                "inheritPreProcessors": {}
+                            }
+                        },
+                        {
+                            "name": "Получить объявление",
+                            "api": {
+                                "id": "8536584",
+                                "method": "get",
+                                "path": "/posts/{post_id}",
+                                "parameters": {
+                                    "path": [
+                                        {
+                                            "id": "post_id#0",
+                                            "name": "post_id",
+                                            "required": true,
+                                            "description": "",
+                                            "type": "string",
+                                            "enable": true
+                                        }
+                                    ]
+                                },
+                                "auth": {},
+                                "commonParameters": {
+                                    "query": [],
+                                    "body": [],
+                                    "cookie": [],
+                                    "header": []
+                                },
+                                "responses": [
+                                    {
+                                        "id": "9415951",
+                                        "name": "Success",
+                                        "code": 200,
+                                        "contentType": "json",
+                                        "jsonSchema": {
+                                            "type": "object",
+                                            "properties": {}
+                                        }
+                                    }
+                                ],
+                                "responseExamples": [],
+                                "requestBody": {
+                                    "type": "none",
+                                    "parameters": []
+                                },
+                                "description": "",
+                                "tags": [],
+                                "status": "developing",
+                                "serverId": "",
+                                "operationId": "",
+                                "sourceUrl": "",
+                                "ordering": 10,
+                                "cases": [],
+                                "mocks": [],
+                                "customApiFields": "{}",
+                                "advancedSettings": {
+                                    "disabledSystemHeaders": {}
+                                },
+                                "mockScript": {},
+                                "codeSamples": [],
+                                "commonResponseStatus": {},
+                                "responseChildren": [
+                                    "BLANK.9415951"
                                 ],
                                 "preProcessors": [],
                                 "postProcessors": [],
@@ -3244,24 +3244,39 @@
                             "inheritPreProcessors": {},
                             "items": [
                                 {
-                                    "name": "Удалить пост из избранного",
+                                    "name": "Получить избранные посты",
                                     "api": {
-                                        "id": "8628616",
-                                        "method": "delete",
-                                        "path": "/posts/{post_id}/favourites",
+                                        "id": "8628614",
+                                        "method": "get",
+                                        "path": "/posts/favourites",
                                         "parameters": {
-                                            "query": [],
-                                            "path": [
+                                            "query": [
                                                 {
-                                                    "id": "post_id#0",
-                                                    "name": "post_id",
-                                                    "required": true,
-                                                    "description": "Идентификатор поста",
+                                                    "required": false,
+                                                    "description": "Количество, но не более 100. По умолчанию 20",
                                                     "type": "integer",
+                                                    "id": "GOCDIx45MQ",
                                                     "enable": true,
+                                                    "name": "count",
                                                     "schema": {
                                                         "type": "integer"
                                                     }
+                                                },
+                                                {
+                                                    "required": false,
+                                                    "description": "`asc` - от старых к новым. `desc` - от новых к старым",
+                                                    "type": "string",
+                                                    "id": "ApUFJU21iY",
+                                                    "enable": true,
+                                                    "name": "sort"
+                                                },
+                                                {
+                                                    "required": false,
+                                                    "description": "Смещение выборки записей",
+                                                    "type": "string",
+                                                    "id": "RTLx1zDTkV",
+                                                    "enable": true,
+                                                    "name": "offset"
                                                 }
                                             ]
                                         },
@@ -3274,7 +3289,7 @@
                                         },
                                         "responses": [
                                             {
-                                                "id": "9553011",
+                                                "id": "9553009",
                                                 "name": "Success",
                                                 "code": 200,
                                                 "contentType": "json",
@@ -3287,32 +3302,9 @@
                                         "responseExamples": [],
                                         "requestBody": {
                                             "type": "none",
-                                            "parameters": [],
-                                            "jsonSchema": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "type": {
-                                                        "type": "string",
-                                                        "description": "Тип объекта. Возможные типы: `post`, `user`, `comment`"
-                                                    },
-                                                    "item_id": {
-                                                        "type": "integer",
-                                                        "minimum": 1,
-                                                        "description": "Идентификатор объекта"
-                                                    }
-                                                },
-                                                "x-apidog-orders": [
-                                                    "type",
-                                                    "item_id"
-                                                ],
-                                                "required": [
-                                                    "type",
-                                                    "item_id"
-                                                ]
-                                            },
-                                            "example": "{\r\n    \"type\": \"post\",\r\n    \"item_id\": 1\r\n}"
+                                            "parameters": []
                                         },
-                                        "description": "Удалить пользователя из избранного.",
+                                        "description": "Получить список постов, которые были добавлены в избранное.",
                                         "tags": [],
                                         "status": "developing",
                                         "serverId": "",
@@ -3329,7 +3321,7 @@
                                         "codeSamples": [],
                                         "commonResponseStatus": {},
                                         "responseChildren": [
-                                            "BLANK.9553011"
+                                            "BLANK.9553009"
                                         ],
                                         "preProcessors": [],
                                         "postProcessors": [],
@@ -3424,39 +3416,24 @@
                                     }
                                 },
                                 {
-                                    "name": "Получить избранные посты",
+                                    "name": "Удалить пост из избранного",
                                     "api": {
-                                        "id": "8628614",
-                                        "method": "get",
-                                        "path": "/posts/favourites",
+                                        "id": "8628616",
+                                        "method": "delete",
+                                        "path": "/posts/{post_id}/favourites",
                                         "parameters": {
-                                            "query": [
+                                            "query": [],
+                                            "path": [
                                                 {
-                                                    "required": false,
-                                                    "description": "Количество, но не более 100. По умолчанию 20",
+                                                    "id": "post_id#0",
+                                                    "name": "post_id",
+                                                    "required": true,
+                                                    "description": "Идентификатор поста",
                                                     "type": "integer",
-                                                    "id": "GOCDIx45MQ",
                                                     "enable": true,
-                                                    "name": "count",
                                                     "schema": {
                                                         "type": "integer"
                                                     }
-                                                },
-                                                {
-                                                    "required": false,
-                                                    "description": "`asc` - от старых к новым. `desc` - от новых к старым",
-                                                    "type": "string",
-                                                    "id": "ApUFJU21iY",
-                                                    "enable": true,
-                                                    "name": "sort"
-                                                },
-                                                {
-                                                    "required": false,
-                                                    "description": "Смещение выборки записей",
-                                                    "type": "string",
-                                                    "id": "RTLx1zDTkV",
-                                                    "enable": true,
-                                                    "name": "offset"
                                                 }
                                             ]
                                         },
@@ -3469,7 +3446,7 @@
                                         },
                                         "responses": [
                                             {
-                                                "id": "9553009",
+                                                "id": "9553011",
                                                 "name": "Success",
                                                 "code": 200,
                                                 "contentType": "json",
@@ -3482,9 +3459,32 @@
                                         "responseExamples": [],
                                         "requestBody": {
                                             "type": "none",
-                                            "parameters": []
+                                            "parameters": [],
+                                            "jsonSchema": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "description": "Тип объекта. Возможные типы: `post`, `user`, `comment`"
+                                                    },
+                                                    "item_id": {
+                                                        "type": "integer",
+                                                        "minimum": 1,
+                                                        "description": "Идентификатор объекта"
+                                                    }
+                                                },
+                                                "x-apidog-orders": [
+                                                    "type",
+                                                    "item_id"
+                                                ],
+                                                "required": [
+                                                    "type",
+                                                    "item_id"
+                                                ]
+                                            },
+                                            "example": "{\r\n    \"type\": \"post\",\r\n    \"item_id\": 1\r\n}"
                                         },
-                                        "description": "Получить список постов, которые были добавлены в избранное.",
+                                        "description": "Удалить пользователя из избранного.",
                                         "tags": [],
                                         "status": "developing",
                                         "serverId": "",
@@ -3501,7 +3501,7 @@
                                         "codeSamples": [],
                                         "commonResponseStatus": {},
                                         "responseChildren": [
-                                            "BLANK.9553009"
+                                            "BLANK.9553011"
                                         ],
                                         "preProcessors": [],
                                         "postProcessors": [],
@@ -3955,93 +3955,6 @@
                                     "inheritPreProcessors": {},
                                     "items": [
                                         {
-                                            "name": "Получить список лайков",
-                                            "api": {
-                                                "id": "8565753",
-                                                "method": "get",
-                                                "path": "/posts/{post_id}/comments/{comment_id}/likes",
-                                                "parameters": {
-                                                    "query": [],
-                                                    "path": [
-                                                        {
-                                                            "id": "post_id#0",
-                                                            "name": "post_id",
-                                                            "required": true,
-                                                            "description": "Идентификатор поста",
-                                                            "type": "integer",
-                                                            "enable": true,
-                                                            "schema": {
-                                                                "type": "integer"
-                                                            }
-                                                        },
-                                                        {
-                                                            "id": "comment_id#0",
-                                                            "name": "comment_id",
-                                                            "required": true,
-                                                            "description": "Идентификатор комментария",
-                                                            "type": "integer",
-                                                            "enable": true,
-                                                            "schema": {
-                                                                "type": "integer"
-                                                            }
-                                                        }
-                                                    ]
-                                                },
-                                                "auth": {},
-                                                "commonParameters": {
-                                                    "query": [],
-                                                    "body": [],
-                                                    "cookie": [],
-                                                    "header": []
-                                                },
-                                                "responses": [
-                                                    {
-                                                        "id": "9461094",
-                                                        "name": "Success",
-                                                        "code": 200,
-                                                        "contentType": "json",
-                                                        "jsonSchema": {
-                                                            "type": "object",
-                                                            "properties": {}
-                                                        }
-                                                    }
-                                                ],
-                                                "responseExamples": [],
-                                                "requestBody": {
-                                                    "type": "none",
-                                                    "parameters": [],
-                                                    "jsonSchema": {
-                                                        "type": "object",
-                                                        "properties": {},
-                                                        "x-apidog-orders": []
-                                                    }
-                                                },
-                                                "description": "Позволяет получить список лайков, которые были поставлены комментарию.",
-                                                "tags": [],
-                                                "status": "developing",
-                                                "serverId": "",
-                                                "operationId": "",
-                                                "sourceUrl": "",
-                                                "ordering": 0,
-                                                "cases": [],
-                                                "mocks": [],
-                                                "customApiFields": "{}",
-                                                "advancedSettings": {
-                                                    "disabledSystemHeaders": {}
-                                                },
-                                                "mockScript": {},
-                                                "codeSamples": [],
-                                                "commonResponseStatus": {},
-                                                "responseChildren": [
-                                                    "BLANK.9461094"
-                                                ],
-                                                "preProcessors": [],
-                                                "postProcessors": [],
-                                                "inheritPostProcessors": {},
-                                                "inheritPreProcessors": {}
-                                            }
-                                        },
-                                        {
                                             "name": "Убрать лайк",
                                             "api": {
                                                 "id": "8565752",
@@ -4208,6 +4121,93 @@
                                                 "commonResponseStatus": {},
                                                 "responseChildren": [
                                                     "BLANK.9461092"
+                                                ],
+                                                "preProcessors": [],
+                                                "postProcessors": [],
+                                                "inheritPostProcessors": {},
+                                                "inheritPreProcessors": {}
+                                            }
+                                        },
+                                        {
+                                            "name": "Получить список лайков",
+                                            "api": {
+                                                "id": "8565753",
+                                                "method": "get",
+                                                "path": "/posts/{post_id}/comments/{comment_id}/likes",
+                                                "parameters": {
+                                                    "query": [],
+                                                    "path": [
+                                                        {
+                                                            "id": "post_id#0",
+                                                            "name": "post_id",
+                                                            "required": true,
+                                                            "description": "Идентификатор поста",
+                                                            "type": "integer",
+                                                            "enable": true,
+                                                            "schema": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        {
+                                                            "id": "comment_id#0",
+                                                            "name": "comment_id",
+                                                            "required": true,
+                                                            "description": "Идентификатор комментария",
+                                                            "type": "integer",
+                                                            "enable": true,
+                                                            "schema": {
+                                                                "type": "integer"
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                "auth": {},
+                                                "commonParameters": {
+                                                    "query": [],
+                                                    "body": [],
+                                                    "cookie": [],
+                                                    "header": []
+                                                },
+                                                "responses": [
+                                                    {
+                                                        "id": "9461094",
+                                                        "name": "Success",
+                                                        "code": 200,
+                                                        "contentType": "json",
+                                                        "jsonSchema": {
+                                                            "type": "object",
+                                                            "properties": {}
+                                                        }
+                                                    }
+                                                ],
+                                                "responseExamples": [],
+                                                "requestBody": {
+                                                    "type": "none",
+                                                    "parameters": [],
+                                                    "jsonSchema": {
+                                                        "type": "object",
+                                                        "properties": {},
+                                                        "x-apidog-orders": []
+                                                    }
+                                                },
+                                                "description": "Позволяет получить список лайков, которые были поставлены комментарию.",
+                                                "tags": [],
+                                                "status": "developing",
+                                                "serverId": "",
+                                                "operationId": "",
+                                                "sourceUrl": "",
+                                                "ordering": 0,
+                                                "cases": [],
+                                                "mocks": [],
+                                                "customApiFields": "{}",
+                                                "advancedSettings": {
+                                                    "disabledSystemHeaders": {}
+                                                },
+                                                "mockScript": {},
+                                                "codeSamples": [],
+                                                "commonResponseStatus": {},
+                                                "responseChildren": [
+                                                    "BLANK.9461094"
                                                 ],
                                                 "preProcessors": [],
                                                 "postProcessors": [],
@@ -5008,6 +5008,418 @@
                     ]
                 },
                 {
+                    "name": "Conversations",
+                    "id": 1700878,
+                    "auth": {},
+                    "parentId": 0,
+                    "serverId": "",
+                    "description": "",
+                    "identityPattern": {
+                        "httpApi": {
+                            "type": "inherit",
+                            "bodyType": ""
+                        }
+                    },
+                    "preProcessors": [
+                        {
+                            "id": "inheritProcessors",
+                            "type": "inheritProcessors",
+                            "data": {}
+                        }
+                    ],
+                    "postProcessors": [
+                        {
+                            "id": "inheritProcessors",
+                            "type": "inheritProcessors",
+                            "data": {}
+                        }
+                    ],
+                    "inheritPostProcessors": {},
+                    "inheritPreProcessors": {},
+                    "items": [
+                        {
+                            "name": "Создать новый чат",
+                            "api": {
+                                "id": "8754288",
+                                "method": "post",
+                                "path": "/conversations",
+                                "parameters": {
+                                    "path": []
+                                },
+                                "auth": {},
+                                "commonParameters": {
+                                    "query": [],
+                                    "body": [],
+                                    "cookie": [],
+                                    "header": []
+                                },
+                                "responses": [
+                                    {
+                                        "id": "9754445",
+                                        "name": "Success",
+                                        "code": 200,
+                                        "contentType": "json",
+                                        "jsonSchema": {
+                                            "type": "object",
+                                            "properties": {}
+                                        }
+                                    }
+                                ],
+                                "responseExamples": [],
+                                "requestBody": {
+                                    "type": "application/json",
+                                    "parameters": [],
+                                    "jsonSchema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "user_ids": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer",
+                                                    "description": "Идентификатор пользователя"
+                                                },
+                                                "description": "Массив идентификатор пользователей"
+                                            }
+                                        },
+                                        "x-apidog-orders": [
+                                            "user_ids"
+                                        ],
+                                        "required": [
+                                            "user_ids"
+                                        ]
+                                    }
+                                },
+                                "description": "Создать новый чат с пользователем(-ями).",
+                                "tags": [],
+                                "status": "developing",
+                                "serverId": "",
+                                "operationId": "",
+                                "sourceUrl": "",
+                                "ordering": 0,
+                                "cases": [],
+                                "mocks": [],
+                                "customApiFields": "{}",
+                                "advancedSettings": {
+                                    "disabledSystemHeaders": {}
+                                },
+                                "mockScript": {},
+                                "codeSamples": [],
+                                "commonResponseStatus": {},
+                                "responseChildren": [
+                                    "BLANK.9754445"
+                                ],
+                                "preProcessors": [],
+                                "postProcessors": [],
+                                "inheritPostProcessors": {},
+                                "inheritPreProcessors": {}
+                            }
+                        },
+                        {
+                            "name": "Получить список чатов",
+                            "api": {
+                                "id": "8754289",
+                                "method": "get",
+                                "path": "/conversations",
+                                "parameters": {
+                                    "query": [
+                                        {
+                                            "required": false,
+                                            "description": "Количество, но не более 100. По умолчанию 20",
+                                            "type": "integer",
+                                            "id": "99oDXLGWsa",
+                                            "enable": true,
+                                            "name": "count",
+                                            "schema": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        {
+                                            "required": false,
+                                            "description": "Смещение для выборки",
+                                            "type": "integer",
+                                            "id": "jPp7MLvA2t",
+                                            "enable": true,
+                                            "name": "offset",
+                                            "schema": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        {
+                                            "required": false,
+                                            "description": "Фильтрация по типу диалога",
+                                            "type": "string",
+                                            "id": "G7hkEYLhRi",
+                                            "enable": true,
+                                            "name": "type",
+                                            "schema": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    ],
+                                    "path": []
+                                },
+                                "auth": {},
+                                "commonParameters": {
+                                    "query": [],
+                                    "body": [],
+                                    "cookie": [],
+                                    "header": []
+                                },
+                                "responses": [
+                                    {
+                                        "id": "9754446",
+                                        "name": "Success",
+                                        "code": 200,
+                                        "contentType": "json",
+                                        "jsonSchema": {
+                                            "type": "object",
+                                            "properties": {}
+                                        }
+                                    }
+                                ],
+                                "responseExamples": [],
+                                "requestBody": {
+                                    "type": "none",
+                                    "parameters": [],
+                                    "jsonSchema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "text": {
+                                                "type": "string",
+                                                "description": "Текст сообщения"
+                                            },
+                                            "username": {
+                                                "type": "string",
+                                                "description": "Идектификатор пользователя"
+                                            }
+                                        },
+                                        "x-apidog-orders": [
+                                            "username",
+                                            "text"
+                                        ],
+                                        "required": [
+                                            "username",
+                                            "text"
+                                        ]
+                                    }
+                                },
+                                "description": "Получить список чатов.",
+                                "tags": [],
+                                "status": "developing",
+                                "serverId": "",
+                                "operationId": "",
+                                "sourceUrl": "",
+                                "ordering": 6,
+                                "cases": [],
+                                "mocks": [],
+                                "customApiFields": "{}",
+                                "advancedSettings": {
+                                    "disabledSystemHeaders": {}
+                                },
+                                "mockScript": {},
+                                "codeSamples": [],
+                                "commonResponseStatus": {},
+                                "responseChildren": [
+                                    "BLANK.9754446"
+                                ],
+                                "preProcessors": [],
+                                "postProcessors": [],
+                                "inheritPostProcessors": {},
+                                "inheritPreProcessors": {}
+                            }
+                        },
+                        {
+                            "name": "Получить информацию о чате",
+                            "api": {
+                                "id": "8754339",
+                                "method": "get",
+                                "path": "/conversations/{conversation_id}",
+                                "parameters": {
+                                    "query": [],
+                                    "path": [
+                                        {
+                                            "id": "conversation_id#0",
+                                            "name": "conversation_id",
+                                            "required": true,
+                                            "description": "Идентификатор чата",
+                                            "type": "integer",
+                                            "enable": true,
+                                            "schema": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "auth": {},
+                                "commonParameters": {
+                                    "query": [],
+                                    "body": [],
+                                    "cookie": [],
+                                    "header": []
+                                },
+                                "responses": [
+                                    {
+                                        "id": "9754453",
+                                        "name": "Success",
+                                        "code": 200,
+                                        "contentType": "json",
+                                        "jsonSchema": {
+                                            "type": "object",
+                                            "properties": {}
+                                        }
+                                    }
+                                ],
+                                "responseExamples": [],
+                                "requestBody": {
+                                    "type": "none",
+                                    "parameters": [],
+                                    "jsonSchema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "text": {
+                                                "type": "string",
+                                                "description": "Текст сообщения"
+                                            },
+                                            "username": {
+                                                "type": "string",
+                                                "description": "Идектификатор пользователя"
+                                            }
+                                        },
+                                        "x-apidog-orders": [
+                                            "username",
+                                            "text"
+                                        ],
+                                        "required": [
+                                            "username",
+                                            "text"
+                                        ]
+                                    }
+                                },
+                                "description": "Получить информацию о чате.",
+                                "tags": [],
+                                "status": "developing",
+                                "serverId": "",
+                                "operationId": "",
+                                "sourceUrl": "",
+                                "ordering": 12,
+                                "cases": [],
+                                "mocks": [],
+                                "customApiFields": "{}",
+                                "advancedSettings": {
+                                    "disabledSystemHeaders": {}
+                                },
+                                "mockScript": {},
+                                "codeSamples": [],
+                                "commonResponseStatus": {},
+                                "responseChildren": [
+                                    "BLANK.9754453"
+                                ],
+                                "preProcessors": [],
+                                "postProcessors": [],
+                                "inheritPostProcessors": {},
+                                "inheritPreProcessors": {}
+                            }
+                        },
+                        {
+                            "name": "Удалить чат",
+                            "api": {
+                                "id": "8754291",
+                                "method": "delete",
+                                "path": "/conversations",
+                                "parameters": {
+                                    "query": [
+                                        {
+                                            "required": false,
+                                            "description": "Идентификатор чата",
+                                            "type": "integer",
+                                            "id": "4LYauRqnDB",
+                                            "enable": true,
+                                            "name": "conversation_id",
+                                            "schema": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    ],
+                                    "path": []
+                                },
+                                "auth": {},
+                                "commonParameters": {
+                                    "query": [],
+                                    "body": [],
+                                    "cookie": [],
+                                    "header": []
+                                },
+                                "responses": [
+                                    {
+                                        "id": "9754448",
+                                        "name": "Success",
+                                        "code": 200,
+                                        "contentType": "json",
+                                        "jsonSchema": {
+                                            "type": "object",
+                                            "properties": {}
+                                        }
+                                    }
+                                ],
+                                "responseExamples": [],
+                                "requestBody": {
+                                    "type": "none",
+                                    "parameters": [],
+                                    "jsonSchema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "user_id": {
+                                                "type": "integer",
+                                                "description": "Идектификатор пользователя"
+                                            },
+                                            "message_id": {
+                                                "type": "integer",
+                                                "description": "Идентификатор сообщения"
+                                            },
+                                            "local": {
+                                                "type": "boolean",
+                                                "description": "`true` - сообщение будет удалено только со стороны пользователя. У собеседника останется сообщение в диалоге. \n`false` - сообщение удалится с обоих сторон.\n\nПо умолчанию `false`"
+                                            }
+                                        },
+                                        "x-apidog-orders": [
+                                            "user_id",
+                                            "message_id",
+                                            "local"
+                                        ],
+                                        "required": [
+                                            "user_id",
+                                            "message_id"
+                                        ]
+                                    }
+                                },
+                                "description": "Удалить чат.",
+                                "tags": [],
+                                "status": "developing",
+                                "serverId": "",
+                                "operationId": "",
+                                "sourceUrl": "",
+                                "ordering": 24,
+                                "cases": [],
+                                "mocks": [],
+                                "customApiFields": "{}",
+                                "advancedSettings": {
+                                    "disabledSystemHeaders": {}
+                                },
+                                "mockScript": {},
+                                "codeSamples": [],
+                                "commonResponseStatus": {},
+                                "responseChildren": [
+                                    "BLANK.9754448"
+                                ],
+                                "preProcessors": [],
+                                "postProcessors": [],
+                                "inheritPostProcessors": {},
+                                "inheritPreProcessors": {}
+                            }
+                        }
+                    ]
+                },
+                {
                     "name": "Animals",
                     "id": 1660530,
                     "auth": {},
@@ -5240,6 +5652,11 @@
                 },
                 {
                     "name": "Messages",
+                    "children": [],
+                    "items": []
+                },
+                {
+                    "name": "Conversations",
                     "children": [],
                     "items": []
                 },
