@@ -2,7 +2,7 @@
 - Названия поля
 - Фронтенд хранит дефолтное +
 - Убрать ограничения на VARCHAR +
-- DEFAULT now()
+- DEFAULT now() +
 - имя и фамилия в юзерах
 - deleted в юзерах
 - Продумать локацию пользователей (таблица местоположений согласно дизайну)
@@ -24,7 +24,9 @@
 CREATE TABLE IF NOT EXISTS
     users (
         id SERIAL PRIMARY KEY,
-        username VARCHAR UNIQUE NOT NULL,
+        username VARCHAR UNIQUE NOT,
+        firstname VARCHAR,
+        lastname VARCHAR,
         description TEXT,
         photo VARCHAR,
         password_hash VARCHAR NOT NULL,
