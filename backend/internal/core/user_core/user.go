@@ -1,4 +1,4 @@
-package core
+package user_core
 
 import (
 	"context"
@@ -7,15 +7,17 @@ import (
 
 type (
 	User struct {
-		Id           int    `gorm:"primary key;autoIncrement" db:"id"`
-		Username     string `db:"username"`
-		PasswordHash string `db:"password_hash"`
-		CreatedAt    string `db:"created_at"`
+		Id        int    `gorm:"primary key;autoIncrement" db:"id"`
+		Username  string `db:"username"`
+		Password  string `db:"password"`
+		CreatedAt string `db:"created_at"`
 	}
 	UserStore interface {
 		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
+		GetUser(ctx context.Context, id int) (user User, err error)
 	}
 	UserService interface {
 		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
+		GetUser(ctx context.Context, id int) (user User, err error)
 	}
 )

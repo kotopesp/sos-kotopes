@@ -2,6 +2,7 @@ package http
 
 import (
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core/user_core"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
@@ -10,14 +11,14 @@ type Router struct {
 	app           *fiber.App
 	entityService core.EntityService
 	authService   interface{}
-	userService   core.UserService
+	userService   user_core.UserService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
 	authService interface{},
-	userService core.UserService,
+	userService user_core.UserService,
 ) {
 	router := &Router{
 		app:           app,
@@ -44,6 +45,7 @@ func (r *Router) initRoutes() {
 
 	// users
 	v1.Patch("/users/:id", r.UpdateUser)
+	v1.Get("/users/:id", r.GetUser)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core/user_core"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
 )
 
@@ -12,13 +12,13 @@ type Store struct {
 	*postgres.Postgres
 }
 
-func NewUserStore(pg *postgres.Postgres) core.UserStore {
+func NewUserStore(pg *postgres.Postgres) user_core.UserStore {
 	return &Store{pg}
 }
 
 func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) error {
 
-	tx := r.DB.WithContext(ctx).Begin()
+	tx := r.DB.Begin()
 
 	if tx.Error != nil {
 		tx.Rollback()
@@ -29,8 +29,8 @@ func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) 
 	if update.Username != nil {
 		updates["username"] = *update.Username
 	}
-	if update.PasswordHash != nil {
-		updates["password"] = *update.PasswordHash
+	if update.Password != nil {
+		updates["password"] = *update.Password
 	}
 
 	if len(updates) == 0 {
@@ -49,4 +49,15 @@ func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) 
 	}
 
 	return tx.Commit().Error
+}
+
+func (r *Store) GetUser(ctx context.Context, id int) (user_core.User, error) {
+	var user user_core.User
+	err := r.DB.Table("users").Where("id = ?", id).First(&user)
+
+	if err != nil {
+		return user, err.Error
+	}
+
+	return user, nil
 }
