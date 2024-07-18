@@ -4,7 +4,9 @@ import (
 	"context"
 	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/user_service"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user_store"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -35,6 +37,8 @@ func Run(cfg *config.Config) {
 	entityStore := entity.New(pg)
 	// Services
 	entityService := name.New(entityStore)
+	userStore := user_store.NewUserStore(pg)
+	userService := user_service.NewUserService(userStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -45,7 +49,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil)
+	v1.NewRouter(app, entityService, nil, userService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)

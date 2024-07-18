@@ -43,13 +43,7 @@ func (r *Router) initRoutes() {
 	v1.Get("/entities/:id", r.getEntityByID)
 
 	// users
-	//v1.Patch("/users", r.UpdatePhoto)
-	//v1.Delete("/users", r.DeletePhoto)
-	v1.Patch("/users", r.ChangeName)
-	v1.Patch("/users", r.ChangeDescription)
-	//v1.Post("/users", r.SendMessage)
-	//v1.Post("/users", r.AddUserToFavourites)
-	//v1.Post("/users", r.DeleteUserFromFavourites)
+	v1.Patch("/users/:id", r.UpdateUser)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

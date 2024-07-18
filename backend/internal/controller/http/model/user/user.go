@@ -11,5 +11,5 @@ type UpdateUser struct {
 	Id           int     `gorm:"primary key;autoIncrement" json:"id"`
 	Username     *string `json:"username"`
 	PasswordHash *string `json:"password_hash"`
-	CreatedAt    *string `json:"created_at"`
+	//CreatedAt    *string `json:"created_at"`
 }

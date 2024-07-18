@@ -1,6 +1,9 @@
 package core
 
-import "context"
+import (
+	"context"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
+)
 
 type (
 	User struct {
@@ -10,9 +13,9 @@ type (
 		CreatedAt    string `db:"created_at"`
 	}
 	UserStore interface {
-		ChangeName(ctx context.Context, id int, name string) (err error)
+		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
 	}
 	UserService interface {
-		ChangeName(ctx context.Context, id int, name string) (err error)
+		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
 	}
 )
