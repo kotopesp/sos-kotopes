@@ -10,17 +10,20 @@ type Router struct {
 	app           *fiber.App
 	entityService core.EntityService
 	authService   interface{}
+	postService   core.PostService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
 	authService interface{},
+	postService   core.PostService,
 ) {
 	router := &Router{
 		app:           app,
 		entityService: entityService,
 		authService:   authService,
+		postService:   postService,
 	}
 
 	router.initRequestMiddlewares()
@@ -38,6 +41,13 @@ func (r *Router) initRoutes() {
 	// entities
 	v1.Get("/entities", r.getEntities)
 	v1.Get("/entities/:id", r.getEntityByID)
+
+	// posts
+	v1.Get("/posts", r.getPosts)
+	v1.Get("/posts/:id", r.getPostByID)
+	v1.Post("/posts", r.createPost)
+	v1.Put("/posts/:id", r.updatePost)
+	v1.Delete("/posts/:id", r.deletePost)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
