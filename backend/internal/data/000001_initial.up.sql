@@ -2,10 +2,10 @@
 CREATE TABLE IF NOT EXISTS
     users (
         id SERIAL PRIMARY KEY,
-        username VARCHAR(50) UNIQUE NOT NULL,
-        "description" TEXT,
-        photo VARCHAR(100) NOT NULL,
-        password_hash VARCHAR(256) NOT NULL,
+        username VARCHAR UNIQUE NOT NULL,
+        description TEXT,
+        photo VARCHAR NOT NULL,
+        password_hash VARCHAR NOT NULL,
         created_at TIMESTAMP NOT NULL
     );
 
@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS
     seekers (
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
-        "description" TEXT,
-        "location" VARCHAR(100),
+        description TEXT,
+        location VARCHAR,
         rating FLOAT
     );
 
@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS
     keepers (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        "description" TEXT,
-        "location" VARCHAR(100),
+        description TEXT,
+        location VARCHAR,
         rating FLOAT NOT NULL
     );
 
@@ -32,15 +32,15 @@ CREATE TABLE IF NOT EXISTS
     vets (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        "description" VARCHAR,
-        "location" VARCHAR(100),
+        description VARCHAR,
+        location VARCHAR,
         rating FLOAT NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
     roles_users (
         id SERIAL PRIMARY KEY,
-        "role" VARCHAR(50) NOT NULL,
+        role VARCHAR NOT NULL,
         user_id INTEGER NOT NULL
     );
 
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS
     vet_reviews (
         id SERIAL PRIMARY KEY,
         author_id INTEGER NOT NULL,
-        "text" VARCHAR,
+        text VARCHAR,
         grade INTEGER NOT NULL,
         vet_id INTEGER NOT NULL
     );
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS
     keeper_reviews (
         id SERIAL PRIMARY KEY,
         author_id INTEGER NOT NULL,
-        "text" VARCHAR,
+        text VARCHAR,
         grade INTEGER NOT NULL,
         keeper_id INTEGER NOT NULL
     );
@@ -97,12 +97,12 @@ CREATE TYPE animal_gender AS ENUM('male', 'female');
 CREATE TABLE IF NOT EXISTS
     animals (
         id SERIAL PRIMARY KEY,
-        "type" animal_type,
+        type animal_type,
         age INTEGER,
-        color VARCHAR(30),
+        color VARCHAR,
         gender animal_gender,
-        "description" TEXT,
-        "status" animal_status,
+        description TEXT,
+        status animal_status,
         keeper_id INTEGER,
         created_at TIMESTAMP NOT NULL,
         updated_at TIMESTAMP NOT NULL
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         user1_id INTEGER NOT NULL,
         user2_id INTEGER NOT NULL,
-        "type" VARCHAR
+        type VARCHAR
     );
 
 ALTER TABLE messages
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         post_id INTEGER NOT NULL,
         responser_id INTEGER NOT NULL,
-        "text" VARCHAR NOT NULL
+        text VARCHAR NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -189,9 +189,9 @@ ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
 -- Comments
 CREATE TABLE IF NOT EXISTS
-    "comments" (
+    comments (
         id SERIAL PRIMARY KEY,
-        "text" TEXT NOT NULL,
+        text TEXT NOT NULL,
         user_id INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL,
         updated_at TIMESTAMP NOT NULL,
@@ -206,14 +206,14 @@ CREATE TABLE IF NOT EXISTS
         created_at TIMESTAMP NOT NULL
     );
 
-ALTER TABLE "comments"
+ALTER TABLE comments
 ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
-ALTER TABLE "comments"
+ALTER TABLE comments
 ADD FOREIGN KEY (posts_id) REFERENCES posts (id);
 
 ALTER TABLE comment_likes
-ADD FOREIGN KEY (comment_id) REFERENCES "comments" (id);
+ADD FOREIGN KEY (comment_id) REFERENCES comments (id);
 
 ALTER TABLE comment_likes
 ADD FOREIGN KEY (user_id) REFERENCES users (id);
@@ -256,7 +256,7 @@ ALTER TABLE favourite_persons
 ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE favourite_comments
-ADD FOREIGN KEY (comment_id) REFERENCES "comments" (id);
+ADD FOREIGN KEY (comment_id) REFERENCES comments (id);
 
 ALTER TABLE favourite_comments
 ADD FOREIGN KEY (user_id) REFERENCES users (id);
