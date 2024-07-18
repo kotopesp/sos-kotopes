@@ -4,7 +4,7 @@
 - Убрать ограничения на VARCHAR +
 - DEFAULT now() +
 - имя и фамилия в юзерах +
-- deleted в юзерах
+- deleted в юзерах +
 - Продумать локацию пользователей (таблица местоположений согласно дизайну)
 - Rating не должно быть
 - Roles лишняя таблица, либо можно оставить
@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER,
         description TEXT,
         location VARCHAR,
-        rating FLOAT,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -51,7 +50,6 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL,
         description TEXT,
         location VARCHAR,
-        rating FLOAT NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -61,7 +59,6 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL,
         description VARCHAR,
         location VARCHAR,
-        rating FLOAT NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
