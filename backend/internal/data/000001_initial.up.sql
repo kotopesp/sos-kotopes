@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER REFERENCES users (id),
     description VARCHAR,
-    location    VARCHAR,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -30,7 +29,6 @@ CREATE TABLE IF NOT EXISTS
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
-    location    VARCHAR,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -40,7 +38,6 @@ CREATE TABLE IF NOT EXISTS
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
-    location    VARCHAR,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
