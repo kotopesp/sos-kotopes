@@ -52,9 +52,11 @@
   }
 
     .stickers {
+
+      background-blend-mode: multiply;
       background-image:
-      url(../../../public/assets/images/big-steps-bg.png),
-      url(../../../public/assets/images/bg-with-steps.png);
+        url(../../../public/assets/images/big-steps-bg.svg),
+        url(../../../public/assets/images/bg-with-steps.svg);
       background-repeat: no-repeat;
       background-size: cover;
       display: grid;
