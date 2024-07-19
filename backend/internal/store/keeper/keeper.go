@@ -2,6 +2,7 @@ package keeperStore
 
 import (
 	"context"
+	"fmt"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
@@ -35,8 +36,30 @@ func (s *store) UpdateById(ctx *context.Context, id int) error {
 
 func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([]core.Keeper, error) {
 	var keepers []core.Keeper
+	query := s.DB.WithContext(*ctx).Model(&core.Keeper{})
 
-	// todo: implement PARAMS parse
+	if params.SortBy != nil && params.SortOrder != nil {
+		query = query.Order(*params.SortBy + " " + *params.SortOrder)
+	}
+	if params.Location != nil {
+		query = query.Where("location = ?", *params.Location)
+	}
+	if params.MinRating != nil {
+		query = query.Where("rating >= ?", *params.MinRating)
+	}
+	if params.MaxRating != nil {
+		query = query.Where("rating <= ?", *params.MaxRating)
+	}
+	if params.Limit != nil {
+		query = query.Limit(*params.Limit)
+	}
+	if params.Offset != nil {
+		query = query.Offset(*params.Offset)
+	}
+
+	if err := query.Find(&keepers).Error; err != nil {
+		return nil, fmt.Errorf("keepers.GetAll.find() error")
+	}
 
 	return keepers, nil
 }
