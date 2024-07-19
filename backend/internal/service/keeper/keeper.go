@@ -15,22 +15,6 @@ func New(keeperStore core.KeeperStore) core.KeeperService {
 }
 
 func (s *service) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([]core.Keeper, error) {
-	if *params.Offset != 0 {
-		//todo: implement
-	}
-
-	if *params.Limit != 0 {
-		//todo: implement
-	}
-
-	if *params.SortBy != "" {
-		//todo: implement
-	}
-
-	if *params.SortOrder != "" {
-		//todo: implement
-	}
-
 	return s.keeperStore.GetAll(ctx, params)
 }
 

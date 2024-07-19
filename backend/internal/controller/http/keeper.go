@@ -11,11 +11,46 @@ import (
 
 func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	var params core.GetAllKeepersParams
+
+	if sortBy := ctx.Query("sortBy"); sortBy != "" {
+		params.SortBy = &sortBy
+	}
+	if sortOrder := ctx.Query("sortOrder"); sortOrder != "" {
+		params.SortOrder = &sortOrder
+	}
+	if location := ctx.Query("location"); location != "" {
+		params.Location = &location
+	}
+	if minRating := ctx.Query("minRating"); minRating != "" {
+		rating, err := strconv.ParseFloat(minRating, 64)
+		if err == nil {
+			params.MinRating = &rating
+		}
+	}
+	if maxRating := ctx.Query("maxRating"); maxRating != "" {
+		rating, err := strconv.ParseFloat(maxRating, 64)
+		if err == nil {
+			params.MaxRating = &rating
+		}
+	}
+	if limit := ctx.Query("limit"); limit != "" {
+		l, err := strconv.Atoi(limit)
+		if err == nil {
+			params.Limit = &l
+		}
+	}
+	if offset := ctx.Query("offset"); offset != "" {
+		o, err := strconv.Atoi(offset)
+		if err == nil {
+			params.Offset = &o
+		}
+	}
+
 	if err := ctx.QueryParser(&params); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
-	// todo: implement PARAMS parse
+
 	usrCtx := ctx.UserContext()
 	var keepers []core.Keeper
 	keepers, err := r.keeperService.GetAll(&usrCtx, params)
