@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS
     password_hash VARCHAR        NOT NULL,
     is_deleted    BOOLEAN        NOT NULL,
     deleted_at    TIMESTAMP,
-    created_at    TIMESTAMP      NOT NULL DEFAULT NOW()
+    created_at    TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMP      NOT NULL
 );
 
 -- Roles
@@ -21,7 +22,8 @@ CREATE TABLE IF NOT EXISTS
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER REFERENCES users (id),
     description VARCHAR,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -30,7 +32,8 @@ CREATE TABLE IF NOT EXISTS
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -39,7 +42,8 @@ CREATE TABLE IF NOT EXISTS
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL
 );
 
 CREATE VIEW user_roles_view AS
@@ -58,10 +62,13 @@ CREATE TABLE IF NOT EXISTS
 (
     id         SERIAL PRIMARY KEY,
     author_id  INTEGER   NOT NULL REFERENCES users (id),
+    vet_id     INTEGER   NOT NULL REFERENCES vets (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
-    vet_id     INTEGER   NOT NULL REFERENCES vets (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    is_deleted BOOLEAN,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -69,10 +76,11 @@ CREATE TABLE IF NOT EXISTS
 (
     id         SERIAL PRIMARY KEY,
     author_id  INTEGER   NOT NULL REFERENCES users (id),
+    keeper_id  INTEGER   NOT NULL REFERENCES keepers (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
-    keeper_id  INTEGER   NOT NULL REFERENCES keepers (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL
 );
 
 -- Animals
@@ -86,13 +94,13 @@ CREATE TABLE IF NOT EXISTS
     animals
 (
     id          SERIAL PRIMARY KEY,
+    keeper_id   INTEGER REFERENCES keepers (id),
     animal_type animal_types,
     age         INTEGER,
     color       VARCHAR,
     gender      animal_genders,
     description VARCHAR,
     status      animal_statuses,
-    keeper_id   INTEGER REFERENCES keepers (id),
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP NOT NULL
 );
@@ -107,7 +115,8 @@ CREATE TABLE IF NOT EXISTS
     chat_type  chat_types,
     is_deleted BOOLEAN   NOT NULL,
     deleted_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -115,11 +124,11 @@ CREATE TABLE IF NOT EXISTS
 (
     id         SERIAL PRIMARY KEY,
     user_id    INTEGER   NOT NULL REFERENCES users (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL,
+    chat_id    INTEGER   NOT NULL REFERENCES chats (id),
     is_deleted BOOLEAN   NOT NULL,
     deleted_at TIMESTAMP,
-    chat_id    INTEGER   NOT NULL REFERENCES chats (id)
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -128,9 +137,9 @@ CREATE TABLE IF NOT EXISTS
     id         SERIAL PRIMARY KEY,
     user_id    INTEGER   NOT NULL REFERENCES users (id),
     chat_id    INTEGER REFERENCES chats (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     is_deleted BOOLEAN   NOT NULL,
-    deleted_at TIMESTAMP
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Posts
@@ -138,14 +147,14 @@ CREATE TABLE IF NOT EXISTS
     posts
 (
     id         SERIAL PRIMARY KEY,
+    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    animal_id  INTEGER   NOT NULL REFERENCES animals (id),
     title      VARCHAR   NOT NULL,
     content    VARCHAR,
-    author_id  INTEGER   NOT NULL REFERENCES users (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL,
     is_deleted BOOLEAN   NOT NULL,
     deleted_at TIMESTAMP,
-    animal_id  INTEGER   NOT NULL REFERENCES animals (id)
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -157,7 +166,8 @@ CREATE TABLE IF NOT EXISTS
     content    VARCHAR   NOT NULL,
     is_deleted BOOLEAN   NOT NULL,
     deleted_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -176,11 +186,11 @@ CREATE TABLE IF NOT EXISTS
     id         SERIAL PRIMARY KEY,
     content    VARCHAR   NOT NULL,
     author_id  INTEGER   NOT NULL REFERENCES users (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL,
+    posts_id   INTEGER   NOT NULL REFERENCES posts (id),
     is_deleted BOOLEAN   NOT NULL,
     deleted_at TIMESTAMP,
-    posts_id   INTEGER   NOT NULL REFERENCES posts (id)
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS
