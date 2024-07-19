@@ -1,10 +1,10 @@
 package http
 
 import (
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"strconv"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 )
@@ -52,7 +52,7 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	}
 
 	usrCtx := ctx.UserContext()
-	var keepers []core.Keeper
+	var keepers []core.Keepers
 	keepers, err := r.keeperService.GetAll(&usrCtx, params)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
@@ -81,7 +81,17 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) createKeeper(ctx *fiber.Ctx) error {
-	panic("impl")
+	usrCtx := ctx.UserContext()
+	err := r.keeperService.Create(&usrCtx, core.Keepers{
+		ID:          0,
+		UserID:      0,
+		Description: "hello keeper",
+		Location:    "asdasd",
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *Router) updateKeeperById(ctx *fiber.Ctx) error {
