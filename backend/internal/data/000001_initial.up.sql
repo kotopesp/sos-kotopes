@@ -98,37 +98,39 @@ CREATE TABLE IF NOT EXISTS
 );
 
 -- Messages
+CREATE TYPE chat_types AS ENUM ('keeper', 'seeker');
+
 CREATE TABLE IF NOT EXISTS
-    conversations
+    chats
 (
-    id                SERIAL PRIMARY KEY,
-    conversation_type VARCHAR,
-    is_deleted        BOOLEAN   NOT NULL,
-    deleted_at        TIMESTAMP,
-    created_at        TIMESTAMP NOT NULL DEFAULT NOW()
+    id         SERIAL PRIMARY KEY,
+    chat_type  chat_types,
+    is_deleted BOOLEAN   NOT NULL,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
     messages
 (
-    id              SERIAL PRIMARY KEY,
-    user_id         INTEGER   NOT NULL REFERENCES users (id),
-    created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMP NOT NULL,
-    is_deleted      BOOLEAN   NOT NULL,
-    deleted_at      TIMESTAMP,
-    conversation_id INTEGER   NOT NULL REFERENCES conversations (id)
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL,
+    is_deleted BOOLEAN   NOT NULL,
+    deleted_at TIMESTAMP,
+    chat_id    INTEGER   NOT NULL REFERENCES chats (id)
 );
 
 CREATE TABLE IF NOT EXISTS
-    conversation_participants
+    chat_participants
 (
-    id              SERIAL PRIMARY KEY,
-    user_id         INTEGER   NOT NULL REFERENCES users (id),
-    conversation_id INTEGER REFERENCES conversations (id),
-    created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
-    is_deleted      BOOLEAN   NOT NULL,
-    deleted_at      TIMESTAMP
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    chat_id    INTEGER REFERENCES chats (id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    is_deleted BOOLEAN   NOT NULL,
+    deleted_at TIMESTAMP
 );
 
 -- Posts
