@@ -1,22 +1,24 @@
 package http
 
 import (
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"strconv"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/keeper"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 )
 
 func (r *Router) getKeepers(ctx *fiber.Ctx) error {
-	var params keeper.GetAllKeepersParams
+	var params core.GetAllKeepersParams
 	if err := ctx.QueryParser(&params); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	panic("implement me")
+	usrCtx := ctx.UserContext()
+	var keepers []core.Keeper
+	keepers, count, err := r.keeperService.GetAll(&usrCtx, params)
 }
 
 func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
@@ -27,7 +29,8 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	data, err := r.keeperService.GetByID(ctx.UserContext(), id)
+	usrCtx := ctx.UserContext()
+	data, err := r.keeperService.GetByID(&usrCtx, id)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
