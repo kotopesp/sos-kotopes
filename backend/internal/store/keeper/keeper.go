@@ -35,7 +35,9 @@ func (s *store) UpdateById(ctx *context.Context, id int) error {
 
 func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([]core.Keeper, error) {
 	var keepers []core.Keeper
-	panic("impl")
+
+	// todo: implement PARAMS parse
+
 	return keepers, nil
 }
 

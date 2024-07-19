@@ -15,7 +15,7 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
-
+	// todo: implement PARAMS parse
 	usrCtx := ctx.UserContext()
 	var keepers []core.Keeper
 	keepers, err := r.keeperService.GetAll(&usrCtx, params)
