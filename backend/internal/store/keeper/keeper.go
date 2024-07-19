@@ -58,7 +58,7 @@ func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([
 	}
 
 	if err := query.Find(&keepers).Error; err != nil {
-		return nil, fmt.Errorf("keepers.GetAll.find() error")
+		return nil, fmt.Errorf("keepers.GetAll.find(): %s", err.Error())
 	}
 
 	return keepers, nil

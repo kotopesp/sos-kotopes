@@ -46,11 +46,6 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 		}
 	}
 
-	if err := ctx.QueryParser(&params); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	}
-
 	usrCtx := ctx.UserContext()
 	var keepers []core.Keepers
 	keepers, err := r.keeperService.GetAll(&usrCtx, params)
