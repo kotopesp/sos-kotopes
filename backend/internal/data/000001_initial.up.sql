@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS
 );
 
 CREATE TABLE IF NOT EXISTS
-    chat_participants
+    chat_members
 (
     id         SERIAL PRIMARY KEY,
     user_id    INTEGER   NOT NULL REFERENCES users (id),
