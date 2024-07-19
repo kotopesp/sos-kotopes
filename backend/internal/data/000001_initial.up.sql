@@ -42,14 +42,15 @@ CREATE TABLE IF NOT EXISTS
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS
-    roles_users
-(
-    id         SERIAL PRIMARY KEY,
-    role       VARCHAR   NOT NULL,
-    user_id    INTEGER   NOT NULL REFERENCES users (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
+CREATE VIEW user_roles_view AS
+SELECT user_id, 'seeker' AS role_type
+FROM seekers
+UNION ALL
+SELECT user_id, 'keeper' AS role_type
+FROM keepers
+UNION ALL
+SELECT user_id, 'vet' AS role_type
+FROM vets;
 
 -- Reviews
 CREATE TABLE IF NOT EXISTS
