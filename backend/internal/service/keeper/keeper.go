@@ -14,7 +14,7 @@ func New(keeperStore core.KeeperStore) core.KeeperService {
 	return &service{keeperStore: keeperStore}
 }
 
-func (s *service) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([]core.Keeper, int, error) {
+func (s *service) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([]core.Keeper, error) {
 	if *params.Offset != 0 {
 		//todo: implement
 	}
