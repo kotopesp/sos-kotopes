@@ -1,30 +1,8 @@
-- Убрать ковычки с некоторых слов +
-- Названия поля
-- Фронтенд хранит дефолтное +
-- Убрать ограничения на VARCHAR +
-- DEFAULT now() +
-- имя и фамилия в юзерах +
-- deleted в юзерах +
-- Продумать локацию пользователей (таблица местоположений согласно дизайну)
-- Rating не должно быть
-- Roles лишняя таблица, либо можно оставить
-- References изменить 
-- content вместо text
-- Продумать удаление объектов (плохо полностью удалять из базы)
-- Найти другое слово для animal_type (чтобы не было type)
-- Опечатка сообщения Messages
-- Пока что можно удалить сообщения (спросить у лизы)
-- использовать author_id и content везде
-- Животное обязательно, оно всегда есть
-- responser_id исправить так не пишут и text на content
-- comments : posts_id
-
-
 -- Users
 CREATE TABLE IF NOT EXISTS
     users (
         id SERIAL PRIMARY KEY,
-        username VARCHAR UNIQUE NOT,
+        username VARCHAR UNIQUE NOT NULL,
         firstname VARCHAR,
         lastname VARCHAR,
         description TEXT,
@@ -156,7 +134,7 @@ CREATE TABLE IF NOT EXISTS
         user1_id INTEGER NOT NULL,
         user2_id INTEGER NOT NULL,
         type VARCHAR,
-        is_deleted BOOLEAN
+        is_deleted BOOLEAN,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -181,7 +159,7 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
-        is_deleted BOOLEAN
+        is_deleted BOOLEAN,
         animal_id INTEGER
     );
 
@@ -191,7 +169,7 @@ CREATE TABLE IF NOT EXISTS
         post_id INTEGER NOT NULL,
         responser_id INTEGER NOT NULL,
         text VARCHAR NOT NULL,
-        is_deleted BOOLEAN
+        is_deleted BOOLEAN,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -229,7 +207,7 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
-        is_deleted BOOLEAN
+        is_deleted BOOLEAN,
         posts_id INTEGER NOT NULL
     );
 
