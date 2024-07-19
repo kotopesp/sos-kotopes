@@ -7,13 +7,14 @@ import (
 
 type (
 	Post struct {
-		ID        int       `gorm:"column:id" json:"id"`
-		Title     string    `gorm:"column:title" json:"title"`
-		Body      string    `gorm:"column:body" json:"body"`
-		UserID    int       `gorm:"column:user_id" json:"user_id"`
-		CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
-		UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
-		AnimalID  int       `gorm:"column:animal_id" json:"animal_id"`
+		ID        int       `gorm:"column:id"`
+		Title     string    `gorm:"column:title"`
+		Body      string    `gorm:"column:body"`
+		UserID    int       `gorm:"column:user_id"`
+		CreatedAt time.Time `gorm:"column:created_at"`
+		UpdatedAt time.Time `gorm:"column:updated_at"`
+		AnimalID  int       `gorm:"column:animal_id"`
+		Photo     []byte    `gorm:"column:photo"`
 	}
 
 	PostStore interface {

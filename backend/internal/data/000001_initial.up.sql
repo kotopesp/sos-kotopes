@@ -124,7 +124,8 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL,
         created_at TIMESTAMP NOT NULL,
         updated_at TIMESTAMP NOT NULL,
-        animal_id INTEGER
+        animal_id INTEGER,
+        photo BYTEA
     );
 CREATE TABLE IF NOT EXISTS
     post_response (

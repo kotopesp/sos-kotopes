@@ -45,6 +45,7 @@ func (r *Router) initRoutes() {
 	// posts
 	v1.Get("/posts", r.getPosts)
 	v1.Get("/posts/:id", r.getPostByID)
+	v1.Get("/posts/:id/photo", r.getPostPhoto)
 	v1.Post("/posts", r.createPost)
 	v1.Put("/posts/:id", r.updatePost)
 	v1.Delete("/posts/:id", r.deletePost)
