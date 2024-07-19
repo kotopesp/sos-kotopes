@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS
         username VARCHAR UNIQUE NOT NULL,
         firstname VARCHAR,
         lastname VARCHAR,
-        description TEXT,
+        description VARCHAR,
         photo VARCHAR,
         password_hash VARCHAR NOT NULL,
         is_deleted BOOLEAN NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS
     seekers (
         id SERIAL PRIMARY KEY,
         user_id INTEGER REFERENCES users (id),
-        description TEXT,
+        description VARCHAR,
         location VARCHAR,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS
     keepers (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL REFERENCES users (id),
-        description TEXT,
+        description VARCHAR,
         location VARCHAR,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS
         age INTEGER,
         color VARCHAR,
         gender animal_genders,
-        description TEXT,
+        description VARCHAR,
         status animal_statuses,
         keeper_id INTEGER REFERENCES keepers (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS
     posts (
         id SERIAL PRIMARY KEY,
         title VARCHAR NOT NULL,
-        body TEXT,
+        content VARCHAR,
         author_id INTEGER NOT NULL REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS
 CREATE TABLE IF NOT EXISTS
     comments (
         id SERIAL PRIMARY KEY,
-        content TEXT NOT NULL,
+        content VARCHAR NOT NULL,
         author_id INTEGER NOT NULL REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
