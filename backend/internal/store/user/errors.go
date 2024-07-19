@@ -1,8 +1,8 @@
-package auth
+package user
 
 import "errors"
 
 var (
-	ErrUserIsNil         = errors.New("user is nil")
 	ErrNotUniqueUsername = errors.New("username must be unique")
+	ErrNoSuchUser        = errors.New("user does not exist")
 )

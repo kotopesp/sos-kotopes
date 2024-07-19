@@ -40,29 +40,21 @@ func (r *Router) initRoutes() {
 	v1.Get("/entities/:id", r.getEntityByID)
 
 	// e.g protected resource
-	v1.Get("/protected", r.protected)
+	v1.Get("/protected", r.protectedMiddleware(), r.protected)
 
 	// auth
 	v1.Post("/auth/login", r.login)
 	v1.Post("/auth/signup", r.signup)
-	v1.Post("/auth/token/refresh", r.refresh)
+	v1.Post("/auth/token/refresh", r.refreshTokenMiddleware(), r.refresh)
+
+	// auth vk
+	v1.Get("/auth/login/vk", r.loginVK)
+	v1.Get("/auth/login/vk/callback", r.callback)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
 func (r *Router) initRequestMiddlewares() {
 	r.app.Use(logger.New())
-
-	v1 := r.app.Group("/api/v1")
-	// protected paths (need to have access token)
-	protectedPaths := []string{
-		"/protected", // e.g, need access token to access /api/v1/protected
-	}
-	// or in initRoutes: `v1.Get("/protected", r.protectedMiddleware(), r.protected)`
-	v1.Use(protectedPaths, r.protectedMiddleware())
-
-	// refresh token middleware
-	refreshTokenPath := "/auth/token/refresh"
-	v1.Use(refreshTokenPath, r.refreshTokenMiddleware())
 }
 
 // initResponseMiddlewares initializes all middlewares for http response

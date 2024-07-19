@@ -11,12 +11,12 @@ var (
 	digit    = regexp.MustCompile(`[0-9]`).MatchString
 )
 
-// if you need to create custom validation tags
+// custom validation tags
 func customValidationOptions(validator *validatorPkg.Validate) {
-	validator.RegisterValidation("containsDigit", func(fl validatorPkg.FieldLevel) bool {
+	validator.RegisterValidation("contains_digit", func(fl validatorPkg.FieldLevel) bool {
 		return digit(fl.Field().String())
 	})
-	validator.RegisterValidation("containsUppercase", func(fl validatorPkg.FieldLevel) bool {
+	validator.RegisterValidation("contains_uppercase", func(fl validatorPkg.FieldLevel) bool {
 		return upperase(fl.Field().String())
 	})
 }

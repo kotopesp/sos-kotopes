@@ -1,4 +1,4 @@
-package userwithroles
+package auth
 
 import "errors"
 

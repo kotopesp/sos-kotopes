@@ -7,9 +7,9 @@ import (
 	"syscall"
 
 	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
-	auth "gitflic.ru/spbu-se/sos-kotopes/internal/service/auth_jwt"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/auth"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
-	userwithroles "gitflic.ru/spbu-se/sos-kotopes/internal/store/user_with_roles"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user"
@@ -39,12 +39,16 @@ func Run(cfg *config.Config) {
 	// Stores
 	entityStore := entity.New(pg)
 	userStore := user.New(pg)
-	userWithRolesStore := userwithroles.New(pg)
 	// Services
 	entityService := name.New(entityStore)
 	authService := auth.New(
 		userStore,
-		userWithRolesStore,
+		core.AuthServiceConfig{
+			JWTSecret:      cfg.JWTSecret,
+			VKClientID:     cfg.VKClientID,
+			VKClientSecret: cfg.VKClientSecret,
+			VKCallback:     cfg.VKCallback,
+		},
 	)
 
 	// HTTP Server
@@ -63,7 +67,7 @@ func Run(cfg *config.Config) {
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
-	err = app.Listen(cfg.HTTP.Port)
+	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())
 	}
