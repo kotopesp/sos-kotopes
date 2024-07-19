@@ -38,6 +38,13 @@ func (r *Router) initRoutes() {
 	// entities
 	v1.Get("/entities", r.getEntities)
 	v1.Get("/entities/:id", r.getEntityByID)
+
+	// keepers
+	v1.Get("/keepers", r.getKeepers)
+	v1.Get("/keepers/:id", r.getKeeperByID)
+	v1.Post("/keepers", r.createKeeper)
+	v1.Put("/keepers/:id", r.updateKeeper)
+	v1.Delete("/keepers/:id", r.deleteKeeper)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
