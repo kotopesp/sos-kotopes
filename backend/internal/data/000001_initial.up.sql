@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS
     photo         VARCHAR,
     password_hash VARCHAR        NOT NULL,
     is_deleted    BOOLEAN        NOT NULL,
+    deleted_at    TIMESTAMP,
     created_at    TIMESTAMP      NOT NULL DEFAULT NOW()
 );
 
@@ -102,6 +103,7 @@ CREATE TABLE IF NOT EXISTS
     id                SERIAL PRIMARY KEY,
     conversation_type VARCHAR,
     is_deleted        BOOLEAN   NOT NULL,
+    deleted_at        TIMESTAMP,
     created_at        TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -113,18 +115,19 @@ CREATE TABLE IF NOT EXISTS
     created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMP NOT NULL,
     is_deleted      BOOLEAN   NOT NULL,
+    deleted_at      TIMESTAMP,
     conversation_id INTEGER   NOT NULL REFERENCES conversations (id)
 );
 
 CREATE TABLE IF NOT EXISTS
     conversation_participants
 (
-    id         SERIAL PRIMARY KEY,
-    user_id    INTEGER   NOT NULL REFERENCES users (id),
-    conversation_id   INTEGER REFERENCES conversations (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL,
-    is_deleted BOOLEAN   NOT NULL
+    id              SERIAL PRIMARY KEY,
+    user_id         INTEGER   NOT NULL REFERENCES users (id),
+    conversation_id INTEGER REFERENCES conversations (id),
+    created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
+    is_deleted      BOOLEAN   NOT NULL,
+    deleted_at      TIMESTAMP
 );
 
 -- Posts
@@ -138,6 +141,7 @@ CREATE TABLE IF NOT EXISTS
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL,
     is_deleted BOOLEAN   NOT NULL,
+    deleted_at TIMESTAMP,
     animal_id  INTEGER   NOT NULL REFERENCES animals (id)
 );
 
@@ -149,6 +153,7 @@ CREATE TABLE IF NOT EXISTS
     author_id  INTEGER   NOT NULL REFERENCES users (id),
     content    VARCHAR   NOT NULL,
     is_deleted BOOLEAN   NOT NULL,
+    deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -171,6 +176,7 @@ CREATE TABLE IF NOT EXISTS
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL,
     is_deleted BOOLEAN   NOT NULL,
+    deleted_at TIMESTAMP,
     posts_id   INTEGER   NOT NULL REFERENCES posts (id)
 );
 
