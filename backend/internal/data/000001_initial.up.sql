@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS
         description TEXT,
         photo VARCHAR,
         password_hash VARCHAR NOT NULL,
-        is_deleted BOOLEAN,
+        is_deleted BOOLEAN NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -94,10 +94,8 @@ CREATE TABLE IF NOT EXISTS
 CREATE TABLE IF NOT EXISTS
     conversations (
         id SERIAL PRIMARY KEY,
-        user1_id INTEGER NOT NULL REFERENCES users (id),
-        user2_id INTEGER NOT NULL REFERENCES users (id),
         conversation_type VARCHAR,
-        is_deleted BOOLEAN,
+        is_deleted BOOLEAN NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -107,9 +105,18 @@ CREATE TABLE IF NOT EXISTS
         user_id INTEGER NOT NULL REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
-        is_deleted BOOLEAN,
+        is_deleted BOOLEAN NOT NULL,
         conversation_id INTEGER NOT NULL REFERENCES conversations (id)
     );
+
+CREATE TABLE IF NOT EXISTS
+    conversation_participants (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users (id),
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL,
+        is_deleted BOOLEAN NOT NULL
+    )
 
 -- Posts
 CREATE TABLE IF NOT EXISTS
@@ -120,7 +127,7 @@ CREATE TABLE IF NOT EXISTS
         author_id INTEGER NOT NULL REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
-        is_deleted BOOLEAN,
+        is_deleted BOOLEAN NOT NULL,
         animal_id INTEGER REFERENCES animals (id)
     );
 
@@ -130,7 +137,7 @@ CREATE TABLE IF NOT EXISTS
         post_id INTEGER NOT NULL REFERENCES posts (id),
         author_id INTEGER NOT NULL REFERENCES users (id),
         content VARCHAR NOT NULL,
-        is_deleted BOOLEAN,
+        is_deleted BOOLEAN NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
@@ -150,7 +157,7 @@ CREATE TABLE IF NOT EXISTS
         author_id INTEGER NOT NULL REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
-        is_deleted BOOLEAN,
+        is_deleted BOOLEAN NOT NULL,
         posts_id INTEGER NOT NULL REFERENCES posts (id)
     );
 
