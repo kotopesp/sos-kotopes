@@ -16,14 +16,14 @@ type Router struct {
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
-	authService interface{},
 	keeperService core.KeeperService,
+	authService interface{},
 ) {
 	router := &Router{
 		app:           app,
 		entityService: entityService,
-		authService:   authService,
 		keeperService: keeperService,
+		authService:   authService,
 	}
 
 	router.initRequestMiddlewares()
@@ -46,8 +46,8 @@ func (r *Router) initRoutes() {
 	v1.Get("/keepers", r.getKeepers)
 	v1.Get("/keepers/:id", r.getKeeperByID)
 	v1.Post("/keepers", r.createKeeper)
-	v1.Put("/keepers/:id", r.updateKeeper)
-	v1.Delete("/keepers/:id", r.deleteKeeper)
+	v1.Put("/keepers/:id", r.updateKeeperById)
+	v1.Delete("/keepers/:id", r.deleteKeeperById)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

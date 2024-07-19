@@ -2,17 +2,18 @@ package app
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
-	keeperService2 "gitflic.ru/spbu-se/sos-kotopes/internal/service/keeper"
+	keeperService "gitflic.ru/spbu-se/sos-kotopes/internal/service/keeper"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
 	keeperStore "gitflic.ru/spbu-se/sos-kotopes/internal/store/keeper"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"gitflic.ru/spbu-se/sos-kotopes/config"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
@@ -38,7 +39,7 @@ func Run(cfg *config.Config) {
 	keepersStore := keeperStore.New(pg)
 	// Services
 	entityService := name.New(entityStore)
-	keeperService := keeperService2.New(keepersStore)
+	keeperService := keeperService.New(keepersStore)
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -48,7 +49,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil, keeperService)
+	v1.NewRouter(app, entityService, keeperService, nil)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)

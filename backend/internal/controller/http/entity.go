@@ -1,11 +1,12 @@
 package http
 
 import (
+	"strconv"
+
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/entity"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"github.com/gofiber/fiber/v2"
-	"strconv"
 )
 
 func (r *Router) getEntities(ctx *fiber.Ctx) error {

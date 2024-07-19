@@ -17,7 +17,10 @@ func New(pg *postgres.Postgres) core.KeeperStore {
 
 // Create implements core.KeeperStore.
 func (s *store) Create(ctx context.Context, keeper core.Keeper) error {
-	panic("unimplemented")
+	if err := s.DB.WithContext(ctx).Create(&keeper).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 // DeleteById implements core.KeeperStore.
