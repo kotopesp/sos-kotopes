@@ -10,17 +10,20 @@ type Router struct {
 	app           *fiber.App
 	entityService core.EntityService
 	authService   interface{}
+	keeperService core.KeeperService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
 	authService interface{},
+	keeperService core.KeeperService,
 ) {
 	router := &Router{
 		app:           app,
 		entityService: entityService,
 		authService:   authService,
+		keeperService: keeperService,
 	}
 
 	router.initRequestMiddlewares()
