@@ -16,7 +16,7 @@ func New(pg *postgres.Postgres) core.KeeperStore {
 }
 
 // Create implements core.KeeperStore.
-func (s *store) Create(ctx context.Context, keeper core.Keeper) error {
+func (s *store) Create(ctx context.Context, keeper core.Keepers) error {
 	if err := s.DB.WithContext(ctx).Create(&keeper).Error; err != nil {
 		return err
 	}
@@ -33,18 +33,18 @@ func (s *store) UpdateById(ctx context.Context, id int) error {
 	panic("unimplemented")
 }
 
-func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keeper, int, error) {
-	var keepers []core.Keeper
+func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keepers, int, error) {
+	var keepers []core.Keepers
 	var count int64
 	panic("impl")
 	return keepers, int(count), nil
 }
 
-func (s *store) GetByID(ctx context.Context, id int) (core.Keeper, error) {
-	var keeper core.Keeper = core.Keeper{ID: id}
+func (s *store) GetByID(ctx context.Context, id int) (core.Keepers, error) {
+	var keeper core.Keepers = core.Keepers{ID: id}
 
 	if err := s.DB.WithContext(ctx).First(&keeper).Error; err != nil {
-		return core.Keeper{}, err
+		return core.Keepers{}, err
 	}
 
 	return keeper, nil

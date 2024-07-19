@@ -1,11 +1,13 @@
 package keeper
 
-type Keeper struct {
-	ID          int     `gorm:"primaryKey;autoIncrement" json:"id"`
-	UserID      int     `json:"user_id"`
-	Description string  `json:"description"`
-	Rating      float32 `json:"rating"`
-	Location    string  `gorm:"type:varchar(100)" json:"location"`
+import "time"
+
+type Keepers struct {
+	ID          int       `gorm:"primaryKey;autoIncrement" json:"id"`
+	UserID      int       `json:"user_id"`
+	Description string    `json:"description"`
+	Location    string    `gorm:"type:varchar(100)" json:"location"`
+	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP()" json:"created_at"`
 }
 
 type GetAllKeepersParams struct {
