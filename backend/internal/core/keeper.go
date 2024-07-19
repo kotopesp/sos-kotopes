@@ -18,7 +18,7 @@ type GetAllKeepersParams struct {
 }
 
 type KeeperStore interface {
-	GetAll(ctx *context.Context, params GetAllKeepersParams) ([]Keeper, int, error)
+	GetAll(ctx *context.Context, params GetAllKeepersParams) ([]Keeper, error)
 	GetByID(ctx *context.Context, id int) (Keeper, error)
 	Create(ctx *context.Context, keeper Keeper) error
 	DeleteById(ctx *context.Context, id int) error
@@ -26,7 +26,7 @@ type KeeperStore interface {
 }
 
 type KeeperService interface {
-	GetAll(ctx *context.Context, params GetAllKeepersParams) ([]Keeper, int, error)
+	GetAll(ctx *context.Context, params GetAllKeepersParams) ([]Keeper, error)
 	GetByID(ctx *context.Context, id int) (Keeper, error)
 	Create(ctx *context.Context, keeper Keeper) error
 	DeleteById(ctx *context.Context, id int) error

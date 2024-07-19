@@ -18,7 +18,13 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 
 	usrCtx := ctx.UserContext()
 	var keepers []core.Keeper
-	keepers, count, err := r.keeperService.GetAll(&usrCtx, params)
+	keepers, err := r.keeperService.GetAll(&usrCtx, params)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keepers))
 }
 
 func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
