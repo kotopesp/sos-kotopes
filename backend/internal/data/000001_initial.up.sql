@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS
 -- Animals
 CREATE TYPE animal_types AS ENUM ('cat', 'dog');
 
-CREATE TYPE animal_statuses AS ENUM ('found', 'lost');
+CREATE TYPE animal_statuses AS ENUM ('found', 'lost', 'need_home');
 
 CREATE TYPE animal_genders AS ENUM ('male', 'female');
 
