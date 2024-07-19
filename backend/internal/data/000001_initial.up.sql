@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS
     vet_reviews (
         id SERIAL PRIMARY KEY,
         author_id INTEGER NOT NULL REFERENCES users (id),
-        text VARCHAR,
+        content VARCHAR,
         grade INTEGER NOT NULL,
         vet_id INTEGER NOT NULL REFERENCES vets (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -63,23 +63,23 @@ CREATE TABLE IF NOT EXISTS
     keeper_reviews (
         id SERIAL PRIMARY KEY,
         author_id INTEGER NOT NULL REFERENCES users (id),
-        text VARCHAR,
+        content VARCHAR,
         grade INTEGER NOT NULL,
         keeper_id INTEGER NOT NULL REFERENCES keepers (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
 
 -- Animals
-CREATE TYPE animal_type AS ENUM('cat', 'dog');
+CREATE TYPE animal_types AS ENUM('cat', 'dog');
 
-CREATE TYPE animal_status AS ENUM('found', 'lost');
+CREATE TYPE animal_statuses AS ENUM('found', 'lost');
 
-CREATE TYPE animal_gender AS ENUM('male', 'female');
+CREATE TYPE animal_genders AS ENUM('male', 'female');
 
 CREATE TABLE IF NOT EXISTS
     animals (
         id SERIAL PRIMARY KEY,
-        type animal_type,
+        animal_type animal_type,
         age INTEGER,
         color VARCHAR,
         gender animal_gender,
@@ -90,13 +90,13 @@ CREATE TABLE IF NOT EXISTS
         updated_at TIMESTAMP NOT NULL
     );
 
--- Messeges
+-- Messages
 CREATE TABLE IF NOT EXISTS
     conversations (
         id SERIAL PRIMARY KEY,
         user1_id INTEGER NOT NULL REFERENCES users (id),
         user2_id INTEGER NOT NULL REFERENCES users (id),
-        type VARCHAR,
+        conversation_type VARCHAR,
         is_deleted BOOLEAN,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS
         id SERIAL PRIMARY KEY,
         title VARCHAR NOT NULL,
         body TEXT,
-        user_id INTEGER NOT NULL REFERENCES users (id),
+        author_id INTEGER NOT NULL REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
         is_deleted BOOLEAN,
@@ -128,8 +128,8 @@ CREATE TABLE IF NOT EXISTS
     post_response (
         id SERIAL PRIMARY KEY,
         post_id INTEGER NOT NULL REFERENCES posts (id),
-        responser_id INTEGER NOT NULL REFERENCES users (id),
-        text VARCHAR NOT NULL,
+        author_id INTEGER NOT NULL REFERENCES users (id),
+        content VARCHAR NOT NULL,
         is_deleted BOOLEAN,
         created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
@@ -146,8 +146,8 @@ CREATE TABLE IF NOT EXISTS
 CREATE TABLE IF NOT EXISTS
     comments (
         id SERIAL PRIMARY KEY,
-        text TEXT NOT NULL,
-        user_id INTEGER NOT NULL REFERENCES users (id),
+        content TEXT NOT NULL,
+        author_id INTEGER NOT NULL REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
         is_deleted BOOLEAN,
