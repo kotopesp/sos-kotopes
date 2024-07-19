@@ -79,12 +79,12 @@ CREATE TYPE animal_genders AS ENUM('male', 'female');
 CREATE TABLE IF NOT EXISTS
     animals (
         id SERIAL PRIMARY KEY,
-        animal_type animal_type,
+        animal_type animal_types,
         age INTEGER,
         color VARCHAR,
-        gender animal_gender,
+        gender animal_genders,
         description TEXT,
-        status animal_status,
+        status animal_statuses,
         keeper_id INTEGER REFERENCES keepers (id),
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
         is_deleted BOOLEAN NOT NULL
-    )
+    );
 
 -- Posts
 CREATE TABLE IF NOT EXISTS
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL,
         is_deleted BOOLEAN NOT NULL,
-        animal_id INTEGER REFERENCES animals (id)
+        animal_id INTEGER NOT NULL REFERENCES animals (id)
     );
 
 CREATE TABLE IF NOT EXISTS
