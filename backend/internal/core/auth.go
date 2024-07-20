@@ -22,6 +22,5 @@ type (
 		Refresh(ctx context.Context, id int) (accessToken string, err error)
 		ConfigVK() *oauth2.Config
 		GetVKUserID(token string) (int, error)
-		GetVKLoginPageURL() string
 	}
 )

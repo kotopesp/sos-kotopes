@@ -11,6 +11,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	vkPasswordPlug = "vk"
+)
+
 type service struct {
 	userStore         core.UserStore
 	authServiceConfig core.AuthServiceConfig
@@ -74,7 +78,7 @@ func (s *service) Signup(ctx context.Context, user core.User) error {
 func (s *service) LoginVK(ctx context.Context, externalUserID int) (string, string, error) {
 	user, err := s.userStore.GetUserByExternalID(ctx, externalUserID)
 	user.ExternalID = &externalUserID
-	user.PasswordHash = "vk"
+	user.PasswordHash = vkPasswordPlug
 	if err != nil {
 		if errors.Is(err, userStore.ErrNoSuchUser) {
 			user.Username = uuid.New().String()
@@ -86,12 +90,10 @@ func (s *service) LoginVK(ctx context.Context, externalUserID int) (string, stri
 			return "", "", err
 		}
 	}
-	user, err = s.userStore.GetUserByExternalID(ctx, externalUserID)
-	user.PasswordHash = "vk"
-	if err != nil {
-		return "", "", err
-	}
-	return s.Login(ctx, user)
+	return s.Login(ctx, core.User{
+		Username:     user.Username,
+		PasswordHash: vkPasswordPlug,
+	})
 }
 
 func (s *service) Refresh(ctx context.Context, id int) (accessToken string, err error) {

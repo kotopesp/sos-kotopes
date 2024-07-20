@@ -1,9 +1,12 @@
 package http
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
@@ -40,7 +43,7 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 	})
 }
 
-func (r *Router) login(ctx *fiber.Ctx) error {
+func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	apiUser := user.User{}
 	if err := ctx.BodyParser(&apiUser); err != nil {
 		logger.Log().Error(ctx.Context(), err.Error())
@@ -57,21 +60,27 @@ func (r *Router) login(ctx *fiber.Ctx) error {
 
 	coreUser := apiUser.ToCoreUser()
 	accessToken, refreshToken, err := r.authService.Login(ctx.Context(), coreUser)
-
 	if err != nil {
 		logger.Log().Error(ctx.Context(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	ctx.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    refreshToken,
-		HTTPOnly: true,
-		Secure:   true,
-		SameSite: "Lax",
-	})
+	setRefreshTokenCookie(ctx, refreshToken)
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
 		"access_token": accessToken,
 	}))
+}
+
+func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
+	file, err := photo.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	photoBytes, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	return &photoBytes, nil
 }
 
 func (r *Router) signup(ctx *fiber.Ctx) error {
@@ -84,18 +93,12 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 	if err != nil {
 		apiUser.Photo = nil
 	} else {
-		file, err := photo.Open()
+		photoBytes, err := getPhotoBytes(photo)
 		if err != nil {
 			logger.Log().Error(ctx.Context(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
-		defer file.Close()
-		photoBytes, err := io.ReadAll(file)
-		if err != nil {
-			logger.Log().Error(ctx.Context(), err.Error())
-			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-		}
-		apiUser.Photo = &photoBytes
+		apiUser.Photo = photoBytes
 	}
 	errs := validator.Validate(apiUser)
 	if len(errs) > 0 {
@@ -149,8 +152,44 @@ func getPayloadItem(ctx *fiber.Ctx, key string) (any, bool) {
 	return claims[key], true
 }
 
+func generateState(length int) (string, error) {
+	b := make([]byte, length)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
+	}
+	return base64.URLEncoding.EncodeToString(b), nil
+}
+
 func (r *Router) loginVK(ctx *fiber.Ctx) error {
-	return ctx.Redirect(r.authService.GetVKLoginPageURL())
+	cfg := r.authService.ConfigVK()
+
+	state, err := generateState(16)
+	if err != nil {
+		logger.Log().Info(ctx.Context(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
+	}
+
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "state",
+		Value:    state,
+		HTTPOnly: true,
+		Secure:   true,
+		SameSite: "Lax",
+	})
+
+	url := cfg.AuthCodeURL(state)
+	return ctx.Redirect(url)
+}
+
+func setRefreshTokenCookie(ctx *fiber.Ctx, refreshToken string) {
+	ctx.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		HTTPOnly: true,
+		Secure:   true,
+		SameSite: "Lax",
+	})
 }
 
 func (r *Router) callback(ctx *fiber.Ctx) error {
@@ -159,7 +198,7 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.Context(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	if ctx.FormValue("state") != "state" {
+	if ctx.FormValue("state") != ctx.Cookies("state") {
 		err = errors.New("states do not match")
 		logger.Log().Error(ctx.Context(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
@@ -174,13 +213,7 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.Context(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	ctx.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    refreshToken,
-		HTTPOnly: true,
-		Secure:   true,
-		SameSite: "Lax",
-	})
+	setRefreshTokenCookie(ctx, refreshToken)
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
 		"access_token": accessToken,
 	}))

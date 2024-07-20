@@ -10,11 +10,11 @@ type (
 		ID           int       `gorm:"column:id"`
 		ExternalID   *int      `gorm:"column:ext_id"`
 		Username     string    `gorm:"column:username"`
-		Firstname    string    `gorm:"column:firstname"`
-		Lastname     string    `gorm:"column:lastname"`
+		Firstname    *string   `gorm:"column:firstname"`
+		Lastname     *string   `gorm:"column:lastname"`
 		Photo        *[]byte   `gorm:"column:photo"`
 		PasswordHash string    `gorm:"column:password_hash"`
-		Description  string    `gorm:"column:description"`
+		Description  *string   `gorm:"column:description"`
 		IsDeleted    bool      `gorm:"is_deleted"`
 		CreatedAt    time.Time `gorm:"column:created_at"`
 	}

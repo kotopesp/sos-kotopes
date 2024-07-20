@@ -62,8 +62,3 @@ func (s *service) GetVKUserID(token string) (int, error) {
 	}
 	return data.VKResponse[0].VKUserID, nil
 }
-
-func (s *service) GetVKLoginPageURL() string {
-	cfg := s.ConfigVK()
-	return cfg.AuthCodeURL("state")
-}
