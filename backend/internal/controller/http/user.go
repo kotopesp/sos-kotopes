@@ -64,3 +64,26 @@ func (r *Router) GetUser(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(currentUser)
 }
+
+func (r *Router) GetUserPosts(ctx *fiber.Ctx) error {
+	idStr := ctx.Params("id")
+	if idStr == "" {
+		logger.Log().Debug(ctx.UserContext(), "Error: id is required")
+		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"error": "id is required",
+		})
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	userPosts, err := r.userService.GetUserPosts(ctx.UserContext(), id)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(userPosts)
+}

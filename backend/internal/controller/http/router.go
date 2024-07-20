@@ -46,6 +46,8 @@ func (r *Router) initRoutes() {
 	// users
 	v1.Patch("/users/:id", r.UpdateUser)
 	v1.Get("/users/:id", r.GetUser)
+	v1.Get("/users/:id/posts", r.GetUserPosts)
+
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

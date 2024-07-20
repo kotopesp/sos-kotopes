@@ -3,6 +3,7 @@ package user_service
 import (
 	"context"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core/post_core"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core/user_core"
 )
 
@@ -15,6 +16,9 @@ func (s *Service) UpdateUser(ctx context.Context, id int, update user.UpdateUser
 }
 func (s *Service) GetUser(ctx context.Context, id int) (user_core.User, error) {
 	return s.userStore.GetUser(ctx, id)
+}
+func (s *Service) GetUserPosts(ctx context.Context, id int) ([]post_core.Post, error) {
+	return s.userStore.GetUserPosts(ctx, id)
 }
 
 func NewUserService(store user_core.UserStore) user_core.UserService {
