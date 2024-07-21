@@ -48,12 +48,12 @@
     column-gap: 10px;
 
     .block__info__date {
-      width: 121px;
-      height: 38px;
-      background: var(--gray-color-button);
-      border-radius: 10px;
       text-align: center;
       align-content: center;
+      padding: 6px 18px;
+      white-space: nowrap; 
+      background: var(--gray-color-button);
+      border-radius: 10px;
     }
 
     .block__info__comments{
