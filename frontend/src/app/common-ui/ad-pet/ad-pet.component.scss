@@ -45,7 +45,7 @@
   .block__info__pet {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    column-gap: 13px;
+    column-gap: 10px;
 
     .block__info__date {
       width: 121px;
@@ -56,13 +56,18 @@
       align-content: center;
     }
 
-    .block__info__comments {
-      width: 50px;
-      height: 40px;
+    .block__info__comments{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url(../../../../public/assets/icons/comment-icon.svg);
+      background-repeat: no-repeat; 
+      background-size: cover; 
+      height: 37px;
+      width: 46px;
+      padding: 6px 0px;
       text-align: center;
       align-content: center;
-      border-radius: 50%;
-      border: 2px solid var(--gray-color-button)
     }
 
     //Временно
