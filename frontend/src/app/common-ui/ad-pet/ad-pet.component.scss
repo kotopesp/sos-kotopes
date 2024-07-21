@@ -70,13 +70,24 @@
       align-content: center;
     }
 
-    //Временно
-    .propal {
+    @mixin block__info__find_status($styles) {
       text-align: center;
       align-content: center;
-      background: var(--red-color-button);
       padding: 6px 18px;
       border-radius: 10px;
+      background: var($styles);
+    }
+    
+    .block__info__lost {
+        @include block__info__find_status(--red-color-button);
+    }
+    
+    .block__info__looking_for_home {
+        @include block__info__find_status(--orange-color-button);
+    }
+    
+    .block__info__found_home {
+        @include block__info__find_status(--green-color-button)
     }
   }
 
