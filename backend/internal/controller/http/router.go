@@ -47,6 +47,26 @@ func (r *Router) initRoutes() {
 	v1.Get("/users/:id", r.GetUser)
 	v1.Get("/users/:id/posts", r.GetUserPosts)
 
+	//favourites posts	todo
+	//	v1.Delete("/posts/:id/favourites", r.DeletePostFromFavourites)
+	//favourites users todo
+	//	v1.Get("/users/favourites", r.GetUserFavourites)
+	//	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
+	//	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
+	//favourites comments todo
+	//	v1.Get("/posts/comments/favourites", r.GetFavouriteComments)
+	//	v1.Delete("/posts/:id/comments/:id/favourites", r.DeleteCommentFromFavourites)
+	// user roles todo
+	//	v1.Get("/users/:id/roles", r.GetUserRoles)
+	//	v1.Post("/users/:id/roles", r.GiveRoleToUser)
+	//	v1.Patch("/users/:id/roles", r.UpdateUserRoles)
+	//	v1.Delete("/users/:id/roles", r.DeleteUserRole)
+	// reviews todo
+	// v1.Get("/users/:id/reviews", r.GetUserReviews)
+	//	v1.Post("/users/:id/reviews", r.ReviewUser)
+	//	v1.Patch("/users/:id/reviews", r.UpdateReviewOnUser)
+	//	v1.Delete("/users/:id/reviews", r.DeleteReviewOnUser)
+
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
