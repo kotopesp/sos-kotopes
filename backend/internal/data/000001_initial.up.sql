@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS
 );
 
 -- Messages
-CREATE TYPE chat_types AS ENUM ('keeper', 'seeker');
+CREATE TYPE chat_types AS ENUM ('keeper', 'seeker', 'vet');
 
 CREATE TABLE IF NOT EXISTS
     chats
