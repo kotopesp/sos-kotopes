@@ -1,57 +1,63 @@
-.sticker {
+.sticker__link {
+  cursor: pointer;
 
-  &:hover .block__button {
-    max-height: 100px;
-    transition: max-height .8s;
-    .sticker__button {
-      opacity: 1;
-      transition: opacity 1s;
+  .sticker {
+
+    &:hover .block__button {
       max-height: 100px;
+      transition: max-height .8s;
+
+      .sticker__button {
+        opacity: 1;
+        transition: opacity 1s;
+        max-height: 100px;
+      }
     }
-  }
 
-  height: fit-content;
-  max-width: 475px;
-  border-radius: 20px;
+    margin-bottom: 100px;
+    height: fit-content;
+    max-width: 475px;
+    border-radius: 20px;
 
 
-  .sticker__title {
-    border-bottom: 3px solid var(--brown-bg-color);
+    .sticker__title {
+      border-bottom: 3px solid var(--brown-bg-color);
 
-    .title__icon {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
+      .title__icon {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
 
-      .icon {
-        max-width: 68px;
-        max-height: 68px;
+        .icon {
+          max-width: 68px;
+          max-height: 68px;
+          margin-right: 20px;
+        }
+      }
+    }
+
+    .block__button {
+      display: grid;
+      padding-bottom: 20px;
+      max-height: 0;
+      transition: max-height .8s;
+
+      .sticker__button {
+        opacity: 0;
+        transition: opacity .2s;
+        cursor: pointer;
+        background: var(--brown-bg-color);
+        padding: 10px 16px;
+        border-radius: 16px;
+        justify-self: end;
         margin-right: 20px;
       }
     }
-  }
 
-  .block__button {
-    display: grid;
-    padding-bottom: 20px;
-    max-height: 0;
-    transition: max-height .8s;
-
-    .sticker__button {
-      opacity: 0;
-      transition: opacity .2s;
-      cursor: pointer;
-      background: var(--brown-bg-color);
-      padding: 10px 16px;
-      border-radius: 16px;
-      justify-self: end;
-      margin-right: 20px;
+    p {
+      color: var(--brown-bg-color);
+      padding: 20px 50px;
     }
-  }
-
-  p {
-    color: var(--brown-bg-color);
-    padding: 20px 50px;
   }
 }
 
