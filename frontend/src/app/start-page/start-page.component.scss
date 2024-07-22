@@ -3,22 +3,21 @@
   .cat-with-buttons-and-dog {
     display: grid;
     align-items: center;
-    padding-left: 282px;
     justify-content: start;
-    background-size: cover;
-    background-repeat: no-repeat;
     height: 737px;
-    background-image: url(../../../public/assets/images/cat-and-dog.jpeg);
+    background-repeat: no-repeat;
+    background-image: url(../../../public/assets/images/cat-and-dog.svg);
+    padding-left: 282px;
 
     .animals-text {
       display: grid;
       grid-gap: 12px;
-      padding-bottom: 100px;
+      padding-bottom: 42px;
     }
 
     .animals__buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      column-gap: 50px;
 
       .animals__button {
         display: flex;
@@ -26,13 +25,13 @@
         border-radius: 16px;
         align-items: center;
         justify-content: center;
-        height: 59px;
-        width: 251px;
         cursor: pointer;
       }
 
       .animals__button-hide {
         background: var(--yellow-color-bg);
+        height: 59px;
+        width: 271px;
         &:hover {
           background: var(--brown-hover-color);
           color: var(--yellow-color-bg);
@@ -42,6 +41,8 @@
 
       .animals__button-find {
         background: var(--pink-color-bg);
+        width: 251px;
+        height: 59px;
         &:hover {
           background: var(--red-hover-color);
           color: var(--pink-color-bg);
@@ -53,30 +54,23 @@
 
     .stickers {
 
-      background-blend-mode: multiply;
-      background-image:
-        url(../../../public/assets/images/big-steps-bg.png),
-        url(../../../public/assets/images/bg-with-steps.png);
+      background-image: url(../../../public/assets/images/bg-with-steps.svg);
       background-repeat: no-repeat;
-      background-size: cover;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 90vh);
-      padding-top: 50px;
-      column-gap: 70px;
-      justify-items: end;
-      align-items: start;
 
-      :nth-child(even) {
-        justify-self: start;
-        align-self: end;
+      display: grid;
+      min-height: fit-content;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 55vh);
+      justify-items: end;
+      column-gap: 40px;
+
+      :nth-child(odd) {
+        margin-top: 10vh;
       }
 
-      .questions {
+      :nth-child(even) {
+        margin-top: 30vh;
         justify-self: start;
-        padding-top: 50px;
-        margin-bottom: 10px;
-        margin-left: 220px;
       }
     }
 
@@ -84,15 +78,21 @@
     display: grid;
     grid-gap: 20px;
     justify-content: center;
-    margin-top: 20px;
     padding: 5px;
+
   }
 
   .block__about-us {
     margin-top: 100px;
-    background: var(--brown-bg-color);
-    height: 100vh;
-    padding-left: 220px;
+    margin-bottom: 300px;
+    display: grid;
+    grid-gap: 20px;
+    justify-content: center;
+    padding: 5px;
+    .text__about-us {
+      justify-self: start;
+      width: 70vw;
+    }
   }
 }
 

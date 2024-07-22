@@ -15,14 +15,24 @@ import {NgForOf} from "@angular/common";
 export class HeaderComponent {
   headerItems = [
     {
-      path: '',
-      text: 'Как я могу помочь?',
-      className: 'header__how-to-help'
-    },
-    {
       path: 'ads',
       text: 'Объявления',
       className: 'header__ads'
+    },
+    {
+      path: '',
+      text: 'Отловщики',
+      className: 'header__overexposure'
+    },
+    {
+      path: '',
+      text: 'Передержка',
+      className: 'header__ads'
+    },
+    {
+      path: '',
+      text: 'Как я могу помочь?',
+      className: 'header__how-to-help'
     },
     {
       path: 'login',
