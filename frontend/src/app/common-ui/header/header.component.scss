@@ -1,29 +1,26 @@
 .header {
   background: var(--brown-main-color);
   color: var(--white-color);
-  padding-bottom: 10px;
   display: grid;
-  max-height: 100px;
-  grid-gap: 10px;
-  grid-template-columns: 7fr 4fr;
+  grid-template-columns: 1fr 1fr;
+  height: 100px;
 
   .header__buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 50px;
+    align-items: center;
+    grid-template-columns: repeat(5, 1fr);
     .header__button {
-      display: grid;
-      justify-content: center;
-      align-items: center;
-
+      width: fit-content;
       .header__link {
         text-decoration: none;
         font-size: 20px;
         color: var(--white-color);
 
         .header__how-to-help {
-          background: var(--brown-light-color);
           width: 232px;
           height: 46px;
+          background: var(--brown-light-color);
           border-radius: 12px;
           display: flex;
           justify-content: center;
@@ -35,9 +32,6 @@
           }
         }
 
-        .header__ads {
-          margin-left: 40px;
-        }
 
         :hover {
           border-bottom: 2px solid var(--white-color);
