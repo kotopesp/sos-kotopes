@@ -10,6 +10,7 @@ type (
 		UpdatedAt string `json:"updated_at"`
 		AnimalID  int    `json:"animal_id"`
 	}
+
 	GetAllPostsParams struct {
 		Limit      int    `query:"limit"`
 		Offset     int    `query:"offset"`

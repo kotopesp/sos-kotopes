@@ -4,9 +4,9 @@ import (
 	"context"
 	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/service/user_service"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/user"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user_store"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -37,8 +37,8 @@ func Run(cfg *config.Config) {
 	entityStore := entity.New(pg)
 	// Services
 	entityService := name.New(entityStore)
-	userStore := user_store.NewUserStore(pg)
-	userService := user_service.NewUserService(userStore)
+	userStore := user.NewUserStore(pg)
+	userService := user.NewUserService(userStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{

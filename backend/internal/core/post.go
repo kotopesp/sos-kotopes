@@ -1,4 +1,4 @@
-package post_core
+package core
 
 import (
 	"context"

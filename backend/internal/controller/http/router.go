@@ -2,7 +2,6 @@ package http
 
 import (
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core/user_core"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
@@ -11,14 +10,14 @@ type Router struct {
 	app           *fiber.App
 	entityService core.EntityService
 	authService   interface{}
-	userService   user_core.UserService
+	userService   core.UserService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
 	authService interface{},
-	userService user_core.UserService,
+	userService core.UserService,
 ) {
 	router := &Router{
 		app:           app,
