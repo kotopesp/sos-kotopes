@@ -170,15 +170,6 @@ CREATE TABLE IF NOT EXISTS
     updated_at TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS
-    post_likes
-(
-    id         SERIAL PRIMARY KEY,
-    post_id    INTEGER   NOT NULL REFERENCES posts (id),
-    user_id    INTEGER   NOT NULL REFERENCES users (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
 -- Comments
 CREATE TABLE IF NOT EXISTS
     comments
