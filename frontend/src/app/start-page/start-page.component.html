@@ -3,8 +3,8 @@
   <div class="cat-with-buttons-and-dog">
     <div>
       <div class="animals-text">
-        <p class="ft40 roboto fw600">Помоги бездомному животному</p>
-        <p class="ft24">Животные ждут твоей помощи</p>
+        <p class="ft48 roboto fw600 lh64">Помоги бездомному животному</p>
+        <p class="ft24 fw400">Животные ждут твоей помощи</p>
       </div>
       <div class="ptbold ft24 fw700 animals__buttons ">
         <a class="animals__button animals__button-hide">Я потерял питомца</a>
@@ -16,18 +16,18 @@
     <app-sticker
       *ngFor="let stickerItem of stickerItems"
       [stickerItem]="stickerItem" />
+  </div>
+  <div class="block__faq">
     <div class="questions">
       <p class="ft48 roboto fw600">Вопросы</p>
     </div>
-  </div>
-  <div class="block__faq">
     <app-question
       *ngFor="let questionItem of questionItems"
       [questionItem]="questionItem"
     />
   </div>
   <div class="block__about-us">
-    <div>
+    <div class="text__about-us">
       <p class="ft48 roboto fw600">О нас</p>
     </div>
   </div>

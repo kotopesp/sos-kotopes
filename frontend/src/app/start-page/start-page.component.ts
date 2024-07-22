@@ -15,7 +15,7 @@ import {HeaderComponent} from "../common-ui/header/header.component";
 export class StartPageComponent {
   stickerItems = [
     {
-      class: 'y-color',
+      class: 'yellow-color',
       title: 'Потеряшка',
       subtitle1: 'Нашли бездомное или потеряли домашнее животное?',
       subtitle2: 'Здесь вы найдете подробные инструкции и контакты ' +
@@ -25,8 +25,8 @@ export class StartPageComponent {
       icon: 'paw-icon.svg'
     },
     {
-      class: 'p-color',
-      title: 'Передержка и отловщики',
+      class: 'pink-color',
+      title: 'Передержка',
       subtitle1: 'Нужен ночлег или помощь?',
       subtitle2: 'Если вы готовы рассказать о нас,' +
         ' предоставить ночлег для животного' +
@@ -36,7 +36,17 @@ export class StartPageComponent {
       icon: 'hand-icon.svg'
     },
     {
-      class: 'g-color',
+      class: 'purple-color',
+      title: 'Отловщики',
+      subtitle1: 'Нужен отлов улов улёт? жду когда Ангелина придумает текст',
+      subtitle2: 'Если вы готовы рассказать о нас, ' +
+        'предоставить ночлег для животного или вы ' +
+        'частный ветеринар, или отловщик, то смело ' +
+        'нажимайте сюда и присоединяйтесь к нашей команде!',
+      icon: 'net-icon.svg'
+    },
+    {
+      class: 'green-color',
       title: 'Ветеринарные Клиники',
       subtitle1: 'Ищете ближайшую ветеринарную клинику?',
       subtitle2: 'Здесь вы найдете список ближайших ' +
@@ -48,7 +58,7 @@ export class StartPageComponent {
       icon: 'cross-icon.svg'
     },
     {
-      class: 'b-color',
+      class: 'blue-color',
       title: 'Правовые Вопросы',
       subtitle1: 'Не знаете, что можно и чего нельзя делать?',
       subtitle2: 'Мы поможем вам разобраться в ' +
