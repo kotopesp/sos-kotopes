@@ -12,7 +12,7 @@
     .animals-text {
       display: grid;
       grid-gap: 12px;
-      padding-bottom: 100px;
+      padding-bottom: 42px;
     }
 
     .animals__buttons {
@@ -54,6 +54,8 @@
 
     .stickers {
 
+      background-blend-mode: overlay;
+      background-color: rgba(49, 38, 17, 0.8);
       background-image:
         url(../../../public/assets/images/big-steps-bg.svg),
         url(../../../public/assets/images/bg-with-steps.svg);
