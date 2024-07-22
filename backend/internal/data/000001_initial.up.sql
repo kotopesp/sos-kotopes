@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS
     description   VARCHAR,
     photo         BYTEA,
     password_hash VARCHAR        NOT NULL,
-    is_deleted    BOOLEAN        NOT NULL,
+    is_deleted    BOOLEAN        NOT NULL DEFAULT false,
     deleted_at    TIMESTAMP,
     created_at    TIMESTAMP      NOT NULL DEFAULT NOW(),
-    updated_at    TIMESTAMP      NOT NULL
+    updated_at    TIMESTAMP      NOT NULL DEFAULT NOW()
 );
 
 -- Roles
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS
     user_id     INTEGER REFERENCES users (id),
     description VARCHAR,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMP NOT NULL
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMP NOT NULL
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMP NOT NULL
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE VIEW user_roles_view AS
@@ -65,10 +65,10 @@ CREATE TABLE IF NOT EXISTS
     vet_id     INTEGER   NOT NULL REFERENCES vets (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
-    is_deleted BOOLEAN,
+    is_deleted BOOLEAN DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -79,8 +79,10 @@ CREATE TABLE IF NOT EXISTS
     keeper_id  INTEGER   NOT NULL REFERENCES keepers (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
+    is_deleted BOOLEAN DEFAULT false,
+    deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Animals
@@ -102,7 +104,7 @@ CREATE TABLE IF NOT EXISTS
     description VARCHAR,
     status      animal_statuses,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMP NOT NULL
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Messages
@@ -113,10 +115,10 @@ CREATE TABLE IF NOT EXISTS
 (
     id         SERIAL PRIMARY KEY,
     chat_type  chat_types,
-    is_deleted BOOLEAN   NOT NULL,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -125,10 +127,10 @@ CREATE TABLE IF NOT EXISTS
     id         SERIAL PRIMARY KEY,
     user_id    INTEGER   NOT NULL REFERENCES users (id),
     chat_id    INTEGER   NOT NULL REFERENCES chats (id),
-    is_deleted BOOLEAN   NOT NULL,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -137,7 +139,7 @@ CREATE TABLE IF NOT EXISTS
     id         SERIAL PRIMARY KEY,
     user_id    INTEGER   NOT NULL REFERENCES users (id),
     chat_id    INTEGER REFERENCES chats (id),
-    is_deleted BOOLEAN   NOT NULL,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
@@ -151,10 +153,10 @@ CREATE TABLE IF NOT EXISTS
     animal_id  INTEGER   NOT NULL REFERENCES animals (id),
     title      VARCHAR   NOT NULL,
     content    VARCHAR,
-    is_deleted BOOLEAN   NOT NULL,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
@@ -164,10 +166,10 @@ CREATE TABLE IF NOT EXISTS
     post_id    INTEGER   NOT NULL REFERENCES posts (id),
     author_id  INTEGER   NOT NULL REFERENCES users (id),
     content    VARCHAR   NOT NULL,
-    is_deleted BOOLEAN   NOT NULL,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- Comments
@@ -178,10 +180,10 @@ CREATE TABLE IF NOT EXISTS
     content    VARCHAR   NOT NULL,
     author_id  INTEGER   NOT NULL REFERENCES users (id),
     posts_id   INTEGER   NOT NULL REFERENCES posts (id),
-    is_deleted BOOLEAN   NOT NULL,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
