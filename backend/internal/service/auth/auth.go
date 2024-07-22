@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	userStore "gitflic.ru/spbu-se/sos-kotopes/internal/store/user"
+	userStorePkg "gitflic.ru/spbu-se/sos-kotopes/internal/store/user"
 	"github.com/google/uuid"
 
 	"golang.org/x/crypto/bcrypt"
@@ -35,8 +35,7 @@ func (s *service) GetJWTSecret() []byte {
 	return s.authServiceConfig.JWTSecret
 }
 
-// return values (`access token`, `refresh token`, error)
-func (s *service) Login(ctx context.Context, user core.User) (string, string, error) {
+func (s *service) Login(ctx context.Context, user core.User) (accessToken, refreshToken string, err error) {
 	dbUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
 		return "", "", err
@@ -67,7 +66,7 @@ func (s *service) Signup(ctx context.Context, user core.User) error {
 	}
 	user.PasswordHash = string(hashedPassword)
 	if _, err := s.userStore.AddUser(ctx, user); err != nil {
-		if errors.Is(err, userStore.ErrNotUniqueUsername) {
+		if errors.Is(err, userStorePkg.ErrNotUniqueUsername) {
 			return ErrNotUniqueUsername
 		}
 		return err
@@ -75,12 +74,12 @@ func (s *service) Signup(ctx context.Context, user core.User) error {
 	return nil
 }
 
-func (s *service) LoginVK(ctx context.Context, externalUserID int) (string, string, error) {
+func (s *service) LoginVK(ctx context.Context, externalUserID int) (accessToken, refreshToken string, err error) {
 	user, err := s.userStore.GetUserByExternalID(ctx, externalUserID)
 	user.ExternalID = &externalUserID
 	user.PasswordHash = vkPasswordPlug
 	if err != nil {
-		if errors.Is(err, userStore.ErrNoSuchUser) {
+		if errors.Is(err, userStorePkg.ErrNoSuchUser) {
 			user.Username = uuid.New().String()
 			err = s.Signup(ctx, user)
 			if err != nil {

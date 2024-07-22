@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	ErrorResponse struct {
+	ResponseError struct {
 		FailedField string
 		Tag         string
 		Param       string
@@ -19,10 +19,10 @@ type (
 	}
 
 	formValidatorAPI interface {
-		validate(data interface{}) []ErrorResponse
+		validate(data interface{}) []ResponseError
 	}
 )
 
-func (err *ErrorResponse) Error() string {
+func (err *ResponseError) Error() string {
 	return fmt.Sprintf("FailedField: %s | Tag: %s | Param: %s | Value: %v", err.FailedField, err.Tag, err.Param, err.Value)
 }

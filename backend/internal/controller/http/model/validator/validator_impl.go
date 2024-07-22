@@ -8,34 +8,38 @@ import (
 
 var (
 	upperase = regexp.MustCompile(`[A-Z]`).MatchString
-	digit    = regexp.MustCompile(`[0-9]`).MatchString
+	digit    = regexp.MustCompile(`\d`).MatchString
 )
 
 // custom validation tags
 func customValidationOptions(validator *validatorPkg.Validate) {
-	validator.RegisterValidation("contains_digit", func(fl validatorPkg.FieldLevel) bool {
+	_ = validator.RegisterValidation("contains_digit", func(fl validatorPkg.FieldLevel) bool {
 		return digit(fl.Field().String())
 	})
-	validator.RegisterValidation("contains_uppercase", func(fl validatorPkg.FieldLevel) bool {
+	_ = validator.RegisterValidation("contains_uppercase", func(fl validatorPkg.FieldLevel) bool {
 		return upperase(fl.Field().String())
 	})
 }
 
-func new(validator *validatorPkg.Validate) formValidatorAPI {
+func newValidator(validator *validatorPkg.Validate) formValidatorAPI {
 	customValidationOptions(validator)
 	return &formValidator{
 		validator: validator,
 	}
 }
 
-func (v *formValidator) validate(data interface{}) []ErrorResponse {
-	validationErrors := []ErrorResponse{}
+func (v *formValidator) validate(data interface{}) []ResponseError {
+	validationErrors := []ResponseError{}
 
 	errs := v.validator.Struct(data)
 
 	if errs != nil {
-		for _, err := range errs.(validatorPkg.ValidationErrors) {
-			var elem ErrorResponse
+		pkgValidationErrors, ok := errs.(validatorPkg.ValidationErrors)
+		if !ok {
+			return []ResponseError{}
+		}
+		for _, err := range pkgValidationErrors {
+			var elem ResponseError
 
 			elem.FailedField = err.Field()
 			elem.Tag = err.Tag()
@@ -48,6 +52,6 @@ func (v *formValidator) validate(data interface{}) []ErrorResponse {
 	return validationErrors
 }
 
-func Validate(data interface{}) []ErrorResponse {
+func Validate(data interface{}) []ResponseError {
 	return v.validate(data)
 }

@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	vkGetUsersUrl = "https://api.vk.com/method/users.get"
-	vkApiVersion  = "5.199"
+	vkGetUsersURL = "https://api.vk.com/method/users.get"
+	vkAPIVersion  = "5.199"
 )
 
 func (s *service) ConfigVK() *oauth2.Config {
@@ -27,17 +27,17 @@ func (s *service) ConfigVK() *oauth2.Config {
 }
 
 func (s *service) GetVKUserID(token string) (int, error) {
-	reqUrl, err := url.Parse(vkGetUsersUrl)
+	reqURL, err := url.Parse(vkGetUsersURL)
 	if err != nil {
 		return 0, err
 	}
-	q := reqUrl.Query()
-	q.Set("v", vkApiVersion)
-	reqUrl.RawQuery = q.Encode()
+	q := reqURL.Query()
+	q.Set("v", vkAPIVersion)
+	reqURL.RawQuery = q.Encode()
 	tokenHeader := fmt.Sprintf("Bearer %s", token)
 	res := &http.Request{
 		Method: http.MethodGet,
-		URL:    reqUrl,
+		URL:    reqURL,
 		Header: map[string][]string{
 			"Authorization": {tokenHeader},
 		},

@@ -125,8 +125,14 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) refresh(ctx *fiber.Ctx) error {
-	sub, _ := getPayloadItem(ctx, "sub")
-	id := int(sub.(float64))
+	sub := getPayloadItem(ctx, "sub")
+	idFloat, ok := sub.(float64)
+	if !ok {
+		err := errors.New("failed to read id from refresh token")
+		logger.Log().Error(ctx.Context(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err))
+	}
+	id := int(idFloat)
 
 	accessToken, err := r.authService.Refresh(ctx.UserContext(), id)
 	if err != nil {
@@ -140,16 +146,16 @@ func (r *Router) refresh(ctx *fiber.Ctx) error {
 }
 
 // getting items from token payload
-func getPayloadItem(ctx *fiber.Ctx, key string) (any, bool) {
-	user, ok := ctx.Locals("user").(*jwt.Token)
+func getPayloadItem(ctx *fiber.Ctx, key string) any {
+	token, ok := ctx.Locals("user").(*jwt.Token)
 	if !ok {
-		return nil, false
+		return nil
 	}
-	claims, ok := user.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return nil, false
+		return nil
 	}
-	return claims[key], true
+	return claims[key]
 }
 
 func generateState(length int) (string, error) {

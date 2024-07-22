@@ -8,8 +8,12 @@ import (
 )
 
 func (r *Router) protected(ctx *fiber.Ctx) error {
-	idItem, _ := getPayloadItem(ctx, "id")
-	id := int(idItem.(float64))
+	idItem := getPayloadItem(ctx, "id")
+	idFloat, ok := idItem.(float64)
+	if !ok {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse("error while reading id from token"))
+	}
+	id := int(idFloat)
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
 		"UserID":  fmt.Sprintf("%d", id),
 		"Message": "successfully accessed protected resource",
