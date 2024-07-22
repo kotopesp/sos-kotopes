@@ -18,3 +18,17 @@ func (p *Post) ToCorePost() *core.Post {
 		AnimalID:  p.AnimalID,
 	}
 }
+
+func (p *GetAllPostsParams) ToCoreGetAllPostsParams() *core.GetAllPostsParams {
+    if p == nil {
+        return nil
+    }
+
+    return &core.GetAllPostsParams{
+        SortBy:     &p.SortBy,
+        SortOrder:  &p.SortOrder,
+        SearchTerm: &p.SearchTerm,
+        Limit:      &p.Limit,
+        Offset:     &p.Offset,
+    }
+}

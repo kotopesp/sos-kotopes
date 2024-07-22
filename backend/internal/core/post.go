@@ -17,19 +17,40 @@ type (
 		Photo     []byte    `gorm:"column:photo"`
 	}
 
+	PostFavorite struct {
+		ID        int       `gorm:"column:id"`
+		UserID    int       `gorm:"column:user_id"`
+		PostID    int       `gorm:"column:post_id"`
+		CreatedAt time.Time `gorm:"column:created_at"`
+	}
+
 	PostStore interface {
-		GetAll(ctx context.Context, params GetAllPostsParams) (data []Post, err error)
-		GetByID(ctx context.Context, id int) (data Post, err error)
-		Create(ctx context.Context, post Post) (data Post, err error)
-		Update(ctx context.Context, post Post) (data Post, err error)
-		Delete(ctx context.Context, id int) (err error)
-	}		
+		GetAllPosts(ctx context.Context, params GetAllPostsParams) (data []Post, total int, err error)
+		GetPostByID(ctx context.Context, ID int) (data Post, err error)
+		CreatePost(ctx context.Context, post Post) (data Post, err error)
+		UpdatePost(ctx context.Context, post Post) (data Post, err error)
+		DeletePost(ctx context.Context, ID int) (err error)
+	}
 	PostService interface {
-		GetAll(ctx context.Context, params GetAllPostsParams) (data []Post, total int, err error)
-		GetByID(ctx context.Context, id int) (data Post, err error)
-		Create(ctx context.Context, post Post) (data Post, err error)
-		Update(ctx context.Context, post Post) (data Post, err error)
-		Delete(ctx context.Context, id int) (err error)
+		GetAllPosts(ctx context.Context, params GetAllPostsParams) (data []Post, total int, err error)
+		GetPostByID(ctx context.Context, ID int) (data Post, err error)
+		CreatePost(ctx context.Context, post Post) (data Post, err error)
+		UpdatePost(ctx context.Context, post Post) (data Post, err error)
+		DeletePost(ctx context.Context, ID int) (err error)
+	}
+
+	PostFavoriteStore interface {
+		GetFavoritePosts(ctx context.Context, userID int, params GetAllPostsParams) (data []Post, total int, err error)
+		GetFavoritePostByID(ctx context.Context, userID, postID int) (data Post, err error)
+		AddToFavorites(ctx context.Context, postFavourite PostFavorite) (data PostFavorite, err error)
+		DeleteFromFavorites(ctx context.Context, postID, userID int) (err error)
+	}
+
+	PostFavoriteService interface {
+		GetFavoritePosts(ctx context.Context, userID int, params GetAllPostsParams) (data []Post, total int, err error)
+		GetFavoritePostByID(ctx context.Context, userID, postID int) (data Post, err error)
+		AddToFavorites(ctx context.Context, postFavourite PostFavorite) (data PostFavorite, err error)
+		DeleteFromFavorites(ctx context.Context, postID, userID int) (err error)
 	}
 
 	GetAllPostsParams struct {
@@ -43,4 +64,8 @@ type (
 
 func (Post) TableName() string {
 	return "posts"
+}
+
+func (PostFavorite) TableName() string {
+	return "favourite_posts"
 }

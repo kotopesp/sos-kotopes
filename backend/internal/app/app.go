@@ -17,6 +17,8 @@ import (
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
 	poststore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_store"
     postservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_service"
+	postfavouritestore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_favorite_store"
+	postfavouriteservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_favorite_service"
 )
 
 // Run creates objects via constructors.
@@ -35,11 +37,13 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
-	postStore := poststore.New(pg)
+	postStore := poststore.NewPostStore(pg)
+	postFavouriteStore := postfavouritestore.NewFavoritePostStore(pg)
 
 	// Services
 	entityService := name.New(entityStore)
-	postService := postservice.New(postStore)
+	postService := postservice.NewPostService(postStore)
+	postFavouriteService := postfavouriteservice.NewPostFavoriteService(postFavouriteStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -50,7 +54,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil, postService)
+	v1.NewRouter(app, entityService, nil, postService, postFavouriteService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
