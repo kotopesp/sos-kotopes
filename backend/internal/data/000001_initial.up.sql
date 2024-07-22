@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS
     firstname     VARCHAR,
     lastname      VARCHAR,
     description   VARCHAR,
-    photo         VARCHAR,
+    photo         BYTEA,
     password_hash VARCHAR        NOT NULL,
     is_deleted    BOOLEAN        NOT NULL,
     deleted_at    TIMESTAMP,
