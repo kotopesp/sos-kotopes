@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
 import {RouterLink} from "@angular/router";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     RouterLink,
-    NgForOf
+    NgForOf,
+    NgIf
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  isAuth: boolean = false;
+
   headerItems = [
     {
       path: 'ads',
@@ -33,11 +36,6 @@ export class HeaderComponent {
       path: '',
       text: 'Как я могу помочь?',
       className: 'header__how-to-help'
-    },
-    {
-      path: 'login',
-      text: 'Войти',
-      className: 'header__login'
     },
   ]
 }
