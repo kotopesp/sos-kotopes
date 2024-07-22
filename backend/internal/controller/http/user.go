@@ -87,3 +87,64 @@ func (r *Router) GetUserPosts(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusOK).JSON(userPosts)
 }
+
+func (r *Router) GetUserRoles(ctx *fiber.Ctx) error {
+	idStr := ctx.Params("id")
+	if idStr == "" {
+		logger.Log().Debug(ctx.UserContext(), "Error: id is required")
+		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"error": "id is required",
+		})
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+	userRoles := r.userService
+}
+
+func (r *Router) GiveRoleToUser(ctx *fiber.Ctx) error {
+	idStr := ctx.Params("id")
+	if idStr == "" {
+		logger.Log().Debug(ctx.UserContext(), "Error: id is required")
+		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"error": "id is required",
+		})
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+}
+
+func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
+	idStr := ctx.Params("id")
+	if idStr == "" {
+		logger.Log().Debug(ctx.UserContext(), "Error: id is required")
+		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"error": "id is required",
+		})
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+}
+
+func (r *Router) DeleteUserRole(ctx *fiber.Ctx) error {
+	idStr := ctx.Params("id")
+	if idStr == "" {
+		logger.Log().Debug(ctx.UserContext(), "Error: id is required")
+		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"error": "id is required",
+		})
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+}

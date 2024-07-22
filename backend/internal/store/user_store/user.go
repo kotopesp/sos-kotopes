@@ -1,4 +1,4 @@
-package user
+package user_store
 
 import (
 	"context"
@@ -45,7 +45,7 @@ func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) 
 
 	if result.RowsAffected == 0 {
 		tx.Rollback()
-		return errors.New("user not found")
+		return errors.New("user_service not found")
 	}
 
 	return tx.Commit().Error
