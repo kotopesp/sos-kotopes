@@ -54,11 +54,7 @@
 
     .stickers {
 
-      background-blend-mode: overlay;
-      background-color: rgba(49, 38, 17, 0.8);
-      background-image:
-        url(../../../public/assets/images/big-steps-bg.svg),
-        url(../../../public/assets/images/bg-with-steps.svg);
+      background-image: url(../../../public/assets/images/bg-with-steps.svg);
       background-repeat: no-repeat;
 
       display: grid;
