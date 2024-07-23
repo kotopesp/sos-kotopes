@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
-import {ProfilePopupComponent} from "../profile-popup/profile-popup.component";
+import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
 
 @Component({
   selector: 'app-header',
@@ -10,6 +10,7 @@ import {ProfilePopupComponent} from "../profile-popup/profile-popup.component";
     RouterLink,
     NgForOf,
     NgIf,
+    ProfilePopupComponent,
     ProfilePopupComponent,
   ],
   templateUrl: './header.component.html',

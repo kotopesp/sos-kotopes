@@ -26,4 +26,22 @@
       border-radius: 50%;
     }
   }
+
+  .block__control {
+    display: grid;
+    height: calc(100% - 174px);
+    grid-gap: 10px;
+    padding: 30px;
+    justify-content: center;
+
+    .block__control__link {
+      cursor: pointer;
+
+      .block__control__line {
+        display: flex;
+        column-gap: 10px;
+      }
+    }
+  }
 }
+
