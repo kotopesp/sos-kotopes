@@ -15,6 +15,17 @@ CREATE TABLE IF NOT EXISTS
     updated_at    TIMESTAMP      NOT NULL DEFAULT NOW()
 );
 
+CREATE TYPE auth_providers AS ENUM ('vk');
+
+CREATE TABLE IF NOT EXISTS
+    external_users
+(
+    id      SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id),
+    external_id INTEGER,
+    auth_provider auth_providers
+);
+
 -- Roles
 CREATE TABLE IF NOT EXISTS
     seekers
@@ -65,7 +76,7 @@ CREATE TABLE IF NOT EXISTS
     vet_id     INTEGER   NOT NULL REFERENCES vets (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
-    is_deleted BOOLEAN DEFAULT false,
+    is_deleted BOOLEAN            DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
@@ -79,7 +90,7 @@ CREATE TABLE IF NOT EXISTS
     keeper_id  INTEGER   NOT NULL REFERENCES keepers (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
-    is_deleted BOOLEAN DEFAULT false,
+    is_deleted BOOLEAN            DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
