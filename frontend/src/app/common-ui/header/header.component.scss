@@ -10,7 +10,7 @@
     grid-gap: 50px;
     align-items: center;
     grid-template-columns: repeat(5, 1fr);
-    padding-right: 40px;
+    padding-right: 7vw;
 
     .header__auth__profile {
       display: grid;
@@ -32,6 +32,34 @@
         align-items: center;
         justify-content: center;
       }
+
+      .message__block {
+      }
+
+      .notification__block {
+
+      }
+
+      .profile__block {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        &:hover {
+          .profile__popup {
+            max-height: fit-content;
+            overflow: visible;
+            transition: max-height 1s;
+          }
+        }
+
+        .profile__popup {
+          order: 0;
+          overflow: hidden;
+          max-height: 0;
+          transition: max-height 1s;
+        }
+      }
     }
 
     .header__button {
@@ -51,6 +79,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
+
           &:hover {
             background: #7A6233;
             border: 0;

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
+import {ProfilePopupComponent} from "../profile-popup/profile-popup.component";
 
 @Component({
   selector: 'app-header',
@@ -8,13 +9,14 @@ import {NgForOf, NgIf} from "@angular/common";
   imports: [
     RouterLink,
     NgForOf,
-    NgIf
+    NgIf,
+    ProfilePopupComponent,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  isAuth: boolean = false;
+  isAuth: boolean = true;
 
   headerItems = [
     {
