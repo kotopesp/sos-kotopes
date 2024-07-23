@@ -1,0 +1,8 @@
+.left__list {
+    width: 100%;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+    border-right: 5px solid var(--black-color)
+}
