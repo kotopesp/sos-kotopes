@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {NgForOf} from "@angular/common";
 
@@ -15,7 +15,7 @@ import {NgForOf} from "@angular/common";
 export class HeaderComponent {
   headerItems = [
     {
-      path: 'ads',
+      path: 'posts',
       text: 'Объявления',
       className: 'header__ads'
     },

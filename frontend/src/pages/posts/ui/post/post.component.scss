@@ -51,7 +51,7 @@
       text-align: center;
       align-content: center;
       padding: 6px 18px;
-      white-space: nowrap; 
+      white-space: nowrap;
       background: var(--gray-color-button);
       border-radius: 10px;
     }
@@ -60,9 +60,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: url(../../../../public/assets/icons/comment-icon.svg);
-      background-repeat: no-repeat; 
-      background-size: cover; 
+      background: url(../../../../../public/assets/icons/comment-icon.svg);
+      background-repeat: no-repeat;
+      background-size: cover;
       height: 37px;
       width: 46px;
       padding: 6px 0px;
@@ -77,15 +77,15 @@
       border-radius: 10px;
       background: var($styles);
     }
-    
+
     .block__info__lost {
         @include block__info__find_status(--red-color-button);
     }
-    
+
     .block__info__looking_for_home {
         @include block__info__find_status(--orange-color-button);
     }
-    
+
     .block__info__found_home {
         @include block__info__find_status(--green-color-button)
     }

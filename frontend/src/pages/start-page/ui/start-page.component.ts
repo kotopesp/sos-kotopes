@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {RouterOutlet} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
-import {StickerComponent} from "../common-ui/sticker/sticker.component";
-import {QuestionComponent} from "../common-ui/question/question.component";
-import {HeaderComponent} from "../common-ui/header/header.component";
+import {StickerComponent} from "./sticker/sticker.component";
+import {QuestionComponent} from "./question/question.component";
+import {HeaderComponent} from "../../../widgets/header/header.component";
 
 @Component({
   selector: 'app-start-page',
