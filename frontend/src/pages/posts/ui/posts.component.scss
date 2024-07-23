@@ -1,16 +1,16 @@
-.main__ads {
+.main__posts {
   display: grid;
   grid-template-columns: 1fr 3fr;
   min-height: 180vh;
   height: fit-content;
 
-  main__ads:after {
+  main__posts:after {
     background: url(../../../../public/assets/images/ads-bg-steps.png) repeat;
     opacity: 0.12;
   }
 
-  .main_menu_ads {
-    .ads {
+  .main_menu_posts {
+    .posts {
       height: fit-content;
       display: grid;
       grid-template-columns: repeat(3, 1fr);

@@ -1,10 +1,10 @@
-.block__ad__pet {
+.block__post__pet {
 
   &:hover {
     background-color: rgba(53, 43, 26, 1);
     transition: background-color .1s;
 
-    .ad__pet__button {
+    .post__pet__button {
       color: var(--brown-button-color);
       background: var(--white-color);
     }
@@ -108,7 +108,7 @@
     .block__button {
       cursor: pointer;
 
-      .ad__pet__button {
+      .post__pet__button {
         text-align: center;
         align-content: center;
         border-radius: 10px;
