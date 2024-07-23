@@ -8,5 +8,31 @@
         <div [class]="headerItem.className">{{ headerItem.text }} </div>
       </a>
     </div>
+
+    <div *ngIf="!isAuth" class="header__button">
+      <a [routerLink]="" class="header__link">
+        <div>Войти</div>
+      </a>
+    </div>
+
+    <div *ngIf="isAuth" class="header__auth__profile">
+      <div class="header__auth__button message__block">
+        <a>
+          <img src="/assets/icons/message-icon.svg">
+        </a>
+      </div>
+      <div class="header__auth__button notification__block">
+        <a>
+          <img src="/assets/icons/notification-icon.svg">
+        </a>
+      </div>
+      <div class="header__auth__button profile__block">
+        <a>
+          <img src="/assets/images/test-cat2.png" class="header__profile__image">
+        </a>
+        <app-profile-popup class="profile__popup"/>
+      </div>
+    </div>
+
   </div>
 </div>
