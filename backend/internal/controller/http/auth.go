@@ -10,7 +10,6 @@ import (
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/auth"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	jwtware "github.com/gofiber/contrib/jwt"
@@ -44,27 +43,29 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 }
 
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
-	apiUser := user.User{}
+	var apiUser user.User
 	if err := ctx.BodyParser(&apiUser); err != nil {
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	errs := validator.Validate(apiUser)
+	errs := r.formValidator.Validate(apiUser)
 	if len(errs) > 0 {
-		logger.Log().Error(ctx.Context(), fmt.Sprintf("%v", errs))
+		logger.Log().Error(ctx.UserContext(), fmt.Sprintf("%v", errs))
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
 			"validation_errors": errs,
 		}))
 	}
 
 	coreUser := apiUser.ToCoreUser()
-	accessToken, refreshToken, err := r.authService.Login(ctx.Context(), coreUser)
+
+	accessToken, refreshToken, err := r.authService.LoginBasic(ctx.Context(), coreUser)
 	if err != nil {
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	setRefreshTokenCookie(ctx, refreshToken)
+
+	setRefreshTokenCookie(ctx, *refreshToken)
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
 		"access_token": accessToken,
 	}))
@@ -75,52 +76,60 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer file.Close()
+
 	photoBytes, err := io.ReadAll(file)
 	if err != nil {
 		return nil, err
 	}
+
 	return &photoBytes, nil
 }
 
 func (r *Router) signup(ctx *fiber.Ctx) error {
-	apiUser := user.User{}
+	var apiUser user.User
 	if err := ctx.BodyParser(&apiUser); err != nil {
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
+
 	photo, err := ctx.FormFile("photo")
 	if err != nil {
 		apiUser.Photo = nil
 	} else {
 		photoBytes, err := getPhotoBytes(photo)
 		if err != nil {
-			logger.Log().Error(ctx.Context(), err.Error())
+			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 		apiUser.Photo = photoBytes
 	}
-	errs := validator.Validate(apiUser)
+
+	errs := r.formValidator.Validate(apiUser)
 	if len(errs) > 0 {
-		logger.Log().Error(ctx.Context(), fmt.Sprintf("%v", errs))
+		logger.Log().Error(ctx.UserContext(), fmt.Sprintf("%v", errs))
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
 			"validation_errors": errs,
 		}))
 	}
+
 	coreUser := apiUser.ToCoreUser()
 
-	err = r.authService.Signup(ctx.Context(), coreUser)
+	err = r.authService.SignupBasic(ctx.UserContext(), coreUser)
 	if err == nil {
-		return ctx.Status(fiber.StatusOK).JSON(model.OKResponse("user created successfully"))
+		return ctx.SendStatus(fiber.StatusCreated)
 	}
 
-	logger.Log().Error(ctx.Context(), err.Error())
+	logger.Log().Error(ctx.UserContext(), err.Error())
+
 	if errors.Is(err, auth.ErrNotUniqueUsername) {
 		errs = append(errs, model.ErrNotUniqueUsername(coreUser.Username))
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
 			"validation_errors": errs,
 		}))
 	}
+
 	return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 }
 
@@ -129,14 +138,14 @@ func (r *Router) refresh(ctx *fiber.Ctx) error {
 	idFloat, ok := sub.(float64)
 	if !ok {
 		err := errors.New("failed to read id from refresh token")
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err))
 	}
 	id := int(idFloat)
 
 	accessToken, err := r.authService.Refresh(ctx.UserContext(), id)
 	if err != nil {
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
@@ -151,20 +160,26 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 	if !ok {
 		return nil
 	}
+
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil
 	}
+
 	return claims[key]
 }
 
-func generateState(length int) (string, error) {
+func generateState(length int) (*string, error) {
 	b := make([]byte, length)
+
 	_, err := rand.Read(b)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return base64.URLEncoding.EncodeToString(b), nil
+
+	state := base64.URLEncoding.EncodeToString(b)
+
+	return &state, nil
 }
 
 func (r *Router) loginVK(ctx *fiber.Ctx) error {
@@ -172,19 +187,20 @@ func (r *Router) loginVK(ctx *fiber.Ctx) error {
 
 	state, err := generateState(16)
 	if err != nil {
-		logger.Log().Info(ctx.Context(), err.Error())
+		logger.Log().Info(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
 	ctx.Cookie(&fiber.Cookie{
 		Name:     "state",
-		Value:    state,
+		Value:    *state,
 		HTTPOnly: true,
 		Secure:   true,
 		SameSite: "Lax",
 	})
 
-	url := cfg.AuthCodeURL(state)
+	url := cfg.AuthCodeURL(*state)
+
 	return ctx.Redirect(url)
 }
 
@@ -201,25 +217,24 @@ func setRefreshTokenCookie(ctx *fiber.Ctx, refreshToken string) {
 func (r *Router) callback(ctx *fiber.Ctx) error {
 	token, err := r.authService.ConfigVK().Exchange(ctx.Context(), ctx.FormValue("code"))
 	if err != nil {
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
+
 	if ctx.FormValue("state") != ctx.Cookies("state") {
 		err = errors.New("states do not match")
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
-	vkUserID, err := r.authService.GetVKUserID(token.AccessToken)
+
+	accessToken, refreshToken, err := r.authService.AuthorizeVK(ctx.Context(), token.AccessToken)
 	if err != nil {
-		logger.Log().Error(ctx.Context(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	accessToken, refreshToken, err := r.authService.LoginVK(ctx.Context(), vkUserID)
-	if err != nil {
-		logger.Log().Error(ctx.Context(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-	}
-	setRefreshTokenCookie(ctx, refreshToken)
+
+	setRefreshTokenCookie(ctx, *refreshToken)
+
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
 		"access_token": accessToken,
 	}))

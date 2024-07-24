@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,6 +21,7 @@ import (
 	"gitflic.ru/spbu-se/sos-kotopes/config"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	baseValidator "github.com/go-playground/validator/v10"
 )
 
 // Run creates objects via constructors.
@@ -51,6 +53,9 @@ func Run(cfg *config.Config) {
 		},
 	)
 
+	// Validator
+	formValidator := validator.New(baseValidator.New())
+
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -63,6 +68,7 @@ func Run(cfg *config.Config) {
 	v1.NewRouter(
 		app,
 		entityService,
+		formValidator,
 		authService,
 	)
 

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -9,17 +10,20 @@ import (
 type Router struct {
 	app           *fiber.App
 	entityService core.EntityService
+	formValidator validator.FormValidatorService
 	authService   core.AuthService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
+	formValidator validator.FormValidatorService,
 	authService core.AuthService,
 ) {
 	router := &Router{
 		app:           app,
 		entityService: entityService,
+		formValidator: formValidator,
 		authService:   authService,
 	}
 
@@ -39,7 +43,7 @@ func (r *Router) initRoutes() {
 	v1.Get("/entities", r.getEntities)
 	v1.Get("/entities/:id", r.getEntityByID)
 
-	// e.g protected resource
+	// e.g. protected resource
 	v1.Get("/protected", r.protectedMiddleware(), r.protected)
 
 	// auth

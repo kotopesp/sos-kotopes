@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 	"errors"
+	"gorm.io/gorm"
 	"strings"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
-	"gorm.io/gorm"
 )
 
 type store struct {
@@ -19,23 +19,19 @@ func New(pg *postgres.Postgres) core.UserStore {
 }
 
 func (s *store) GetUserByUsername(ctx context.Context, username string) (data core.User, err error) {
-	user := core.User{}
+	var user core.User
 	result := s.DB.WithContext(ctx).First(&user, "username=?", username)
-	data = user
-	err = result.Error
-	return
+	return user, result.Error
 }
 
 func (s *store) GetUserByID(ctx context.Context, id int) (data core.User, err error) {
-	user := core.User{}
+	var user core.User
 	result := s.DB.WithContext(ctx).First(&user, id)
-	data = user
-	err = result.Error
-	return
+	return user, result.Error
 }
 
-func (s *store) AddUser(ctx context.Context, user core.User) (int, error) {
-	err := s.DB.WithContext(ctx).Create(&user).Error
+func (s *store) AddUser(ctx context.Context, user core.User) (userID int, err error) {
+	err = s.DB.WithContext(ctx).Create(&user).Error
 	if err != nil {
 		if strings.Contains(err.Error(), "users_username_key") { // here I need to somehow catch the error of unique constraint violation
 			return 0, ErrNotUniqueUsername
@@ -44,9 +40,9 @@ func (s *store) AddUser(ctx context.Context, user core.User) (int, error) {
 	return user.ID, err
 }
 
-func (s *store) GetUserByExternalID(ctx context.Context, extID int) (core.User, error) {
-	user := core.User{}
-	err := s.DB.WithContext(ctx).First(&user, "ext_id=?", extID).Error
+func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (data core.ExternalUser, err error) {
+	var user core.ExternalUser
+	err = s.DB.WithContext(ctx).First(&user, "external_id=?", externalID).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return user, ErrNoSuchUser
@@ -54,4 +50,30 @@ func (s *store) GetUserByExternalID(ctx context.Context, extID int) (core.User, 
 		return user, err
 	}
 	return user, nil
+}
+
+func (s *store) AddExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
+	tx := s.DB.WithContext(ctx).Begin()
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	err = tx.Create(&user).Error
+	if err != nil {
+		return 0, err
+	}
+
+	err = tx.Create(&core.ExternalUser{
+		ExternalID:   externalUserID,
+		UserID:       user.ID,
+		AuthProvider: authProvider,
+	}).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return user.ID, tx.Commit().Error
 }

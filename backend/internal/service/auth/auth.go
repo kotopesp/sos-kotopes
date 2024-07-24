@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	userStorePkg "gitflic.ru/spbu-se/sos-kotopes/internal/store/user"
 	"github.com/google/uuid"
@@ -12,8 +11,12 @@ import (
 )
 
 const (
-	vkPasswordPlug = "vk"
+	vkAuthProvider = "vk"
 )
+
+var authProvidersPasswordPlugs = map[string]string{
+	vkAuthProvider: "vk_password",
+}
 
 type service struct {
 	userStore         core.UserStore
@@ -30,80 +33,122 @@ func New(
 	}
 }
 
-// need to be accessed from middleware
+// GetJWTSecret need to be accessed from middleware
 func (s *service) GetJWTSecret() []byte {
 	return s.authServiceConfig.JWTSecret
 }
 
-func (s *service) Login(ctx context.Context, user core.User) (accessToken, refreshToken string, err error) {
+func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, refreshToken *string, err error) {
 	dbUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
-		return "", "", err
+		return nil, nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(dbUser.PasswordHash), []byte(user.PasswordHash))
 	if err != nil {
-		return "", "", err
+		return nil, nil, err
 	}
 
 	at, err := s.generateAccessToken(dbUser.ID, dbUser.Username)
 	if err != nil {
-		return "", "", err
+		return nil, nil, err
 	}
 
 	rt, err := s.generateRefreshToken(dbUser.ID)
 	if err != nil {
-		return "", "", err
+		return nil, nil, err
 	}
 
 	return at, rt, nil
 }
 
-func (s *service) Signup(ctx context.Context, user core.User) error {
+func (s *service) SignupBasic(ctx context.Context, user core.User) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), 12)
 	if err != nil {
 		return err
 	}
+
 	user.PasswordHash = string(hashedPassword)
+
 	if _, err := s.userStore.AddUser(ctx, user); err != nil {
 		if errors.Is(err, userStorePkg.ErrNotUniqueUsername) {
 			return ErrNotUniqueUsername
 		}
 		return err
 	}
+
 	return nil
 }
 
-func (s *service) LoginVK(ctx context.Context, externalUserID int) (accessToken, refreshToken string, err error) {
-	user, err := s.userStore.GetUserByExternalID(ctx, externalUserID)
-	user.ExternalID = &externalUserID
-	user.PasswordHash = vkPasswordPlug
+func (s *service) AuthorizeVK(ctx context.Context, token string) (accessToken, refreshToken *string, err error) {
+	vkUserID, err := s.getVKUserID(token)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	accessToken, refreshToken, err = s.loginVK(ctx, vkUserID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return accessToken, refreshToken, err
+}
+
+func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken, refreshToken *string, err error) {
+	externalUser, err := s.userStore.GetUserByExternalID(ctx, externalUserID)
+
+	var userID int
+
 	if err != nil {
 		if errors.Is(err, userStorePkg.ErrNoSuchUser) {
-			user.Username = uuid.New().String()
-			err = s.Signup(ctx, user)
+			userID, err = s.signupVK(ctx, core.User{
+				Username:     uuid.New().String(),
+				PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
+			}, externalUserID, vkAuthProvider)
 			if err != nil {
-				return "", "", err
+				return nil, nil, err
 			}
 		} else {
-			return "", "", err
+			return nil, nil, err
 		}
+	} else {
+		userID = externalUser.UserID
 	}
-	return s.Login(ctx, core.User{
+
+	user, err := s.userStore.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return s.LoginBasic(ctx, core.User{
 		Username:     user.Username,
-		PasswordHash: vkPasswordPlug,
+		PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
 	})
 }
 
-func (s *service) Refresh(ctx context.Context, id int) (accessToken string, err error) {
+func (s *service) signupVK(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), 12)
+	if err != nil {
+		return 0, err
+	}
+
+	user.PasswordHash = string(hashedPassword)
+	userID, err = s.userStore.AddExternalUser(ctx, user, externalUserID, authProvider)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
+}
+
+func (s *service) Refresh(ctx context.Context, id int) (accessToken *string, err error) {
 	user, err := s.userStore.GetUserByID(ctx, id)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	accessToken, err = s.generateAccessToken(id, user.Username)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	return accessToken, nil

@@ -50,7 +50,7 @@ func NewConfig() (*Config, error) {
 	jwtSecret := flag.String("jwt_secret", "secret", "key that used to sign jwt")
 	vkClientID := flag.String("vk_client_id", "", "vk id of our app")
 	vkClientSecret := flag.String("vk_client_secret", "", "key that used to access vk api")
-	vkCallback := flag.String("vk_callback", "https://1268-195-175-200-238.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
+	vkCallback := flag.String("vk_callback", "https://08ec-102-38-225-73.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
 
 	flag.Parse()
 

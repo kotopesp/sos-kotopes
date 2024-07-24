@@ -16,11 +16,15 @@ type (
 
 	AuthService interface {
 		GetJWTSecret() []byte
-		Login(ctx context.Context, user User) (accessToken string, refreshToken string, err error)
-		LoginVK(ctx context.Context, externalUserID int) (string, string, error)
-		Signup(ctx context.Context, user User) error
-		Refresh(ctx context.Context, id int) (accessToken string, err error)
+		LoginBasic(ctx context.Context, user User) (accessToken, refreshToken *string, err error)
+		SignupBasic(ctx context.Context, user User) error
+		Refresh(ctx context.Context, id int) (accessToken *string, err error)
 		ConfigVK() *oauth2.Config
-		GetVKUserID(token string) (int, error)
+		AuthorizeVK(ctx context.Context, token string) (accessToken, refreshToken *string, err error)
 	}
+)
+
+const (
+	VKGetUsersURL = "https://api.vk.com/method/users.get"
+	VKAPIVersion  = "5.199"
 )

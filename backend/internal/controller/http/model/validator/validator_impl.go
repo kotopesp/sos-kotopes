@@ -1,40 +1,45 @@
 package validator
 
 import (
+	"context"
+	"errors"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"regexp"
 
 	validatorPkg "github.com/go-playground/validator/v10"
 )
 
 var (
-	upperase = regexp.MustCompile(`[A-Z]`).MatchString
-	digit    = regexp.MustCompile(`\d`).MatchString
+	uppercase = regexp.MustCompile(`[A-Z]`).MatchString
+	digit     = regexp.MustCompile(`\d`).MatchString
 )
 
-// custom validation tags
+// custom validator tags
 func customValidationOptions(validator *validatorPkg.Validate) {
 	_ = validator.RegisterValidation("contains_digit", func(fl validatorPkg.FieldLevel) bool {
 		return digit(fl.Field().String())
 	})
 	_ = validator.RegisterValidation("contains_uppercase", func(fl validatorPkg.FieldLevel) bool {
-		return upperase(fl.Field().String())
+		return uppercase(fl.Field().String())
 	})
 }
 
-func newValidator(validator *validatorPkg.Validate) formValidatorAPI {
+func New(validator *validatorPkg.Validate) FormValidatorService {
+	logger.Log().Info(context.Background(), "validator created")
 	customValidationOptions(validator)
 	return &formValidator{
 		validator: validator,
 	}
 }
 
-func (v *formValidator) validate(data interface{}) []ResponseError {
-	validationErrors := []ResponseError{}
+func (v *formValidator) Validate(data interface{}) []ResponseError {
+	var validationErrors []ResponseError
 
 	errs := v.validator.Struct(data)
 
 	if errs != nil {
-		pkgValidationErrors, ok := errs.(validatorPkg.ValidationErrors)
+		var pkgValidationErrors validatorPkg.ValidationErrors
+		ok := errors.As(errs, &pkgValidationErrors)
 		if !ok {
 			return []ResponseError{}
 		}
@@ -50,8 +55,4 @@ func (v *formValidator) validate(data interface{}) []ResponseError {
 		}
 	}
 	return validationErrors
-}
-
-func Validate(data interface{}) []ResponseError {
-	return v.validate(data)
 }

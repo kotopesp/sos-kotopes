@@ -18,8 +18,8 @@ type (
 		validator *validatorPkg.Validate
 	}
 
-	formValidatorAPI interface {
-		validate(data interface{}) []ResponseError
+	FormValidatorService interface {
+		Validate(data interface{}) []ResponseError
 	}
 )
 
