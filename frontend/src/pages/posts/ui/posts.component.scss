@@ -1,8 +1,39 @@
 .container__page__posts {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
+  display: flex;
+  flex-direction: column;
   min-height: 180vh;
   height: fit-content;
+
+  .container__upper__menu {
+    height: 218px;
+    display: flex;
+    flex-direction: column;
+    gap: 51px;
+
+    .container__top-buttons {
+      margin-top: 13px;
+      display: flex;
+      gap: 40px;
+      
+      .posts__search__bar {
+        width: max-content;
+        display: flex;
+        align-items: center;
+        border-radius: 20px;
+        padding: 18px 26px;
+        background: var(--brown-light-color);
+
+        .search-input {
+          width: 350px;
+          font-style: italic;
+          color: var(--white-color);
+          margin-left: 24px;
+          outline: none;
+          border: none;
+          background: var(--brown-light-color);
+        }
+      }
+  }
 
   main__posts:after {
     background: url(../../../../public/assets/images/ads-bg-steps.png) repeat;
