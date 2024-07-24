@@ -7,10 +7,11 @@ import (
 )
 
 type Router struct {
-	app           *fiber.App
-	entityService core.EntityService
-	authService   interface{}
-	chatService   core.ChatService
+	app            *fiber.App
+	entityService  core.EntityService
+	authService    interface{}
+	chatService    core.ChatService
+	messageService core.MessageService
 }
 
 func NewRouter(
@@ -18,12 +19,14 @@ func NewRouter(
 	entityService core.EntityService,
 	authService interface{},
 	chatService core.ChatService,
+	messageService core.MessageService,
 ) {
 	router := &Router{
-		app:           app,
-		entityService: entityService,
-		authService:   authService,
-		chatService:   chatService,
+		app:            app,
+		entityService:  entityService,
+		authService:    authService,
+		chatService:    chatService,
+		messageService: messageService,
 	}
 
 	router.initRequestMiddlewares()
@@ -43,10 +46,16 @@ func (r *Router) initRoutes() {
 	v1.Get("/entities/:id", r.getEntityByID)
 
 	// chats
-	v1.Get("/chats", r.getChats)
-	v1.Get("/chats/:id", r.getChatByID)
+	v1.Get("/chats", r.getAllChats)
+	v1.Get("/chats/:chat_id", r.getChatByID)
 	v1.Post("/chats", r.createChat)
-	v1.Delete("/chats/:id", r.deleteChat)
+	v1.Delete("/chats/:chat_id", r.deleteChat)
+
+	// messages
+	v1.Get("/chats/:chat_id/messages", r.getAllMessages)
+	v1.Post("/chats/:chat_id/messages", r.createMessage)
+	v1.Patch("/chats/:chat_id/messages/:message_id", r.updateMessage)
+	v1.Delete("/chats/:chat_id/messages/:message_id", r.deleteMessage)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

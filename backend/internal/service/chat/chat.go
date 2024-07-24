@@ -18,8 +18,8 @@ func New(store core.ChatStore) core.ChatService {
 	}
 }
 
-func (s *service) GetAll(ctx context.Context, sortType string) (chats []core.Chat, total int, err error) {
-	chats, err = s.ChatStore.GetAll(ctx, sortType)
+func (s *service) GetAllChats(ctx context.Context, sortType string) (chats []core.Chat, total int, err error) {
+	chats, err = s.ChatStore.GetAllChats(ctx, sortType)
 	if err != nil {
 		return
 	}
@@ -27,17 +27,17 @@ func (s *service) GetAll(ctx context.Context, sortType string) (chats []core.Cha
 	return
 }
 
-func (s *service) GetByID(ctx context.Context, id int) (chat core.Chat, err error) {
-	chat, err = s.ChatStore.GetByID(ctx, id)
+func (s *service) GetChatByID(ctx context.Context, id int) (chat core.Chat, err error) {
+	chat, err = s.ChatStore.GetChatByID(ctx, id)
 	return
 }
 
-func (s *service) Create(ctx context.Context, data core.Chat) (chat core.Chat, err error) {
-	chat, err = s.ChatStore.Create(ctx, data)
+func (s *service) CreateChat(ctx context.Context, data core.Chat) (chat core.Chat, err error) {
+	chat, err = s.ChatStore.CreateChat(ctx, data)
 	return
 }
 
-func (s *service) Delete(ctx context.Context, id int) (err error) {
-	err = s.ChatStore.Delete(ctx, id)
+func (s *service) DeleteChat(ctx context.Context, id int) (err error) {
+	err = s.ChatStore.DeleteChat(ctx, id)
 	return
 }

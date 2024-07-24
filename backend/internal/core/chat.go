@@ -7,22 +7,59 @@ import (
 
 type (
 	Chat struct {
-		ID        int       `gorm:"column:id" json:"id"`
-		Type      string    `gorm:"column:type" json:"type"`
-		CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
+		ID        int       `gorm:"column:id"`
+		ChatType  string    `gorm:"column:chat_type"`
+		IsDeleted bool      `gorm:"column:is_deleted"`
+		DeletedAt time.Time `gorm:"column:deleted_at"`
+		CreatedAt time.Time `gorm:"column:created_at"`
+		UpdatedAt time.Time `gorm:"column:updated_at"`
+	}
+
+	Message struct {
+		ID        int       `gorm:"column:id"`
+		UserID    int       `gorm:"column:user_id"`
+		ChatID    int       `gorm:"column:chat_id"`
+		Content   string    `gorm:"column:content"`
+		IsDeleted bool      `gorm:"column:is_deleted"`
+		DeletedAt time.Time `gorm:"column:deleted_at"`
+		CreatedAt time.Time `gorm:"column:created_at"`
+		UpdatedAt time.Time `gorm:"column:updated_at"`
+	}
+
+	ChatMember struct {
+		ID        int       `gorm:"column:id"`
+		UserID    int       `gorm:"column:user_id"`
+		ChatID    int       `gorm:"column:chat_id"`
+		IsDeleted bool      `gorm:"column:is_deleted"`
+		DeletedAt time.Time `gorm:"column:deleted_at"`
+		CreatedAt time.Time `gorm:"column:created_at"`
 	}
 
 	ChatStore interface {
-		GetAll(ctx context.Context, sortType string) (chats []Chat, err error)
-		GetByID(ctx context.Context, id int) (chat Chat, err error)
-		Create(ctx context.Context, data Chat) (chat Chat, err error)
-		Delete(ctx context.Context, id int) error
+		GetAllChats(ctx context.Context, sortType string) (chats []Chat, err error)
+		GetChatByID(ctx context.Context, id int) (chat Chat, err error)
+		CreateChat(ctx context.Context, data Chat) (chat Chat, err error)
+		DeleteChat(ctx context.Context, id int) (err error)
 	}
 
 	ChatService interface {
-		GetAll(ctx context.Context, sortType string) (chats []Chat, total int, err error)
-		GetByID(ctx context.Context, id int) (chat Chat, err error)
-		Create(ctx context.Context, data Chat) (chat Chat, err error)
-		Delete(ctx context.Context, id int) error
+		GetAllChats(ctx context.Context, sortType string) (chats []Chat, total int, err error)
+		GetChatByID(ctx context.Context, id int) (chat Chat, err error)
+		CreateChat(ctx context.Context, data Chat) (chat Chat, err error)
+		DeleteChat(ctx context.Context, id int) (err error)
+	}
+
+	MessageStore interface {
+		GetAllMessages(ctx context.Context, chatId int, sortType string, searchText string) (messages []Message, err error)
+		CreateMessage(ctx context.Context, data Message) (message Message, err error)
+		UpdateMessage(ctx context.Context, chatId int, messageId int, data string) (message Message, err error)
+		DeleteMessage(ctx context.Context, chatId int, messageId int) (err error)
+	}
+
+	MessageService interface {
+		GetAllMessages(ctx context.Context, chatId int, sortType string, searchText string) (messages []Message, total int, err error)
+		CreateMessage(ctx context.Context, data Message) (message Message, err error)
+		UpdateMessage(ctx context.Context, chatId int, messageId int, data string) (message Message, err error)
+		DeleteMessage(ctx context.Context, chatId int, messageId int) (err error)
 	}
 )
