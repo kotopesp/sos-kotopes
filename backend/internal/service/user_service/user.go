@@ -10,6 +10,12 @@ type Service struct {
 	userStore core.UserStore
 }
 
+func NewUserService(store core.UserStore) core.UserService {
+	return &Service{
+		userStore: store,
+	}
+}
+
 func (s *Service) UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error) {
 	return s.userStore.UpdateUser(ctx, id, update)
 }
@@ -18,10 +24,4 @@ func (s *Service) GetUser(ctx context.Context, id int) (user core.User, err erro
 }
 func (s *Service) GetUserPosts(ctx context.Context, id int) (posts []core.Post, err error) {
 	return s.userStore.GetUserPosts(ctx, id)
-}
-
-func NewUserService(store core.UserStore) core.UserService {
-	return &Service{
-		userStore: store,
-	}
 }

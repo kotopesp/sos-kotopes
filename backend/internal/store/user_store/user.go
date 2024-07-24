@@ -12,7 +12,7 @@ type Store struct {
 	*postgres.Postgres
 }
 
-func NewUserStore(pg *postgres.Postgres) core.UserStore {
+func NewRoleStore(pg *postgres.Postgres) core.UserStore {
 	return &Store{pg}
 }
 
@@ -52,7 +52,6 @@ func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) 
 }
 
 func (r *Store) GetUser(ctx context.Context, id int) (user core.User, err error) {
-
 	err = r.DB.Table("users").Where("id = ?", id).First(&user).Error
 	if err != nil {
 		return user, err

@@ -6,8 +6,10 @@ import (
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/auth"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/role_service"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/user_service"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/role_store"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user_store"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -37,9 +39,11 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
+	userStore := user_store.NewRoleStore(pg)
+	roleStore := role_store.NewUserStore(pg)
 	// Services
+	roleService := role_service.NewRoleService(roleStore)
 	entityService := name.New(entityStore)
-	userStore := user_store.NewUserStore(pg)
 	userService := user_service.NewUserService(userStore)
 	authService := auth.New(
 		userStore,
