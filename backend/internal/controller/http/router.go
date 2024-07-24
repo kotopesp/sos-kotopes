@@ -8,6 +8,7 @@ import (
 )
 
 type Router struct {
+<<<<<<< HEAD
 	app                  *fiber.App
 	formValidator        validator.FormValidatorService
 	authService          core.AuthService
@@ -16,10 +17,18 @@ type Router struct {
 	userService          core.UserService
 	roleService          core.RoleService
 	userFavouriteService core.UserFavouriteService
+=======
+	app            *fiber.App
+	entityService  core.EntityService
+	authService    interface{}
+	chatService    core.ChatService
+	messageService core.MessageService
+>>>>>>> bccf526f (Refactor chats + add message endpoints)
 }
 
 func NewRouter(
 	app *fiber.App,
+<<<<<<< HEAD
 	authService core.AuthService,
 	commentService core.CommentService,
 	postService core.PostService,
@@ -35,6 +44,19 @@ func NewRouter(
 		userService:    userService,
 		roleService:    roleService,
 		commentService: commentService,
+=======
+	entityService core.EntityService,
+	authService interface{},
+	chatService core.ChatService,
+	messageService core.MessageService,
+) {
+	router := &Router{
+		app:            app,
+		entityService:  entityService,
+		authService:    authService,
+		chatService:    chatService,
+		messageService: messageService,
+>>>>>>> bccf526f (Refactor chats + add message endpoints)
 	}
 
 	router.initRequestMiddlewares()
@@ -59,6 +81,7 @@ func (r *Router) initRoutes() {
 	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
 	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
 
+<<<<<<< HEAD
 	// users
 	v1.Get("/users/:id", r.getUser)
 	v1.Patch("/users", r.protectedMiddleware(), r.updateUser)
@@ -93,6 +116,19 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
+=======
+	// chats
+	v1.Get("/chats", r.getAllChats)
+	v1.Get("/chats/:chat_id", r.getChatByID)
+	v1.Post("/chats", r.createChat)
+	v1.Delete("/chats/:chat_id", r.deleteChat)
+
+	// messages
+	v1.Get("/chats/:chat_id/messages", r.getAllMessages)
+	v1.Post("/chats/:chat_id/messages", r.createMessage)
+	v1.Patch("/chats/:chat_id/messages/:message_id", r.updateMessage)
+	v1.Delete("/chats/:chat_id/messages/:message_id", r.deleteMessage)
+>>>>>>> bccf526f (Refactor chats + add message endpoints)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
