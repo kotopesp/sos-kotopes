@@ -4,7 +4,8 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"fmt"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/golang-jwt/jwt/v5"
 	"io"
 	"mime/multipart"
 
@@ -14,7 +15,6 @@ import (
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func authErrorHandler(ctx *fiber.Ctx, err error) error {
@@ -44,17 +44,9 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	if err := ctx.BodyParser(&apiUser); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	errs := r.formValidator.Validate(apiUser)
-	if len(errs) > 0 {
-		logger.Log().Error(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		}))
+	err := parseAndValidate(ctx, r.formValidator, apiUser)
+	if err != nil {
+		return err
 	}
 
 	coreUser := apiUser.ToCoreUser()
@@ -89,9 +81,9 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 
 func (r *Router) signup(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	if err := ctx.BodyParser(&apiUser); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	err := parseAndValidate(ctx, r.formValidator, apiUser)
+	if err != nil {
+		return err
 	}
 
 	photo, err := ctx.FormFile("photo")
@@ -106,14 +98,6 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 		apiUser.Photo = photoBytes
 	}
 
-	errs := r.formValidator.Validate(apiUser)
-	if len(errs) > 0 {
-		logger.Log().Error(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		}))
-	}
-
 	coreUser := apiUser.ToCoreUser()
 
 	err = r.authService.SignupBasic(ctx.UserContext(), coreUser)
@@ -124,13 +108,27 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 	logger.Log().Error(ctx.UserContext(), err.Error())
 
 	if errors.Is(err, auth.ErrNotUniqueUsername) {
-		errs = append(errs, model.ErrNotUniqueUsername(coreUser.Username))
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
+			"validation_errors": []validator.ResponseError{model.ErrNotUniqueUsername(coreUser.Username)},
 		}))
 	}
 
 	return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+}
+
+// getting items from token payload
+func getPayloadItem(ctx *fiber.Ctx, key string) any {
+	token, ok := ctx.Locals("user").(*jwt.Token)
+	if !ok {
+		return nil
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil
+	}
+
+	return claims[key]
 }
 
 func (r *Router) refresh(ctx *fiber.Ctx) error {
@@ -152,21 +150,6 @@ func (r *Router) refresh(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
 		"access_token": accessToken,
 	}))
-}
-
-// getting items from token payload
-func getPayloadItem(ctx *fiber.Ctx, key string) any {
-	token, ok := ctx.Locals("user").(*jwt.Token)
-	if !ok {
-		return nil
-	}
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil
-	}
-
-	return claims[key]
 }
 
 func generateState(length int) (*string, error) {
