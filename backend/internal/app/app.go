@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/auth"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/user_service"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
@@ -39,6 +41,15 @@ func Run(cfg *config.Config) {
 	entityService := name.New(entityStore)
 	userStore := user_store.NewUserStore(pg)
 	userService := user_service.NewUserService(userStore)
+	authService := auth.New(
+		userStore,
+		core.AuthServiceConfig{
+			JWTSecret: cfg.JWTSecret,
+			//VKClientID:     cfg.VKClientID,
+			//VKClientSecret: cfg.VKClientSecret,
+			//VKCallback:     cfg.VKCallback,
+		},
+	)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -49,7 +60,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil, userService)
+	v1.NewRouter(app, entityService, authService, userService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)

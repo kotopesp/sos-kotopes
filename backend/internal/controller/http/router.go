@@ -9,14 +9,14 @@ import (
 type Router struct {
 	app           *fiber.App
 	entityService core.EntityService
-	authService   interface{}
+	authService   core.AuthService
 	userService   core.UserService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
-	authService interface{},
+	authService core.AuthService,
 	userService core.UserService,
 ) {
 	router := &Router{
@@ -43,14 +43,14 @@ func (r *Router) initRoutes() {
 	v1.Get("/entities/:id", r.getEntityByID)
 
 	// users
-	v1.Patch("/users/:id", r.UpdateUser)
+	v1.Patch("/users", r.protectedMiddleware(), r.UpdateUser)
 	v1.Get("/users/:id", r.GetUser)
 	v1.Get("/users/:id/posts", r.GetUserPosts)
 
 	// user_service roles todo
-	v1.Get("/users/:id/roles", r.GetUserRoles)
-	v1.Post("/users/:id/roles", r.GiveRoleToUser)
-	v1.Delete("/users/:id/roles", r.DeleteUserRole)
+	//v1.Get("/users/:id/roles", r.GetUserRoles)
+	//v1.Post("/users/:id/roles", r.GiveRoleToUser)
+	//v1.Delete("/users/:id/roles", r.DeleteUserRole)
 	//v1.Patch("/users/:id/roles", r.UpdateUserRoles)
 	// reviews todo
 	// v1.Get("/users/:id/reviews", r.GetUserReviews)

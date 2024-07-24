@@ -16,9 +16,9 @@ type (
 		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
 		GetUser(ctx context.Context, id int) (user User, err error)
 		GetUserPosts(ctx context.Context, id int) (posts []Post, err error)
-		GetUserRoles(ctx context.Context, id int) (roles []string, err error)
-		GiveRoleToUser(ctx context.Context, id int, role string) (err error)
-		DeleteUserRole(ctx context.Context, id int, role string) (err error)
+		//GetUserRoles(ctx context.Context, id int) (roles []string, err error)
+		//GiveRoleToUser(ctx context.Context, id int, role string) (err error)
+		//DeleteUserRole(ctx context.Context, id int, role string) (err error)
 		//UpdateUserRole(ctx context.Context, id int, role string) (err error)
 
 	}
@@ -26,8 +26,9 @@ type (
 		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
 		GetUser(ctx context.Context, id int) (user User, err error)
 		GetUserPosts(ctx context.Context, id int) (posts []Post, err error)
-		GetUserRoles(ctx context.Context, id int) (roles []string, err error)
-		GiveRoleToUser(ctx context.Context, id int, role string) (err error)
-		DeleteUserRole(ctx context.Context, id int, role string) (err error)
+		//GetUserRoles(ctx context.Context, id int) (roles []string, err error)
+		//GiveRoleToUser(ctx context.Context, id int, role string) (err error)
+		//DeleteUserRole(ctx context.Context, id int, role string) (err error)
+		//UpdateUserRole(ctx context.Context, id int, role string) (err error)
 	}
 )

@@ -54,7 +54,7 @@ func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) 
 func (r *Store) GetUser(ctx context.Context, id int) (user core.User, err error) {
 
 	err = r.DB.Table("users").Where("id = ?", id).First(&user).Error
-	if err.Error != nil {
+	if err != nil {
 		return user, err
 	}
 	return user, nil
@@ -66,7 +66,7 @@ func (r *Store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, er
 		Order("created_at DESC").
 		Find(&posts).Error
 
-	if err.Error != nil {
+	if err != nil {
 		return nil, err
 	}
 
