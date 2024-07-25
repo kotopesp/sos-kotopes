@@ -7,11 +7,25 @@ CREATE TABLE IF NOT EXISTS
     firstname     VARCHAR,
     lastname      VARCHAR,
     description   VARCHAR,
-    photo         VARCHAR,
+    photo         BYTEA,
     password_hash VARCHAR        NOT NULL,
-    is_deleted    BOOLEAN        NOT NULL,
-    created_at    TIMESTAMP      NOT NULL DEFAULT NOW()
+    is_deleted    BOOLEAN        NOT NULL DEFAULT false,
+    deleted_at    TIMESTAMP,
+    created_at    TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMP      NOT NULL DEFAULT NOW()
 );
+
+CREATE TYPE auth_providers AS ENUM ('vk');
+
+CREATE TABLE IF NOT EXISTS
+    external_users
+(
+    id      SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id),
+    external_id INTEGER,
+    auth_provider auth_providers
+);
+
 -- Roles
 CREATE TABLE IF NOT EXISTS
     seekers
@@ -19,116 +33,143 @@ CREATE TABLE IF NOT EXISTS
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER REFERENCES users (id),
     description VARCHAR,
-    location    VARCHAR,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     keepers
 (
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
-    location    VARCHAR,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     vets
 (
     id          SERIAL PRIMARY KEY,
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
-    location    VARCHAR,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
-CREATE TABLE IF NOT EXISTS
-    roles_users
-(
-    id         SERIAL PRIMARY KEY,
-    role       VARCHAR   NOT NULL,
-    user_id    INTEGER   NOT NULL REFERENCES users (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
+
+CREATE VIEW user_roles_view AS
+SELECT user_id, 'seeker' AS role_type
+FROM seekers
+UNION ALL
+SELECT user_id, 'keeper' AS role_type
+FROM keepers
+UNION ALL
+SELECT user_id, 'vet' AS role_type
+FROM vets;
+
 -- Reviews
 CREATE TABLE IF NOT EXISTS
     vet_reviews
 (
     id         SERIAL PRIMARY KEY,
     author_id  INTEGER   NOT NULL REFERENCES users (id),
+    vet_id     INTEGER   NOT NULL REFERENCES vets (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
-    vet_id     INTEGER   NOT NULL REFERENCES vets (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    is_deleted BOOLEAN            DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     keeper_reviews
 (
     id         SERIAL PRIMARY KEY,
     author_id  INTEGER   NOT NULL REFERENCES users (id),
+    keeper_id  INTEGER   NOT NULL REFERENCES keepers (id),
     content    VARCHAR,
     grade      INTEGER   NOT NULL,
-    keeper_id  INTEGER   NOT NULL REFERENCES keepers (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    is_deleted BOOLEAN            DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 -- Animals
 CREATE TYPE animal_types AS ENUM ('cat', 'dog');
-CREATE TYPE animal_statuses AS ENUM ('found', 'lost');
+
+CREATE TYPE animal_statuses AS ENUM ('found', 'lost', 'need_home');
+
 CREATE TYPE animal_genders AS ENUM ('male', 'female');
+
 CREATE TABLE IF NOT EXISTS
     animals
 (
     id          SERIAL PRIMARY KEY,
+    keeper_id   INTEGER REFERENCES keepers (id),
     animal_type animal_types,
     age         INTEGER,
     color       VARCHAR,
     gender      animal_genders,
     description VARCHAR,
     status      animal_statuses,
-    keeper_id   INTEGER REFERENCES keepers (id),
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMP NOT NULL
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 -- Messages
+CREATE TYPE chat_types AS ENUM ('keeper', 'seeker', 'vet');
+
 CREATE TABLE IF NOT EXISTS
-    conversations
+    chats
 (
-    id                SERIAL PRIMARY KEY,
-    conversation_type VARCHAR,
-    is_deleted        BOOLEAN   NOT NULL,
-    created_at        TIMESTAMP NOT NULL DEFAULT NOW()
+    id         SERIAL PRIMARY KEY,
+    chat_type  chat_types,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     messages
 (
-    id              SERIAL PRIMARY KEY,
-    user_id         INTEGER   NOT NULL REFERENCES users (id),
-    created_at      TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMP NOT NULL,
-    is_deleted      BOOLEAN   NOT NULL,
-    conversation_id INTEGER   NOT NULL REFERENCES conversations (id)
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    chat_id    INTEGER   NOT NULL REFERENCES chats (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
-    conversation_participants
+    chat_members
 (
     id         SERIAL PRIMARY KEY,
     user_id    INTEGER   NOT NULL REFERENCES users (id),
-    conversation_id   INTEGER REFERENCES conversations (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL,
-    is_deleted BOOLEAN   NOT NULL
+    chat_id    INTEGER REFERENCES chats (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 -- Posts
 CREATE TABLE IF NOT EXISTS
     posts
 (
     id         SERIAL PRIMARY KEY,
+    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    animal_id  INTEGER   NOT NULL REFERENCES animals (id),
     title      VARCHAR   NOT NULL,
     content    VARCHAR,
-    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL,
-    is_deleted BOOLEAN   NOT NULL,
-    animal_id  INTEGER   NOT NULL REFERENCES animals (id)
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     post_response
 (
@@ -136,17 +177,12 @@ CREATE TABLE IF NOT EXISTS
     post_id    INTEGER   NOT NULL REFERENCES posts (id),
     author_id  INTEGER   NOT NULL REFERENCES users (id),
     content    VARCHAR   NOT NULL,
-    is_deleted BOOLEAN   NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
-CREATE TABLE IF NOT EXISTS
-    post_likes
-(
-    id         SERIAL PRIMARY KEY,
-    post_id    INTEGER   NOT NULL REFERENCES posts (id),
-    user_id    INTEGER   NOT NULL REFERENCES users (id),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
+
 -- Comments
 CREATE TABLE IF NOT EXISTS
     comments
@@ -154,11 +190,13 @@ CREATE TABLE IF NOT EXISTS
     id         SERIAL PRIMARY KEY,
     content    VARCHAR   NOT NULL,
     author_id  INTEGER   NOT NULL REFERENCES users (id),
+    posts_id   INTEGER   NOT NULL REFERENCES posts (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL,
-    is_deleted BOOLEAN   NOT NULL,
-    posts_id   INTEGER   NOT NULL REFERENCES posts (id)
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     comment_likes
 (
@@ -167,6 +205,7 @@ CREATE TABLE IF NOT EXISTS
     user_id    INTEGER   NOT NULL REFERENCES users (id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 -- Favourites
 CREATE TABLE IF NOT EXISTS
     favourite_persons
@@ -176,6 +215,7 @@ CREATE TABLE IF NOT EXISTS
     user_id    INTEGER   NOT NULL REFERENCES users (id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     favourite_posts
 (
@@ -184,6 +224,7 @@ CREATE TABLE IF NOT EXISTS
     user_id    INTEGER   NOT NULL REFERENCES users (id),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
 CREATE TABLE IF NOT EXISTS
     favourite_comments
 (
