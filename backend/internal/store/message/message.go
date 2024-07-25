@@ -19,29 +19,29 @@ func New(pg *postgres.Postgres) core.MessageStore {
 	return &store{pg}
 }
 
-func ifChatExists(s *store, ctx context.Context, chatId int) error {
+func ifChatExists(s *store, ctx context.Context, chatID int) error {
 	var counter int64
-	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", chatId).Where("is_deleted", false).Count(&counter).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", chatID).Where("is_deleted", false).Count(&counter).Error; err != nil {
 		return err
 	}
 	if counter != 1 {
-		return errors.ErrInvalidChatId
+		return errors.ErrInvalidChatID
 	}
 	return nil
 }
 
-func ifMessageExists(s *store, ctx context.Context, messageId int) error {
+func ifMessageExists(s *store, ctx context.Context, messageID int) error {
 	var counter int64
-	if err := s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageId).Where("is_deleted", false).Count(&counter).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageID).Where("is_deleted", false).Count(&counter).Error; err != nil {
 		return err
 	}
 	if counter != 1 {
-		return errors.ErrInvalidMessageId
+		return errors.ErrInvalidMessageID
 	}
 	return nil
 }
 
-func (s *store) GetAllMessages(ctx context.Context, id int, sortType string, searchText string) ([]core.Message, error) {
+func (s *store) GetAllMessages(ctx context.Context, id int, sortType, searchText string) ([]core.Message, error) {
 	if err := ifChatExists(s, ctx, id); err != nil {
 		return nil, err
 	}
@@ -63,29 +63,29 @@ func (s *store) CreateMessage(ctx context.Context, data core.Message) (core.Mess
 	return data, nil
 }
 
-func (s *store) UpdateMessage(ctx context.Context, chatId int, messageId int, content string) (core.Message, error) {
-	if err := ifChatExists(s, ctx, chatId); err != nil {
+func (s *store) UpdateMessage(ctx context.Context, chatID, messageID int, content string) (core.Message, error) {
+	if err := ifChatExists(s, ctx, chatID); err != nil {
 		return core.Message{}, err
 	}
-	if err := ifMessageExists(s, ctx, messageId); err != nil {
+	if err := ifMessageExists(s, ctx, messageID); err != nil {
 		return core.Message{}, err
 	}
-	if err := s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageId).Where("chat_id", chatId).Where("is_deleted", false).Updates(map[string]interface{}{"content": content, "updated_at": time.Now()}).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageID).Where("chat_id", chatID).Where("is_deleted", false).Updates(map[string]interface{}{"content": content, "updated_at": time.Now()}).Error; err != nil {
 		return core.Message{}, err
 	}
 	var message core.Message
-	s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageId).First(&message)
+	s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageID).First(&message)
 	return message, nil
 }
 
-func (s *store) DeleteMessage(ctx context.Context, chatId int, messageId int) error {
-	if err := ifChatExists(s, ctx, chatId); err != nil {
+func (s *store) DeleteMessage(ctx context.Context, chatID, messageID int) error {
+	if err := ifChatExists(s, ctx, chatID); err != nil {
 		return err
 	}
-	if err := ifMessageExists(s, ctx, messageId); err != nil {
+	if err := ifMessageExists(s, ctx, messageID); err != nil {
 		return err
 	}
-	if err := s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageId).Where("chat_id", chatId).Where("is_deleted", false).Updates(map[string]interface{}{"is_deleted": true, "deleted_at": time.Now()}).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.Message{}).Where("id", messageID).Where("chat_id", chatID).Where("is_deleted", false).Updates(map[string]interface{}{"is_deleted": true, "deleted_at": time.Now()}).Error; err != nil {
 		return err
 	}
 	return nil

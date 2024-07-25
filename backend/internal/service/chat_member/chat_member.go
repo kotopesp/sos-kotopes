@@ -18,8 +18,8 @@ func New(store core.ChatMemberStore) core.ChatMemberService {
 	}
 }
 
-func (s *service) GetAllMembers(ctx context.Context, chatId int) (members []core.ChatMember, total int, err error) {
-	members, err = s.ChatMemberStore.GetAllMembers(ctx, chatId)
+func (s *service) GetAllMembers(ctx context.Context, chatID int) (members []core.ChatMember, total int, err error) {
+	members, err = s.ChatMemberStore.GetAllMembers(ctx, chatID)
 	if err != nil {
 		return
 	}
@@ -31,10 +31,10 @@ func (s *service) AddMemberToChat(ctx context.Context, data core.ChatMember) (me
 	return s.ChatMemberStore.AddMemberToChat(ctx, data)
 }
 
-func (s *service) UpdateMemberInfo(ctx context.Context, chatId int, userId int) (member core.ChatMember, err error) {
-	return s.ChatMemberStore.UpdateMemberInfo(ctx, chatId, userId)
+func (s *service) UpdateMemberInfo(ctx context.Context, chatID, userID int) (member core.ChatMember, err error) {
+	return s.ChatMemberStore.UpdateMemberInfo(ctx, chatID, userID)
 }
 
-func (s *service) DeleteMemberFromChat(ctx context.Context, chatId int, userId int) (err error) {
-	return s.ChatMemberStore.DeleteMemberFromChat(ctx, chatId, userId)
+func (s *service) DeleteMemberFromChat(ctx context.Context, chatID, userID int) (err error) {
+	return s.ChatMemberStore.DeleteMemberFromChat(ctx, chatID, userID)
 }

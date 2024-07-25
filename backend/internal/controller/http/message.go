@@ -22,18 +22,18 @@ func (r *Router) getAllMessages(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	responce := struct {
+	response := struct {
 		Total    int            `json:"total"`
 		Messages []core.Message `json:"message"`
 	}{
 		Total:    total,
 		Messages: messages,
 	}
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(responce))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
 func (r *Router) createMessage(ctx *fiber.Ctx) error {
-	chatId, err := ctx.ParamsInt("chat_id")
+	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
@@ -41,7 +41,7 @@ func (r *Router) createMessage(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(&message); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
 	}
-	message.ChatID = chatId
+	message.ChatID = chatID
 	createdMessage, err := r.messageService.CreateMessage(ctx.UserContext(), message)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
@@ -51,11 +51,11 @@ func (r *Router) createMessage(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) updateMessage(ctx *fiber.Ctx) error {
-	chatId, err := ctx.ParamsInt("chat_id")
+	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	messageId, err := ctx.ParamsInt("message_id")
+	messageID, err := ctx.ParamsInt("message_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid message ID"))
 	}
@@ -66,7 +66,7 @@ func (r *Router) updateMessage(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(&request); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
 	}
-	updatedMessage, err := r.messageService.UpdateMessage(ctx.UserContext(), chatId, messageId, request.Content)
+	updatedMessage, err := r.messageService.UpdateMessage(ctx.UserContext(), chatID, messageID, request.Content)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -75,15 +75,15 @@ func (r *Router) updateMessage(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) deleteMessage(ctx *fiber.Ctx) error {
-	chatId, err := ctx.ParamsInt("chat_id")
+	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	messageId, err := ctx.ParamsInt("message_id")
+	messageID, err := ctx.ParamsInt("message_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid message ID"))
 	}
-	if err := r.messageService.DeleteMessage(ctx.UserContext(), chatId, messageId); err != nil {
+	if err := r.messageService.DeleteMessage(ctx.UserContext(), chatID, messageID); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
