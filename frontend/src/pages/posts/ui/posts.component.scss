@@ -66,12 +66,14 @@
     }
   }
 
-  main__posts:after {
+  container__page__posts:after {
     background: url(../../../../public/assets/images/ads-bg-steps.png) repeat;
     opacity: 0.12;
   }
 
   .container__posts {
+    margin-left: 35px;
+
     .posts {
       height: fit-content;
       display: grid;
