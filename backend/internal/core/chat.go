@@ -62,4 +62,18 @@ type (
 		UpdateMessage(ctx context.Context, chatId int, messageId int, data string) (message Message, err error)
 		DeleteMessage(ctx context.Context, chatId int, messageId int) (err error)
 	}
+
+	ChatMemberStore interface {
+		GetAllMembers(ctx context.Context, chatId int) (members []ChatMember, err error)
+		AddMemberToChat(ctx context.Context, data ChatMember) (member ChatMember, err error)
+		UpdateMemberInfo(ctx context.Context, chatId int, userId int) (member ChatMember, err error)
+		DeleteMemberFromChat(ctx context.Context, chatId int, userId int) (err error)
+	}
+
+	ChatMemberService interface {
+		GetAllMembers(ctx context.Context, chatId int) (members []ChatMember, total int, err error)
+		AddMemberToChat(ctx context.Context, data ChatMember) (member ChatMember, err error)
+		UpdateMemberInfo(ctx context.Context, chatId int, userId int) (member ChatMember, err error)
+		DeleteMemberFromChat(ctx context.Context, chatId int, userId int) (err error)
+	}
 )

@@ -8,7 +8,6 @@ import (
 )
 
 type Router struct {
-<<<<<<< HEAD
 	app                  *fiber.App
 	formValidator        validator.FormValidatorService
 	authService          core.AuthService
@@ -17,46 +16,34 @@ type Router struct {
 	userService          core.UserService
 	roleService          core.RoleService
 	userFavouriteService core.UserFavouriteService
-=======
-	app            *fiber.App
-	entityService  core.EntityService
-	authService    interface{}
-	chatService    core.ChatService
-	messageService core.MessageService
->>>>>>> bccf526f (Refactor chats + add message endpoints)
+	chatService          core.ChatService
+	messageService       core.MessageService
+	chatMemberService    core.ChatMemberService
 }
 
 func NewRouter(
 	app *fiber.App,
-<<<<<<< HEAD
 	authService core.AuthService,
 	commentService core.CommentService,
 	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
+	chatService core.ChatService,
+	messageService core.MessageService,
+	chatMemberService core.ChatMemberService,
 	formValidator validator.FormValidatorService,
 ) {
 	router := &Router{
-		app:            app,
-		formValidator:  formValidator,
-		authService:    authService,
-		postService:    postService,
-		userService:    userService,
-		roleService:    roleService,
-		commentService: commentService,
-=======
-	entityService core.EntityService,
-	authService interface{},
-	chatService core.ChatService,
-	messageService core.MessageService,
-) {
-	router := &Router{
-		app:            app,
-		entityService:  entityService,
-		authService:    authService,
-		chatService:    chatService,
-		messageService: messageService,
->>>>>>> bccf526f (Refactor chats + add message endpoints)
+		app:               app,
+		formValidator:     formValidator,
+		authService:       authService,
+		postService:       postService,
+		userService:       userService,
+		roleService:       roleService,
+		commentService:    commentService,
+		chatService:       chatService,
+		messageService:    messageService,
+		chatMemberService: chatMemberService,
 	}
 
 	router.initRequestMiddlewares()
@@ -81,7 +68,6 @@ func (r *Router) initRoutes() {
 	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
 	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
 
-<<<<<<< HEAD
 	// users
 	v1.Get("/users/:id", r.getUser)
 	v1.Patch("/users", r.protectedMiddleware(), r.updateUser)
@@ -116,7 +102,7 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
-=======
+
 	// chats
 	v1.Get("/chats", r.getAllChats)
 	v1.Get("/chats/:chat_id", r.getChatByID)
@@ -128,7 +114,12 @@ func (r *Router) initRoutes() {
 	v1.Post("/chats/:chat_id/messages", r.createMessage)
 	v1.Patch("/chats/:chat_id/messages/:message_id", r.updateMessage)
 	v1.Delete("/chats/:chat_id/messages/:message_id", r.deleteMessage)
->>>>>>> bccf526f (Refactor chats + add message endpoints)
+
+	// chat members
+	v1.Get("/chats/:chat_id/members", r.getAllMembers)
+	v1.Post("/chats/:chat_id/members", r.addMemberToChat)
+	v1.Patch("/chats/:chat_id/members/:user_id", r.updateMemberInfo)
+	v1.Delete("/chats/:chat_id/members/:user_id", r.deleteMemberFromChat)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
