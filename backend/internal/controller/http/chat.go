@@ -30,7 +30,7 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	responce := struct {
+	response := struct {
 		Total int         `json:"total"`
 		Chats []core.Chat `json:"chat"`
 	}{
@@ -38,7 +38,7 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 		Chats: chats,
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(responce))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
 func (r *Router) getChatByID(ctx *fiber.Ctx) error {

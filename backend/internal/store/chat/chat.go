@@ -19,13 +19,13 @@ func New(pg *postgres.Postgres) core.ChatStore {
 	return &store{pg}
 }
 
-func ifChatExists(s *store, ctx context.Context, chatId int) error {
+func ifChatExists(s *store, ctx context.Context, chatID int) error {
 	var counter int64
-	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", chatId).Where("is_deleted", false).Count(&counter).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", chatID).Where("is_deleted", false).Count(&counter).Error; err != nil {
 		return err
 	}
 	if counter != 1 {
-		return errors.ErrInvalidChatId
+		return errors.ErrInvalidChatID
 	}
 	return nil
 }
@@ -43,7 +43,7 @@ func (s *store) GetAllChats(ctx context.Context, sortType string) ([]core.Chat, 
 }
 
 func (s *store) GetChatByID(ctx context.Context, id int) (core.Chat, error) {
-	var chat core.Chat = core.Chat{ID: id, IsDeleted: false}
+	var chat = core.Chat{ID: id, IsDeleted: false}
 
 	if err := s.DB.WithContext(ctx).First(&chat).Error; err != nil {
 		return core.Chat{}, err

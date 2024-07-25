@@ -50,30 +50,30 @@ type (
 	}
 
 	MessageStore interface {
-		GetAllMessages(ctx context.Context, chatId int, sortType string, searchText string) (messages []Message, err error)
+		GetAllMessages(ctx context.Context, chatID int, sortType string, searchText string) (messages []Message, err error)
 		CreateMessage(ctx context.Context, data Message) (message Message, err error)
-		UpdateMessage(ctx context.Context, chatId int, messageId int, data string) (message Message, err error)
-		DeleteMessage(ctx context.Context, chatId int, messageId int) (err error)
+		UpdateMessage(ctx context.Context, chatID int, messageID int, data string) (message Message, err error)
+		DeleteMessage(ctx context.Context, chatID int, messageID int) (err error)
 	}
 
 	MessageService interface {
-		GetAllMessages(ctx context.Context, chatId int, sortType string, searchText string) (messages []Message, total int, err error)
+		GetAllMessages(ctx context.Context, chatID int, sortType string, searchText string) (messages []Message, total int, err error)
 		CreateMessage(ctx context.Context, data Message) (message Message, err error)
-		UpdateMessage(ctx context.Context, chatId int, messageId int, data string) (message Message, err error)
-		DeleteMessage(ctx context.Context, chatId int, messageId int) (err error)
+		UpdateMessage(ctx context.Context, chatID int, messageID int, data string) (message Message, err error)
+		DeleteMessage(ctx context.Context, chatID int, messageID int) (err error)
 	}
 
 	ChatMemberStore interface {
-		GetAllMembers(ctx context.Context, chatId int) (members []ChatMember, err error)
+		GetAllMembers(ctx context.Context, chatID int) (members []ChatMember, err error)
 		AddMemberToChat(ctx context.Context, data ChatMember) (member ChatMember, err error)
-		UpdateMemberInfo(ctx context.Context, chatId int, userId int) (member ChatMember, err error)
-		DeleteMemberFromChat(ctx context.Context, chatId int, userId int) (err error)
+		UpdateMemberInfo(ctx context.Context, chatID int, userID int) (member ChatMember, err error)
+		DeleteMemberFromChat(ctx context.Context, chatID int, userID int) (err error)
 	}
 
 	ChatMemberService interface {
-		GetAllMembers(ctx context.Context, chatId int) (members []ChatMember, total int, err error)
+		GetAllMembers(ctx context.Context, chatID int) (members []ChatMember, total int, err error)
 		AddMemberToChat(ctx context.Context, data ChatMember) (member ChatMember, err error)
-		UpdateMemberInfo(ctx context.Context, chatId int, userId int) (member ChatMember, err error)
-		DeleteMemberFromChat(ctx context.Context, chatId int, userId int) (err error)
+		UpdateMemberInfo(ctx context.Context, chatID int, userID int) (member ChatMember, err error)
+		DeleteMemberFromChat(ctx context.Context, chatID int, userID int) (err error)
 	}
 )
