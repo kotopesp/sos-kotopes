@@ -17,8 +17,6 @@ type GetAllKeepersParams struct {
 	SortBy    *string
 	SortOrder *string
 	Location  *string
-	MinRating *float64
-	MaxRating *float64
 	Limit     *int
 	Offset    *int
 }
@@ -28,7 +26,7 @@ type KeeperStore interface {
 	GetByID(ctx *context.Context, id int) (Keepers, error)
 	Create(ctx *context.Context, keeper Keepers) error
 	DeleteById(ctx *context.Context, id int) error
-	UpdateById(ctx *context.Context, id int) error
+	UpdateById(ctx *context.Context, keeper Keepers) error
 }
 
 type KeeperService interface {
@@ -36,5 +34,5 @@ type KeeperService interface {
 	GetByID(ctx *context.Context, id int) (Keepers, error)
 	Create(ctx *context.Context, keeper Keepers) error
 	DeleteById(ctx *context.Context, id int) error
-	UpdateById(ctx *context.Context, id int) error
+	UpdateById(ctx *context.Context, keeper Keepers) error
 }
