@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/errors"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
 )
 
@@ -18,11 +19,22 @@ func New(pg *postgres.Postgres) core.ChatStore {
 	return &store{pg}
 }
 
+func ifChatExists(s *store, ctx context.Context, chatId int) error {
+	var counter int64
+	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", chatId).Where("is_deleted", false).Count(&counter).Error; err != nil {
+		return err
+	}
+	if counter != 1 {
+		return errors.ErrInvalidChatId
+	}
+	return nil
+}
+
 func (s *store) GetAllChats(ctx context.Context, sortType string) ([]core.Chat, error) {
 	var chats []core.Chat
-	query := s.DB.WithContext(ctx).Model(&core.Chat{})
+	query := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("is_deleted", false)
 	if sortType != "" {
-		query = query.Where(&core.Chat{ChatType: sortType})
+		query = query.Where("chat_type", sortType)
 	}
 	if err := query.Find(&chats).Error; err != nil {
 		return nil, err
@@ -31,7 +43,7 @@ func (s *store) GetAllChats(ctx context.Context, sortType string) ([]core.Chat, 
 }
 
 func (s *store) GetChatByID(ctx context.Context, id int) (core.Chat, error) {
-	var chat core.Chat = core.Chat{ID: id}
+	var chat core.Chat = core.Chat{ID: id, IsDeleted: false}
 
 	if err := s.DB.WithContext(ctx).First(&chat).Error; err != nil {
 		return core.Chat{}, err
@@ -47,7 +59,10 @@ func (s *store) CreateChat(ctx context.Context, data core.Chat) (core.Chat, erro
 }
 
 func (s *store) DeleteChat(ctx context.Context, id int) error {
-	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where(&core.Chat{ID: id}).Updates(map[string]interface{}{"is_deleted": true, "deleted_at": time.Now()}).Error; err != nil {
+	if err := ifChatExists(s, ctx, id); err != nil {
+		return err
+	}
+	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", id).Where("is_deleted", false).Updates(map[string]interface{}{"is_deleted": true, "deleted_at": time.Now()}).Error; err != nil {
 		return err
 	}
 	return nil

@@ -7,11 +7,12 @@ import (
 )
 
 type Router struct {
-	app            *fiber.App
-	entityService  core.EntityService
-	authService    interface{}
-	chatService    core.ChatService
-	messageService core.MessageService
+	app               *fiber.App
+	entityService     core.EntityService
+	authService       interface{}
+	chatService       core.ChatService
+	messageService    core.MessageService
+	chatMemberService core.ChatMemberService
 }
 
 func NewRouter(
@@ -20,13 +21,15 @@ func NewRouter(
 	authService interface{},
 	chatService core.ChatService,
 	messageService core.MessageService,
+	chatMemberService core.ChatMemberService,
 ) {
 	router := &Router{
-		app:            app,
-		entityService:  entityService,
-		authService:    authService,
-		chatService:    chatService,
-		messageService: messageService,
+		app:               app,
+		entityService:     entityService,
+		authService:       authService,
+		chatService:       chatService,
+		messageService:    messageService,
+		chatMemberService: chatMemberService,
 	}
 
 	router.initRequestMiddlewares()
@@ -56,6 +59,12 @@ func (r *Router) initRoutes() {
 	v1.Post("/chats/:chat_id/messages", r.createMessage)
 	v1.Patch("/chats/:chat_id/messages/:message_id", r.updateMessage)
 	v1.Delete("/chats/:chat_id/messages/:message_id", r.deleteMessage)
+
+	// chat members
+	v1.Get("/chats/:chat_id/members", r.getAllMembers)
+	v1.Post("/chats/:chat_id/members", r.addMemberToChat)
+	v1.Patch("/chats/:chat_id/members/:user_id", r.updateMemberInfo)
+	v1.Delete("/chats/:chat_id/members/:user_id", r.deleteMemberFromChat)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

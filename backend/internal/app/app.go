@@ -8,9 +8,11 @@ import (
 
 	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
 	chatservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/chat"
+	chatmemberservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/chat_member"
 	messageservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/message"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
 	chatstore "gitflic.ru/spbu-se/sos-kotopes/internal/store/chat"
+	chatmemberstore "gitflic.ru/spbu-se/sos-kotopes/internal/store/chat_member"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
 	messagestore "gitflic.ru/spbu-se/sos-kotopes/internal/store/message"
 	"github.com/gofiber/fiber/v2"
@@ -40,10 +42,13 @@ func Run(cfg *config.Config) {
 	entityStore := entity.New(pg)
 	chatStore := chatstore.New(pg)
 	messageStore := messagestore.New(pg)
+	chatMemberStore := chatmemberstore.New(pg)
+
 	// Services
 	entityService := name.New(entityStore)
 	chatService := chatservice.New(chatStore)
 	messageService := messageservice.New(messageStore)
+	chatMemberService := chatmemberservice.New(chatMemberStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -54,7 +59,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil, chatService, messageService)
+	v1.NewRouter(app, entityService, nil, chatService, messageService, chatMemberService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
