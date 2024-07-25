@@ -6,6 +6,7 @@ import (
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	"gorm.io/gorm"
 )
 
 type store struct {
@@ -16,7 +17,6 @@ func New(pg *postgres.Postgres) core.KeeperStore {
 	return &store{pg}
 }
 
-// Create implements core.KeeperStore.
 func (s *store) Create(ctx *context.Context, keeper core.Keepers) error {
 	if err := s.DB.WithContext(*ctx).Create(&keeper).Error; err != nil {
 		return err
@@ -24,32 +24,40 @@ func (s *store) Create(ctx *context.Context, keeper core.Keepers) error {
 	return nil
 }
 
-// DeleteById implements core.KeeperStore.
 func (s *store) DeleteById(ctx *context.Context, id int) error {
-	panic("unimplemented")
+	result := s.DB.WithContext(*ctx).Delete(core.Keepers{}, id)
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return result.Error
 }
 
-// UpdateById implements core.KeeperStore.
-func (s *store) UpdateById(ctx *context.Context, id int) error {
-	panic("unimplemented")
+func (s *store) UpdateById(ctx *context.Context, keeper core.Keepers) error {
+	result := s.DB.WithContext(*ctx).Model(&core.Keepers{}).Where("id = ?", keeper.ID).Updates(keeper)
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return result.Error
 }
 
 func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([]core.Keepers, error) {
 	var keepers []core.Keepers
 	query := s.DB.WithContext(*ctx).Model(&core.Keepers{})
 
-	if params.SortBy != nil && params.SortOrder != nil {
-		query = query.Order(*params.SortBy + " " + *params.SortOrder)
-	}
 	if params.Location != nil {
 		query = query.Where("location = ?", *params.Location)
 	}
-	if params.MinRating != nil {
-		query = query.Where("rating >= ?", *params.MinRating)
+
+	if params.SortBy != nil {
+		sortOrder := "asc"
+		if params.SortOrder != nil && (*params.SortOrder == "desc" || *params.SortOrder == "DESC") {
+			sortOrder = "desc"
+		}
+		query = query.Order(*params.SortBy + " " + sortOrder)
 	}
-	if params.MaxRating != nil {
-		query = query.Where("rating <= ?", *params.MaxRating)
-	}
+
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)
 	}
