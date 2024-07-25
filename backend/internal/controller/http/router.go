@@ -12,21 +12,24 @@ type Router struct {
 	authService          interface{}
 	postService          core.PostService
 	postFavouriteService core.PostFavoriteService
+	postResponseService  core.PostResponseService
 }
 
 func NewRouter(
-	app 		         *fiber.App,
-	entityService 	     core.EntityService,
-	authService   		 interface{},
-	postService   		 core.PostService,
+	app *fiber.App,
+	entityService core.EntityService,
+	authService interface{},
+	postService core.PostService,
 	postFavouriteService core.PostFavoriteService,
+	postResponseService core.PostResponseService,
 ) {
 	router := &Router{
 		app:                  app,
 		entityService:        entityService,
-		authService:   		  authService,
-		postService:   		  postService,
+		authService:          authService,
+		postService:          postService,
 		postFavouriteService: postFavouriteService,
+		postResponseService:  postResponseService,
 	}
 
 	router.initRequestMiddlewares()
@@ -55,11 +58,17 @@ func (r *Router) initRoutes() {
 	v1.Delete("/posts/:id", r.deletePost)
 
 	// favorites posts
-	
+
 	v1.Get("/posts/favorites/:id", r.getFavoritePostUserByID)
-    v1.Post("/posts/:id/favorites", r.addFavoritePost)
+	v1.Post("/posts/:id/favorites", r.addFavoritePost)
 	// v1.Delete("/posts/favorites", r.deleteFavoriteAllPostsFromUser) // удалить все посты у user (не знаю нужна ли)
-    v1.Delete("/posts/favorites/:id", r.deleteFavoritePostByID)
+	v1.Delete("/posts/favorites/:id", r.deleteFavoritePostByID)
+
+	// responses post
+	v1.Post("/posts/:post_id/responses", r.createPostResponse)
+	v1.Get("/posts/:post_id/responses", r.getResponsesByPostID)
+	v1.Put("/posts/:post_id/responses", r.updatePostResponse)
+	v1.Delete("/posts/:post_id/responses", r.deletePostResponse)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

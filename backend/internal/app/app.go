@@ -2,23 +2,26 @@ package app
 
 import (
 	"context"
-	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/recover"
 	"os"
 	"os/signal"
 	"syscall"
 
+	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
+	postresponseservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_response"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
+	postresponsestore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_response"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+
 	"gitflic.ru/spbu-se/sos-kotopes/config"
+	postfavouriteservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_favorite_service"
+	postservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_service"
+	postfavouritestore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_favorite_store"
+	poststore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_store"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
-	poststore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_store"
-    postservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_service"
-	postfavouritestore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_favorite_store"
-	postfavouriteservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_favorite_service"
 )
 
 // Run creates objects via constructors.
@@ -39,11 +42,13 @@ func Run(cfg *config.Config) {
 	entityStore := entity.New(pg)
 	postStore := poststore.NewPostStore(pg)
 	postFavouriteStore := postfavouritestore.NewFavoritePostStore(pg)
+	postResponseStore := postresponsestore.New(pg)
 
 	// Services
 	entityService := name.New(entityStore)
 	postService := postservice.NewPostService(postStore)
 	postFavouriteService := postfavouriteservice.NewPostFavoriteService(postFavouriteStore)
+	postResponseService := postresponseservice.New(postResponseStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -54,7 +59,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil, postService, postFavouriteService)
+	v1.NewRouter(app, entityService, nil, postService, postFavouriteService, postResponseService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
