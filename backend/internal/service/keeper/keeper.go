@@ -30,6 +30,6 @@ func (s *service) DeleteById(ctx *context.Context, id int) error {
 	return s.keeperStore.DeleteById(ctx, id)
 }
 
-func (s *service) UpdateById(ctx *context.Context, id int) error {
-	return s.keeperStore.UpdateById(ctx, id)
+func (s *service) UpdateById(ctx *context.Context, keeper core.Keepers) error {
+	return s.keeperStore.UpdateById(ctx, keeper)
 }
