@@ -1,6 +1,6 @@
 package user
 
-import "gitflic.ru/spbu-se/sos-kotopes/internal/core"
+import "github.com/kotopesp/sos-kotopes/internal/core"
 
 func (u *User) ToCoreUser() core.User {
 	if u == nil {

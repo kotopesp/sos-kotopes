@@ -3,7 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 	"io"
 	"net/http"
 	"net/url"

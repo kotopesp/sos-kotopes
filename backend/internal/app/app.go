@@ -2,26 +2,26 @@ package app
 
 import (
 	"context"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"os"
 	"os/signal"
 	"syscall"
 
-	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/service/auth"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
+	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/service/auth"
+	"github.com/kotopesp/sos-kotopes/internal/service/name"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/kotopesp/sos-kotopes/internal/store/entity"
+	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
-	"gitflic.ru/spbu-se/sos-kotopes/config"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
 	baseValidator "github.com/go-playground/validator/v10"
+	"github.com/kotopesp/sos-kotopes/config"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
 // Run creates objects via constructors.

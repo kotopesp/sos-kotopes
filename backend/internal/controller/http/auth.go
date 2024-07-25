@@ -4,17 +4,17 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 	"io"
 	"mime/multipart"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 func authErrorHandler(ctx *fiber.Ctx, err error) error {
@@ -44,9 +44,9 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	err := parseAndValidate(ctx, r.formValidator, &apiUser)
-	if err != nil {
-		return err
+	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &apiUser)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
 	coreUser := apiUser.ToCoreUser()
@@ -86,9 +86,9 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 
 func (r *Router) signup(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	err := parseAndValidate(ctx, r.formValidator, &apiUser)
-	if err != nil {
-		return err
+	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &apiUser)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
 	photo, err := ctx.FormFile("photo")

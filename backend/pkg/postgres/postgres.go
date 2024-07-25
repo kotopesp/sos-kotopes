@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

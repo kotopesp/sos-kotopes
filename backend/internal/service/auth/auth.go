@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"github.com/google/uuid"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	"golang.org/x/crypto/bcrypt"
 )

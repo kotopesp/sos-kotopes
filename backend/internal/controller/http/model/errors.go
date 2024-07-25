@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 )
 
 var (
@@ -19,4 +19,6 @@ var (
 	ErrInvalidTokenUsername = errors.New("invalid token username")
 
 	ErrOAuthStateMismatch = errors.New("states do not match")
+
+	ErrValidationFailed = errors.New("validation failed")
 )

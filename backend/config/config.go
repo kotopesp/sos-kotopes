@@ -2,8 +2,7 @@ package config
 
 import (
 	"flag"
-
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type (
@@ -50,7 +49,7 @@ func NewConfig() (*Config, error) {
 	jwtSecret := flag.String("jwt_secret", "secret", "key that used to sign jwt")
 	vkClientID := flag.String("vk_client_id", "", "vk id of our app")
 	vkClientSecret := flag.String("vk_client_secret", "", "key that used to access vk api")
-	vkCallback := flag.String("vk_callback", "https://08ec-102-38-225-73.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
+	vkCallback := flag.String("vk_callback", "https://59bf-91-223-89-38.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
 
 	flag.Parse()
 

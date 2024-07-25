@@ -2,8 +2,8 @@ package http
 
 import (
 	"fmt"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"github.com/gofiber/fiber/v2"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 )
 
 func (r *Router) protected(ctx *fiber.Ctx) error {
