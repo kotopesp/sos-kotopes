@@ -7,16 +7,18 @@ import (
 )
 
 type Router struct {
-	app           *fiber.App
-	entityService core.EntityService
-	authService   interface{}
-	keeperService core.KeeperService
+	app                  *fiber.App
+	entityService        core.EntityService
+	authService          interface{}
+	keeperService        core.KeeperService
+	KeeperReviewsService core.KeeperReviewsService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
 	keeperService core.KeeperService,
+	KeeperReviewsService core.KeeperReviewsService,
 	authService interface{},
 ) {
 	router := &Router{
@@ -48,6 +50,12 @@ func (r *Router) initRoutes() {
 	v1.Post("/keepers", r.createKeeper)
 	v1.Put("/keepers/:id", r.updateKeeperById)
 	v1.Delete("/keepers/:id", r.deleteKeeperById)
+
+	// keeper reviews
+	v1.Get("/keepers/:id/keeper_reviews", r.getKeeperReviews)
+	v1.Post("/keepers/:id/keeper_reviews", r.createKeeperReview)
+	v1.Put("/keeper_reviews/:id", r.updateKeeperReview)
+	v1.Delete("/keeper_reviews/:id", r.deleteKeeperReview)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
