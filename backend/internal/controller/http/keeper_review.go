@@ -91,7 +91,7 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 
 	// update
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperReviewsService.UpdateById(&usrCtx, review); err != nil {
+	if err := r.keeperReviewsService.UpdateByID(&usrCtx, review); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		if err == gorm.ErrRecordNotFound {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
@@ -114,7 +114,7 @@ func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 
 	// delete
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperReviewsService.DeleteById(&usrCtx, id); err != nil {
+	if err := r.keeperReviewsService.DeleteByID(&usrCtx, id); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		if err == gorm.ErrRecordNotFound {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))

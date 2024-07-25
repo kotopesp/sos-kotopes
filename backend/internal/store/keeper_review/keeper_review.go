@@ -1,4 +1,4 @@
-package keeperreviewStore
+package keeperreviewstore
 
 import (
 	"context"
@@ -23,7 +23,7 @@ func (s *store) Create(ctx *context.Context, review core.KeeperReviews) error {
 	return nil
 }
 
-func (s *store) DeleteById(ctx *context.Context, id int) error {
+func (s *store) DeleteByID(ctx *context.Context, id int) error {
 	result := s.DB.WithContext(*ctx).Delete(core.KeeperReviews{}, id)
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
@@ -32,7 +32,7 @@ func (s *store) DeleteById(ctx *context.Context, id int) error {
 	return result.Error
 }
 
-func (s *store) UpdateById(ctx *context.Context, review core.KeeperReviews) error {
+func (s *store) UpdateByID(ctx *context.Context, review core.KeeperReviews) error {
 	result := s.DB.WithContext(*ctx).Model(&core.KeeperReviews{}).Where("id = ?", review.ID).Updates(review)
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound

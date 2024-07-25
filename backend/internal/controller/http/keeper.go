@@ -90,7 +90,7 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(keeper))
 }
 
-func (r *Router) updateKeeperById(ctx *fiber.Ctx) error {
+func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 	// get id
 	idStr := ctx.Params("id")
 	id, err := strconv.Atoi(idStr)
@@ -111,7 +111,7 @@ func (r *Router) updateKeeperById(ctx *fiber.Ctx) error {
 
 	// update
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperService.UpdateById(&usrCtx, keeper); err != nil {
+	if err := r.keeperService.UpdateByID(&usrCtx, keeper); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		if err == gorm.ErrRecordNotFound {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
@@ -123,7 +123,7 @@ func (r *Router) updateKeeperById(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper))
 }
 
-func (r *Router) deleteKeeperById(ctx *fiber.Ctx) error {
+func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 	// get id
 	idStr := ctx.Params("id")
 	id, err := strconv.Atoi(idStr)
@@ -134,7 +134,7 @@ func (r *Router) deleteKeeperById(ctx *fiber.Ctx) error {
 
 	// delete
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperService.DeleteById(&usrCtx, id); err != nil {
+	if err := r.keeperService.DeleteByID(&usrCtx, id); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		if err == gorm.ErrRecordNotFound {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))

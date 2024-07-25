@@ -1,4 +1,4 @@
-package keeperService
+package keeperservice
 
 import (
 	"context"
@@ -26,10 +26,10 @@ func (s *service) Create(ctx *context.Context, keeper core.Keepers) error {
 	return s.keeperStore.Create(ctx, keeper)
 }
 
-func (s *service) DeleteById(ctx *context.Context, id int) error {
-	return s.keeperStore.DeleteById(ctx, id)
+func (s *service) DeleteByID(ctx *context.Context, id int) error {
+	return s.keeperStore.DeleteByID(ctx, id)
 }
 
-func (s *service) UpdateById(ctx *context.Context, keeper core.Keepers) error {
-	return s.keeperStore.UpdateById(ctx, keeper)
+func (s *service) UpdateByID(ctx *context.Context, keeper core.Keepers) error {
+	return s.keeperStore.UpdateByID(ctx, keeper)
 }
