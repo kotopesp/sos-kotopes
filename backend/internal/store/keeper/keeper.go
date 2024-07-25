@@ -73,7 +73,7 @@ func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([
 }
 
 func (s *store) GetByID(ctx *context.Context, id int) (core.Keepers, error) {
-	var keeper core.Keepers = core.Keepers{ID: id}
+	var keeper = core.Keepers{ID: id}
 
 	if err := s.DB.WithContext(*ctx).First(&keeper).Error; err != nil {
 		return core.Keepers{}, err

@@ -11,14 +11,14 @@ type Router struct {
 	entityService        core.EntityService
 	authService          interface{}
 	keeperService        core.KeeperService
-	KeeperReviewsService core.KeeperReviewsService
+	keeperReviewsService core.KeeperReviewsService
 }
 
 func NewRouter(
 	app *fiber.App,
 	entityService core.EntityService,
 	keeperService core.KeeperService,
-	KeeperReviewsService core.KeeperReviewsService,
+	keeperReviewsService core.KeeperReviewsService,
 	authService interface{},
 ) {
 	router := &Router{
