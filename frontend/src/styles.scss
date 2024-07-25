@@ -5,6 +5,7 @@
   --brown-main-color: #21190B;
   --brown-light-color: #4B432A;
   --brown-button-color: #352B1A;
+  --grey-button-color: #D8D8D8;
   --white-color: #FFF;
   --black-color: #000;
   --text-brown-light-color: #443416;
@@ -74,6 +75,11 @@ body {
 
 .ptbold {
   font-family: "PT Sans Caption Bold", sans-serif;
+}
+
+.ptitalic {
+  font-family: "PT Sans Caption Regular", sans-serif;
+  font-style: italic;
 }
 
 .fw400 {

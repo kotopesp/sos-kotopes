@@ -11,7 +11,7 @@
     gap: 51px;
 
     .container__top-buttons {
-      margin-top: 13px;
+      margin-top: 51px;
       display: flex;
       gap: 40px;
       
@@ -25,14 +25,37 @@
 
         .search-input {
           width: 350px;
-          font-style: italic;
           color: var(--white-color);
           margin-left: 24px;
           outline: none;
           border: none;
           background: var(--brown-light-color);
         }
+
+        ::placeholder {
+          color: var(--white-color);
+          opacity: 1;
+        }
       }
+
+      .button__publish {
+        background: var(--grey-button-color);
+        border-radius: 20px;
+        color: var(--brown-ads-color);
+        padding: 18px 30px;
+        border: none;
+        text-align: center;
+      }
+
+      .button__publish:active {
+        background: var(--white-color);
+        text-decoration-line: underline;
+      }
+    }
+
+    .container__info__posts-displaying {
+
+    }
   }
 
   main__posts:after {
