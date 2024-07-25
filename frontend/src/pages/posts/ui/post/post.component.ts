@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import { SidebarComponent } from "../../../../widgets/sidebar/sidebar.component";
 
 @Component({
   selector: 'app-post',
