@@ -54,7 +54,7 @@ func Run(cfg *config.Config) {
 	)
 
 	// Validator
-	formValidator := validator.New(baseValidator.New())
+	formValidator := validator.New(ctx, baseValidator.New())
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{

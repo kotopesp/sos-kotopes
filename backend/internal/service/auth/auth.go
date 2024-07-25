@@ -3,8 +3,9 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	userStorePkg "gitflic.ru/spbu-se/sos-kotopes/internal/store/user"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"github.com/google/uuid"
 
 	"golang.org/x/crypto/bcrypt"
@@ -41,11 +42,17 @@ func (s *service) GetJWTSecret() []byte {
 func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, refreshToken *string, err error) {
 	dbUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
+		if errors.Is(err, core.ErrNoSuchUser) {
+			return nil, nil, core.ErrInvalidCredentials
+		}
 		return nil, nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(dbUser.PasswordHash), []byte(user.PasswordHash))
 	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return nil, nil, core.ErrInvalidCredentials
+		}
 		return nil, nil, err
 	}
 
@@ -71,8 +78,8 @@ func (s *service) SignupBasic(ctx context.Context, user core.User) error {
 	user.PasswordHash = string(hashedPassword)
 
 	if _, err := s.userStore.AddUser(ctx, user); err != nil {
-		if errors.Is(err, userStorePkg.ErrNotUniqueUsername) {
-			return ErrNotUniqueUsername
+		if errors.Is(err, core.ErrNotUniqueUsername) {
+			return core.ErrNotUniqueUsername
 		}
 		return err
 	}
@@ -100,7 +107,7 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 	var userID int
 
 	if err != nil {
-		if errors.Is(err, userStorePkg.ErrNoSuchUser) {
+		if errors.Is(err, core.ErrNoSuchUser) {
 			userID, err = s.signupVK(ctx, core.User{
 				Username:     uuid.New().String(),
 				PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
@@ -116,6 +123,9 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 	}
 
 	user, err := s.userStore.GetUserByID(ctx, userID)
+
+	logger.Log().Debug(ctx, fmt.Sprint(err))
+
 	if err != nil {
 		return nil, nil, err
 	}

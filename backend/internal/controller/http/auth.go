@@ -5,13 +5,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/validator"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"github.com/golang-jwt/jwt/v5"
 	"io"
 	"mime/multipart"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/service/auth"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
@@ -44,7 +44,7 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	err := parseAndValidate(ctx, r.formValidator, apiUser)
+	err := parseAndValidate(ctx, r.formValidator, &apiUser)
 	if err != nil {
 		return err
 	}
@@ -53,6 +53,11 @@ func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 
 	accessToken, refreshToken, err := r.authService.LoginBasic(ctx.Context(), coreUser)
 	if err != nil {
+		if errors.Is(err, core.ErrInvalidCredentials) {
+			logger.Log().Info(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		}
+
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
@@ -81,7 +86,7 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 
 func (r *Router) signup(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	err := parseAndValidate(ctx, r.formValidator, apiUser)
+	err := parseAndValidate(ctx, r.formValidator, &apiUser)
 	if err != nil {
 		return err
 	}
@@ -105,13 +110,14 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusCreated)
 	}
 
-	logger.Log().Error(ctx.UserContext(), err.Error())
-
-	if errors.Is(err, auth.ErrNotUniqueUsername) {
+	if errors.Is(err, core.ErrNotUniqueUsername) {
+		logger.Log().Info(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
 			"validation_errors": []validator.ResponseError{model.ErrNotUniqueUsername(coreUser.Username)},
 		}))
 	}
+
+	logger.Log().Error(ctx.UserContext(), err.Error())
 
 	return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 }
@@ -135,9 +141,8 @@ func (r *Router) refresh(ctx *fiber.Ctx) error {
 	sub := getPayloadItem(ctx, "sub")
 	idFloat, ok := sub.(float64)
 	if !ok {
-		err := errors.New("failed to read id from refresh token")
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err))
+		logger.Log().Error(ctx.UserContext(), model.ErrInvalidTokenID.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(model.ErrInvalidTokenID.Error()))
 	}
 	id := int(idFloat)
 
@@ -205,9 +210,8 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 	}
 
 	if ctx.FormValue("state") != ctx.Cookies("state") {
-		err = errors.New("states do not match")
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
+		logger.Log().Error(ctx.UserContext(), model.ErrOAuthStateMismatch.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrOAuthStateMismatch.Error())
 	}
 
 	accessToken, refreshToken, err := r.authService.AuthorizeVK(ctx.Context(), token.AccessToken)

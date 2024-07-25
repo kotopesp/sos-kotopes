@@ -15,18 +15,24 @@ var (
 )
 
 // custom validator tags
-func customValidationOptions(validator *validatorPkg.Validate) {
-	_ = validator.RegisterValidation("contains_digit", func(fl validatorPkg.FieldLevel) bool {
+func customValidationOptions(ctx context.Context, validator *validatorPkg.Validate) {
+	err := validator.RegisterValidation("contains_digit", func(fl validatorPkg.FieldLevel) bool {
 		return digit(fl.Field().String())
 	})
-	_ = validator.RegisterValidation("contains_uppercase", func(fl validatorPkg.FieldLevel) bool {
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	err = validator.RegisterValidation("contains_uppercase", func(fl validatorPkg.FieldLevel) bool {
 		return uppercase(fl.Field().String())
 	})
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
 }
 
-func New(validator *validatorPkg.Validate) FormValidatorService {
+func New(ctx context.Context, validator *validatorPkg.Validate) FormValidatorService {
 	logger.Log().Info(context.Background(), "validator created")
-	customValidationOptions(validator)
+	customValidationOptions(ctx, validator)
 	return &formValidator{
 		validator: validator,
 	}

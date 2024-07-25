@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -21,10 +22,10 @@ type (
 	}
 
 	ExternalUser struct {
-		ID           int    `gorm:"id"`
-		UserID       int    `gorm:"user_id"`
-		ExternalID   int    `gorm:"external_id"`
-		AuthProvider string `gorm:"auth_provider"`
+		ID           int    `gorm:"column:id"`
+		UserID       int    `gorm:"column:user_id"`
+		ExternalID   int    `gorm:"column:external_id"`
+		AuthProvider string `gorm:"column:auth_provider"`
 	}
 
 	UserStore interface {
@@ -34,6 +35,14 @@ type (
 		AddUser(ctx context.Context, user User) (userID int, err error)
 		AddExternalUser(ctx context.Context, user User, externalUserID int, authProvider string) (userID int, err error)
 	}
+)
+
+// errors
+var (
+	ErrNotUniqueUsername  = errors.New("username must be unique")
+	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrNoResponseFromVK   = errors.New("no response from VK")
+	ErrNoSuchUser         = errors.New("user does not exist")
 )
 
 // TableName table name in db for gorm

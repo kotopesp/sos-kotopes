@@ -1,7 +1,6 @@
 package http
 
 import (
-	"errors"
 	"fmt"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
@@ -15,7 +14,7 @@ func getIDFromToken(ctx *fiber.Ctx) (int, error) {
 	idItem := getPayloadItem(ctx, "id")
 	idFloat, ok := idItem.(float64)
 	if !ok {
-		return 0, errors.New("invalid id")
+		return 0, model.ErrInvalidTokenID
 	}
 	return int(idFloat), nil
 }
@@ -24,20 +23,20 @@ func getUsernameFromToken(ctx *fiber.Ctx) (string, error) {
 	usernameItem := getPayloadItem(ctx, "username")
 	username, ok := usernameItem.(string)
 	if !ok {
-		return "", errors.New("invalid username")
+		return "", model.ErrInvalidTokenUsername
 	}
 	return username, nil
 }
 
 // validation helpers
-func parseAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, apiUser user.User) error {
-	if err := ctx.BodyParser(&apiUser); err != nil {
+func parseAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, apiUser *user.User) error {
+	if err := ctx.BodyParser(apiUser); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 	errs := formValidator.Validate(apiUser)
 	if len(errs) > 0 {
-		logger.Log().Error(ctx.UserContext(), fmt.Sprintf("%v", errs))
+		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
 			"validation_errors": errs,
 		}))

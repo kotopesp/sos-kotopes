@@ -61,8 +61,10 @@ func (s *service) getVKUserID(token string) (id int, err error) {
 	}
 
 	err = json.Unmarshal(body, &data)
-	if err != nil || len(data.VKResponse) == 0 {
+	if err != nil {
 		return 0, err
+	} else if len(data.VKResponse) == 0 {
+		return 0, core.ErrNoResponseFromVK
 	}
 
 	return data.VKResponse[0].VKUserID, nil
