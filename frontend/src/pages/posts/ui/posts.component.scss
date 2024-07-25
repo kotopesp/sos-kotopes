@@ -8,10 +8,9 @@
     height: 218px;
     display: flex;
     flex-direction: column;
-    gap: 51px;
 
     .container__top-buttons {
-      margin-top: 51px;
+      margin: 51px 0px;
       display: flex;
       gap: 40px;
       
@@ -54,7 +53,16 @@
     }
 
     .container__info__posts-displaying {
+      margin: 0px 0px 23px 25px;
+      display: flex;
 
+      .block__displaying-icons {
+        display: flex;
+        
+        img {
+          margin-right: 24px;
+        }
+      }
     }
   }
 
