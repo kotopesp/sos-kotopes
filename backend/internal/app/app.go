@@ -8,9 +8,11 @@ import (
 
 	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
 	keeperService "gitflic.ru/spbu-se/sos-kotopes/internal/service/keeper"
+	keeperReviewsService "gitflic.ru/spbu-se/sos-kotopes/internal/service/keeper_review"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
 	keeperStore "gitflic.ru/spbu-se/sos-kotopes/internal/store/keeper"
+	keeperReviewsStore "gitflic.ru/spbu-se/sos-kotopes/internal/store/keeper_review"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -37,9 +39,11 @@ func Run(cfg *config.Config) {
 	// Stores
 	entityStore := entity.New(pg)
 	keepersStore := keeperStore.New(pg)
+	keeperReviewsStore := keeperReviewsStore.New(pg)
 	// Services
 	entityService := name.New(entityStore)
 	keeperService := keeperService.New(keepersStore)
+	keeperReviewsService := keeperReviewsService.New(keeperReviewsStore)
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -49,7 +53,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, keeperService, nil)
+	v1.NewRouter(app, entityService, keeperService, keeperReviewsService, nil)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
