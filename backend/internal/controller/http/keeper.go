@@ -23,18 +23,7 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	if location := ctx.Query("location"); location != "" {
 		params.Location = &location
 	}
-	// if minRating := ctx.Query("minRating"); minRating != "" {
-	// 	rating, err := strconv.ParseFloat(minRating, 64)
-	// 	if err == nil {
-	// 		params.MinRating = &rating
-	// 	}
-	// }
-	// if maxRating := ctx.Query("maxRating"); maxRating != "" {
-	// 	rating, err := strconv.ParseFloat(maxRating, 64)
-	// 	if err == nil {
-	// 		params.MaxRating = &rating
-	// 	}
-	// }
+
 	if limit := ctx.Query("limit"); limit != "" {
 		l, err := strconv.Atoi(limit)
 		if err == nil {
