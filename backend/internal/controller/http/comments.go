@@ -87,3 +87,17 @@ func (r *Router) updateComment(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(
 		model.Response{Data: updatedComment}))
 }
+
+func (r *Router) deleteComment(ctx *fiber.Ctx) error {
+	id, err := strconv.Atoi(ctx.FormValue("id"))
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid comment id")
+	}
+
+	err = r.commentsService.DeleteComments(ctx.UserContext(), id)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return nil
+}
