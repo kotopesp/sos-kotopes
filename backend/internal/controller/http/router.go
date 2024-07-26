@@ -44,9 +44,9 @@ func (r *Router) initRoutes() {
 
 	//comments
 	v1.Get("/posts/:post_id/comments", r.getCommentsByPostID)
-	v1.Post("/comments", r.createComment)
+	v1.Post("/posts/:post_id/comments", r.createComment)
 	v1.Put("/posts/:post_id/comments/:comment_id", r.updateComment)
-	v1.Delete("/comments/:comment_id", r.deleteComment)
+	v1.Delete("/posts/:post_id/comments/:comment_id", r.deleteComment)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
