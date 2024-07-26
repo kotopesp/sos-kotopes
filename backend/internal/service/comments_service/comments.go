@@ -24,6 +24,18 @@ func (s *commentsService) GetCommentsByPostID(ctx context.Context, params core.G
 	return comments, nil
 }
 
+/*func (s *store) Replies(ctx context.Context, comment core.Comments, post_id int, id_comment_to_reply int, id_reply_to_reply int) (core.Comments, error) {
+
+	//response to the comment of the first nesting
+	if id_reply_to_reply < 0 && id_comment_to_reply > 0 {
+		comment.Content = comment.Content + strconv.Itoa(id_comment_to_reply) + ", "
+	} else if id_reply_to_reply > 0 && id_comment_to_reply > 0 { //reply to reply under the comment, the second nesting
+		comment.Content = comment.Content + strconv.Itoa(id_reply_to_reply) + ", "
+	}
+
+	return s.CreateComment(ctx, comment, post_id)
+}*/
+
 func (s *commentsService) CreateComment(ctx context.Context, comment core.Comments, post_id int) (core.Comments, error) {
 	return s.CommentsStore.CreateComment(ctx, comment, post_id)
 }
