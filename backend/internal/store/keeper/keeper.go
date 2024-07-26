@@ -75,7 +75,7 @@ func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([
 			sortOrder = "desc"
 		}
 
-		if sortField == "avg_grade" || sortField == "price" {
+		if sortField == "avg_grade" || sortField == "price" || sortField == "created_at" {
 			query = query.Order(sortField + " " + sortOrder)
 		}
 	}
