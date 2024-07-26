@@ -69,11 +69,15 @@ func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([
 	}
 
 	if params.SortBy != nil {
+		sortField := *params.SortBy
 		sortOrder := "asc"
 		if params.SortOrder != nil && (*params.SortOrder == "desc" || *params.SortOrder == "DESC") {
 			sortOrder = "desc"
 		}
-		query = query.Order(*params.SortBy + " " + sortOrder)
+
+		if sortField == "avg_grade" || sortField == "price" {
+			query = query.Order(sortField + " " + sortOrder)
+		}
 	}
 
 	if params.Limit != nil {
