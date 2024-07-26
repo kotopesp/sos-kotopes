@@ -2,19 +2,21 @@ package app
 
 import (
 	"context"
-	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/recover"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"gitflic.ru/spbu-se/sos-kotopes/config"
+	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
+	commentsservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/comments_service"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
+	commentsstore "gitflic.ru/spbu-se/sos-kotopes/internal/store/comments_store"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 // Run creates objects via constructors.
@@ -33,8 +35,11 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
+	commentsStore := commentsstore.NewCommentsStore(pg)
+
 	// Services
 	entityService := name.New(entityStore)
+	commentsService := commentsservice.NewCommentsService(commentsStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -45,7 +50,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil)
+	v1.NewRouter(app, entityService, nil, commentsService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
