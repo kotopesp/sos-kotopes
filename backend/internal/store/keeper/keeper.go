@@ -50,6 +50,10 @@ func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([
 		query = query.Where("location = ?", *params.Location)
 	}
 
+	query = query.Select("keepers.*, AVG(keeper_reviews.grade) as avg_grade").
+		Joins("left join keeper_reviews on keeper_reviews.keeper_id = keepers.id").
+		Group("keepers.id")
+
 	if params.SortBy != nil {
 		sortOrder := "asc"
 		if params.SortOrder != nil && (*params.SortOrder == "desc" || *params.SortOrder == "DESC") {
