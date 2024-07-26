@@ -24,6 +24,39 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 		params.Location = &location
 	}
 
+	if minPriceStr := ctx.Query("min_price"); minPriceStr != "" {
+		minPrice, err := strconv.ParseFloat(minPriceStr, 64)
+		if err != nil {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		}
+		params.MinPrice = &minPrice
+	}
+	if maxPriceStr := ctx.Query("max_price"); maxPriceStr != "" {
+		maxPrice, err := strconv.ParseFloat(maxPriceStr, 64)
+		if err != nil {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		}
+		params.MaxPrice = &maxPrice
+	}
+	if minRatingStr := ctx.Query("min_rating"); minRatingStr != "" {
+		minRating, err := strconv.ParseFloat(minRatingStr, 64)
+		if err != nil {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		}
+		params.MinRating = &minRating
+	}
+	if maxRatingStr := ctx.Query("max_rating"); maxRatingStr != "" {
+		maxRating, err := strconv.ParseFloat(maxRatingStr, 64)
+		if err != nil {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		}
+		params.MaxRating = &maxRating
+	}
+
 	if limit := ctx.Query("limit"); limit != "" {
 		l, err := strconv.Atoi(limit)
 		if err == nil {
