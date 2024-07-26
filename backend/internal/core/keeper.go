@@ -9,6 +9,7 @@ type Keepers struct {
 	ID          int       `gorm:"primaryKey;autoIncrement" json:"id"`
 	UserID      int       `json:"user_id"`
 	Description string    `json:"description"`
+	Price       float64   `json:"price"`
 	Location    string    `gorm:"type:varchar(100)" json:"location"`
 	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP()" json:"created_at"`
 }
