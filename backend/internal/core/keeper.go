@@ -19,6 +19,10 @@ type GetAllKeepersParams struct {
 	SortBy    *string
 	SortOrder *string
 	Location  *string
+	MinRating *float64
+	MaxRating *float64
+	MinPrice  *float64
+	MaxPrice  *float64
 	Limit     *int
 	Offset    *int
 }

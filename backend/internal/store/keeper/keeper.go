@@ -50,9 +50,23 @@ func (s *store) GetAll(ctx *context.Context, params core.GetAllKeepersParams) ([
 		query = query.Where("location = ?", *params.Location)
 	}
 
+	if params.MinPrice != nil {
+		query = query.Where("price >= ?", *params.MinPrice)
+	}
+	if params.MaxPrice != nil {
+		query = query.Where("price <= ?", *params.MaxPrice)
+	}
+
 	query = query.Select("keepers.*, AVG(keeper_reviews.grade) as avg_grade").
 		Joins("left join keeper_reviews on keeper_reviews.keeper_id = keepers.id").
 		Group("keepers.id")
+
+	if params.MinRating != nil {
+		query = query.Having("AVG(keeper_reviews.grade) >= ?", *params.MinRating)
+	}
+	if params.MaxRating != nil {
+		query = query.Having("AVG(keeper_reviews.grade) <= ?", *params.MaxRating)
+	}
 
 	if params.SortBy != nil {
 		sortOrder := "asc"
