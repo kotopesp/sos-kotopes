@@ -26,6 +26,10 @@ func (s *service) DeleteByID(ctx *context.Context, id int) error {
 	return s.KeeperReviewsStore.DeleteByID(ctx, id)
 }
 
+func (s *service) SoftDeleteByID(ctx *context.Context, id int) error {
+	return s.KeeperReviewsStore.SoftDeleteByID(ctx, id)
+}
+
 func (s *service) UpdateByID(ctx *context.Context, review core.KeeperReviews) error {
 	return s.KeeperReviewsStore.UpdateByID(ctx, review)
 }

@@ -2,6 +2,7 @@ package keeperreviewstore
 
 import (
 	"context"
+	"time"
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
@@ -32,8 +33,14 @@ func (s *store) DeleteByID(ctx *context.Context, id int) error {
 	return result.Error
 }
 
+func (s *store) SoftDeleteByID(ctx *context.Context, id int) error {
+	err := s.DB.WithContext(*ctx).Model(&core.KeeperReviews{}).Where("id = ?", id).Updates(core.KeeperReviews{IsDeleted: true, DeletedAt: time.Now()}).Error
+
+	return err
+}
+
 func (s *store) UpdateByID(ctx *context.Context, review core.KeeperReviews) error {
-	result := s.DB.WithContext(*ctx).Model(&core.KeeperReviews{}).Where("id = ?", review.ID).Updates(review)
+	result := s.DB.WithContext(*ctx).Model(&core.KeeperReviews{}).Where("id = ? AND is_deleted = ?", review.ID, false).Updates(review)
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
@@ -44,7 +51,7 @@ func (s *store) UpdateByID(ctx *context.Context, review core.KeeperReviews) erro
 func (s *store) GetAll(ctx *context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error) {
 	var reviews []core.KeeperReviews
 
-	query := s.DB.WithContext(*ctx).Model(&core.KeeperReviews{})
+	query := s.DB.WithContext(*ctx).Model(&core.KeeperReviews{}).Where("is_deleted = ?", false)
 
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)
