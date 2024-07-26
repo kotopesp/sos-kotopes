@@ -5,6 +5,7 @@ import (
 
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/comments"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -59,4 +60,30 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(createdComment))
+}
+
+func (r *Router) updateComment(ctx *fiber.Ctx) error {
+
+	id, err := strconv.Atoi(ctx.FormValue("id"))
+
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("invalid comment id"))
+	}
+
+	newComment := core.Comments{}
+
+	if err := ctx.BodyParser(&newComment); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	newComment.Id = id
+
+	updatedComment, err := r.commentsService.UpdateComments(ctx.UserContext(), newComment)
+
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(
+		model.Response{Data: updatedComment}))
 }
