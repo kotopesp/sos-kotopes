@@ -12,6 +12,7 @@ import (
 var (
 	uppercase = regexp.MustCompile(`[A-Z]`).MatchString
 	digit     = regexp.MustCompile(`\d`).MatchString
+	alphaNum  = regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString
 )
 
 // custom validator tags
@@ -24,6 +25,12 @@ func customValidationOptions(ctx context.Context, validator *validatorPkg.Valida
 	}
 	err = validator.RegisterValidation("contains_uppercase", func(fl validatorPkg.FieldLevel) bool {
 		return uppercase(fl.Field().String())
+	})
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	err = validator.RegisterValidation("no_specials", func(fl validatorPkg.FieldLevel) bool {
+		return alphaNum(fl.Field().String())
 	})
 	if err != nil {
 		logger.Log().Fatal(ctx, err.Error())
