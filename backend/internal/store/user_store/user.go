@@ -12,7 +12,7 @@ type Store struct {
 	*postgres.Postgres
 }
 
-func NewRoleStore(pg *postgres.Postgres) core.UserStore {
+func NewUserStore(pg *postgres.Postgres) core.UserStore {
 	return &Store{pg}
 }
 

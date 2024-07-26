@@ -52,8 +52,8 @@ func (r *Router) initRoutes() {
 
 	// user_service roles todo
 	v1.Get("/users/:id/roles", r.GetUserRoles)
-	v1.Post("/users/:id/roles", r.GiveRoleToUser)   //todo
-	v1.Delete("/users/:id/roles", r.DeleteUserRole) //todo
+	v1.Post("/users/:id/roles", r.GiveRoleToUser)
+	v1.Delete("/users/:id/roles", r.DeleteUserRole)
 	v1.Patch("/users/:id/roles", r.UpdateUserRoles) //todo
 
 	//favourites users todo

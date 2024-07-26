@@ -39,8 +39,8 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
-	userStore := user_store.NewRoleStore(pg)
-	roleStore := role_store.NewUserStore(pg)
+	userStore := user_store.NewUserStore(pg)
+	roleStore := role_store.NewRoleStore(pg)
 	// Services
 	roleService := role_service.NewRoleService(roleStore)
 	entityService := name.New(entityStore)
@@ -64,7 +64,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, authService, userService)
+	v1.NewRouter(app, entityService, authService, userService, roleService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
