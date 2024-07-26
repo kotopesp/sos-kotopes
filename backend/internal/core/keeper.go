@@ -12,6 +12,7 @@ type Keepers struct {
 	Price       float64   `json:"price"`
 	Location    string    `gorm:"type:varchar(100)" json:"location"`
 	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP()" json:"created_at"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }
 
 type GetAllKeepersParams struct {
