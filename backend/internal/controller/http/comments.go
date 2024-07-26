@@ -34,3 +34,29 @@ func (r *Router) getCommentsByPostID(ctx *fiber.Ctx) error {
 			Data: comments,
 		}))
 }
+func (r *Router) createComment(ctx *fiber.Ctx) error {
+
+	comment := comments.Comments{}
+
+	if err := ctx.BodyParser(&comment); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	coreComment := comment.ToCoreComments()
+
+	post_id, err := strconv.Atoi(ctx.FormValue("postsID")) //ctx.ParamsInt("postsID")
+
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("invalid post id for comments"))
+	}
+
+	coreComment.Posts_id = post_id
+
+	createdComment, err := r.commentsService.CreateComment(ctx.UserContext(), *coreComment, post_id)
+
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(createdComment))
+}
