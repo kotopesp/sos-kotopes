@@ -1,8 +1,9 @@
 package entity
 
 import (
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"strings"
+
+	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
 func (p *GetAllParams) FromUserRequest() core.GetAllParams {

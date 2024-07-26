@@ -1,13 +1,14 @@
 package http
 
 import (
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
-	postModel "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/post"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
-	"github.com/gofiber/fiber/v2"
 	"io"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 func (r *Router) getPosts(ctx *fiber.Ctx) error {

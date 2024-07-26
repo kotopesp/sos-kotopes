@@ -2,10 +2,11 @@ package postfavouritestore
 
 import (
 	"context"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/store/errors"
 	"time"
+
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/store/errors"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
 type store struct {
@@ -61,19 +62,19 @@ func (s *store) GetFavoritePostByID(ctx context.Context, userID, postID int) (co
 }
 
 func (s *store) AddToFavorites(ctx context.Context, postFavourite core.PostFavorite) (core.PostFavorite, error) {
-    var existing core.PostFavorite
-    if err := s.DB.WithContext(ctx).
-        Where("post_id = ? AND user_id = ?", postFavourite.PostID, postFavourite.UserID).
-        First(&existing).Error; err == nil {
-        return core.PostFavorite{}, errors.ErrPostAlreadyInFavorites
-    }
+	var existing core.PostFavorite
+	if err := s.DB.WithContext(ctx).
+		Where("post_id = ? AND user_id = ?", postFavourite.PostID, postFavourite.UserID).
+		First(&existing).Error; err == nil {
+		return core.PostFavorite{}, errors.ErrPostAlreadyInFavorites
+	}
 
 	postFavourite.CreatedAt = time.Now()
-	
-    if err := s.DB.WithContext(ctx).Create(&postFavourite).Error; err != nil {
-        return core.PostFavorite{}, err
-    }
-    return postFavourite, nil
+
+	if err := s.DB.WithContext(ctx).Create(&postFavourite).Error; err != nil {
+		return core.PostFavorite{}, err
+	}
+	return postFavourite, nil
 }
 
 func (s *store) DeleteFromFavorites(ctx context.Context, postID, userID int) error {

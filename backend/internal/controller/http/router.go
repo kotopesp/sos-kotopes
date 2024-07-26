@@ -1,9 +1,9 @@
 package http
 
 import (
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
 type Router struct {

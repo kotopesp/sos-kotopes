@@ -1,4 +1,4 @@
-module gitflic.ru/spbu-se/sos-kotopes
+module github.com/kotopesp/sos-kotopes
 
 go 1.22.5
 

@@ -2,8 +2,9 @@ package post
 
 import (
 	"context"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
 type (
@@ -37,9 +38,9 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 	}
 
 	var total int64
-    if err := query.Count(&total).Error; err != nil {
-        return nil, 0, err
-    }
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
 
 	if err := query.Find(&posts).Error; err != nil {
 		return nil, 0, err

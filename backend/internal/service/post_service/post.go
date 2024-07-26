@@ -3,7 +3,7 @@ package post
 import (
 	"context"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
 type (
@@ -32,7 +32,7 @@ func (s *postService) GetPostByID(ctx context.Context, id int) (core.Post, error
 
 func (s *postService) CreatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	return s.PostStore.CreatePost(ctx, post)
-	
+
 }
 
 func (s *postService) UpdatePost(ctx context.Context, post core.Post) (core.Post, error) {

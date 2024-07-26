@@ -1,8 +1,9 @@
 package post
 
 import (
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 )
+
 func (p *Post) ToCorePost() *core.Post {
 	if p == nil {
 		return nil
@@ -20,15 +21,15 @@ func (p *Post) ToCorePost() *core.Post {
 }
 
 func (p *GetAllPostsParams) ToCoreGetAllPostsParams() *core.GetAllPostsParams {
-    if p == nil {
-        return nil
-    }
+	if p == nil {
+		return nil
+	}
 
-    return &core.GetAllPostsParams{
-        SortBy:     &p.SortBy,
-        SortOrder:  &p.SortOrder,
-        SearchTerm: &p.SearchTerm,
-        Limit:      &p.Limit,
-        Offset:     &p.Offset,
-    }
+	return &core.GetAllPostsParams{
+		SortBy:     &p.SortBy,
+		SortOrder:  &p.SortOrder,
+		SearchTerm: &p.SearchTerm,
+		Limit:      &p.Limit,
+		Offset:     &p.Offset,
+	}
 }

@@ -2,7 +2,8 @@ package config
 
 import (
 	"flag"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
+
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type (
