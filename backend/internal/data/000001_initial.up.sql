@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS
     user_id     INTEGER   NOT NULL REFERENCES users (id),
     description VARCHAR,
     price NUMERIC,
+    location VARCHAR,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
