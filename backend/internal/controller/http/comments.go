@@ -1,8 +1,6 @@
 package http
 
 import (
-	"strconv"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/comments"
@@ -11,50 +9,41 @@ import (
 
 func (r *Router) getCommentsByPostID(ctx *fiber.Ctx) error {
 
-	var params = comments.GetAllCommentsParams{}
-
+	params := comments.GetAllCommentsParams{}
 	if err := ctx.QueryParser(&params); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	posts_id, err := strconv.Atoi(ctx.FormValue("postsID"))
-
+	postsID, err := ctx.ParamsInt("postsID")
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(ctx.FormValue("postsID"))
+		return ctx.Status(fiber.ErrNotFound.Code).JSON("")
 	}
 
-	comments, err := r.commentsService.GetCommentsByPostID(ctx.UserContext(),
-		*params.ToCoreGetAllCommentsParams(), posts_id)
-
+	commentsByPost, err := r.commentsService.GetCommentsByPostID(ctx.UserContext(),
+		*params.ToCoreGetAllCommentsParams(), postsID)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		return ctx.Status(fiber.ErrInternalServerError.Code).JSON("")
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(
-		model.Response{
-			Data: comments,
-		}))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(commentsByPost))
 }
 func (r *Router) createComment(ctx *fiber.Ctx) error {
 
 	comment := comments.Comments{}
-
 	if err := ctx.BodyParser(&comment); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	coreComment := comment.ToCoreComments()
 
-	post_id, err := strconv.Atoi(ctx.FormValue("postsID")) //ctx.ParamsInt("postsID")
-
+	postID, err := ctx.ParamsInt("postsID")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("invalid post id for comments"))
 	}
 
-	coreComment.Posts_id = post_id
+	coreComment.PostsID = postID
 
-	createdComment, err := r.commentsService.CreateComment(ctx.UserContext(), *coreComment, post_id)
-
+	createdComment, err := r.commentsService.CreateComment(ctx.UserContext(), *coreComment, postID)
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
@@ -64,22 +53,19 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 
 func (r *Router) updateComment(ctx *fiber.Ctx) error {
 
-	id, err := strconv.Atoi(ctx.FormValue("id"))
-
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("invalid comment id"))
 	}
 
 	newComment := core.Comments{}
-
 	if err := ctx.BodyParser(&newComment); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	newComment.Id = id
+	newComment.ID = id
 
 	updatedComment, err := r.commentsService.UpdateComments(ctx.UserContext(), newComment)
-
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -89,7 +75,7 @@ func (r *Router) updateComment(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) deleteComment(ctx *fiber.Ctx) error {
-	id, err := strconv.Atoi(ctx.FormValue("id"))
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid comment id")
 	}

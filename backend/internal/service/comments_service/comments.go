@@ -16,8 +16,8 @@ func NewCommentsService(store core.CommentsStore) core.CommentsService {
 	}
 }
 
-func (s *commentsService) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, post_id int) ([]core.Comments, error) {
-	comments, err := s.CommentsStore.GetCommentsByPostID(ctx, params, post_id)
+func (s *commentsService) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, postID int) ([]core.Comments, error) {
+	comments, err := s.CommentsStore.GetCommentsByPostID(ctx, params, postID)
 	if err != nil {
 		//TODO обработать
 	}
@@ -36,8 +36,8 @@ func (s *commentsService) GetCommentsByPostID(ctx context.Context, params core.G
 	return s.CreateComment(ctx, comment, post_id)
 }*/
 
-func (s *commentsService) CreateComment(ctx context.Context, comment core.Comments, post_id int) (core.Comments, error) {
-	return s.CommentsStore.CreateComment(ctx, comment, post_id)
+func (s *commentsService) CreateComment(ctx context.Context, comment core.Comments, postID int) (core.Comments, error) {
+	return s.CommentsStore.CreateComment(ctx, comment, postID)
 }
 func (s *commentsService) UpdateComments(ctx context.Context, comments core.Comments) (core.Comments, error) {
 	return s.CommentsStore.UpdateComments(ctx, comments)

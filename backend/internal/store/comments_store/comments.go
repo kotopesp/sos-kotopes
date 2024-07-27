@@ -19,7 +19,7 @@ func NewCommentsStore(pg *postgres.Postgres) core.CommentsStore {
 	}
 }
 
-func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, post_id int) ([]core.Comments, error) {
+func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, postID int) ([]core.Comments, error) {
 
 	var comments []core.Comments
 
@@ -40,10 +40,8 @@ func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParam
 
 }
 
-func (s *store) CreateComment(ctx context.Context, comment core.Comments, post_id int) (core.Comments, error) {
-	/*if comment.Is_deleted == true {
-		return comment, fiber.NewError(fiber.StatusBadRequest, "invalid is_deleted comment")
-	}*/
+func (s *store) CreateComment(ctx context.Context, comment core.Comments, postID int) (core.Comments, error) {
+
 	if err := s.DB.WithContext(ctx).Create(&comment).Error; err != nil {
 		return comment, fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
@@ -59,8 +57,8 @@ func (s *store) UpdateComments(ctx context.Context, comment core.Comments) (core
 
 func (s *store) DeleteComments(ctx context.Context, id int) error {
 	deletedComment := core.Comments{
-		Is_deleted: true,
-		Deleted_at: time.Now(),
+		IsDeleted: true,
+		DeletedAt: time.Now(),
 	}
 	if err := s.DB.WithContext(ctx).Save(&deletedComment).Error; err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
