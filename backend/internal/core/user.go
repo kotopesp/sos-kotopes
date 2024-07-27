@@ -7,10 +7,17 @@ import (
 
 type (
 	User struct {
-		Id        int    `gorm:"primary key;autoIncrement" db:"id"`
-		Username  string `db:"username"`
-		Password  string `db:"password"`
-		CreatedAt string `db:"created_at"`
+		Id           int    `gorm:"primary key;autoIncrement" db:"id"`
+		Username     string `db:"username"`
+		FirstName    string `db:"firstname"`
+		LastName     string `db:"lastname"`
+		Description  string `db:"description"`
+		Photo        string `db:"photo"`
+		PasswordHash string `db:"password"`
+		IsDeleted    bool   `db:"is_deleted"`
+		DeletedAt    string `db:"deleted_at"`
+		CreatedAt    string `db:"created_at"`
+		UpdatedAt    string `db:"updated_at"`
 	}
 	UserStore interface {
 		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
@@ -28,14 +35,19 @@ type (
 		userId    int    `db:"user_id"`
 		createdAt string `db:"created_at"`
 	}
-	FavouriteUserStore interface {
-		AddPersonToFavourite(ctx context.Context, personId int, userId int) (err error)
-		GetFavouritePersons(ctx context.Context, userId int) (persons []FavouriteUser, err error)
-		DeletePersonFromFavourite(ctx context.Context, personId int, userId int) (err error)
+	UserFavouriteStore interface {
+		AddUserToFavourite(ctx context.Context, personId int, userId int) (err error)
+		GetFavouriteUsers(ctx context.Context, userId int, params user.GetFavourites) (favouriteUsers []user.User, err error)
+		DeleteUserFromFavourite(ctx context.Context, personId int, userId int) (err error)
 	}
-	FavouriteUserService interface {
-		AddPersonToFavourite(ctx context.Context, personId int, userId int) (err error)
-		GetFavouritePersons(ctx context.Context, userId int) (persons []FavouriteUser, err error)
-		DeletePersonFromFavourite(ctx context.Context, personId int, userId int) (err error)
+	UserFavouriteService interface {
+		AddUserToFavourite(ctx context.Context, personId int, userId int) (err error)
+		GetFavouriteUsers(ctx context.Context, userId int, params user.GetFavourites) (favouriteUsers []user.User, err error)
+		DeleteUserFromFavourite(ctx context.Context, personId int, userId int) (err error)
+	}
+	GetFavourites struct {
+		Count  *int
+		Offset *int
+		Sort   *string
 	}
 )

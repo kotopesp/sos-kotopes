@@ -10,7 +10,7 @@ type Service struct {
 	roleStore core.RoleStore
 }
 
-func NewRoleService(store core.RoleStore) core.RoleService {
+func New(store core.RoleStore) core.RoleService {
 	return &Service{
 		roleStore: store,
 	}
@@ -25,6 +25,6 @@ func (s *Service) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole
 func (s *Service) DeleteUserRole(ctx context.Context, id int, role string) (err error) {
 	return s.roleStore.DeleteUserRole(ctx, id, role)
 }
-func (s *Service) UpdateUserRole(ctx context.Context, id int, role string) (err error) {
-	return nil
+func (s *Service) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole) (err error) {
+	return s.roleStore.UpdateUserRole(ctx, id, role)
 }

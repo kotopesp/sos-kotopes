@@ -6,16 +6,18 @@ import (
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	"time"
 )
 
 type Store struct {
 	*postgres.Postgres
 }
 
-func NewUserStore(pg *postgres.Postgres) core.UserStore {
+func New(pg *postgres.Postgres) core.UserStore {
 	return &Store{pg}
 }
 
+// проверка на существование пользователя?
 func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) error {
 
 	tx := r.DB.Begin()
@@ -29,12 +31,35 @@ func (r *Store) UpdateUser(ctx context.Context, id int, update user.UpdateUser) 
 	if update.Username != nil {
 		updates["username"] = *update.Username
 	}
-	if update.Password != nil {
-		updates["password"] = *update.Password
+	if update.FirstName != nil {
+		updates["firstname"] = *update.FirstName
+	}
+	if update.LastName != nil {
+		updates["lastname"] = *update.LastName
+	}
+	if update.Description != nil {
+		updates["description"] = *update.Description
+	}
+	if update.Photo != nil {
+		updates["photo"] = *update.Photo
+	}
+	if update.PasswordHash != nil {
+		updates["password_hash"] = *update.PasswordHash
+	}
+	if update.IsDeleted != nil {
+		updates["is_deleted"] = *update.IsDeleted
+	}
+	if update.DeletedAt != nil {
+		updates["deleted_at"] = *update.DeletedAt
+	}
+	if update.CreatedAt != nil {
+		updates["created_at"] = *update.CreatedAt
 	}
 
 	if len(updates) == 0 {
 		return errors.New("no fields to update")
+	} else {
+		updates["updated_at"] = time.Now()
 	}
 
 	result := tx.Table("users").Where("id = ?", id).Updates(updates)

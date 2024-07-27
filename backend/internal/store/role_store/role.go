@@ -15,7 +15,7 @@ type Store struct {
 	*postgres.Postgres
 }
 
-func NewRoleStore(pg *postgres.Postgres) core.RoleStore {
+func New(pg *postgres.Postgres) core.RoleStore {
 	return &Store{pg}
 }
 
@@ -73,7 +73,7 @@ func (r *Store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 	case "seeker":
 		seeker := core.Seeker{
 			UserId:      id,
-			Description: role.Data,
+			Description: role.Description,
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -84,7 +84,7 @@ func (r *Store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 	case "keeper":
 		keeper := core.Role{
 			UserId:      id,
-			Description: role.Data,
+			Description: role.Description,
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -95,7 +95,7 @@ func (r *Store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 	case "vet":
 		vet := core.Role{
 			UserId:      id,
-			Description: role.Data,
+			Description: role.Description,
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -127,7 +127,7 @@ func (r *Store) DeleteUserRole(ctx context.Context, id int, role string) (err er
 		err = tx.Table("seekers").Where("user_id = ?", id).Delete(seeker).Error
 	case "keeper":
 		var keeper core.Keeper
-		err = tx.Table("keeper").Where("user_id = ?", id).Delete(keeper).Error
+		err = tx.Table("keepers").Where("user_id = ?", id).Delete(keeper).Error
 	case "vet":
 		var vet core.Vet
 		err = tx.Table("vets").Where("user_id = ?", id).Delete(vet).Error
@@ -144,6 +144,50 @@ func (r *Store) DeleteUserRole(ctx context.Context, id int, role string) (err er
 	return tx.Commit().Error
 
 }
-func (r *Store) UpdateUserRole(ctx context.Context, id int, role string) (err error) {
-	return nil
+
+// добавить проверку на существование пользователя
+func (r *Store) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole) (err error) {
+	tx := r.DB.Begin()
+
+	if tx.Error != nil {
+		tx.Rollback()
+		return tx.Error
+	}
+
+	updates := make(map[string]interface{})
+	if role.Description != nil {
+		updates["description"] = *role.Description
+	}
+
+	if len(updates) == 0 {
+		return errors.New("no fields to update")
+	} else {
+		updates["updated_at"] = time.Now()
+	}
+	roleName := role.Name
+	switch roleName {
+	case "seeker":
+		result := tx.Table("seekers").Where("id = ?", id).Updates(updates)
+		if result.Error != nil {
+			tx.Rollback()
+			return result.Error
+		}
+	case "keeper":
+		result := tx.Table("keepers").Where("id = ?", id).Updates(updates)
+		if result.Error != nil {
+			tx.Rollback()
+			return result.Error
+		}
+	case "vet":
+		result := tx.Table("vets").Where("id = ?", id).Updates(updates)
+		if result.Error != nil {
+			tx.Rollback()
+			return result.Error
+		}
+	default:
+		tx.Rollback()
+		return errors.New("invalid role name")
+	}
+
+	return tx.Commit().Error
 }

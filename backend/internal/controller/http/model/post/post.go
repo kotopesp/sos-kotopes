@@ -2,7 +2,7 @@ package post
 
 type (
 	Post struct {
-		ID        int    `gorm:"primary key;autoIncrement" json:"id"`
+		ID        int    `json:"id"`
 		Title     string `json:"title"`
 		Body      string `json:"body"`
 		UserID    int    `json:"user_id"`

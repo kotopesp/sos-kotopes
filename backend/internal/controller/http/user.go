@@ -11,9 +11,7 @@ import (
 
 func (r *Router) UpdateUser(ctx *fiber.Ctx) error {
 	idItem := getPayloadItem(ctx, "id")
-	fmt.Println(idItem)
 	idFloat, ok := idItem.(float64)
-	fmt.Println(idFloat, ok)
 	if !ok {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse("error while reading id from token"))
 	}
@@ -27,7 +25,7 @@ func (r *Router) UpdateUser(ctx *fiber.Ctx) error {
 			"error": "invalid request body",
 		})
 	}
-	err = r.userService.UpdateUser(ctx.UserContext(), int(id), update)
+	err = r.userService.UpdateUser(ctx.UserContext(), id, update)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))

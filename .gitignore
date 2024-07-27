@@ -1,5 +1,4 @@
 .idea
 .vscode
-.gitignore
 backend/Makefile
 *.exe

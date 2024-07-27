@@ -2,7 +2,7 @@ package role
 
 type Role struct {
 	Name        string `json:"name"`
-	Id          int    `gorm:"primary_key;autoIncrement" json:"id"`
+	Id          int    `json:"id"`
 	UserID      int    `json:"user_id"`
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`
@@ -10,11 +10,11 @@ type Role struct {
 }
 
 type GiveRole struct {
-	Name string `json:"name"`
-	Data string `json:"data"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 type UpdateRole struct {
-	Name string  `json:"name"`
-	Data *string `json:"data"`
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
 }

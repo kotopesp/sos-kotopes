@@ -39,12 +39,12 @@ type (
 		GetUserRoles(ctx context.Context, id int) (roles []role.Role, err error)
 		GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) (err error)
 		DeleteUserRole(ctx context.Context, id int, role string) (err error)
-		UpdateUserRole(ctx context.Context, id int, role string) (err error)
+		UpdateUserRole(ctx context.Context, id int, role role.UpdateRole) (err error)
 	}
 	RoleStore interface {
 		GetUserRoles(ctx context.Context, id int) (roles []role.Role, err error)
 		GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) (err error)
 		DeleteUserRole(ctx context.Context, id int, role string) (err error)
-		UpdateUserRole(ctx context.Context, id int, role string) (err error)
+		UpdateUserRole(ctx context.Context, id int, role role.UpdateRole) (err error)
 	}
 )

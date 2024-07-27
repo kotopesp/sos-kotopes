@@ -10,7 +10,7 @@ type Service struct {
 	userStore core.UserStore
 }
 
-func NewUserService(store core.UserStore) core.UserService {
+func New(store core.UserStore) core.UserService {
 	return &Service{
 		userStore: store,
 	}

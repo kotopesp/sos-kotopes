@@ -7,11 +7,12 @@ import (
 )
 
 type Router struct {
-	app           *fiber.App
-	entityService core.EntityService
-	authService   core.AuthService
-	userService   core.UserService
-	roleService   core.RoleService
+	app                  *fiber.App
+	entityService        core.EntityService
+	authService          core.AuthService
+	userService          core.UserService
+	roleService          core.RoleService
+	userFavouriteService core.UserFavouriteService
 }
 
 func NewRouter(
@@ -20,13 +21,15 @@ func NewRouter(
 	authService core.AuthService,
 	userService core.UserService,
 	roleService core.RoleService,
+	userFavouriteService core.UserFavouriteService,
 ) {
 	router := &Router{
-		app:           app,
-		entityService: entityService,
-		authService:   authService,
-		userService:   userService,
-		roleService:   roleService,
+		app:                  app,
+		entityService:        entityService,
+		authService:          authService,
+		userService:          userService,
+		roleService:          roleService,
+		userFavouriteService: userFavouriteService,
 	}
 
 	router.initRequestMiddlewares()
@@ -54,20 +57,13 @@ func (r *Router) initRoutes() {
 	v1.Get("/users/:id/roles", r.GetUserRoles)
 	v1.Post("/users/:id/roles", r.GiveRoleToUser)
 	v1.Delete("/users/:id/roles", r.DeleteUserRole)
-	v1.Patch("/users/:id/roles", r.UpdateUserRoles) //todo
+	v1.Patch("/users/:id/roles", r.UpdateUserRoles)
 
 	//favourites users todo
-	//	v1.Get("/users/favourites", r.GetUserFavourites)
-	//	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
-	//	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
-	//favourites comments todo
-	//	v1.Get("/posts/comments/favourites", r.GetFavouriteComments)
-	//	v1.Delete("/posts/:id/comments/:id/favourites", r.DeleteCommentFromFavourites)
-	// reviews todo
-	// v1.Get("/users/:id/reviews", r.GetUserReviews)
-	//	v1.Post("/users/:id/reviews", r.ReviewUser)
-	//	v1.Patch("/users/:id/reviews", r.UpdateReviewOnUser)
-	//	v1.Delete("/users/:id/reviews", r.DeleteReviewOnUser)
+	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
+	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
+	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
+
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

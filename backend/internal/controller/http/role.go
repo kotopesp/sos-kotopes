@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/role"
 	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
@@ -107,6 +106,16 @@ func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
-	fmt.Println(id)
-	return nil
+	var updateRole role.UpdateRole
+	if err = ctx.BodyParser(&updateRole); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Cannot parse JSON",
+		})
+	}
+	err = r.roleService.UpdateUserRole(ctx.UserContext(), id, updateRole)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+	return ctx.Status(fiber.StatusOK).JSON(id)
 }

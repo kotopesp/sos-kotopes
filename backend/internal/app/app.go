@@ -7,9 +7,11 @@ import (
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/auth"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/role_service"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/user_favourite_service"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/service/user_service"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/role_store"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user_favourite_store"
 	"gitflic.ru/spbu-se/sos-kotopes/internal/store/user_store"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -39,12 +41,14 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
-	userStore := user_store.NewUserStore(pg)
-	roleStore := role_store.NewRoleStore(pg)
+	userStore := user_store.New(pg)
+	roleStore := role_store.New(pg)
+	favouriteUserStore := user_favourite_store.New(pg)
 	// Services
-	roleService := role_service.NewRoleService(roleStore)
+	roleService := role_service.New(roleStore)
 	entityService := name.New(entityStore)
-	userService := user_service.NewUserService(userStore)
+	userService := user_service.New(userStore)
+	favouriteUserService := user_favourite_service.New(favouriteUserStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -64,7 +68,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, authService, userService, roleService)
+	v1.NewRouter(app, entityService, authService, userService, roleService, favouriteUserService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
