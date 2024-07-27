@@ -17,6 +17,7 @@
       grid-template-columns: repeat(3, 1fr);
       grid-gap: 20px;
       align-items: center;
+      position: relative;
 
       .header__profile__image {
         width: 45px;
@@ -27,37 +28,71 @@
       .header__auth__button {
         cursor: pointer;
         width: 50px;
-        height: 50px;
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: center;
       }
 
+      .popups {
+        justify-content: center;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height .3s ease-out;
+      }
+
       .message__block {
+
+        height: 22px;
+
+        &:hover {
+
+          .header__message__icon {
+            box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.3);
+          }
+
+          .popups {
+            max-height: fit-content;
+            overflow: visible;
+            transition: max-height .3s ease-out;
+          }
+        }
       }
 
       .notification__block {
 
+        height: 24px;
+
+        &:hover {
+
+          .header__notification__icon {
+            box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.3);
+          }
+
+          .popups {
+            max-height: fit-content;
+            overflow: visible;
+            transition: max-height .3s ease-out;
+          }
+        }
       }
 
       .profile__block {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+
+        height: 50px;
 
         &:hover {
-          .profile__popup {
+
+          .header__profile__image {
+            box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.3);
+            transition: box-shadow .3s;
+          }
+
+          .popups {
             max-height: fit-content;
             overflow: visible;
-            transition: max-height 1s;
+            transition: max-height .3s ease-out;
           }
-        }
-
-        .profile__popup {
-          order: 0;
-          overflow: hidden;
-          max-height: 0;
-          transition: max-height 1s;
         }
       }
     }

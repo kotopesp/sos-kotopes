@@ -18,19 +18,21 @@
     <div *ngIf="isAuth" class="header__auth__profile">
       <div class="header__auth__button message__block">
         <a>
-          <img src="/assets/icons/message-icon.svg">
+          <img src="/assets/icons/message-icon.svg" class="header__message__icon">
         </a>
+        <app-message-popup class="popups message__popup"/>
       </div>
       <div class="header__auth__button notification__block">
         <a>
-          <img src="/assets/icons/notification-icon.svg">
+          <img src="/assets/icons/notification-icon.svg" class="header__notification__icon">
         </a>
+        <app-notification-popup class="popups notification__popup"/>
       </div>
       <div class="header__auth__button profile__block">
         <a>
           <img src="/assets/images/test-cat2.png" class="header__profile__image">
         </a>
-        <app-profile-popup class="profile__popup"/>
+        <app-profile-popup class="popups profile__popup"/>
       </div>
     </div>
 
