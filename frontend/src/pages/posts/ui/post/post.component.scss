@@ -26,11 +26,21 @@
     justify-items: center;
 
     .block__image__pet {
+      max-width: 334px;
+      max-height: 352px;
+      position: relative;
+
       .image__pet {
         width: 334px;
         height: 352px;
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
+      }
+
+      app-favorites-button {
+        position: absolute;
+        left: 266px;
+        top: 18px;
       }
     }
 

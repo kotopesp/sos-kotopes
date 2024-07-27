@@ -1,0 +1,9 @@
+path {
+    fill: var(--white-color);
+    fill-opacity: 50%;
+    stroke: var(--gray-color-button);
+
+    &:hover {
+        stroke: var(--red-color);
+    }
+}

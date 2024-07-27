@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
-import { SidebarComponent } from "../../../../widgets/sidebar/sidebar.component";
+import { FavoritesButtonComponent } from "./favorites-button/favorites-button.component";
 
 @Component({
   selector: 'app-post',
   standalone: true,
-  imports: [],
+  imports: [FavoritesButtonComponent],
   templateUrl: './post.component.html',
   styleUrl: './post.component.scss'
 })
