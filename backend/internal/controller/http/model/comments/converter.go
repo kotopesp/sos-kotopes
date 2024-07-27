@@ -4,7 +4,7 @@ import "github.com/kotopesp/sos-kotopes/internal/core"
 
 func (c *Comments) ToCoreComments() *core.Comments {
 	if c == nil {
-		//TODO: доделать
+		return &core.Comments{}
 	}
 	return &core.Comments{
 		ID:        c.ID,
@@ -19,9 +19,10 @@ func (c *Comments) ToCoreComments() *core.Comments {
 		ReplyID:   c.ReplyID,
 	}
 }
+
 func (c *GetAllCommentsParams) ToCoreGetAllCommentsParams() *core.GetAllParamsComments {
 	if c == nil {
-		//TODO: доделать
+		return &core.GetAllParamsComments{}
 	}
 	return &core.GetAllParamsComments{
 		Limit:  &c.Limit,

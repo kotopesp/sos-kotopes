@@ -19,7 +19,7 @@ func NewCommentsService(store core.CommentsStore) core.CommentsService {
 func (s *commentsService) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, postID int) ([]core.Comments, error) {
 	comments, err := s.CommentsStore.GetCommentsByPostID(ctx, params, postID)
 	if err != nil {
-		//TODO обработать
+		return nil, err
 	}
 	return comments, nil
 }

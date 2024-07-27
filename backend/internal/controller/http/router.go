@@ -45,7 +45,7 @@ func (r *Router) initRoutes() {
 	v1.Get("/entities", r.getEntities)
 	v1.Get("/entities/:id", r.getEntityByID)
 
-	//comments
+	// comments
 	v1.Get("/posts/:post_id/comments", r.getCommentsByPostID)
 	v1.Post("/posts/:post_id/comments", r.createComment)
 	v1.Put("/posts/:post_id/comments/:comment_id", r.updateComment)
