@@ -17,6 +17,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/service/auth"
+	"github.com/kotopesp/sos-kotopes/internal/service/name"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/kotopesp/sos-kotopes/internal/store/entity"
+	"github.com/kotopesp/sos-kotopes/internal/store/user"
+
+	baseValidator "github.com/go-playground/validator/v10"
+	"github.com/kotopesp/sos-kotopes/config"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
 // Run creates objects via constructors.
@@ -35,11 +51,25 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
+	userStore := user.New(pg)
 	commentsStore := commentsstore.NewCommentsStore(pg)
 
 	// Services
 	entityService := name.New(entityStore)
 	commentsService := commentsservice.NewCommentsService(commentsStore)
+	entityService := name.New(entityStore)
+	authService := auth.New(
+		userStore,
+		core.AuthServiceConfig{
+			JWTSecret:      cfg.JWTSecret,
+			VKClientID:     cfg.VKClientID,
+			VKClientSecret: cfg.VKClientSecret,
+			VKCallback:     cfg.VKCallback,
+		},
+	)
+
+	// Validator
+	formValidator := validator.New(ctx, baseValidator.New())
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -50,10 +80,16 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, nil, commentsService)
+	v1.NewRouter(
+		app,
+		entityService,
+		formValidator,
+		authService,
+		commentsService,
+	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
-	err = app.Listen(cfg.HTTP.Port)
+	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())
 	}

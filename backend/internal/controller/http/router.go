@@ -1,37 +1,41 @@
 package http
 
 import (
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 )
 
 type Router struct {
 	app             *fiber.App
 	entityService   core.EntityService
-	authService     interface{}
-	commentsService core.CommentsService
+	authService     core.AuthService
+	commentsService core.CommentsService	
+	formValidator   validator.FormValidatorService
 }
 
-func NewRouter(
+func NewRouter()
 	app *fiber.App,
 	entityService core.EntityService,
-	authService interface{},
-	commentsService core.CommentsService,
-) {
-	router := &Router{
-		app:             app,
-		entityService:   entityService,
-		authService:     authService,
-		commentsService: commentsService,
-	}
+		formValidator validator.FormValidatorService,
+		authService core.AuthService,
+	 {
+		router := &Router{
+			app:           app,
+			entityService: entityService,
+			formValidator: formValidator,
+			authService:   authService,
+			}
 
+		}
 	router.initRequestMiddlewares()
 
 	router.initRoutes()
 
 	router.initResponseMiddlewares()
-}
+
 
 func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
@@ -47,7 +51,17 @@ func (r *Router) initRoutes() {
 	v1.Post("/posts/:post_id/comments", r.createComment)
 	v1.Put("/posts/:post_id/comments/:comment_id", r.updateComment)
 	v1.Delete("/posts/:post_id/comments/:comment_id", r.deleteComment)
-}
+	// e.g. protected resource
+	v1.Get("/protected", r.protectedMiddleware(), r.protected)
+
+	// auth
+	v1.Post("/auth/login", r.loginBasic)
+	v1.Post("/auth/signup", r.signup)
+	v1.Post("/auth/token/refresh", r.refreshTokenMiddleware(), r.refresh)
+
+	// auth vk
+	v1.Get("/auth/login/vk", r.loginVK)
+	v1.Get("/auth/login/vk/callback", r.callback)}
 
 // initRequestMiddlewares initializes all middlewares for http requests
 func (r *Router) initRequestMiddlewares() {
