@@ -8,6 +8,7 @@
   --white-color: #FFF;
   --black-color: #000;
   --text-brown-light-color: #443416;
+  --pink-border-color: #EABAB3;
   --yellow-color-bg: #F6DE8A;
   --pink-color-bg: #F5D3B4;
   --purple-color-bg: #E3CFFD;
@@ -86,6 +87,10 @@ body {
 
 .fw700 {
   font-weight: 700;
+}
+
+.lh26 {
+  line-height: 26px;
 }
 
 .lh52 {
