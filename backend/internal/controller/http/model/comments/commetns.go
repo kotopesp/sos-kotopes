@@ -3,16 +3,16 @@ package comments
 import "time"
 
 type Comments struct {
-	ID         int       `json:"id" db:"id"`
-	Content    string    `json:"content" db:"content"`
-	Author_id  int       `json:"autorID" db:"author_id"`
-	Posts_id   int       `json:"postsID" db:"posts_id"`
-	Is_deleted bool      `json:"isDELETED" db:"is_deleted"`
-	Deleted_at time.Time `json:"deletedAT" db:"deleted_at"`
-	Created_at time.Time `json:"createdAT" db:"created_at"`
-	Updated_at time.Time `json:"updatedAT" db:"updated_at"`
-	Parent_id  int       `json:"parent_id " db:"parent_id"`
-	Reply_id   int       `json:"reply_id" db:"reply_id"`
+	ID        int       `json:"id" db:"id"`
+	Content   string    `json:"content" db:"content"`
+	AuthorID  int       `json:"autorID" db:"author_id"`
+	PostsID   int       `json:"postsID" db:"posts_id"`
+	IsDeleted bool      `json:"isDeleted" db:"is_deleted"`
+	DeletedAt time.Time `json:"deletedAt" db:"deleted_at"`
+	CreatedAt time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
+	ParentID  int       `json:"parentID " db:"parent_id"`
+	ReplyID   int       `json:"replyID" db:"reply_id"`
 }
 
 type GetAllCommentsParams struct {
