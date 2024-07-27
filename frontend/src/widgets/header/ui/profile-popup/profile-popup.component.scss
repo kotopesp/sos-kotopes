@@ -40,6 +40,10 @@
       .block__control__line {
         display: flex;
         column-gap: 10px;
+
+        :hover {
+          border-bottom: 1px solid var(--white-color);
+        }
       }
     }
   }
