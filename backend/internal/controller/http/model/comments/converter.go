@@ -19,7 +19,6 @@ func (c *Comments) ToCoreComments() *core.Comments {
 		ReplyID:   c.ReplyID,
 	}
 }
-
 func (c *GetAllCommentsParams) ToCoreGetAllCommentsParams() *core.GetAllParamsComments {
 	if c == nil {
 		//TODO: доделать
