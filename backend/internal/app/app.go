@@ -6,31 +6,20 @@ import (
 	"os/signal"
 	"syscall"
 
-	"gitflic.ru/spbu-se/sos-kotopes/config"
-	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
-	commentsservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/comments_service"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
-	commentsstore "gitflic.ru/spbu-se/sos-kotopes/internal/store/comments_store"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/kotopesp/sos-kotopes/config"
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
+	commentsservice "github.com/kotopesp/sos-kotopes/internal/service/comments_service"
 	"github.com/kotopesp/sos-kotopes/internal/service/name"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/recover"
+	commentsstore "github.com/kotopesp/sos-kotopes/internal/store/comments_store"
 	"github.com/kotopesp/sos-kotopes/internal/store/entity"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
-
-	baseValidator "github.com/go-playground/validator/v10"
-	"github.com/kotopesp/sos-kotopes/config"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
@@ -57,7 +46,6 @@ func Run(cfg *config.Config) {
 	// Services
 	entityService := name.New(entityStore)
 	commentsService := commentsservice.NewCommentsService(commentsStore)
-	entityService := name.New(entityStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{

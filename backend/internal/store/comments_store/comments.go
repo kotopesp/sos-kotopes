@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
 	"github.com/gofiber/fiber/v2"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
 type store struct {

@@ -3,10 +3,10 @@ package http
 import (
 	"strconv"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/comments"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"github.com/gofiber/fiber/v2"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/comments"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
 func (r *Router) getCommentsByPostID(ctx *fiber.Ctx) error {

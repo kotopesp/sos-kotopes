@@ -1,6 +1,6 @@
 package comments
 
-import "gitflic.ru/spbu-se/sos-kotopes/internal/core"
+import "github.com/kotopesp/sos-kotopes/internal/core"
 
 func (c *Comments) ToCoreComments() *core.Comments {
 	if c == nil {
