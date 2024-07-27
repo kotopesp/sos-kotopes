@@ -16,8 +16,10 @@
     }
 
     .animals__buttons {
-      display: flex;
-      column-gap: 50px;
+      display: grid;
+      row-gap: 30px;
+      grid-template-columns: 270px 270px;
+      column-gap: 40px;
 
       .animals__button {
         display: flex;
@@ -28,10 +30,11 @@
         cursor: pointer;
       }
 
-      .animals__button-hide {
+      .animals__button__hide {
         background: var(--yellow-color-bg);
         height: 59px;
         width: 271px;
+
         &:hover {
           background: var(--brown-hover-color);
           color: var(--yellow-color-bg);
@@ -39,10 +42,23 @@
         }
       }
 
-      .animals__button-find {
+      .animals__button__find {
         background: var(--pink-color-bg);
         width: 251px;
         height: 59px;
+
+        &:hover {
+          background: var(--red-hover-color);
+          color: var(--pink-color-bg);
+          transition: 0.3s ease;
+        }
+      }
+
+      .animals__button__looking-for-home {
+        width: 277px;
+        height: 59px;
+        color: var(--white-color);
+        border: 1px solid var(--pink-border-color);
         &:hover {
           background: var(--red-hover-color);
           color: var(--pink-color-bg);
@@ -52,27 +68,27 @@
     }
   }
 
-    .stickers {
+  .stickers {
 
-      background-image: url(../../../../public/assets/images/bg-with-steps.svg);
-      background-repeat: no-repeat;
+    background-image: url(../../../../public/assets/images/bg-with-steps.svg);
+    background-repeat: no-repeat;
 
-      display: grid;
-      min-height: fit-content;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 55vh);
-      justify-items: end;
-      column-gap: 40px;
+    display: grid;
+    min-height: fit-content;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 55vh);
+    justify-items: end;
+    column-gap: 40px;
 
-      :nth-child(odd) {
-        margin-top: 10vh;
-      }
-
-      :nth-child(even) {
-        margin-top: 30vh;
-        justify-self: start;
-      }
+    :nth-child(odd) {
+      margin-top: 10vh;
     }
+
+    :nth-child(even) {
+      margin-top: 30vh;
+      justify-self: start;
+    }
+  }
 
   .block__faq {
     display: grid;
@@ -89,6 +105,7 @@
     grid-gap: 20px;
     justify-content: center;
     padding: 5px;
+
     .text__about-us {
       justify-self: start;
       width: 70vw;
