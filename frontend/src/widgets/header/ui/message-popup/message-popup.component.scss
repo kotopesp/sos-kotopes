@@ -2,7 +2,7 @@
   margin-right: 350px;
   margin-top: 34px;
   width: 919px;
-  height: 620px;
+  height: 522px;
   background: var(--brown-ads-color);
   max-height: fit-content;
   border-bottom-left-radius: 40px;
@@ -15,8 +15,7 @@
   box-shadow: 0 5px 10px 2px rgba(0, 0, 0, 0.2);
   grid-template-rows: 80px 1fr 1fr 1fr 1fr;
 
-  .block__list__roles {
-    display: grid;
-    grid-template-rows: repeat(6, 86px);
+  .block__list__chats {
+    width: 323px;
   }
 }

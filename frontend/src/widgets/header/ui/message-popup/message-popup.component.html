@@ -1,9 +1,14 @@
 <div class="block__message__popup">
   <div class="block__list__roles">
-
+    <app-list-role *ngFor="let listRole of listRoles" [listRole]="listRole"/>
   </div>
   <div class="block__list__chats">
+    <div class="block__search">
 
+    </div>
+    <div class="block__chats">
+
+    </div>
   </div>
   <div class="block__inner__chat">
 

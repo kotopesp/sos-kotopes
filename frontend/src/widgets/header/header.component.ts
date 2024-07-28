@@ -4,6 +4,7 @@ import {NgForOf, NgIf} from "@angular/common";
 import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
 import {NotificationPopupComponent} from "./ui/notification-popup/notification-popup.component";
 import {MessagePopupComponent} from "./ui/message-popup/message-popup.component";
+import {AuthOverlayComponent} from "../auth-overlay/auth-overlay.component";
 
 @Component({
   selector: 'app-header',
@@ -16,6 +17,7 @@ import {MessagePopupComponent} from "./ui/message-popup/message-popup.component"
     ProfilePopupComponent,
     NotificationPopupComponent,
     MessagePopupComponent,
+    AuthOverlayComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
