@@ -5,19 +5,21 @@
         path {
             fill: var(--white-color);
             fill-opacity: 50%;
+            stroke-width: 3px;
             stroke: var(--gray-color-button);
 
             &:hover {
-                stroke: var(--red-color);
+                stroke: var(--red-color-favorites);
             }
         }
     }
 
     .inactive-button {
         path {
-            fill: var(--red-color);
+            fill: var(--red-color-favorites);
             fill-opacity: 100%;
-            stroke: var(--red-color);
+            stroke: var(--red-color-favorites);
+            stroke-width: 2px;
 
             &:hover {
                 stroke: var(--white-color);

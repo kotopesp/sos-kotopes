@@ -1,37 +1,39 @@
-.block__post__pet {
-  max-width: 334px;
-  display: contents;
-  margin: 44px 44px 30px 44px;
+.post__interior_container {
+  width: 421px;
+  max-height: max-content;
+  padding: 44px 44px 30px 44px;
   justify-items: center;
   align-items: center;
-  
-  .block__post__inferior {
-    
-    &:hover {
-      background-color: rgba(53, 43, 26, 1);
-      transition: background-color .1s;
-  
-      .post__pet__button {
-        color: var(--brown-button-color);
-        background: var(--white-color);
+  border-radius: 20px;
+  z-index: 0;
+
+  &:hover {
+    background-color: rgba(53, 43, 26, 1);
+    transition: background-color .1s;
+
+    .post__inferior_container {
+      .post-bottom__container {
+        .response_button {
+          color: var(--brown-button-color);
+          background-color: var(--white-color);
+        }
       }
     }
+  }
   
-    border-radius: 20px;
+  .post__inferior_container {
     flex: none;
     display: grid;
     gap: 20px;
-    max-width: 421px;
-    padding: 44px 44px 30px 44px;
+    width: 334px;
     justify-items: center;
 
-    .block__image__pet {
+    .photo__container {
       max-width: 334px;
       max-height: 352px;
       position: relative;
-      z-index: 0;
 
-      .image__pet {
+      .pet_photo {
         width: 334px;
         height: 352px;
         border-top-left-radius: 20px;
@@ -46,12 +48,12 @@
       }
     }
 
-    .block__info__pet {
+    .info-under-photo__container {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       column-gap: 10px;
 
-      .block__info__date {
+      .publication-date {
         text-align: center;
         align-content: center;
         padding: 6px 18px;
@@ -60,7 +62,7 @@
         border-radius: 10px;
       }
 
-      .block__info__comments{
+      .comments_number {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -74,7 +76,7 @@
         align-content: center;
       }
 
-      @mixin block__info__find_status($styles) {
+      @mixin find-status($styles) {
         text-align: center;
         align-content: center;
         padding: 6px 18px;
@@ -82,25 +84,20 @@
         background: var($styles);
       }
   
-      .block__info__lost {
-          @include block__info__find_status(--red-color-button);
+      .lost_status  {
+          @include find-status(--red-color-button);
       }
   
-      .block__info__looking_for_home {
-          @include block__info__find_status(--orange-color-button);
+      .looking-for-home_status {
+          @include find-status(--orange-color-button);
       }
   
-      .block__info__found_home {
-          @include block__info__find_status(--green-color-button)
+      .found-home_status {
+          @include find-status(--green-color-button)
       }
     }
 
-    .block__place__pet {
-      width: 100%;
-      justify-items: start;
-    }
-
-    .block__description__pet {
+    .pet-description__container {
       text-align: left;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -110,30 +107,37 @@
       width: 334px;
     }
 
-    .block__under__place {
+
+    .place__container {
+      width: 100%;
+      justify-items: start;
+    }
+
+    .post-bottom__container {
       margin-top: 10px;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       column-gap: 20px;
   
-      .block__username__author {
+      .author-username__container {
         white-space: pre;
         overflow: hidden;
+        text-align: center;
         text-overflow: ellipsis;
         min-width: 100px;
       }
   
-      .block__button {
+      .response_button {
         cursor: pointer;
         z-index: 1;
-  
-        .post__pet__button {
-          text-align: center;
-          align-content: center;
-          border-radius: 10px;
-          border: 1px solid var(--white-color);
-          padding: 7px 18px;
-        }
+        text-align: center;
+        align-content: center;
+        align-items: center;
+        border-radius: 10px;
+        border: 1px solid var(--white-color);
+        padding: 7px 18px;
+        background-color: none;
+        background-color: rgba(28,28,28,0);
       }
     }
   }

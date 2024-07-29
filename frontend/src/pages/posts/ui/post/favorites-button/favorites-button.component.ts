@@ -9,9 +9,9 @@ import {NgClass} from "@angular/common";
   styleUrl: './favorites-button.component.scss'
 })
 export class FavoritesButtonComponent {
-  isToggled: boolean = false;
+  isPressed: boolean = false;
 
-  toggleButton() {
-    this.isToggled = !this.isToggled;
+  pressButton() {
+    this.isPressed = !this.isPressed;
   }
 }

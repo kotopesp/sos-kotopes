@@ -1,5 +1,5 @@
 <div class="favourites_button">
-    <button [ngClass]="{'active-button': !isToggled, 'inactive-button': isToggled}" (click)="toggleButton()">
+    <button [ngClass]="{'active-button': !isPressed, 'inactive-button': isPressed}" (click)="pressButton()">
         <svg width="48" height="40" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M34 2C29.8 2 26.1 4.1 24 7.4C21.9 4.1 18.2 2 14 2C7.4 2 2 7.4 2 14C2 25.9 24 38 24 38C24 38 46 26 46 14C46 7.4 40.6 2 34 2Z" stroke-width="3"/>
         </svg>
