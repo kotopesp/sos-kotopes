@@ -41,7 +41,7 @@ The following tasks are pending to complete the backend development:
 1. Clone the repository:
 
     ```sh
-    git clone https://gitflic.ru/project/spbu-se/sos-kotopes
+    git clone https://github.com/kotopesp/sos-kotopes.git
     cd sos-kotopes/backend
     ```
 
