@@ -29,6 +29,7 @@
       max-width: 334px;
       max-height: 352px;
       position: relative;
+      z-index: 0;
 
       .image__pet {
         width: 334px;
@@ -41,6 +42,7 @@
         position: absolute;
         left: 266px;
         top: 18px;
+        z-index: 1;
       }
     }
 
@@ -93,7 +95,7 @@
       }
     }
 
-        .block__place__pet {
+    .block__place__pet {
       width: 100%;
       justify-items: start;
     }
@@ -123,6 +125,7 @@
   
       .block__button {
         cursor: pointer;
+        z-index: 1;
   
         .post__pet__button {
           text-align: center;
