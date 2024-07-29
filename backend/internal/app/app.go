@@ -6,25 +6,21 @@ import (
 	"os/signal"
 	"syscall"
 
-	"os"
-	"os/signal"
-	"syscall"
-
-	keeperServiceImp "gitflic.ru/spbu-se/sos-kotopes/internal/service/keeper"
-	keeperReviewsServiceImp "gitflic.ru/spbu-se/sos-kotopes/internal/service/keeper_review"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	keeperServiceImp "github.com/kotopesp/sos-kotopes/internal/service/keeper"
+	keeperReviewsServiceImp "github.com/kotopesp/sos-kotopes/internal/service/keeper_review"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
 	"github.com/kotopesp/sos-kotopes/internal/service/name"
 
-	keeperStoreImp "gitflic.ru/spbu-se/sos-kotopes/internal/store/keeper"
-	keeperReviewsStoreImp "gitflic.ru/spbu-se/sos-kotopes/internal/store/keeper_review"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/kotopesp/sos-kotopes/internal/store/entity"
+	keeperStoreImp "github.com/kotopesp/sos-kotopes/internal/store/keeper"
+	keeperReviewsStoreImp "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"

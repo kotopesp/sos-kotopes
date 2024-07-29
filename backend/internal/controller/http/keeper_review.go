@@ -4,10 +4,10 @@ import (
 	"strconv"
 	"time"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"github.com/gofiber/fiber/v2"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"gorm.io/gorm"
 )
 

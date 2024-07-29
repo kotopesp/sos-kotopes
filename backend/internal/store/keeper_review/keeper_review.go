@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
 )
 

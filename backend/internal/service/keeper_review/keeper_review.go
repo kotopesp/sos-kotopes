@@ -3,7 +3,7 @@ package keeperreviewservice
 import (
 	"context"
 
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
 type service struct {
