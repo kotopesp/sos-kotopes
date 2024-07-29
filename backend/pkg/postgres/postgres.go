@@ -3,8 +3,9 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"time"
+
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
