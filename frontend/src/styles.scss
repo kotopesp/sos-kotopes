@@ -2,28 +2,43 @@
 @import "fonts";
 
 :root {
-  --brown-main-color: #21190B;
-  --brown-light-color: #4B432A;
-  --brown-button-color: #352B1A;
-  --grey-button-color: #D8D8D8;
   --white-color: #FFF;
   --black-color: #000;
-  --text-brown-light-color: #443416;
-  --yellow-color-bg: #F6DE8A;
-  --pink-color-bg: #F5D3B4;
-  --purple-color-bg: #E3CFFD;
-  --green-color-bg: #86C8C0;
-  --blue-color-bg: #79B0E3;
+
+  // brown
+  --brown-main-color: #21190B;
   --brown-bg-color: #2C2210;
+  --brown-button-color: #352B1A;
+  --text-brown-light-color: #443416;
+  --brown-light-color: #4B432A;
   --brown-hover-color: #503E00;
-  --red-hover-color: #5A2B00;
-  --red-color-button: #8A372699;
-  --orange-color-button: #916943;
-  --green-color-button: #467430;
-  --brown-ads-color: #2C2210;
+
+  // grey
   --gray-color-button: #4E4E4E;
   --gray-text-tag: #5D5D5D;
+  --grey-button-color: #D8D8D8;
+
+  // green
+  --green-color-button: #467430;
+  --green-color-bg: #86C8C0;
+
+  // red and pink
+  --red-hover-color: #5A2B00;
+  --red-color-button: #8A372699;
   --red-color: #BA2C21;
+  --pink-color-bg: #F5D3B4;
+
+  // blue
+  --blue-color-bg: #79B0E3;
+
+  //orange
+  --orange-color-button: #916943;
+
+  // purple
+  --purple-color-bg: #E3CFFD;
+
+  // yellow
+  --yellow-color-bg: #F6DE8A;
 }
 
 
