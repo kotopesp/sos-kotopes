@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {HeaderComponent} from "../../../widgets/header/header.component";
 import {PostComponent} from "./post/post.component";
-import { SidebarComponent } from "../../../widgets/sidebar/sidebar.component";
+import {FiltersBarComponent} from "../../../widgets/filters-bar/filters-bar.component";
 
 @Component({
   selector: 'app-posts',
@@ -9,7 +9,7 @@ import { SidebarComponent } from "../../../widgets/sidebar/sidebar.component";
   imports: [
     HeaderComponent,
     PostComponent,
-    SidebarComponent
+    FiltersBarComponent
 ],
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.scss'
