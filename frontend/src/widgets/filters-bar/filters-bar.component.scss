@@ -1,10 +1,35 @@
-.sidebar {
+.filters-bar {
+    padding: 65px 24px 0 169px;
+    max-height: 1050px;
     float: left;
     right: 0;
-    width: 26%;
-    display: flex;
-    flex-direction: column;
-    row-gap: 40px;
-    border-right: 5px solid var(--black-color);
     position: sticky;
+
+    p {
+        font-weight: 700;
+        font-size: 24px;
+    }
+
+    .content__container {
+        width: 313px;
+        float: left;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        row-gap: 40px;
+        
+        ul {
+            font-size: 20px;
+            padding-left: 46px;
+        }
+    }
+}
+.filters-bar::after {
+    content: "";
+    background: var(--white-color);
+    width: 1px;
+    height: 450px;
+    right: 0px;
+    top: 163px;
+    position: absolute;
 }

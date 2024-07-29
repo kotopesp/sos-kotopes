@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-sidebar',
+  selector: 'app-filters-bar',
   standalone: true,
   imports: [],
   templateUrl: './filters-bar.component.html',
