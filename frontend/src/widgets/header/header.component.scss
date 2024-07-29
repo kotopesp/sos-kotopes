@@ -9,7 +9,7 @@
     display: grid;
     grid-gap: 50px;
     align-items: center;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     padding-right: 7vw;
 
     .header__auth__profile {
@@ -99,7 +99,6 @@
     .header__button {
       width: fit-content;
 
-
       .header__link {
         text-decoration: none;
         font-size: 20px;
@@ -133,5 +132,12 @@
   .header__logo {
     padding: 14px 100px;
   }
+}
+
+.auth__overlay {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: 100vh;
 }
 

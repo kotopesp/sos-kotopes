@@ -1,0 +1,46 @@
+<div class="block__auth__overlay">
+  <div class="auth__overlay">
+    <div class="title__and__close">
+      <div class="close__cross">
+        <img src="/assets/icons/exit-cross-icon.svg" alt="">
+      </div>
+      <div class="title__login">
+        <img src="/assets/icons/profile-icon.svg" width="80" height="80" alt="">
+        <p class="ft24 fw400 login__to__account" >Вход в аккаунт</p>
+      </div>
+    </div>
+
+    <div class="block__login__and__password">
+      <p class="ft20 fw400">Логин</p>
+      <form>
+        <input type="text" placeholder="Введите имя пользователя" class="input__text ft20 fw400"/>
+      </form>
+
+      <div class="password__info">
+        <span class="ft20 fw400">Пароль</span>
+        <span *ngIf="!passwordValid" class="wrong_password">
+          <img src="/assets/icons/red-mistake-icon.svg" alt="">
+          Неверный пароль
+        </span>
+      </div>
+      <form>
+        <input type="text" placeholder="Введите пароль" class="input__text ft20 fw400"/>
+
+      </form>
+      <a class="ft16 fw400" id="forgot__pass">Забыли пароль?</a>
+
+      <p class="ft20 fw400">Или войти через: </p>
+      <div class="image__login__with__VK">
+        <a>
+          <img src="/assets/icons/vk-logo.svg" alt="">
+        </a>
+      </div>
+
+      <p class="ft18 fw400">Нет аккаунта? <a class="registration__link">Зарегистрироваться</a></p>
+    </div>
+
+    <div class="block__log-in__button">
+      <button id="button__login" class="ft20 ptbold">Войти</button>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@ import {NgForOf, NgIf} from "@angular/common";
 import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
 import {NotificationPopupComponent} from "./ui/notification-popup/notification-popup.component";
 import {MessagePopupComponent} from "./ui/message-popup/message-popup.component";
-import {AuthOverlayComponent} from "../auth-overlay/auth-overlay.component";
+import {AuthOverlayComponent} from "./ui/auth-overlay/auth-overlay.component";
 
 @Component({
   selector: 'app-header',
@@ -23,7 +23,8 @@ import {AuthOverlayComponent} from "../auth-overlay/auth-overlay.component";
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  isAuth: boolean = true;
+  isAuth: boolean = false;
+  loginOverlay: boolean = true;
 
   headerItems = [
     {
@@ -40,6 +41,11 @@ export class HeaderComponent {
       path: '',
       text: 'Передержка',
       className: 'header__ads'
+    },
+    {
+      path: 'vets',
+      text: 'Ветеринары',
+      className: 'header__vets'
     },
     {
       path: '',
