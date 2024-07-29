@@ -75,26 +75,6 @@
         text-align: center;
         align-content: center;
       }
-
-      @mixin find-status($styles) {
-        text-align: center;
-        align-content: center;
-        padding: 6px 18px;
-        border-radius: 10px;
-        background: var($styles);
-      }
-  
-      .lost_status  {
-          @include find-status(--red-color-button);
-      }
-  
-      .looking-for-home_status {
-          @include find-status(--orange-color-button);
-      }
-  
-      .found-home_status {
-          @include find-status(--green-color-button)
-      }
     }
 
     .pet-description__container {
