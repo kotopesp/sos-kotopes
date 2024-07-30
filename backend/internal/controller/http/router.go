@@ -57,7 +57,7 @@ func (r *Router) initRoutes() {
 	v1.Get("/users/:id", r.GetUser)
 	v1.Get("/users/:id/posts", r.GetUserPosts)
 
-	// user_service roles todo
+	// user roles
 	v1.Get("/users/:id/roles", r.GetUserRoles)
 	v1.Post("/users/:id/roles", r.GiveRoleToUser)
 	v1.Delete("/users/:id/roles", r.DeleteUserRole)

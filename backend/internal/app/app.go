@@ -3,11 +3,11 @@ package app
 import (
 	"context"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	"github.com/kotopesp/sos-kotopes/internal/service/role_service"
-	"github.com/kotopesp/sos-kotopes/internal/service/user_favourite_service"
-	"github.com/kotopesp/sos-kotopes/internal/service/user_service"
-	"github.com/kotopesp/sos-kotopes/internal/store/role_store"
-	"github.com/kotopesp/sos-kotopes/internal/store/user_favourite_store"
+	roleService "github.com/kotopesp/sos-kotopes/internal/service/role"
+	userService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	userFavouriteService "github.com/kotopesp/sos-kotopes/internal/service/user_favourite"
+	roleStore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/user_favourite"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,7 +21,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/kotopesp/sos-kotopes/internal/store/entity"
-	"github.com/kotopesp/sos-kotopes/internal/store/user"
+	userStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
@@ -45,15 +45,15 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
-	roleStore := role_store.New(pg)
-	favouriteUserStore := user_favourite_store.New(pg)
-	userStore := user.New(pg)
+	roleStore := roleStore.New(pg)
+	favouriteUserStore := userFavouriteStore.New(pg)
+	userStore := userStore.New(pg)
 
 	// Services
-	roleService := role_service.New(roleStore)
+	roleService := roleService.New(roleStore)
 	entityService := name.New(entityStore)
-	userService := user_service.New(userStore)
-	favouriteUserService := user_favourite_service.New(favouriteUserStore)
+	userService := userService.New(userStore)
+	favouriteUserService := userFavouriteService.New(favouriteUserStore)
 
 	authService := auth.New(
 		userStore,
@@ -76,7 +76,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, authService, userService, roleService, favouriteUserService)
+	v1.NewRouter(app, entityService, authService, userService, roleService, favouriteUserService, formValidator)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)

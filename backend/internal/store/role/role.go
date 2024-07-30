@@ -1,28 +1,28 @@
-package role_store
+package role
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/role"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/role"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
 	"time"
 )
 
-type Store struct {
+type store struct {
 	*postgres.Postgres
 }
 
 func New(pg *postgres.Postgres) core.RoleStore {
-	return &Store{pg}
+	return &store{pg}
 }
 
-func (r *Store) GetUserRoles(ctx context.Context, id int) (roles []role.Role, err error) {
+func (s *store) GetUserRoles(ctx context.Context, id int) (roles []core.Role, err error) {
 
-	var seeker role.Role
-	if err := r.DB.WithContext(ctx).Table("seekers").
+	var seeker core.Role
+	if err := s.DB.WithContext(ctx).Table("seekers").
 		Where("user_id = ?", id).
 		Select("'seeker' as name, id, user_id, description, created_at, updated_at").
 		First(&seeker).Error; err == nil {
@@ -31,8 +31,8 @@ func (r *Store) GetUserRoles(ctx context.Context, id int) (roles []role.Role, er
 		return nil, fmt.Errorf("error querying seeker role: %w", err)
 	}
 
-	var keeper role.Role
-	if err := r.DB.WithContext(ctx).Table("keepers").
+	var keeper core.Role
+	if err := s.DB.WithContext(ctx).Table("keepers").
 		Where("user_id = ?", id).
 		Select("'keeper' as name, id, user_id, description, created_at, updated_at").
 		First(&keeper).Error; err == nil {
@@ -41,8 +41,8 @@ func (r *Store) GetUserRoles(ctx context.Context, id int) (roles []role.Role, er
 		return nil, fmt.Errorf("error querying keeper role: %w", err)
 	}
 
-	var vet role.Role
-	if err := r.DB.WithContext(ctx).Table("vets").
+	var vet core.Role
+	if err := s.DB.WithContext(ctx).Table("vets").
 		Where("user_id = ?", id).
 		Select("'vet' as name, id, user_id, description, created_at, updated_at").
 		First(&vet).Error; err == nil {
@@ -54,9 +54,9 @@ func (r *Store) GetUserRoles(ctx context.Context, id int) (roles []role.Role, er
 	return roles, nil
 }
 
-func (r *Store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) (err error) {
+func (s *store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) (err error) {
 
-	tx := r.DB.Begin()
+	tx := s.DB.Begin()
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -110,14 +110,14 @@ func (r *Store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 
 	return tx.Commit().Error
 }
-func (r *Store) DeleteUserRole(ctx context.Context, id int, role string) (err error) {
+func (s *store) DeleteUserRole(ctx context.Context, id int, role string) (err error) {
 
-	tx := r.DB.Begin()
+	tx := s.DB.Begin()
 	if tx.Error != nil {
 		return tx.Error
 	}
 	var user core.User
-	if err = r.DB.Table("users").First(&user, "id = ?", id).Error; err != nil {
+	if err = s.DB.Table("users").First(&user, "id = ?", id).Error; err != nil {
 		return errors.New("user not found")
 	}
 
@@ -146,8 +146,8 @@ func (r *Store) DeleteUserRole(ctx context.Context, id int, role string) (err er
 }
 
 // добавить проверку на существование пользователя
-func (r *Store) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole) (err error) {
-	tx := r.DB.Begin()
+func (s *store) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole) (err error) {
+	tx := s.DB.Begin()
 
 	if tx.Error != nil {
 		tx.Rollback()

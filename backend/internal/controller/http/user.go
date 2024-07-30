@@ -1,50 +1,49 @@
 package http
 
 import (
-	"fmt"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
-	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/user"
-	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
+	"errors"
 	"github.com/gofiber/fiber/v2"
-	"strconv"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 func (r *Router) UpdateUser(ctx *fiber.Ctx) error {
-	idItem := getPayloadItem(ctx, "id")
-	idFloat, ok := idItem.(float64)
-	if !ok {
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse("error while reading id from token"))
-	}
-	id := int(idFloat)
-
-	var update user.UpdateUser
-	err := ctx.BodyParser(&update)
-	if err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
-			"error": "invalid request body",
-		})
-	}
-	err = r.userService.UpdateUser(ctx.UserContext(), id, update)
+	id, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(&fiber.Map{
-		"message": "success",
-	})
+	var update user.UpdateUser
+	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &update)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+	coreUpdate := update.ToCoreUpdateUser()
+
+	updatedUser, err := r.userService.UpdateUser(ctx.UserContext(), id, coreUpdate)
+	if err != nil {
+		switch {
+		case errors.Is(err, core.ErrNoSuchUser):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, core.ErrEmptyUpdateRequest):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(updatedUser)
 }
 
 func (r *Router) GetUser(ctx *fiber.Ctx) error {
-	idStr := ctx.Params("id")
-	if idStr == "" {
-		logger.Log().Debug(ctx.UserContext(), "Error: id is required")
-		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
-			"error": "id is required",
-		})
-	}
-	id, err := strconv.Atoi(idStr)
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
@@ -52,35 +51,41 @@ func (r *Router) GetUser(ctx *fiber.Ctx) error {
 
 	currentUser, err := r.userService.GetUser(ctx.UserContext(), id)
 	if err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		switch {
+		case errors.Is(err, core.ErrNoSuchUser):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(currentUser)
 }
 
 func (r *Router) GetUserPosts(ctx *fiber.Ctx) error {
-
-	fmt.Println("!")
-	idStr := ctx.Params("id")
-	if idStr == "" {
-		logger.Log().Debug(ctx.UserContext(), "Error: id is required")
-		return ctx.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
-			"error": "id is required",
-		})
-	}
-
-	id, err := strconv.Atoi(idStr)
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
-	fmt.Println("!!")
+
 	userPosts, err := r.userService.GetUserPosts(ctx.UserContext(), id)
 	if err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		switch {
+		case errors.Is(err, core.ErrNoSuchUser):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+	var posts []post.Post
+	for _, postModel := range userPosts {
+		posts = append(posts, post.ToPost(&postModel))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(userPosts)
+	return ctx.Status(fiber.StatusOK).JSON(posts)
 }

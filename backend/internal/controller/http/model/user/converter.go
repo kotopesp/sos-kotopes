@@ -15,3 +15,16 @@ func (u *User) ToCoreUser() core.User {
 		Lastname:     u.Lastname,
 	}
 }
+func (u *UpdateUser) ToCoreUpdateUser() core.UpdateUser {
+	if u == nil {
+		return core.UpdateUser{}
+	}
+	return core.UpdateUser{
+		Username:     u.Username,
+		PasswordHash: u.Password,
+		Description:  u.Description,
+		Photo:        u.Photo,
+		Firstname:    u.Firstname,
+		Lastname:     u.Lastname,
+	}
+}

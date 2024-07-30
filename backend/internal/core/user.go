@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"errors"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"time"
 )
 
@@ -21,8 +20,16 @@ type (
 		UpdatedAt    time.Time  `gorm:"column:updated_at"`
 		DeletedAt    *time.Time `gorm:"column:deleted_at"`
 	}
+	UpdateUser struct {
+		Username     *string `gorm:"column:username"`
+		Firstname    *string `gorm:"column:firstname"`
+		Lastname     *string `gorm:"column:lastname"`
+		Description  *string `gorm:"column:description"`
+		Photo        *[]byte `gorm:"column:photo"`
+		PasswordHash *string `gorm:"column:password"`
+	}
 	UserStore interface {
-		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
+		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)
 		GetUser(ctx context.Context, id int) (user User, err error)
 		GetUserPosts(ctx context.Context, id int) (posts []Post, err error)
 		GetUserByID(ctx context.Context, id int) (data User, err error)
@@ -32,36 +39,39 @@ type (
 		AddExternalUser(ctx context.Context, user User, externalUserID int, authProvider string) (userID int, err error)
 	}
 	UserService interface {
-		UpdateUser(ctx context.Context, id int, update user.UpdateUser) (err error)
+		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)
 		GetUser(ctx context.Context, id int) (user User, err error)
-		GetUserPosts(ctx context.Context, id int) (posts []Post, err error)
+		GetUserPosts(ctx context.Context, id int) (posts []PostDetails, err error)
 	}
+
+	ExternalUser struct {
+		ID           int    `gorm:"column:id"`
+		UserID       int    `gorm:"column:user_id"`
+		ExternalID   int    `gorm:"column:external_id"`
+		AuthProvider string `gorm:"column:auth_provider"`
+	}
+
+	//todo
 	FavouriteUser struct {
-		Id        int    `gorm:"primary key;autoIncrement" db:"id"`
-		personId  int    `db:"person_id"`
-		userId    int    `db:"user_id"`
-		createdAt string `db:"created_at"`
+		Id        int    `gorm:"column:id"`
+		personId  int    `gorm:"column:person_id"`
+		userId    int    `gorm:"column:user_id"`
+		createdAt string `gorm:"column:created_at"`
 	}
 	UserFavouriteStore interface {
 		AddUserToFavourite(ctx context.Context, personId int, userId int) (err error)
-		GetFavouriteUsers(ctx context.Context, userId int, params user.GetFavourites) (favouriteUsers []user.User, err error)
+		GetFavouriteUsers(ctx context.Context, userId int, params GetFavourites) (favouriteUsers []User, err error)
 		DeleteUserFromFavourite(ctx context.Context, personId int, userId int) (err error)
 	}
 	UserFavouriteService interface {
 		AddUserToFavourite(ctx context.Context, personId int, userId int) (err error)
-		GetFavouriteUsers(ctx context.Context, userId int, params user.GetFavourites) (favouriteUsers []user.User, err error)
+		GetFavouriteUsers(ctx context.Context, userId int, params GetFavourites) (favouriteUsers []User, err error)
 		DeleteUserFromFavourite(ctx context.Context, personId int, userId int) (err error)
 	}
 	GetFavourites struct {
 		Count  *int
 		Offset *int
 		Sort   *string
-	}
-	ExternalUser struct {
-		ID           int    `gorm:"column:id"`
-		UserID       int    `gorm:"column:user_id"`
-		ExternalID   int    `gorm:"column:external_id"`
-		AuthProvider string `gorm:"column:auth_provider"`
 	}
 )
 
@@ -71,6 +81,7 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrNoResponseFromVK   = errors.New("no response from VK")
 	ErrNoSuchUser         = errors.New("user does not exist")
+	ErrEmptyUpdateRequest = errors.New("empty update request")
 )
 
 // TableName table name in db for gorm

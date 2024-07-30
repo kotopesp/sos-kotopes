@@ -1,14 +1,16 @@
 package post
 
+import "time"
+
 type (
 	Post struct {
-		ID        int    `json:"id"`
-		Title     string `json:"title"`
-		Body      string `json:"body"`
-		UserID    int    `json:"user_id"`
-		CreatedAt string `json:"created_at"`
-		UpdatedAt string `json:"updated_at"`
-		AnimalID  int    `json:"animal_id"`
+		ID        int       `json:"id"`
+		Title     string    `json:"title"`
+		Content   string    `json:"content"`
+		Username  string    `json:"username"`
+		CreatedAt time.Time `json:"created_at"`
+		UpdatedAt time.Time `json:"updated_at"`
+		AnimalID  int       `json:"animal_id"`
 	}
 
 	GetAllPostsParams struct {

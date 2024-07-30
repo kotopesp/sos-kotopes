@@ -7,13 +7,24 @@ import (
 
 type (
 	Post struct {
-		ID        int       `gorm:"column:id" json:"id"`
-		Title     string    `gorm:"column:title" json:"title"`
-		Body      string    `gorm:"column:body" json:"body"`
-		UserID    int       `gorm:"column:user_id" json:"user_id"`
-		CreatedAt time.Time `gorm:"column:created_at" json:"created_at"`
-		UpdatedAt time.Time `gorm:"column:updated_at" json:"updated_at"`
-		AnimalID  int       `gorm:"column:animal_id" json:"animal_id"`
+		ID        int       `gorm:"column:id"`
+		Title     string    `gorm:"column:title"`
+		Content   string    `gorm:"column:content"`
+		UserID    int       `gorm:"column:author_id"`
+		IsDeleted bool      `gorm:"column:is_deleted"`
+		DeletedAt time.Time `gorm:"column:deleted_at"`
+		CreatedAt time.Time `gorm:"column:created_at"`
+		UpdatedAt time.Time `gorm:"column:updated_at"`
+		AnimalID  int       `gorm:"column:animal_id"`
+	}
+	PostDetails struct {
+		ID        int       `gorm:"column:id"`
+		Title     string    `gorm:"column:title"`
+		Content   string    `gorm:"column:content"`
+		Username  string    `gorm:"-"`
+		CreatedAt time.Time `gorm:"column:created_at"`
+		UpdatedAt time.Time `gorm:"column:updated_at"`
+		AnimalID  int       `gorm:"column:animal_id"`
 	}
 	PostStore interface {
 		GetAll(ctx context.Context, params GetAllPostsParams) (data []Post, err error)
@@ -40,4 +51,19 @@ type (
 
 func (Post) TableName() string {
 	return "posts"
+}
+
+func (p *Post) ToPostDetails(name string) PostDetails {
+	if p == nil {
+		return PostDetails{}
+	}
+	return PostDetails{
+		ID:        p.ID,
+		Title:     p.Title,
+		Content:   p.Content,
+		Username:  name,
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+		AnimalID:  p.AnimalID,
+	}
 }
