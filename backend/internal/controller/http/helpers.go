@@ -5,7 +5,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -46,7 +45,7 @@ func parseAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorServi
 	return nil, nil
 }
 
-func parseAndValidateNewKeeper(ctx *fiber.Ctx, formValidator validator.FormValidatorService, entity *keeper.KeepersCreate) (fiberError, parseOrValidationError error) {
+func parseAndValidateAny[T any](ctx *fiber.Ctx, formValidator validator.FormValidatorService, entity *T) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(entity); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err

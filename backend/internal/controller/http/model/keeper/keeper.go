@@ -19,6 +19,12 @@ type KeepersCreate struct {
 	Location    string  `json:"location"`
 }
 
+type KeepersUpdate struct {
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	Location    string  `json:"location"`
+}
+
 type GetAllKeepersParams struct {
 	SortBy    string  `query:"sortby"`
 	SortOrder string  `query:"sortorder"`

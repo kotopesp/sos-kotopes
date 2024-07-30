@@ -2,111 +2,120 @@ package http
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	keeperreview "github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper_review"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"gorm.io/gorm"
 )
 
 func (r *Router) getKeeperReviews(ctx *fiber.Ctx) error {
-	params := core.GetAllKeeperReviewsParams{}
+	var params keeperreview.GetAllKeeperReviewsParams
 
-	if limit := ctx.Query("limit"); limit != "" {
-		limitInt, err := strconv.Atoi(limit)
-		if err == nil {
-			*params.Limit = limitInt
-		}
-	}
-
-	if offset := ctx.Query("offset"); offset != "" {
-		offsetInt, err := strconv.Atoi(offset)
-		if err == nil {
-			*params.Offset = offsetInt
-		}
+	if err := ctx.QueryParser(params); err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	usrCtx := ctx.UserContext()
-	reviews, err := r.keeperReviewsService.GetAll(&usrCtx, params)
-
+	reviews, err := r.keeperReviewsService.GetAll(&usrCtx, params.FromKeeperReviewRequest())
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(reviews))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(Map(reviews, func(review core.KeeperReviews) keeperreview.KeeperReviews {
+		return keeperreview.KeeperReviews{
+			ID:        review.ID,
+			AuthorID:  review.AuthorID,
+			Content:   review.Content,
+			Grade:     review.Grade,
+			KeeperID:  review.KeeperID,
+			IsDeleted: review.IsDeleted,
+			DeletedAt: review.DeletedAt,
+			CreatedAt: review.CreatedAt,
+			UpdatedAt: review.UpdatedAt,
+		}
+	})))
 }
 
 func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
-	var review core.KeeperReviews
+	var newReview keeperreview.KeeperReviewsCreate
 
 	// parse review
-	if err := ctx.BodyParser(&review); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &newReview)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
-	// make sure the create time is set
-	if review.CreatedAt.IsZero() {
-		review.CreatedAt = time.Now()
-	}
+	// // make sure the create time is set
+	// if review.CreatedAt.IsZero() {
+	// 	review.CreatedAt = time.Now()
+	// }
 
-	// check grade boundaries
-	if review.Grade < 1 || review.Grade > 5 {
-		errMsg := "Grade must be between 1 and 5"
-		logger.Log().Debug(ctx.UserContext(), errMsg)
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(errMsg))
-	}
+	// // check grade boundaries
+	// if review.Grade < 1 || review.Grade > 5 {
+	// 	errMsg := "Grade must be between 1 and 5"
+	// 	logger.Log().Debug(ctx.UserContext(), errMsg)
+	// 	return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(errMsg))
+	// }
 
 	// create review
 	usrCtx := ctx.UserContext()
-	if err := r.keeperReviewsService.Create(&usrCtx, review); err != nil {
+	coreReview := newReview.ToCoreNewKeeperReview()
+	if err := r.keeperReviewsService.Create(&usrCtx, coreReview); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(review))
+	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(keeperreview.KeeperReviews{
+		ID:        coreReview.ID,
+		AuthorID:  coreReview.AuthorID,
+		Content:   coreReview.Content,
+		Grade:     coreReview.Grade,
+		KeeperID:  coreReview.KeeperID,
+		IsDeleted: coreReview.IsDeleted,
+		DeletedAt: coreReview.DeletedAt,
+		CreatedAt: coreReview.CreatedAt,
+		UpdatedAt: coreReview.UpdatedAt,
+	}))
 }
 
 func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 	// get id
-	idStr := ctx.Params("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	var review core.KeeperReviews
+	var updateReview keeperreview.KeeperReviewsUpdate
 
 	// parse review
-	if err := ctx.BodyParser(&review); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &updateReview)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
-
-	review.ID = id
 
 	// update
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperReviewsService.UpdateByID(&usrCtx, review); err != nil {
+	if err := r.keeperReviewsService.UpdateByID(&usrCtx, core.KeeperReviews{
+		ID:      int(id),
+		Content: updateReview.Content,
+		Grade:   updateReview.Grade,
+	}); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
-		if err == gorm.ErrRecordNotFound {
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
-		}
-
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(review))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(updateReview))
 }
 
 func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 	// get id
-	idStr := ctx.Params("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
@@ -114,7 +123,7 @@ func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 
 	// delete
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperReviewsService.SoftDeleteByID(&usrCtx, id); err != nil {
+	if err := r.keeperReviewsService.SoftDeleteByID(&usrCtx, int(id)); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		if err == gorm.ErrRecordNotFound {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))

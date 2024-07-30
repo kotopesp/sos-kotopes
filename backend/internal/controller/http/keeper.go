@@ -126,7 +126,7 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 	var newKeeper keeper.KeepersCreate
 
-	fiberError, parseOrValidationError := parseAndValidateNewKeeper(ctx, r.formValidator, &newKeeper)
+	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &newKeeper)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -163,41 +163,38 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 
 func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 	// get id
-	idStr := ctx.Params("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	var keeper core.Keepers
+	var updateKeeper keeper.KeepersUpdate
 
 	// parse keeper
-	if err := ctx.BodyParser(&keeper); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &updateKeeper)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
-
-	keeper.ID = id
 
 	// update
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperService.UpdateByID(&usrCtx, keeper); err != nil {
+	if err := r.keeperService.UpdateByID(&usrCtx, core.Keepers{
+		ID:          int(id),
+		Description: updateKeeper.Description,
+		Price:       updateKeeper.Price,
+		Location:    updateKeeper.Location,
+	}); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
-		if err == gorm.ErrRecordNotFound {
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
-		}
-
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(updateKeeper))
 }
 
 func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 	// get id
-	idStr := ctx.Params("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
@@ -205,7 +202,7 @@ func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 
 	// delete
 	var usrCtx = ctx.UserContext()
-	if err := r.keeperService.DeleteByID(&usrCtx, id); err != nil {
+	if err := r.keeperService.DeleteByID(&usrCtx, int(id)); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		if err == gorm.ErrRecordNotFound {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))

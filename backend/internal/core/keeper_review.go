@@ -6,15 +6,15 @@ import (
 )
 
 type KeeperReviews struct {
-	ID        int       `gorm:"primaryKey;autoIncrement" json:"id"`
-	AuthorID  int       `json:"author_id"`
-	Content   string    `json:"content"`
-	Grade     int       `json:"grade"`
-	KeeperID  int       `json:"keeper_id"`
-	IsDeleted bool      `json:"is_deleted"`
-	DeletedAt time.Time `json:"deleted_at"`
-	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP()" json:"created_at"`
-	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	ID        int       `gorm:"primaryKey;autoIncrement;column:id"`
+	AuthorID  int       `gorm:"column:author_id"`
+	Content   string    `gorm:"column:content"`
+	Grade     int       `gorm:"column:grade"`
+	KeeperID  int       `gorm:"column:keeper_id"`
+	IsDeleted bool      `gorm:"column:is_deleted"`
+	DeletedAt time.Time `gorm:"column:deleted_at"`
+	CreatedAt time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime;column:updated_at"`
 }
 
 type GetAllKeeperReviewsParams struct {
