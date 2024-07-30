@@ -4,7 +4,7 @@ package mocks
 
 import (
 	context "context"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+	//"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 
 	core "github.com/kotopesp/sos-kotopes/internal/core"
 	mock "github.com/stretchr/testify/mock"
