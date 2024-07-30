@@ -1,34 +1,56 @@
 package post
 
 import (
-	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	modelAnimal "github.com/kotopesp/sos-kotopes/internal/controller/http/model/animal"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
-func (p *Post) ToCorePost() *core.Post {
-	if p == nil {
-		return nil
+func (p *Post) ToCorePost(AuthorID int) core.Post {
+	if (p == nil) {
+		return core.Post{}
 	}
-
-	return &core.Post{
-		ID:        p.ID,
+	return core.Post{
 		Title:     p.Title,
-		Body:      p.Body,
-		UserID:    p.UserID,
-		CreatedAt: p.CreatedAt,
-		UpdatedAt: p.UpdatedAt,
-		AnimalID:  p.AnimalID,
+		Content:   p.Content,
+		AuthorID:    AuthorID,
 	}
 }
 
-func (p *GetAllPostsParams) ToCoreGetAllPostsParams() *core.GetAllPostsParams {
-    if p == nil {
-        return nil
-    }
+func ToResponse(meta pagination.Pagination, posts []PostPesponse) Response {
+	return Response{
+		Meta:  meta,
+		Posts: posts,
+	}
+}
 
-    return &core.GetAllPostsParams{
-        SortBy:     &p.SortBy,
-        SortOrder:  &p.SortOrder,
-        SearchTerm: &p.SearchTerm,
-        Limit:      &p.Limit,
-        Offset:     &p.Offset,
-    }
+func ToPostPesponse(AuthorUsername string, post core.Post, animal core.Animal) PostPesponse {
+	return PostPesponse{
+		Title:          post.Title,
+		Content:        post.Content,
+		AuthorUsername: AuthorUsername,
+		CreatedAt:      post.CreatedAt,
+		Animal:         modelAnimal.ToAnimalResponse(&animal),
+		Photo:          post.Photo,
+	}
+}
+
+func ToCorePostFavourite(userId, postId int) core.PostFavourite {
+	return core.PostFavourite{
+		UserID: userId,
+		PostID: postId,
+	}
+}
+
+func FuncUpdateRequestBodyPost(post *core.Post, updateRequestPost *UpdateRequestBodyPost) core.Post {
+	if updateRequestPost.Title != nil {
+		post.Title = *updateRequestPost.Title
+	}
+	if updateRequestPost.Content != nil {
+		post.Content = *updateRequestPost.Content
+	}
+	if updateRequestPost.Photo != nil {
+		post.Photo = *updateRequestPost.Photo
+	}
+
+	return *post
 }
