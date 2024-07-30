@@ -2,7 +2,7 @@ package role
 
 type Role struct {
 	Name        string `json:"name"`
-	Id          int    `json:"id"`
+	ID          int    `json:"id"`
 	UserID      int    `json:"user_id"`
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`

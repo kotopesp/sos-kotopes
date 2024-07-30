@@ -19,6 +19,10 @@ func New(pg *postgres.Postgres) core.RoleStore {
 	return &store{pg}
 }
 
+const Seeker = "seeker"
+const Keeper = "keeper"
+const Vet = "vet"
+
 func (s *store) GetUserRoles(ctx context.Context, id int) (roles []core.Role, err error) {
 
 	var seeker core.Role
@@ -54,7 +58,7 @@ func (s *store) GetUserRoles(ctx context.Context, id int) (roles []core.Role, er
 	return roles, nil
 }
 
-func (s *store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) (err error) {
+func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole role.GiveRole) (err error) {
 
 	tx := s.DB.Begin()
 	if tx.Error != nil {
@@ -69,11 +73,11 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 
 	now := time.Now()
 
-	switch role.Name {
-	case "seeker":
+	switch givenRole.Name {
+	case Seeker:
 		seeker := core.Seeker{
-			UserId:      id,
-			Description: role.Description,
+			UserID:      id,
+			Description: givenRole.Description,
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -81,10 +85,10 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 			tx.Rollback()
 			return err
 		}
-	case "keeper":
+	case Keeper:
 		keeper := core.Role{
-			UserId:      id,
-			Description: role.Description,
+			UserID:      id,
+			Description: givenRole.Description,
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -92,10 +96,10 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 			tx.Rollback()
 			return err
 		}
-	case "vet":
+	case Vet:
 		vet := core.Role{
-			UserId:      id,
-			Description: role.Description,
+			UserID:      id,
+			Description: givenRole.Description,
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -105,12 +109,12 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) 
 		}
 	default:
 		tx.Rollback()
-		return errors.New("invalid role")
+		return errors.New("invalid givenRole")
 	}
 
 	return tx.Commit().Error
 }
-func (s *store) DeleteUserRole(ctx context.Context, id int, role string) (err error) {
+func (s *store) DeleteUserRole(ctx context.Context, id int, roleName string) (err error) {
 
 	tx := s.DB.Begin()
 	if tx.Error != nil {
@@ -121,19 +125,19 @@ func (s *store) DeleteUserRole(ctx context.Context, id int, role string) (err er
 		return errors.New("user not found")
 	}
 
-	switch role {
-	case "seeker":
+	switch roleName {
+	case Seeker:
 		var seeker core.Seeker
 		err = tx.Table("seekers").Where("user_id = ?", id).Delete(seeker).Error
-	case "keeper":
+	case Keeper:
 		var keeper core.Keeper
 		err = tx.Table("keepers").Where("user_id = ?", id).Delete(keeper).Error
-	case "vet":
+	case Vet:
 		var vet core.Vet
 		err = tx.Table("vets").Where("user_id = ?", id).Delete(vet).Error
 	default:
 		tx.Rollback()
-		return errors.New("invalid role name")
+		return errors.New("invalid roleName name")
 	}
 
 	if err != nil {
@@ -145,8 +149,8 @@ func (s *store) DeleteUserRole(ctx context.Context, id int, role string) (err er
 
 }
 
-// добавить проверку на существование пользователя
-func (s *store) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole) (err error) {
+// check for user existing
+func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole role.UpdateRole) (err error) {
 	tx := s.DB.Begin()
 
 	if tx.Error != nil {
@@ -155,8 +159,8 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole
 	}
 
 	updates := make(map[string]interface{})
-	if role.Description != nil {
-		updates["description"] = *role.Description
+	if updateRole.Description != nil {
+		updates["description"] = *updateRole.Description
 	}
 
 	if len(updates) == 0 {
@@ -164,21 +168,21 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole
 	} else {
 		updates["updated_at"] = time.Now()
 	}
-	roleName := role.Name
+	roleName := updateRole.Name
 	switch roleName {
-	case "seeker":
+	case Seeker:
 		result := tx.Table("seekers").Where("id = ?", id).Updates(updates)
 		if result.Error != nil {
 			tx.Rollback()
 			return result.Error
 		}
-	case "keeper":
+	case Keeper:
 		result := tx.Table("keepers").Where("id = ?", id).Updates(updates)
 		if result.Error != nil {
 			tx.Rollback()
 			return result.Error
 		}
-	case "vet":
+	case Vet:
 		result := tx.Table("vets").Where("id = ?", id).Updates(updates)
 		if result.Error != nil {
 			tx.Rollback()
@@ -186,7 +190,7 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, role role.UpdateRole
 		}
 	default:
 		tx.Rollback()
-		return errors.New("invalid role name")
+		return errors.New("invalid updateRole name")
 	}
 
 	return tx.Commit().Error

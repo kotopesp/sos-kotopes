@@ -3,11 +3,11 @@ package app
 import (
 	"context"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	roleService "github.com/kotopesp/sos-kotopes/internal/service/role"
-	userService "github.com/kotopesp/sos-kotopes/internal/service/user"
-	userFavouriteService "github.com/kotopesp/sos-kotopes/internal/service/user_favourite"
-	roleStore "github.com/kotopesp/sos-kotopes/internal/store/role"
-	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/user_favourite"
+	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
+	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	userFavouriteService "github.com/kotopesp/sos-kotopes/internal/service/userfavourite"
+	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,7 +21,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/kotopesp/sos-kotopes/internal/store/entity"
-	userStore "github.com/kotopesp/sos-kotopes/internal/store/user"
+	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
@@ -45,14 +45,14 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
-	roleStore := roleStore.New(pg)
+	roleStore := rolesStore.New(pg)
 	favouriteUserStore := userFavouriteStore.New(pg)
-	userStore := userStore.New(pg)
+	userStore := usersStore.New(pg)
 
 	// Services
-	roleService := roleService.New(roleStore)
+	roleService := rolesService.New(roleStore)
 	entityService := name.New(entityStore)
-	userService := userService.New(userStore)
+	userService := usersService.New(userStore)
 	favouriteUserService := userFavouriteService.New(favouriteUserStore)
 
 	authService := auth.New(

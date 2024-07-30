@@ -8,34 +8,35 @@ import (
 
 type (
 	Role struct {
-		Id          int       `gorm:"id"`
-		UserId      int       `gorm:"user_id"`
+		ID          int       `gorm:"id"`
+		UserID      int       `gorm:"user_id"`
 		Description string    `gorm:"description"`
 		CreatedAt   time.Time `gorm:"created_at"`
 		UpdatedAt   time.Time `gorm:"updated_at"`
 	}
 	Seeker struct {
-		Id          int       `gorm:"id"`
-		UserId      int       `gorm:"user_id"`
+		ID          int       `gorm:"id"`
+		UserID      int       `gorm:"user_id"`
 		Description string    `gorm:"description"`
 		CreatedAt   time.Time `gorm:"created_at"`
 		UpdatedAt   time.Time `gorm:"updated_at"`
 	}
 	Keeper struct {
-		Id          int    `gorm:"id"`
-		UserId      int    `gorm:"user_id"`
+		ID          int    `gorm:"id"`
+		UserID      int    `gorm:"user_id"`
 		Description string `gorm:"description"`
 		CreatedAt   string `gorm:"created_at"`
 		UpdatedAt   string `gorm:"updated_at"`
 	}
 	Vet struct {
-		Id          int    `gorm:"id"`
-		UserId      int    `gorm:"user_id"`
+		ID          int    `gorm:"id"`
+		UserID      int    `gorm:"user_id"`
 		Description string `gorm:"description"`
 		CreatedAt   string `gorm:"created_at"`
 		UpdatedAt   string `gorm:"updated_at"`
 	}
-	//change to core struct
+
+	// todo
 	RoleService interface {
 		GetUserRoles(ctx context.Context, id int) (roles []Role, err error)
 		GiveRoleToUser(ctx context.Context, id int, role role.GiveRole) (err error)

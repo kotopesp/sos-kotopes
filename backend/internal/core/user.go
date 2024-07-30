@@ -51,22 +51,22 @@ type (
 		AuthProvider string `gorm:"column:auth_provider"`
 	}
 
-	//todo
+	// todo
 	FavouriteUser struct {
-		Id        int    `gorm:"column:id"`
-		personId  int    `gorm:"column:person_id"`
-		userId    int    `gorm:"column:user_id"`
+		ID        int    `gorm:"column:id"`
+		personID  int    `gorm:"column:person_id"`
+		userID    int    `gorm:"column:user_id"`
 		createdAt string `gorm:"column:created_at"`
 	}
 	UserFavouriteStore interface {
-		AddUserToFavourite(ctx context.Context, personId int, userId int) (err error)
-		GetFavouriteUsers(ctx context.Context, userId int, params GetFavourites) (favouriteUsers []User, err error)
-		DeleteUserFromFavourite(ctx context.Context, personId int, userId int) (err error)
+		AddUserToFavourite(ctx context.Context, personID int, userID int) (err error)
+		GetFavouriteUsers(ctx context.Context, userID int, params GetFavourites) (favouriteUsers []User, err error)
+		DeleteUserFromFavourite(ctx context.Context, personID int, userID int) (err error)
 	}
 	UserFavouriteService interface {
-		AddUserToFavourite(ctx context.Context, personId int, userId int) (err error)
-		GetFavouriteUsers(ctx context.Context, userId int, params GetFavourites) (favouriteUsers []User, err error)
-		DeleteUserFromFavourite(ctx context.Context, personId int, userId int) (err error)
+		AddUserToFavourite(ctx context.Context, personID int, userID int) (err error)
+		GetFavouriteUsers(ctx context.Context, userID int, params GetFavourites) (favouriteUsers []User, err error)
+		DeleteUserFromFavourite(ctx context.Context, personID int, userID int) (err error)
 	}
 	GetFavourites struct {
 		Count  *int

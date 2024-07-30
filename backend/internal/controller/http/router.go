@@ -63,7 +63,7 @@ func (r *Router) initRoutes() {
 	v1.Delete("/users/:id/roles", r.DeleteUserRole)
 	v1.Patch("/users/:id/roles", r.UpdateUserRoles)
 
-	//favourites users todo
+	// favourites users todo
 	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
 	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
 	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)

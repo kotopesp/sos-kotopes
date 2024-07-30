@@ -49,7 +49,7 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 	if update.Photo != nil {
 		updates["photo"] = *update.Photo
 	}
-	//maybe delete
+	// maybe delete
 	if update.PasswordHash != nil {
 		updates["password_hash"] = *update.PasswordHash
 	}
