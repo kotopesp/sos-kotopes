@@ -7,19 +7,26 @@ type Keepers struct {
 	UserID      int       `json:"user_id"`
 	Description string    `json:"description"`
 	Price       float64   `json:"price"`
-	Location    string    `gorm:"type:varchar(100)" json:"location"`
-	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP()" json:"created_at"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	Location    string    `json:"location"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+type KeepersCreate struct {
+	UserID      int     `json:"user_id"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	Location    string  `json:"location"`
 }
 
 type GetAllKeepersParams struct {
-	SortBy    *string
-	SortOrder *string
-	Location  *string
-	MinRating *float64
-	MaxRating *float64
-	MinPrice  *float64
-	MaxPrice  *float64
-	Limit     *int
-	Offset    *int
+	SortBy    string  `query:"sortby"`
+	SortOrder string  `query:"sortorder"`
+	Location  string  `query:"location"`
+	MinRating float64 `query:"minrating"`
+	MaxRating float64 `query:"maxrating"`
+	MinPrice  float64 `query:"minprice"`
+	MaxPrice  float64 `query:"maxprice"`
+	Limit     int     `query:"limit"`
+	Offset    int     `query:"offset"`
 }

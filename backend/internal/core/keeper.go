@@ -6,13 +6,13 @@ import (
 )
 
 type Keepers struct {
-	ID          int       `gorm:"primaryKey;autoIncrement" json:"id"`
-	UserID      int       `json:"user_id"`
-	Description string    `json:"description"`
-	Price       float64   `json:"price"`
-	Location    string    `gorm:"type:varchar(100)" json:"location"`
-	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP()" json:"created_at"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
+	UserID      int       `gorm:"column:user_id"`
+	Description string    `gorm:"column:description"`
+	Price       float64   `gorm:"column:price"`
+	Location    string    `gorm:"type:varchar(100);column:location"`
+	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
 }
 
 type GetAllKeepersParams struct {

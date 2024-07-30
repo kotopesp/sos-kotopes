@@ -2,6 +2,7 @@ package keeperservice
 
 import (
 	"context"
+	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
@@ -23,6 +24,10 @@ func (s *service) GetByID(ctx *context.Context, id int) (core.Keepers, error) {
 }
 
 func (s *service) Create(ctx *context.Context, keeper core.Keepers) error {
+	if keeper.CreatedAt.IsZero() {
+		keeper.CreatedAt = time.Now()
+	}
+
 	return s.keeperStore.Create(ctx, keeper)
 }
 
