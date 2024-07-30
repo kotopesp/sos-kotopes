@@ -82,9 +82,9 @@ func (r *Router) GetUserPosts(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
-	var posts []post.Post
-	for _, postModel := range userPosts {
-		posts = append(posts, post.ToPost(&postModel))
+	posts := make([]post.Post, 0, len(userPosts))
+	for i := range userPosts {
+		posts = append(posts, post.ToPost(&userPosts[i]))
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(posts)

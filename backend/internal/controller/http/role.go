@@ -19,6 +19,7 @@ func (r *Router) GetUserRoles(ctx *fiber.Ctx) error {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
+	
 	if len(userRoles) == 0 {
 		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 			"message": "User has no roles",
