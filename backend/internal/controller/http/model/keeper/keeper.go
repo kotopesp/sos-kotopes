@@ -14,14 +14,14 @@ type Keepers struct {
 
 type KeepersCreate struct {
 	UserID      int     `json:"user_id"`
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
+	Description string  `json:"description" validate:"required,notblank,max=600"`
+	Price       float64 `json:"price" validate:"required, min=0"`
 	Location    string  `json:"location"`
 }
 
 type KeepersUpdate struct {
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
+	Description string  `json:"description" validate:"notblank,max=600"`
+	Price       float64 `json:"price" validate:"min=0"`
 	Location    string  `json:"location"`
 }
 

@@ -16,14 +16,14 @@ type KeeperReviews struct {
 
 type KeeperReviewsCreate struct {
 	AuthorID int    `json:"author_id"`
-	Content  string `json:"content"`
-	Grade    int    `json:"grade"`
+	Content  string `json:"content" validate:"required,notblank,max=2000"`
+	Grade    int    `json:"grade" validate:"required,numeric_natural,min=1,max=5"`
 	KeeperID int    `json:"keeper_id"`
 }
 
 type KeeperReviewsUpdate struct {
-	Content string `json:"content"`
-	Grade   int    `json:"grade"`
+	Content string `json:"content" validate:"notblank,max=2000"`
+	Grade   int    `json:"grade" validate:"numeric_natural,min=1,max=5"`
 }
 
 type GetAllKeeperReviewsParams struct {
