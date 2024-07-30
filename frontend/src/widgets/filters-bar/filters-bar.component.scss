@@ -10,6 +10,16 @@
         font-size: 24px;
     }
 
+    .filter {
+        margin-bottom: 40px;
+
+        .filter_name {
+            margin-bottom: 18px;
+        }
+    }
+
+    
+
     .content__container {
         width: 313px;
         float: left;
@@ -18,10 +28,10 @@
         flex-direction: column;
         row-gap: 40px;
         
-        ul {
-            font-size: 20px;
-            padding-left: 46px;
-        }
+        // ul {
+        //     font-size: 20px;
+        //     padding-left: 46px;
+        // }
     }
 }
 .filters-bar::after {

@@ -19,12 +19,17 @@
   --light-gray-color: #D8D8D8;
 
   // green
+  --green-active-button-bg: rgba(70, 116, 48, 1);
+  --green-hover-bg: background: rgba(59, 126, 28, 0.1);  ;
+  --green-hover-border: rgba(42, 88, 20, 1);
   --green-color-button: #467430;
   --green-color-bg: #86C8C0;
 
   // red and pink
+  --red-hover-bg: rgba(155, 52, 29, 0.1);
+  --red-active-button-bg: rgba(138, 55, 38, 1);
+  --red-hover-border: rgba(109, 36, 21, 1);
   --red-hover-color: #5A2B00;
-  --red-color-button: #8A372699;
   --red-color-favorites: #BA2C21;
   --pink-color-bg: #F5D3B4;
 
@@ -32,7 +37,9 @@
   --blue-color-bg: #79B0E3;
 
   //orange
-  --orange-color-button: #916943;
+  --orange-hover-border: rgba(121, 82, 46, 1);
+  --orange-active-button-bg: rgba(145, 105, 67, 1);
+  --orange-hover-bg: rgba(172, 117, 65, 0.1);
 
   // purple
   --purple-color-bg: #E3CFFD;
