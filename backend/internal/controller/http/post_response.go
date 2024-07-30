@@ -1,6 +1,8 @@
 package http
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -12,6 +14,14 @@ func (r *Router) createPostResponse(ctx *fiber.Ctx) error {
 
 	if err := ctx.BodyParser(&apiPostResponse); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
+	}
+
+	errs := r.formValidator.Validate(apiPostResponse)
+	if errs != nil {
+		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
+			"validation_errors": errs,
+		}))
 	}
 
 	postID, err := ctx.ParamsInt("post_id")
@@ -55,6 +65,14 @@ func (r *Router) updatePostResponse(ctx *fiber.Ctx) error {
 	var response core.PostResponse
 	if err := ctx.BodyParser(&response); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
+	}
+
+	errs := r.formValidator.Validate(response)
+	if errs != nil {
+		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
+			"validation_errors": errs,
+		}))
 	}
 
 	id, err := ctx.ParamsInt("id")

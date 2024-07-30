@@ -10,7 +10,7 @@ type (
 		ID        int       `gorm:"column:id"`
 		PostID    int       `gorm:"column:post_id"`
 		AuthorID  int       `gorm:"column:author_id"`
-		Contetnt  string    `gorm:"column:content"`
+		Content   string    `gorm:"column:content"`
 		IsDeleted bool      `gorm:"column:is_deleded"`
 		DeletedAt time.Time `gorm:"column:deleted_at"`
 		CreatedAt time.Time `gorm:"column:created_at"`

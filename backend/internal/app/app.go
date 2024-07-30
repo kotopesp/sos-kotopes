@@ -85,8 +85,10 @@ func Run(cfg *config.Config) {
 		entityService,
 		formValidator,
 		authService,
+		postService,
+		postFavouriteService,
+		postResponseService,
 	)
-	v1.NewRouter(app, entityService, nil, postService, postFavouriteService, postResponseService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
