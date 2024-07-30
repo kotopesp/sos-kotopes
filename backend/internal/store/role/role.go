@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/role"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
@@ -23,42 +22,39 @@ const Seeker = "seeker"
 const Keeper = "keeper"
 const Vet = "vet"
 
-func (s *store) GetUserRoles(ctx context.Context, id int) (roles []core.Role, err error) {
-
+func (s *store) GetUserRoles(ctx context.Context, id int) (roles map[string]core.Role, err error) {
+	roles = make(map[string]core.Role)
 	var seeker core.Role
-	if err := s.DB.WithContext(ctx).Table("seekers").
+	if err = s.DB.WithContext(ctx).Table("seekers").
 		Where("user_id = ?", id).
-		Select("'seeker' as name, id, user_id, description, created_at, updated_at").
 		First(&seeker).Error; err == nil {
-		roles = append(roles, seeker)
+		roles[Seeker] = seeker
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, fmt.Errorf("error querying seeker role: %w", err)
+		return nil, err
 	}
 
 	var keeper core.Role
-	if err := s.DB.WithContext(ctx).Table("keepers").
+	if err = s.DB.WithContext(ctx).Table("keepers").
 		Where("user_id = ?", id).
-		Select("'keeper' as name, id, user_id, description, created_at, updated_at").
 		First(&keeper).Error; err == nil {
-		roles = append(roles, keeper)
+		roles[Keeper] = keeper
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, fmt.Errorf("error querying keeper role: %w", err)
+		return nil, err
 	}
 
 	var vet core.Role
-	if err := s.DB.WithContext(ctx).Table("vets").
+	if err = s.DB.WithContext(ctx).Table("vets").
 		Where("user_id = ?", id).
-		Select("'vet' as name, id, user_id, description, created_at, updated_at").
 		First(&vet).Error; err == nil {
-		roles = append(roles, vet)
+		roles[Vet] = vet
 	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, fmt.Errorf("error querying vet role: %w", err)
+		return nil, err
 	}
 
 	return roles, nil
 }
 
-func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole role.GiveRole) (err error) {
+func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.GiveRole) (err error) {
 
 	tx := s.DB.Begin()
 	if tx.Error != nil {
@@ -150,7 +146,7 @@ func (s *store) DeleteUserRole(ctx context.Context, id int, roleName string) (er
 }
 
 // check for user existing
-func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole role.UpdateRole) (err error) {
+func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole core.UpdateRole) (err error) {
 	tx := s.DB.Begin()
 
 	if tx.Error != nil {
