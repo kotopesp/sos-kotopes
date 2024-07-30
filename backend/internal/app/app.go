@@ -22,6 +22,11 @@ import (
 	"github.com/kotopesp/sos-kotopes/config"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+
+	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/poststore"
+    postservice "github.com/kotopesp/sos-kotopes/internal/service/postservice"
+	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavouritestore"
 )
 
 // Run creates objects via constructors.
@@ -41,6 +46,10 @@ func Run(cfg *config.Config) {
 	// Stores
 	entityStore := entity.New(pg)
 	userStore := user.New(pg)
+	postStore := poststore.NewPostStore(pg)
+	postFavouriteStore := postfavouritestore.NewFavouritePostStore(pg)
+	animalStore := animalstore.New(pg)
+
 	// Services
 	entityService := name.New(entityStore)
 	authService := auth.New(
@@ -52,6 +61,7 @@ func Run(cfg *config.Config) {
 			VKCallback:     cfg.VKCallback,
 		},
 	)
+	postService := postservice.NewPostService(postStore, postFavouriteStore, animalStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -65,16 +75,13 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-<<<<<<< HEAD
-	v1.NewRouter(app, entityService, nil, postService, postFavouriteService)
-=======
 	v1.NewRouter(
 		app,
 		entityService,
 		formValidator,
 		authService,
+		postService,
 	)
->>>>>>> 449c83ab9abbd83209ee0de34e51092c87b96db9
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
