@@ -42,3 +42,8 @@ type KeeperService interface {
 	DeleteByID(ctx *context.Context, id int) error
 	UpdateByID(ctx *context.Context, keeper Keepers) error
 }
+
+// TableName table name in db for gorm
+func (Keepers) TableName() string {
+	return "keepers"
+}

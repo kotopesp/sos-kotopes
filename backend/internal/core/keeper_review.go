@@ -37,3 +37,8 @@ type KeeperReviewsService interface {
 	SoftDeleteByID(ctx *context.Context, id int) error
 	UpdateByID(ctx *context.Context, keeperReview KeeperReviews) error
 }
+
+// TableName table name in db for gorm
+func (KeeperReviews) TableName() string {
+	return "keeper_reviews"
+}
