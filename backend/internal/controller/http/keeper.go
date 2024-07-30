@@ -93,7 +93,7 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 	data, err := r.keeperService.GetByID(&usrCtx, id)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(data))
