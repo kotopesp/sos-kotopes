@@ -3,7 +3,6 @@ package role
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
@@ -24,62 +23,58 @@ const Vet = "vet"
 
 func (s *store) GetUserRoles(ctx context.Context, id int) (roles map[string]core.Role, err error) {
 	roles = make(map[string]core.Role)
-	var seeker core.Role
-	if err = s.DB.WithContext(ctx).Table("seekers").
-		Where("user_id = ?", id).
-		First(&seeker).Error; err == nil {
-		roles[Seeker] = seeker
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
-	}
 
-	var keeper core.Role
-	if err = s.DB.WithContext(ctx).Table("keepers").
-		Where("user_id = ?", id).
-		First(&keeper).Error; err == nil {
-		roles[Keeper] = keeper
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
-	}
+	tableNames := []string{"seekers", "keepers", "vets"}
+	roleNames := []string{Seeker, Keeper, Vet}
 
-	var vet core.Role
-	if err = s.DB.WithContext(ctx).Table("vets").
-		Where("user_id = ?", id).
-		First(&vet).Error; err == nil {
-		roles[Vet] = vet
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
+	for i, name := range tableNames {
+		var role core.Role
+		key := roleNames[i]
+		if err = s.DB.WithContext(ctx).Table(name).
+			Where("user_id = ?", id).
+			First(&role).Error; err == nil {
+			roles[key] = role
+		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
 	}
 
 	return roles, nil
 }
 
-func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.GiveRole) (err error) {
+func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.GivenRole) (addedRole core.Role, roleName string, err error) {
 
 	tx := s.DB.Begin()
 	if tx.Error != nil {
-		return tx.Error
+		return core.Role{}, "", tx.Error
 	}
-	fmt.Println(id)
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			tx.Rollback()
+		}
+	}()
+
 	var user core.User
 	if err = tx.Table("users").First(&user, "id = ?", id).Error; err != nil {
-		tx.Rollback()
-		return errors.New("user not found")
+		return core.Role{}, "", core.ErrNoSuchUser
 	}
 
 	now := time.Now()
 
 	switch givenRole.Name {
 	case Seeker:
-		seeker := core.Seeker{
+		seeker := core.Role{
 			UserID:      id,
 			Description: givenRole.Description,
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
-		if err = tx.Table("seekers").Create(&seeker).Error; err != nil {
-			tx.Rollback()
-			return err
+		if err := tx.Table("seekers").Create(&seeker).Error; err != nil {
+			return core.Role{}, "", err
+		} else {
+			roleName = Seeker
+			addedRole = seeker
 		}
 	case Keeper:
 		keeper := core.Role{
@@ -88,9 +83,11 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.GiveR
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
-		if err = tx.Table("keepers").Create(&keeper).Error; err != nil {
-			tx.Rollback()
-			return err
+		if err := tx.Table("keepers").Create(&keeper).Error; err != nil {
+			return core.Role{}, "", err
+		} else {
+			roleName = Keeper
+			addedRole = keeper
 		}
 	case Vet:
 		vet := core.Role{
@@ -99,16 +96,17 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.GiveR
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
-		if err = tx.Table("vets").Create(&vet).Error; err != nil {
-			tx.Rollback()
-			return err
+		if err := tx.Table("vets").Create(&vet).Error; err != nil {
+			return core.Role{}, "", err
+		} else {
+			roleName = Vet
+			addedRole = vet
 		}
 	default:
-		tx.Rollback()
-		return errors.New("invalid givenRole")
+		return core.Role{}, "", core.ErrInvalidRole
 	}
 
-	return tx.Commit().Error
+	return addedRole, roleName, tx.Commit().Error
 }
 func (s *store) DeleteUserRole(ctx context.Context, id int, roleName string) (err error) {
 

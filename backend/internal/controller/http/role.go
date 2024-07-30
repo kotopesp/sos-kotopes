@@ -34,7 +34,7 @@ func (r *Router) GetUserRoles(ctx *fiber.Ctx) error {
 		posts = append(posts, role.ToRole(&userRoles[i]))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(userRoles)
+	return ctx.Status(fiber.StatusOK).JSON(posts)
 }
 
 func (r *Router) GiveRoleToUser(ctx *fiber.Ctx) error {
@@ -44,13 +44,14 @@ func (r *Router) GiveRoleToUser(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	var body core.GiveRole // fix
-	if err = ctx.BodyParser(&body); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Cannot parse JSON",
-		})
+	var givenRole role.GivenRole
+	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &givenRole)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
-	err = r.roleService.GiveRoleToUser(ctx.UserContext(), id, body)
+	coreGivenRole := givenRole.ToCoreGivenRole()
+
+	addedRole, err := r.roleService.GiveRoleToUser(ctx.UserContext(), id, coreGivenRole)
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):
@@ -61,7 +62,7 @@ func (r *Router) GiveRoleToUser(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
-	return ctx.Status(fiber.StatusOK).JSON(id)
+	return ctx.Status(fiber.StatusCreated).JSON(addedRole)
 }
 
 func (r *Router) DeleteUserRole(ctx *fiber.Ctx) error {
@@ -71,7 +72,7 @@ func (r *Router) DeleteUserRole(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	var roleName role.GiveRole
+	var roleName role.GivenRole
 	if err = ctx.BodyParser(&roleName); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Cannot parse JSON",
@@ -83,13 +84,13 @@ func (r *Router) DeleteUserRole(ctx *fiber.Ctx) error {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))
 		default:
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
-	return ctx.Status(fiber.StatusOK).JSON(id)
+	return ctx.Status(fiber.StatusNoContent).JSON(id)
 }
 
 func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
@@ -98,7 +99,7 @@ func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
-	var updateRole core.UpdateRole //fix
+	var updateRole core.UpdateRole // fix
 	if err = ctx.BodyParser(&updateRole); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Cannot parse JSON",

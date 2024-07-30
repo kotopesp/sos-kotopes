@@ -9,9 +9,19 @@ func ToRole(roleDetails *core.RoleDetails) Role {
 	return Role{
 		Name:        roleDetails.Name,
 		ID:          roleDetails.ID,
-		UserID:      roleDetails.UserID,
+		Username:    roleDetails.Username,
 		Description: roleDetails.Description,
 		CreatedAt:   roleDetails.CreatedAt,
 		UpdatedAt:   roleDetails.UpdatedAt,
+	}
+}
+
+func (r *GivenRole) ToCoreGivenRole() core.GivenRole {
+	if r == nil {
+		return core.GivenRole{}
+	}
+	return core.GivenRole{
+		Name:        r.Name,
+		Description: r.Description,
 	}
 }

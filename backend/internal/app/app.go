@@ -50,7 +50,7 @@ func Run(cfg *config.Config) {
 	userStore := usersStore.New(pg)
 
 	// Services
-	roleService := rolesService.New(roleStore)
+	roleService := rolesService.New(roleStore, userStore)
 	entityService := name.New(entityStore)
 	userService := usersService.New(userStore)
 	favouriteUserService := userFavouriteService.New(favouriteUserStore)
