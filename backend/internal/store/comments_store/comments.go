@@ -2,9 +2,11 @@ package comments
 
 import (
 	"context"
+	"errors"
+	"gorm.io/gorm"
+	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
@@ -19,11 +21,24 @@ func NewCommentsStore(pg *postgres.Postgres) core.CommentsStore {
 	}
 }
 
-func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, postID int) ([]core.Comments, error) {
+func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comments, error) {
+	var comment core.Comments
+	if err := s.DB.WithContext(ctx).First(&comment, "id=?", commentID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return comment, core.ErrNoSuchComment
+		}
+		return comment, err
+	}
 
+	return comment, nil
+}
+
+func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, postID int) (data []core.Comments, total int, err error) {
 	var comments []core.Comments
 
-	query := s.DB.WithContext(ctx).Model(&core.Comments{})
+	query := s.DB.WithContext(ctx).Order(
+		"COALESCE(parent_id, id), (parent_id IS NULL)::int DESC, id",
+	) // sorting by comment and replies to it
 
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)
@@ -33,35 +48,56 @@ func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParam
 		query = query.Offset(*params.Offset)
 	}
 
-	if err := query.Order("replay_to_comment, reply_to_reply").Find(&comments).Error; err != nil {
-		return nil, fiber.NewError(fiber.StatusBadRequest, err.Error())
+	if err := query.Find(&comments, "posts_id=?", postID).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, 0, core.ErrNoSuchComment
+		}
+		return nil, 0, err
 	}
-	return comments, nil
 
+	var totalInt64 int64
+	if err := s.DB.WithContext(ctx).
+		Model(&core.Comments{}).
+		Where("posts_id=?", postID).
+		Count(&totalInt64).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return comments, int(totalInt64), nil
 }
 
-func (s *store) CreateComment(ctx context.Context, comment core.Comments, postID int) (core.Comments, error) {
-
+func (s *store) CreateComment(ctx context.Context, comment core.Comments) (core.Comments, error) {
 	if err := s.DB.WithContext(ctx).Create(&comment).Error; err != nil {
-		return comment, fiber.NewError(fiber.StatusBadRequest, err.Error())
+		if strings.Contains(err.Error(), "comments_posts_id_fkey") {
+			return comment, core.ErrNoSuchPost
+		}
+		return comment, err
 	}
+
 	return comment, nil
 }
 
 func (s *store) UpdateComments(ctx context.Context, comment core.Comments) (core.Comments, error) {
-	if err := s.DB.WithContext(ctx).Save(&comment).Error; err != nil {
-		return comment, fiber.NewError(fiber.StatusBadRequest, err.Error())
+	if err := s.DB.WithContext(ctx).Updates(comment).Error; err != nil {
+		return comment, err
 	}
+
+	// unfortunately, updates does not update `comment` variable
+	if err := s.DB.WithContext(ctx).First(&comment, "id=?", comment.ID).Error; err != nil {
+		return comment, err
+	}
+
 	return comment, nil
 }
 
-func (s *store) DeleteComments(ctx context.Context, id int) error {
-	deletedComment := core.Comments{
-		IsDeleted: true,
-		DeletedAt: time.Now(),
+func (s *store) DeleteComments(ctx context.Context, comment core.Comments) error {
+	comment.IsDeleted = true
+	now := time.Now()
+	comment.DeletedAt = &now
+
+	if err := s.DB.WithContext(ctx).Updates(&comment).Error; err != nil {
+		return err
 	}
-	if err := s.DB.WithContext(ctx).Save(&deletedComment).Error; err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
+
 	return nil
 }

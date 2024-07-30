@@ -47,9 +47,10 @@ func (r *Router) initRoutes() {
 
 	// comments
 	v1.Get("/posts/:post_id/comments", r.getCommentsByPostID)
-	v1.Post("/posts/:post_id/comments", r.createComment)
-	v1.Put("/posts/:post_id/comments/:comment_id", r.updateComment)
-	v1.Delete("/posts/:post_id/comments/:comment_id", r.deleteComment)
+	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
+	v1.Put("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
+	v1.Delete("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.deleteComment)
+
 	// e.g. protected resource
 	v1.Get("/protected", r.protectedMiddleware(), r.protected)
 

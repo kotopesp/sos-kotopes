@@ -1,89 +1,164 @@
 package http
 
 import (
+	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/comments"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 func (r *Router) getCommentsByPostID(ctx *fiber.Ctx) error {
-
-	params := comments.GetAllCommentsParams{}
-	if err := ctx.QueryParser(&params); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	var getAllCommentsParams comments.GetAllCommentsParams
+	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllCommentsParams)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
-	postsID, err := ctx.ParamsInt("postsID")
+	var urlParams comments.CommentURLParams
+	fiberError, parseOrValidationError = parseParamsAndValidate(ctx, r.formValidator, &urlParams)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+
+	coreComments, total, err := r.commentsService.GetCommentsByPostID(
+		ctx.UserContext(),
+		getAllCommentsParams.ToCoreGetAllCommentsParams(),
+		urlParams.PostID,
+	)
 	if err != nil {
-		return ctx.Status(fiber.ErrNotFound.Code).JSON("")
+		if errors.Is(err, core.ErrNoSuchComment) {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(err.Error())
+		}
+
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	commentsByPost, err := r.commentsService.GetCommentsByPostID(ctx.UserContext(),
-		*params.ToCoreGetAllCommentsParams(), postsID)
-	if err != nil {
-		return ctx.Status(fiber.ErrInternalServerError.Code).JSON("")
-	}
+	modelComments := comments.ToModelCommentsSlice(coreComments)
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(commentsByPost))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
+		"comments": modelComments,
+		"meta":     paginate(total, getAllCommentsParams.Limit, getAllCommentsParams.Offset),
+	}))
 }
-func (r *Router) createComment(ctx *fiber.Ctx) error {
 
-	comment := comments.Comments{}
-	if err := ctx.BodyParser(&comment); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+func (r *Router) createComment(ctx *fiber.Ctx) error {
+	var comment comments.Comments
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &comment)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+
+	var urlParams comments.CommentURLParams
+	fiberError, parseOrValidationError = parseParamsAndValidate(ctx, r.formValidator, &urlParams)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
 	coreComment := comment.ToCoreComments()
 
-	postID, err := ctx.ParamsInt("postsID")
+	coreComment.PostsID = urlParams.PostID
+	userID, err := getIDFromToken(ctx)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("invalid post id for comments"))
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	coreComment.AuthorID = userID
+
+	createdComment, err := r.commentsService.CreateComment(ctx.UserContext(), coreComment)
+	if err != nil {
+		if errors.Is(err, core.ErrNoSuchPost) {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		}
+
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	coreComment.PostsID = postID
+	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("Created comments: %v", createdComment))
 
-	createdComment, err := r.commentsService.CreateComment(ctx.UserContext(), *coreComment, postID)
-	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(createdComment))
+	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(fiber.Map{
+		"created_comment": comments.ToModelComment(createdComment),
+	}))
 }
 
 func (r *Router) updateComment(ctx *fiber.Ctx) error {
+	var urlParams comments.CommentURLParams
+	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &urlParams)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
 
-	id, err := ctx.ParamsInt("id")
+	var newComment comments.CommentUpdate
+	fiberError, parseOrValidationError = parseBodyAndValidate(ctx, r.formValidator, &newComment)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+
+	newCoreComment := newComment.ToCoreComment()
+
+	newCoreComment.ID = urlParams.CommentID
+	userID, err := getIDFromToken(ctx)
 	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("invalid comment id"))
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}
+	newCoreComment.AuthorID = userID
 
-	newComment := core.Comments{}
-	if err := ctx.BodyParser(&newComment); err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
-	}
-
-	newComment.ID = id
-
-	updatedComment, err := r.commentsService.UpdateComments(ctx.UserContext(), newComment)
+	updatedComment, err := r.commentsService.UpdateComments(ctx.UserContext(), newCoreComment)
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		if errors.Is(err, core.ErrCommentAuthorIDMismatch) {
+			return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		} else if errors.Is(err, core.ErrNoSuchComment) || errors.Is(err, core.ErrCommentIsDeleted) {
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		}
+
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(
-		model.Response{Data: updatedComment}))
+	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("Updated comments: %v", updatedComment))
+
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
+		"updated_comment": comments.ToModelComment(updatedComment),
+	}))
 }
 
 func (r *Router) deleteComment(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
-	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, "invalid comment id")
+	var urlParams comments.CommentURLParams
+	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &urlParams)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
-	err = r.commentsService.DeleteComments(ctx.UserContext(), id)
+	var coreComment core.Comments
+	coreComment.ID = urlParams.CommentID
+
+	userID, err := getIDFromToken(ctx)
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	coreComment.AuthorID = userID
+
+	err = r.commentsService.DeleteComments(ctx.UserContext(), coreComment)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		if errors.Is(err, core.ErrCommentAuthorIDMismatch) {
+			return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		} else if errors.Is(err, core.ErrNoSuchComment) || errors.Is(err, core.ErrCommentIsDeleted) {
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		}
+
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
 
-	return nil
+	return ctx.SendStatus(fiber.StatusNoContent)
 }

@@ -2,29 +2,41 @@ package comments
 
 import "github.com/kotopesp/sos-kotopes/internal/core"
 
-func (c *Comments) ToCoreComments() *core.Comments {
-	if c == nil {
-		return &core.Comments{}
-	}
-	return &core.Comments{
-		ID:        c.ID,
-		Content:   c.Content,
-		AuthorID:  c.AuthorID,
-		PostsID:   c.PostsID,
-		IsDeleted: c.IsDeleted,
-		DeletedAt: c.DeletedAt,
-		CreatedAt: c.CreatedAt,
-		UpdatedAt: c.UpdatedAt,
-		ParentID:  c.ParentID,
-		ReplyID:   c.ReplyID,
+func (c *Comments) ToCoreComments() core.Comments {
+	return core.Comments{
+		Content:  c.Content,
+		ParentID: c.ParentID,
+		ReplyID:  c.ReplyID,
 	}
 }
 
-func (c *GetAllCommentsParams) ToCoreGetAllCommentsParams() *core.GetAllParamsComments {
-	if c == nil {
-		return &core.GetAllParamsComments{}
+func (c *CommentUpdate) ToCoreComment() core.Comments {
+	return core.Comments{
+		Content: c.Content,
 	}
-	return &core.GetAllParamsComments{
+}
+
+func ToModelComment(c core.Comments) Comments {
+	return Comments{
+		ID:        c.ID,
+		Content:   c.Content,
+		ParentID:  c.ParentID,
+		ReplyID:   c.ReplyID,
+		UpdatedAt: c.UpdatedAt,
+		IsDeleted: c.IsDeleted,
+	}
+}
+
+func ToModelCommentsSlice(c []core.Comments) []Comments {
+	modelCommentsSlice := make([]Comments, len(c))
+	for i, comment := range c {
+		modelCommentsSlice[i] = ToModelComment(comment)
+	}
+	return modelCommentsSlice
+}
+
+func (c *GetAllCommentsParams) ToCoreGetAllCommentsParams() core.GetAllParamsComments {
+	return core.GetAllParamsComments{
 		Limit:  &c.Limit,
 		Offset: &c.Offset,
 	}

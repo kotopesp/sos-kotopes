@@ -14,11 +14,8 @@ var (
 		}
 	}
 
-	ErrInvalidTokenID = errors.New("invalid token id")
-
+	ErrInvalidTokenID       = errors.New("invalid token id")
 	ErrInvalidTokenUsername = errors.New("invalid token username")
-
-	ErrOAuthStateMismatch = errors.New("states do not match")
-
-	ErrValidationFailed = errors.New("validation failed")
+	ErrOAuthStateMismatch   = errors.New("states do not match")
+	ErrValidationFailed     = errors.New("validation failed")
 )
