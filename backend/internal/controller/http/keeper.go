@@ -19,62 +19,6 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	// if sortBy := ctx.Query("sortBy"); sortBy != "" {
-	// 	params.SortBy = &sortBy
-	// }
-	// if sortOrder := ctx.Query("sortOrder"); sortOrder != "" {
-	// 	params.SortOrder = &sortOrder
-	// }
-	// if location := ctx.Query("location"); location != "" {
-	// 	params.Location = &location
-	// }
-
-	// if minPriceStr := ctx.Query("min_price"); minPriceStr != "" {
-	// 	minPrice, err := strconv.ParseFloat(minPriceStr, 64)
-	// 	if err != nil {
-	// 		logger.Log().Debug(ctx.UserContext(), err.Error())
-	// 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	// 	}
-	// 	params.MinPrice = &minPrice
-	// }
-	// if maxPriceStr := ctx.Query("max_price"); maxPriceStr != "" {
-	// 	maxPrice, err := strconv.ParseFloat(maxPriceStr, 64)
-	// 	if err != nil {
-	// 		logger.Log().Debug(ctx.UserContext(), err.Error())
-	// 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	// 	}
-	// 	params.MaxPrice = &maxPrice
-	// }
-	// if minRatingStr := ctx.Query("min_rating"); minRatingStr != "" {
-	// 	minRating, err := strconv.ParseFloat(minRatingStr, 64)
-	// 	if err != nil {
-	// 		logger.Log().Debug(ctx.UserContext(), err.Error())
-	// 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	// 	}
-	// 	params.MinRating = &minRating
-	// }
-	// if maxRatingStr := ctx.Query("max_rating"); maxRatingStr != "" {
-	// 	maxRating, err := strconv.ParseFloat(maxRatingStr, 64)
-	// 	if err != nil {
-	// 		logger.Log().Debug(ctx.UserContext(), err.Error())
-	// 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	// 	}
-	// 	params.MaxRating = &maxRating
-	// }
-
-	// if limit := ctx.Query("limit"); limit != "" {
-	// 	l, err := strconv.Atoi(limit)
-	// 	if err == nil {
-	// 		params.Limit = &l
-	// 	}
-	// }
-	// if offset := ctx.Query("offset"); offset != "" {
-	// 	o, err := strconv.Atoi(offset)
-	// 	if err == nil {
-	// 		params.Offset = &o
-	// 	}
-	// }
-
 	usrCtx := ctx.UserContext()
 	coreParams := params.FromKeeperRequest()
 	coreKeepers, err := r.keeperService.GetAll(&usrCtx, coreParams)
@@ -130,17 +74,6 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
-
-	// parse keeper
-	// if err := ctx.BodyParser(&newKeeper); err != nil {
-	// 	logger.Log().Debug(ctx.UserContext(), err.Error())
-	// 	return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	// }
-
-	// make sure the create time is set
-	// if keeper.CreatedAt.IsZero() {
-	// 	keeper.CreatedAt = time.Now()
-	// }
 
 	// create keeper
 	k := newKeeper.ToCoreNewKeeper()

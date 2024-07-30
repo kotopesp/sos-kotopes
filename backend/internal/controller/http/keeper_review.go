@@ -50,18 +50,6 @@ func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	// // make sure the create time is set
-	// if review.CreatedAt.IsZero() {
-	// 	review.CreatedAt = time.Now()
-	// }
-
-	// // check grade boundaries
-	// if review.Grade < 1 || review.Grade > 5 {
-	// 	errMsg := "Grade must be between 1 and 5"
-	// 	logger.Log().Debug(ctx.UserContext(), errMsg)
-	// 	return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(errMsg))
-	// }
-
 	// create review
 	usrCtx := ctx.UserContext()
 	coreReview := newReview.ToCoreNewKeeperReview()
