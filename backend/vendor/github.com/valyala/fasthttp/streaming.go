@@ -107,7 +107,7 @@ func releaseRequestStream(rs *requestStream) {
 }
 
 var requestStreamPool = sync.Pool{
-	New: func() any {
+	New: func() interface{} {
 		return &requestStream{}
 	},
 }

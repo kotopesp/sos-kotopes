@@ -2,7 +2,7 @@ package name
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 )
 
 type service struct {

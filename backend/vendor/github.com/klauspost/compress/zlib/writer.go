@@ -5,7 +5,6 @@
 package zlib
 
 import (
-	"encoding/binary"
 	"fmt"
 	"hash"
 	"hash/adler32"
@@ -21,7 +20,7 @@ const (
 	BestSpeed           = flate.BestSpeed
 	BestCompression     = flate.BestCompression
 	DefaultCompression  = flate.DefaultCompression
-	ConstantCompression = flate.ConstantCompression // Deprecated: Use HuffmanOnly.
+	ConstantCompression = flate.ConstantCompression
 	HuffmanOnly         = flate.HuffmanOnly
 )
 
@@ -41,7 +40,7 @@ type Writer struct {
 // NewWriter creates a new Writer.
 // Writes to the returned Writer are compressed and written to w.
 //
-// It is the caller's responsibility to call Close on the Writer when done.
+// It is the caller's responsibility to call Close on the WriteCloser when done.
 // Writes may be buffered and not flushed until Close.
 func NewWriter(w io.Writer) *Writer {
 	z, _ := NewWriterLevelDict(w, DefaultCompression, nil)
@@ -117,13 +116,17 @@ func (z *Writer) writeHeader() (err error) {
 	if z.dict != nil {
 		z.scratch[1] |= 1 << 5
 	}
-	z.scratch[1] += uint8(31 - binary.BigEndian.Uint16(z.scratch[:2])%31)
+	z.scratch[1] += uint8(31 - (uint16(z.scratch[0])<<8+uint16(z.scratch[1]))%31)
 	if _, err = z.w.Write(z.scratch[0:2]); err != nil {
 		return err
 	}
 	if z.dict != nil {
 		// The next four bytes are the Adler-32 checksum of the dictionary.
-		binary.BigEndian.PutUint32(z.scratch[:], adler32.Checksum(z.dict))
+		checksum := adler32.Checksum(z.dict)
+		z.scratch[0] = uint8(checksum >> 24)
+		z.scratch[1] = uint8(checksum >> 16)
+		z.scratch[2] = uint8(checksum >> 8)
+		z.scratch[3] = uint8(checksum >> 0)
 		if _, err = z.w.Write(z.scratch[0:4]); err != nil {
 			return err
 		}
@@ -189,7 +192,10 @@ func (z *Writer) Close() error {
 	}
 	checksum := z.digest.Sum32()
 	// ZLIB (RFC 1950) is big-endian, unlike GZIP (RFC 1952).
-	binary.BigEndian.PutUint32(z.scratch[:], checksum)
+	z.scratch[0] = uint8(checksum >> 24)
+	z.scratch[1] = uint8(checksum >> 16)
+	z.scratch[2] = uint8(checksum >> 8)
+	z.scratch[3] = uint8(checksum >> 0)
 	_, z.err = z.w.Write(z.scratch[0:4])
 	return z.err
 }

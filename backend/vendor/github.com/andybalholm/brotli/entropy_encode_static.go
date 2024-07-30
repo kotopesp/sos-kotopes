@@ -782,11 +782,6 @@ func storeStaticCodeLengthCode(storage_ix *uint, storage []byte) {
 	writeBits(40, 0x0000FF55555554, storage_ix, storage)
 }
 
-func storeStaticCodeLengthCodeBW(bw *bitWriter) {
-	bw.writeBits(32, 0x55555554)
-	bw.writeBits(8, 0xFF)
-}
-
 var kZeroRepsBits = [numCommandSymbols]uint64{
 	0x00000000,
 	0x00000000,

@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"strings"
 )
 

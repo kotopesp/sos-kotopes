@@ -85,7 +85,7 @@ readLiteral:
 			dict.writeByte(byte(v))
 			if dict.availWrite() == 0 {
 				f.toRead = dict.readFlush()
-				f.step = huffmanBytesBuffer
+				f.step = (*decompressor).huffmanBytesBuffer
 				f.stepState = stateInit
 				f.b, f.nb = fb, fnb
 				return
@@ -251,7 +251,7 @@ copyHistory:
 
 		if dict.availWrite() == 0 || f.copyLen > 0 {
 			f.toRead = dict.readFlush()
-			f.step = huffmanBytesBuffer // We need to continue this work
+			f.step = (*decompressor).huffmanBytesBuffer // We need to continue this work
 			f.stepState = stateDict
 			f.b, f.nb = fb, fnb
 			return
@@ -336,7 +336,7 @@ readLiteral:
 			dict.writeByte(byte(v))
 			if dict.availWrite() == 0 {
 				f.toRead = dict.readFlush()
-				f.step = huffmanBytesReader
+				f.step = (*decompressor).huffmanBytesReader
 				f.stepState = stateInit
 				f.b, f.nb = fb, fnb
 				return
@@ -502,7 +502,7 @@ copyHistory:
 
 		if dict.availWrite() == 0 || f.copyLen > 0 {
 			f.toRead = dict.readFlush()
-			f.step = huffmanBytesReader // We need to continue this work
+			f.step = (*decompressor).huffmanBytesReader // We need to continue this work
 			f.stepState = stateDict
 			f.b, f.nb = fb, fnb
 			return
@@ -587,7 +587,7 @@ readLiteral:
 			dict.writeByte(byte(v))
 			if dict.availWrite() == 0 {
 				f.toRead = dict.readFlush()
-				f.step = huffmanBufioReader
+				f.step = (*decompressor).huffmanBufioReader
 				f.stepState = stateInit
 				f.b, f.nb = fb, fnb
 				return
@@ -753,7 +753,7 @@ copyHistory:
 
 		if dict.availWrite() == 0 || f.copyLen > 0 {
 			f.toRead = dict.readFlush()
-			f.step = huffmanBufioReader // We need to continue this work
+			f.step = (*decompressor).huffmanBufioReader // We need to continue this work
 			f.stepState = stateDict
 			f.b, f.nb = fb, fnb
 			return
@@ -838,7 +838,7 @@ readLiteral:
 			dict.writeByte(byte(v))
 			if dict.availWrite() == 0 {
 				f.toRead = dict.readFlush()
-				f.step = huffmanStringsReader
+				f.step = (*decompressor).huffmanStringsReader
 				f.stepState = stateInit
 				f.b, f.nb = fb, fnb
 				return
@@ -1004,7 +1004,7 @@ copyHistory:
 
 		if dict.availWrite() == 0 || f.copyLen > 0 {
 			f.toRead = dict.readFlush()
-			f.step = huffmanStringsReader // We need to continue this work
+			f.step = (*decompressor).huffmanStringsReader // We need to continue this work
 			f.stepState = stateDict
 			f.b, f.nb = fb, fnb
 			return
@@ -1089,7 +1089,7 @@ readLiteral:
 			dict.writeByte(byte(v))
 			if dict.availWrite() == 0 {
 				f.toRead = dict.readFlush()
-				f.step = huffmanGenericReader
+				f.step = (*decompressor).huffmanGenericReader
 				f.stepState = stateInit
 				f.b, f.nb = fb, fnb
 				return
@@ -1255,7 +1255,7 @@ copyHistory:
 
 		if dict.availWrite() == 0 || f.copyLen > 0 {
 			f.toRead = dict.readFlush()
-			f.step = huffmanGenericReader // We need to continue this work
+			f.step = (*decompressor).huffmanGenericReader // We need to continue this work
 			f.stepState = stateDict
 			f.b, f.nb = fb, fnb
 			return
@@ -1265,19 +1265,19 @@ copyHistory:
 	// Not reached
 }
 
-func (f *decompressor) huffmanBlockDecoder() {
+func (f *decompressor) huffmanBlockDecoder() func() {
 	switch f.r.(type) {
 	case *bytes.Buffer:
-		f.huffmanBytesBuffer()
+		return f.huffmanBytesBuffer
 	case *bytes.Reader:
-		f.huffmanBytesReader()
+		return f.huffmanBytesReader
 	case *bufio.Reader:
-		f.huffmanBufioReader()
+		return f.huffmanBufioReader
 	case *strings.Reader:
-		f.huffmanStringsReader()
+		return f.huffmanStringsReader
 	case Reader:
-		f.huffmanGenericReader()
+		return f.huffmanGenericReader
 	default:
-		f.huffmanGenericReader()
+		return f.huffmanGenericReader
 	}
 }

@@ -2,8 +2,8 @@ package entity
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
 )
 
 type store struct {

@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/kotopesp/sos-kotopes/config"
-	"github.com/kotopesp/sos-kotopes/internal/app"
+	"gitflic.ru/spbu-se/sos-kotopes/config"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/app"
 )
 
 func main() {

@@ -134,17 +134,17 @@ func WriteBrotliLevel(w io.Writer, p []byte, level int) (int, error) {
 
 var (
 	stacklessWriteBrotliOnce sync.Once
-	stacklessWriteBrotliFunc func(ctx any) bool
+	stacklessWriteBrotliFunc func(ctx interface{}) bool
 )
 
-func stacklessWriteBrotli(ctx any) {
+func stacklessWriteBrotli(ctx interface{}) {
 	stacklessWriteBrotliOnce.Do(func() {
 		stacklessWriteBrotliFunc = stackless.NewFunc(nonblockingWriteBrotli)
 	})
 	stacklessWriteBrotliFunc(ctx)
 }
 
-func nonblockingWriteBrotli(ctxv any) {
+func nonblockingWriteBrotli(ctxv interface{}) {
 	ctx := ctxv.(*compressCtx)
 	zw := acquireRealBrotliWriter(ctx.w, ctx.level)
 

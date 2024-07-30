@@ -1,33 +1,32 @@
 package http
 
 import (
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
 type Router struct {
-	app           *fiber.App
-	entityService core.EntityService
-	formValidator validator.FormValidatorService
-	authService   core.AuthService
-	postService   core.PostService
+	app                  *fiber.App
+	entityService        core.EntityService
+	authService          interface{}
+	postService          core.PostService
+	postFavouriteService core.PostFavoriteService
 }
 
 func NewRouter(
-	app *fiber.App,
-	entityService core.EntityService,
-	formValidator validator.FormValidatorService,
-	authService core.AuthService,
-	postService core.PostService,
+	app 		         *fiber.App,
+	entityService 	     core.EntityService,
+	authService   		 interface{},
+	postService   		 core.PostService,
+	postFavouriteService core.PostFavoriteService,
 ) {
 	router := &Router{
-		app:           app,
-		entityService: entityService,
-		formValidator: formValidator,
-		authService:   authService,
-		postService:   postService,
+		app:                  app,
+		entityService:        entityService,
+		authService:   		  authService,
+		postService:   		  postService,
+		postFavouriteService: postFavouriteService,
 	}
 
 	router.initRequestMiddlewares()
@@ -48,16 +47,19 @@ func (r *Router) initRoutes() {
 
 	// posts
 	v1.Get("/posts", r.getPosts)
-	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavoritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
+	v1.Get("/posts/favorites", r.getFavoritePosts) // получает все посты у user (могут быть коллизии с "/posts/:id")
 	v1.Get("/posts/:id", r.getPostByID)
-	v1.Post("/posts", r.protectedMiddleware(), r.createPost)
-	v1.Patch("/posts/:id", r.updatePost)
+	v1.Get("/posts/:id/photo", r.getPostPhoto)
+	v1.Post("/posts", r.createPost)
+	v1.Put("/posts/:id", r.updatePost)
 	v1.Delete("/posts/:id", r.deletePost)
 
 	// favorites posts
-	v1.Get("/posts/favourites/:id", r.protectedMiddleware(), r.getFavoritePostUserAndPostByID)
-	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavoritePost)
-	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavoritePostByID)
+	
+	v1.Get("/posts/favorites/:id", r.getFavoritePostUserByID)
+    v1.Post("/posts/:id/favorites", r.addFavoritePost)
+	// v1.Delete("/posts/favorites", r.deleteFavoriteAllPostsFromUser) // удалить все посты у user (не знаю нужна ли)
+    v1.Delete("/posts/favorites/:id", r.deleteFavoritePostByID)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

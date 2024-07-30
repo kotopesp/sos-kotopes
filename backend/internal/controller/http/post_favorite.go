@@ -1,158 +1,110 @@
 package http
 
 import (
+	"strconv"
 	"github.com/gofiber/fiber/v2"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
-    "errors"
-    postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
-
+	"gitflic.ru/spbu-se/sos-kotopes/internal/core"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
+	postModel "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/post"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/errors"
 )
 
-const (
-	PostAddFromFavorites = "Post added to favorites"
-    PostDeletedFromFavorites = "Post deleted from favorites"
-)
-
-func (r *Router) getFavoritePostsUserByID(ctx *fiber.Ctx) error {
-    var getAllPostsParams postModel.GetAllPostsParams
-	fiberError, parseOrValidationError := parseQueryAndValidatePosts(ctx, r.formValidator, &getAllPostsParams)
-
-	if fiberError != nil || parseOrValidationError != nil {
-		logger.Log().Error(ctx.UserContext(), fiberError.Error())
-		return fiberError
-	}
-
-    userID, err := getIDFromToken(ctx) //from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
-	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
-	}
-
-    posts, total, err := r.postService.GetFavouritePosts(ctx.UserContext(), userID, getAllPostsParams.Limit, getAllPostsParams.Offset)
+func (r *Router) getFavoritePosts(ctx *fiber.Ctx) error {
+    userID, err := strconv.Atoi(ctx.Query("user_id"))
     if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
-		}
-        logger.Log().Error(ctx.UserContext(), core.ErrInternalServerError.Error())
-        return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
+        return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid user ID"))
     }
 
-	pagination := paginate(total, getAllPostsParams.Limit, getAllPostsParams.Offset)
-
-    responsePosts := make([]postModel.PostPesponse, len(posts))
-    for i, post := range posts {
-
-        authorUsername, err := r.postService.GetAuthorUsernameByID(ctx.UserContext(), post.AuthorID)
-        if err != nil {
-			logger.Log().Error(ctx.UserContext(), core.ErrInternalServerError.Error())
-            return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
-        }
-
-		// не знаю как выводить animal
-		animal, err := r.postService.GetAnimalByID(ctx.UserContext(), post.AnimalID)
-        if err != nil {
-            logger.Log().Error(ctx.UserContext(), err.Error())
-            return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
-        }
-
-		responsePosts[i] = postModel.ToPostPesponse(authorUsername, post, animal)
+    var apiParams postModel.GetAllPostsParams
+    if err := ctx.QueryParser(&apiParams); err != nil {
+        logger.Log().Debug(ctx.UserContext(), err.Error())
+        return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
     }
 
-	response := postModel.ToResponse(pagination, responsePosts)
+    coreParams := apiParams.ToCoreGetAllPostsParams()
+
+    posts, total, err := r.postFavouriteService.GetFavoritePosts(ctx.UserContext(), userID, *coreParams)
+    if err != nil {
+        logger.Log().Error(ctx.UserContext(), err.Error())
+        return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+    }
+
+    response := struct {
+        Total int         `json:"total"`
+        Posts []core.Post `json:"posts"`
+    }{
+        Total: total,
+        Posts: posts,
+    }
 
     return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
-func (r *Router) getFavoritePostUserAndPostByID(ctx *fiber.Ctx) error {
-	postID, err := ctx.ParamsInt("id")
+func (r *Router) getFavoritePostUserByID(ctx *fiber.Ctx) error {
+	userID, err := strconv.Atoi(ctx.Query("user_id"))
 	if err != nil {
-        logger.Log().Error(ctx.UserContext(), core.ErrInvalidPostID.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrInvalidPostID.Error()))
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid user ID"))
 	}
 
-    userID, err := getIDFromToken(ctx) //from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
+	postID, err := strconv.Atoi(ctx.Params("id"))
 	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid post ID"))
 	}
 
-	post, animal, err := r.postService.GetFavouritePostByID(ctx.UserContext(), userID, postID)
-	if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
-		}
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
-	}
-
-	if post.Photo == nil {
-		logger.Log().Error(ctx.UserContext(), core.ErrPhotoNotFound.Error())
-		return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPhotoNotFound.Error()))
-	}
-
-	authorUsername, err := r.postService.GetAuthorUsernameByID(ctx.UserContext(), post.AuthorID)
+	post, err := r.postFavouriteService.GetFavoritePostByID(ctx.UserContext(), userID, postID)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	PostResponse := postModel.ToPostPesponse(authorUsername, post, animal) 
-
-	ctx.Set(fiber.HeaderContentType, "image/png")
-
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(PostResponse))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(post))
 }
 
 func (r *Router) addFavoritePost(ctx *fiber.Ctx) error {
-    postID, err := ctx.ParamsInt("id")
+    postID, err := strconv.Atoi(ctx.Params("id"))
     if err != nil {
-        logger.Log().Error(ctx.UserContext(), core.ErrInvalidPostID.Error())
-        return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrInvalidPostID.Error()))
+        return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid post ID"))
     }
 
-    userID, err := getIDFromToken(ctx) //from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
-	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
-	}
-
-    postFavourite := postModel.ToCorePostFavourite(userID, postID)
-
-    err = r.postService.AddToFavourites(ctx.UserContext(), postFavourite)
+    userID, err := strconv.Atoi(ctx.Query("user_id"))
     if err != nil {
-        if errors.Is(err, core.ErrPostAlreadyInFavorites) {
-            logger.Log().Error(ctx.UserContext(), err.Error())
+        return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid user ID"))
+    }
+
+    postFavourite := core.PostFavorite{
+        PostID: postID,
+        UserID: userID,
+    }
+
+    createdPostFavourite, err := r.postFavouriteService.AddToFavorites(ctx.UserContext(), postFavourite)
+    if err != nil {
+        if err == errors.ErrPostAlreadyInFavorites {
             return ctx.Status(fiber.StatusConflict).JSON(model.ErrorResponse(err.Error()))
         }
         logger.Log().Error(ctx.UserContext(), err.Error())
         return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
     }
 
-    return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(PostAddFromFavorites))
+    return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(createdPostFavourite))
 }
 
 func (r *Router) deleteFavoritePostByID(ctx *fiber.Ctx) error {
-    postID, err := ctx.ParamsInt("id")
+	userID, err := strconv.Atoi(ctx.Query("user_id"))
 	if err != nil {
-        logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrInvalidPostID.Error()))
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid user ID"))
 	}
 
-	userID, err := getIDFromToken(ctx) //from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
+	postID, err := strconv.Atoi(ctx.Params("id"))
 	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid post ID"))
 	}
 
-	err = r.postService.DeleteFromFavourites(ctx.UserContext(), postID, userID)
+	err = r.postFavouriteService.DeleteFromFavorites(ctx.UserContext(), postID, userID)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(PostDeletedFromFavorites))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse("Post deleted from favorites"))
 }

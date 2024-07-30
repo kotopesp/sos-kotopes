@@ -1,9 +1,9 @@
 package http
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/entity"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/controller/http/model/entity"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
 )

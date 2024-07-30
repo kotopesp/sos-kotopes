@@ -2,31 +2,23 @@ package app
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"os"
 	"os/signal"
 	"syscall"
 
-	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/service/name"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/kotopesp/sos-kotopes/internal/store/entity"
-	"github.com/kotopesp/sos-kotopes/internal/store/user"
-
-	baseValidator "github.com/go-playground/validator/v10"
-	"github.com/kotopesp/sos-kotopes/config"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-
-	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
-	poststore "github.com/kotopesp/sos-kotopes/internal/store/poststore"
-    postservice "github.com/kotopesp/sos-kotopes/internal/service/postservice"
-	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavouritestore"
+	"gitflic.ru/spbu-se/sos-kotopes/config"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
+	poststore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_store"
+    postservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_service"
+	postfavouritestore "gitflic.ru/spbu-se/sos-kotopes/internal/store/post_favorite_store"
+	postfavouriteservice "gitflic.ru/spbu-se/sos-kotopes/internal/service/post_favorite_service"
 )
 
 // Run creates objects via constructors.
@@ -45,26 +37,13 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
-	userStore := user.New(pg)
 	postStore := poststore.NewPostStore(pg)
-	postFavouriteStore := postfavouritestore.NewFavouritePostStore(pg)
-	animalStore := animalstore.New(pg)
+	postFavouriteStore := postfavouritestore.NewFavoritePostStore(pg)
 
 	// Services
 	entityService := name.New(entityStore)
-	postService := postservice.NewPostService(postStore, postFavouriteStore, animalStore)
-	authService := auth.New(
-		userStore,
-		core.AuthServiceConfig{
-			JWTSecret:      cfg.JWTSecret,
-			VKClientID:     cfg.VKClientID,
-			VKClientSecret: cfg.VKClientSecret,
-			VKCallback:     cfg.VKCallback,
-		},
-	)
-
-	// Validator
-	formValidator := validator.New(ctx, baseValidator.New())
+	postService := postservice.NewPostService(postStore)
+	postFavouriteService := postfavouriteservice.NewPostFavoriteService(postFavouriteStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -75,7 +54,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, formValidator, authService, postService)
+	v1.NewRouter(app, entityService, nil, postService, postFavouriteService)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)

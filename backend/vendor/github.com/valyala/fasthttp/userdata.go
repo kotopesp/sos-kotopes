@@ -5,13 +5,13 @@ import (
 )
 
 type userDataKV struct {
-	key   any
-	value any
+	key   interface{}
+	value interface{}
 }
 
 type userData []userDataKV
 
-func (d *userData) Set(key, value any) {
+func (d *userData) Set(key interface{}, value interface{}) {
 	if b, ok := key.([]byte); ok {
 		key = string(b)
 	}
@@ -46,11 +46,11 @@ func (d *userData) Set(key, value any) {
 	*d = args
 }
 
-func (d *userData) SetBytes(key []byte, value any) {
+func (d *userData) SetBytes(key []byte, value interface{}) {
 	d.Set(key, value)
 }
 
-func (d *userData) Get(key any) any {
+func (d *userData) Get(key interface{}) interface{} {
 	if b, ok := key.([]byte); ok {
 		key = b2s(b)
 	}
@@ -65,7 +65,7 @@ func (d *userData) Get(key any) any {
 	return nil
 }
 
-func (d *userData) GetBytes(key []byte) any {
+func (d *userData) GetBytes(key []byte) interface{} {
 	return d.Get(key)
 }
 
@@ -81,7 +81,7 @@ func (d *userData) Reset() {
 	*d = (*d)[:0]
 }
 
-func (d *userData) Remove(key any) {
+func (d *userData) Remove(key interface{}) {
 	if b, ok := key.([]byte); ok {
 		key = b2s(b)
 	}
