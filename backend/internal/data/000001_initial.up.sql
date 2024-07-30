@@ -1,214 +1,235 @@
 -- Users
 CREATE TABLE IF NOT EXISTS
-    users (
-        id SERIAL PRIMARY KEY,
-        username VARCHAR(50) UNIQUE NOT NULL,
-        "description" TEXT,
-        photo VARCHAR(100) NOT NULL,
-        password_hash VARCHAR(256) NOT NULL,
-        created_at TIMESTAMP NOT NULL
-    );
+    users
+(
+    id            SERIAL PRIMARY KEY,
+    username      VARCHAR UNIQUE NOT NULL,
+    firstname     VARCHAR,
+    lastname      VARCHAR,
+    description   VARCHAR,
+    photo         BYTEA,
+    password_hash VARCHAR        NOT NULL,
+    is_deleted    BOOLEAN        NOT NULL DEFAULT false,
+    deleted_at    TIMESTAMP,
+    created_at    TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMP      NOT NULL DEFAULT NOW()
+);
+
+CREATE TYPE auth_providers AS ENUM ('vk');
+
+CREATE TABLE IF NOT EXISTS
+    external_users
+(
+    id      SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users (id),
+    external_id INTEGER,
+    auth_provider auth_providers
+);
+
 -- Roles
 CREATE TABLE IF NOT EXISTS
-    seekers (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER,
-        "description" TEXT,
-        "location" VARCHAR(100),
-        rating FLOAT
-    );
+    seekers
+(
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER REFERENCES users (id),
+    description VARCHAR,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    keepers (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        "description" TEXT,
-        "location" VARCHAR(100),
-        rating FLOAT NOT NULL
-    );
+    keepers
+(
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER   NOT NULL REFERENCES users (id),
+    description VARCHAR,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    vets (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        "description" VARCHAR,
-        "location" VARCHAR(100),
-        rating FLOAT NOT NULL
-    );
-CREATE TABLE IF NOT EXISTS
-    roles_users (
-        id SERIAL PRIMARY KEY,
-        "role" VARCHAR(50) NOT NULL,
-        user_id INTEGER NOT NULL
-    );
-ALTER TABLE seekers
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE keepers
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE vets
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE roles_users
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
+    vets
+(
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER   NOT NULL REFERENCES users (id),
+    description VARCHAR,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE VIEW user_roles_view AS
+SELECT user_id, 'seeker' AS role_type
+FROM seekers
+UNION ALL
+SELECT user_id, 'keeper' AS role_type
+FROM keepers
+UNION ALL
+SELECT user_id, 'vet' AS role_type
+FROM vets;
+
 -- Reviews
 CREATE TABLE IF NOT EXISTS
-    vet_reviews (
-        id SERIAL PRIMARY KEY,
-        author_id INTEGER NOT NULL,
-        "text" VARCHAR,
-        grade INTEGER NOT NULL,
-        vet_id INTEGER NOT NULL
-    );
+    vet_reviews
+(
+    id         SERIAL PRIMARY KEY,
+    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    vet_id     INTEGER   NOT NULL REFERENCES vets (id),
+    content    VARCHAR,
+    grade      INTEGER   NOT NULL,
+    is_deleted BOOLEAN            DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    keeper_reviews (
-        id SERIAL PRIMARY KEY,
-        author_id INTEGER NOT NULL,
-        "text" VARCHAR,
-        grade INTEGER NOT NULL,
-        keeper_id INTEGER NOT NULL
-    );
-ALTER TABLE vet_reviews
-ADD FOREIGN KEY (author_id) REFERENCES users (id);
-ALTER TABLE vet_reviews
-ADD FOREIGN KEY (vet_id) REFERENCES vets (id);
-ALTER TABLE keeper_reviews
-ADD FOREIGN KEY (author_id) REFERENCES users (id);
-ALTER TABLE keeper_reviews
-ADD FOREIGN KEY (keeper_id) REFERENCES keepers (id);
+    keeper_reviews
+(
+    id         SERIAL PRIMARY KEY,
+    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    keeper_id  INTEGER   NOT NULL REFERENCES keepers (id),
+    content    VARCHAR,
+    grade      INTEGER   NOT NULL,
+    is_deleted BOOLEAN            DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 -- Animals
-CREATE TYPE animal_type AS ENUM('cat', 'dog');
-CREATE TYPE animal_status AS ENUM('found', 'lost');
-CREATE TYPE animal_gender AS ENUM('male', 'female');
+CREATE TYPE animal_types AS ENUM ('cat', 'dog');
+
+CREATE TYPE animal_statuses AS ENUM ('found', 'lost', 'need_home');
+
+CREATE TYPE animal_genders AS ENUM ('male', 'female');
+
 CREATE TABLE IF NOT EXISTS
-    animals (
-        id SERIAL PRIMARY KEY,
-        "type" animal_type,
-        age INTEGER,
-        color VARCHAR(30),
-        gender animal_gender,
-        "description" TEXT,
-        "status" animal_status,
-        keeper_id INTEGER,
-        created_at TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP NOT NULL
-    );
-ALTER TABLE animals
-ADD FOREIGN KEY (keeper_id) REFERENCES keepers (id);
--- Messeges
+    animals
+(
+    id          SERIAL PRIMARY KEY,
+    keeper_id   INTEGER REFERENCES keepers (id),
+    animal_type animal_types,
+    age         INTEGER,
+    color       VARCHAR,
+    gender      animal_genders,
+    description VARCHAR,
+    status      animal_statuses,
+    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Messages
+CREATE TYPE chat_types AS ENUM ('keeper', 'seeker', 'vet');
+
 CREATE TABLE IF NOT EXISTS
-    messages (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP NOT NULL,
-        conversation_id INTEGER NOT NULL
-    );
+    chats
+(
+    id         SERIAL PRIMARY KEY,
+    chat_type  chat_types,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    conversations (
-        id SERIAL PRIMARY KEY,
-        user1_id INTEGER NOT NULL,
-        user2_id INTEGER NOT NULL,
-        "type" VARCHAR
-    );
-ALTER TABLE messages
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE messages
-ADD FOREIGN KEY (conversation_id) REFERENCES conversations (id);
-ALTER TABLE conversations
-ADD FOREIGN KEY (user1_id) REFERENCES users (id);
-ALTER TABLE conversations
-ADD FOREIGN KEY (user2_id) REFERENCES users (id);
+    messages
+(
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    chat_id    INTEGER   NOT NULL REFERENCES chats (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS
+    chat_members
+(
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    chat_id    INTEGER REFERENCES chats (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 -- Posts
 CREATE TABLE IF NOT EXISTS
-    posts (
-        id SERIAL PRIMARY KEY,
-        title VARCHAR NOT NULL,
-        body TEXT,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP NOT NULL,
-        animal_id INTEGER,
-        photo BYTEA
-    );
+    posts
+(
+    id         SERIAL PRIMARY KEY,
+    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    animal_id  INTEGER   NOT NULL REFERENCES animals (id),
+    title      VARCHAR   NOT NULL,
+    content    VARCHAR,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    post_response (
-        id SERIAL PRIMARY KEY,
-        post_id INTEGER NOT NULL,
-        responser_id INTEGER NOT NULL,
-        "text" VARCHAR NOT NULL
-    );
-CREATE TABLE IF NOT EXISTS
-    post_likes (
-        id SERIAL PRIMARY KEY,
-        post_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
-    );
-ALTER TABLE posts
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE posts
-ADD FOREIGN KEY (animal_id) REFERENCES animals (id);
-ALTER TABLE post_response
-ADD FOREIGN KEY (post_id) REFERENCES posts (id);
-ALTER TABLE post_response
-ADD FOREIGN KEY (responser_id) REFERENCES users (id);
-ALTER TABLE post_likes
-ADD FOREIGN KEY (post_id) REFERENCES posts (id);
-ALTER TABLE post_likes
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
+    post_response
+(
+    id         SERIAL PRIMARY KEY,
+    post_id    INTEGER   NOT NULL REFERENCES posts (id),
+    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    content    VARCHAR   NOT NULL,
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 -- Comments
 CREATE TABLE IF NOT EXISTS
-    "comments" (
-        id SERIAL PRIMARY KEY,
-        "text" TEXT NOT NULL,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL,
-        updated_at TIMESTAMP NOT NULL,
-        posts_id INTEGER NOT NULL
-    );
+    comments
+(
+    id         SERIAL PRIMARY KEY,
+    content    VARCHAR   NOT NULL,
+    author_id  INTEGER   NOT NULL REFERENCES users (id),
+    posts_id   INTEGER   NOT NULL REFERENCES posts (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    comment_likes (
-        id SERIAL PRIMARY KEY,
-        comment_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
-    );
-ALTER TABLE "comments"
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE "comments"
-ADD FOREIGN KEY (posts_id) REFERENCES posts (id);
-ALTER TABLE comment_likes
-ADD FOREIGN KEY (comment_id) REFERENCES "comments" (id);
-ALTER TABLE comment_likes
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
+    comment_likes
+(
+    id         SERIAL PRIMARY KEY,
+    comment_id INTEGER   NOT NULL REFERENCES comments (id),
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 -- Favourites
 CREATE TABLE IF NOT EXISTS
-    favourite_persons (
-        id SERIAL PRIMARY KEY,
-        person_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
-    );
+    favourite_persons
+(
+    id         SERIAL PRIMARY KEY,
+    person_id  INTEGER   NOT NULL REFERENCES users (id),
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    favourite_posts (
-        id SERIAL PRIMARY KEY,
-        post_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
-    );
+    favourite_posts
+(
+    id         SERIAL PRIMARY KEY,
+    post_id    INTEGER   NOT NULL REFERENCES posts (id),
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS
-    favourite_comments (
-        id SERIAL PRIMARY KEY,
-        comment_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        created_at TIMESTAMP NOT NULL
-    );
-ALTER TABLE favourite_posts
-ADD FOREIGN KEY (post_id) REFERENCES posts (id);
-ALTER TABLE favourite_posts
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE favourite_persons
-ADD FOREIGN KEY (person_id) REFERENCES users (id);
-ALTER TABLE favourite_persons
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
-ALTER TABLE favourite_comments
-ADD FOREIGN KEY (comment_id) REFERENCES "comments" (id);
-ALTER TABLE favourite_comments
-ADD FOREIGN KEY (user_id) REFERENCES users (id);
+    favourite_comments
+(
+    id         SERIAL PRIMARY KEY,
+    comment_id INTEGER   NOT NULL REFERENCES comments (id),
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
