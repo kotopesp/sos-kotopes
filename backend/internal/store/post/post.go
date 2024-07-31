@@ -89,22 +89,22 @@ func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, erro
 	post.CreatedAt = time.Now()
 	post.UpdatedAt = time.Now()
 
-	var createPost core.Post
+	var createdPost core.Post
 
-	if err := s.DB.WithContext(ctx).Create(&post).First(&createPost).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Create(&post).First(&createdPost, post.ID).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.Post{}, err
 	}
 	
-	return createPost, nil
+	return createdPost, nil
 }
 
 func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	post.UpdatedAt = time.Now()
 
-	var updatePost core.Post
+	var updatedPost core.Post
 
-	if err := s.DB.WithContext(ctx).Save(&post).First(&updatePost).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Save(&post).First(&updatedPost, post.ID).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
@@ -114,7 +114,7 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 		return core.Post{}, err
 	}
 	
-	return updatePost, nil
+	return updatedPost, nil
 }
 
 func (s *store) DeletePost(ctx context.Context, id int) error{
