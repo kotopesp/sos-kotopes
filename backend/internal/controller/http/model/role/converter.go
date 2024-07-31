@@ -25,3 +25,13 @@ func (r *GivenRole) ToCoreGivenRole() core.GivenRole {
 		Description: r.Description,
 	}
 }
+
+func (r *UpdateRole) ToCoreUpdateRole() core.UpdateRole {
+	if r == nil {
+		return core.UpdateRole{}
+	}
+	return core.UpdateRole{
+		Name:        r.Name,
+		Description: r.Description,
+	}
+}

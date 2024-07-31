@@ -14,27 +14,7 @@ type (
 		CreatedAt   time.Time `gorm:"created_at"`
 		UpdatedAt   time.Time `gorm:"updated_at"`
 	}
-	Seeker struct {
-		ID          int       `gorm:"id"`
-		UserID      int       `gorm:"user_id"`
-		Description string    `gorm:"description"`
-		CreatedAt   time.Time `gorm:"created_at"`
-		UpdatedAt   time.Time `gorm:"updated_at"`
-	}
-	Keeper struct {
-		ID          int       `gorm:"id"`
-		UserID      int       `gorm:"user_id"`
-		Description string    `gorm:"description"`
-		CreatedAt   time.Time `gorm:"created_at"`
-		UpdatedAt   time.Time `gorm:"updated_at"`
-	}
-	Vet struct {
-		ID          int       `gorm:"id"`
-		UserID      int       `gorm:"user_id"`
-		Description string    `gorm:"description"`
-		CreatedAt   time.Time `gorm:"created_at"`
-		UpdatedAt   time.Time `gorm:"updated_at"`
-	}
+
 	RoleDetails struct {
 		Name        string    `gorm:"-"`
 		ID          int       `gorm:"id"`
@@ -58,19 +38,20 @@ type (
 		GetUserRoles(ctx context.Context, id int) (roles []RoleDetails, err error)
 		GiveRoleToUser(ctx context.Context, id int, role GivenRole) (addedRole RoleDetails, err error)
 		DeleteUserRole(ctx context.Context, id int, role string) (err error)
-		UpdateUserRole(ctx context.Context, id int, role UpdateRole) (err error)
+		UpdateUserRole(ctx context.Context, id int, role UpdateRole) (updatedRole RoleDetails, err error)
 	}
 	RoleStore interface {
 		GetUserRoles(ctx context.Context, id int) (roles map[string]Role, err error)
-		GiveRoleToUser(ctx context.Context, id int, role GivenRole) (addedRole Role, roleName string, err error)
+		GiveRoleToUser(ctx context.Context, id int, role GivenRole) (addedRole Role, err error)
 		DeleteUserRole(ctx context.Context, id int, role string) (err error)
-		UpdateUserRole(ctx context.Context, id int, role UpdateRole) (err error)
+		UpdateUserRole(ctx context.Context, id int, role UpdateRole) (updatedRole Role, err error)
 	}
 )
 
 // errors
 var (
-	ErrInvalidRole = errors.New("invalid role name")
+	ErrInvalidRole      = errors.New("invalid role name")
+	ErrNoFieldsToUpdate = errors.New("no fields to update")
 )
 
 func (r *Role) ToRoleDetails(roleName, username string) RoleDetails {

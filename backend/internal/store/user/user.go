@@ -61,7 +61,17 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 	}
 
 	err = tx.WithContext(ctx).Table("users").Where("id = ?", id).Updates(updates).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return core.User{}, core.ErrNoSuchUser
+		}
+		return core.User{}, err
+	}
 
+	err = tx.WithContext(ctx).Table("users").Where("id = ?", id).First(&user).Error
+	if err != nil {
+		return core.User{}, err
+	}
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return core.User{}, core.ErrNoSuchUser

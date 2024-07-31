@@ -10,10 +10,10 @@ type (
 		Photo       *[]byte
 	}
 	UpdateUser struct {
-		Username    *string `json:"username" validate:"max=50,no_specials"`
+		Username    *string `json:"username" validate:"omitempty,max=50,no_specials"`
 		Firstname   *string `json:"firstname" validate:"omitempty,max=25"`
 		Lastname    *string `json:"lastname" validate:"omitempty,max=25"`
-		Description *string `json:"description" validate:"max=512"`
+		Description *string `json:"description" validate:"omitempty,max=512"`
 		Photo       *[]byte `json:"photo"`
 		Password    *string `json:"password" validate:"omitempty,min=8,max=72,contains_digit,contains_uppercase"`
 	}
