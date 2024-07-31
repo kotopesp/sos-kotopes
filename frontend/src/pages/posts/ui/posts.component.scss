@@ -3,7 +3,6 @@
   flex-direction: row;
   width: 100%;
   position: relative;
-  z-index: 1;
 
   .container__page__posts {
 
@@ -22,6 +21,7 @@
         margin: 51px 0px;
         display: flex;
         gap: 40px;
+        z-index: 1;
         
         .posts__search__bar {
           width: max-content;
