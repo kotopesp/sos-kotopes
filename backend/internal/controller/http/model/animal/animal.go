@@ -19,7 +19,7 @@ type (
 		Status      string    `form:"status" json:"status"`
 	}
 
-	UpdateRequestBodyAnimal struct {
+	UpdateAnimal struct {
 		AnimalType  *string `form:"animal_type" json:"animal_type"`
 		Age         *int    `form:"age" json:"age"`
 		Color       *string `form:"color" json:"color"`

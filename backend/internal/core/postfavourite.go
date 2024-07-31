@@ -18,6 +18,13 @@ type (
 		AddToFavourites(ctx context.Context, postFavourite PostFavourite) (err error)
 		DeleteFromFavourites(ctx context.Context, postID, userID int) (err error)
 	}
+
+	PostFavouriteService interface {
+		GetFavouritePosts(ctx context.Context, userID, limit, offset int) (data []PostDetails, total int, err error)
+		GetFavouritePostByID(ctx context.Context, userID, postID int) (data PostDetails, err error)
+		AddToFavourites(ctx context.Context, postFavourite PostFavourite) (err error)
+		DeleteFromFavourites(ctx context.Context, postID, userID int) (err error)
+	}
 )
 
 func (PostFavourite) TableName() string {

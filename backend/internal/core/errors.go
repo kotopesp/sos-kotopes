@@ -8,7 +8,6 @@ import (
 var (
     ErrInvalidPostID      		    = errors.New("invalid post ID")
     ErrPostNotFound       		    = errors.New("post not found")
-    ErrInternalServerError 		    = errors.New("internal server error")
 	ErrInvalidInput        		    = errors.New("invalid input")
 	ErrInvalidAuthorID       		= errors.New("invalid author ID")
 	ErrInvalidAnimalID     		    = errors.New("invalid animal ID")
@@ -22,4 +21,5 @@ var (
 	ErrAnimalNotFound 				= errors.New("animal not found")
 	ErrInvalidUserID 				= errors.New("invalid user ID")
 	ErrUsernameNotFound 			= errors.New("username not found")
+	ErrUserNotFound 				= errors.New("user not found")
 )

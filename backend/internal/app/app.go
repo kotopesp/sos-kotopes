@@ -24,9 +24,9 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
-	poststore "github.com/kotopesp/sos-kotopes/internal/store/poststore"
-    postservice "github.com/kotopesp/sos-kotopes/internal/service/postservice"
-	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavouritestore"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
+    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
 // Run creates objects via constructors.
@@ -46,8 +46,8 @@ func Run(cfg *config.Config) {
 	// Stores
 	entityStore := entity.New(pg)
 	userStore := user.New(pg)
-	postStore := poststore.NewPostStore(pg)
-	postFavouriteStore := postfavouritestore.NewFavouritePostStore(pg)
+	postStore := poststore.New(pg)
+	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
@@ -61,7 +61,7 @@ func Run(cfg *config.Config) {
 			VKCallback:     cfg.VKCallback,
 		},
 	)
-	postService := postservice.NewPostService(postStore, postFavouriteStore, animalStore)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())

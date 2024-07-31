@@ -15,30 +15,41 @@ type (
 	}
 )
 
-func NewPostStore(pg *postgres.Postgres) core.PostStore {
+func New(pg *postgres.Postgres) core.PostStore {
 	return &store{pg}
 }
 
-func (s *store) GetAuthorUsernameByID(ctx context.Context, authorID int) (string, error) {
-    var username string
 
-    err := s.DB.WithContext(ctx).Model(&core.User{}).Select("username").Where("id = ?", authorID).Scan(&username).Error
-    if err != nil {
-		if errors.Is(err, core.ErrRecordNotFound) {
-			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return "", core.ErrUsernameNotFound
-		}
-		logger.Log().Error(ctx, err.Error())
-		return "", err
-	}
-
-	return username, nil
-}
-
-func (s *store) GetAllPosts(ctx context.Context, limit, offset int) ([]core.Post, int, error) {
+func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.Post, int, error) {
     var posts []core.Post
 
-    query := s.DB.WithContext(ctx).Model(&core.Post{}).Where("is_deleted = ?", false)
+    query := s.DB.WithContext(ctx).Model(&core.Post{}).
+			Joins("JOIN animals ON posts.animal_id = animals.id").
+			Where("posts.is_deleted = ?", false)
+
+	if params.Limit != nil {
+		query = query.Limit(*params.Limit)
+	}
+
+	if params.Offset != nil {
+		query = query.Offset(*params.Offset)
+	}
+
+	if params.Status != nil {
+		query = query.Where("animals.status = ?", *params.Status)
+	}
+
+	if params.AnimalType != nil {
+		query = query.Where("animals.animal_type = ?", *params.AnimalType)
+	}
+
+	if params.Gender != nil {
+		query = query.Where("animals.gender = ?", *params.Gender)
+	}
+
+	if params.Color != nil {
+		query = query.Where("animals.color = ?", *params.Color)
+	}
 
     var total int64
     if err := query.Count(&total).Error; err != nil {
@@ -46,7 +57,7 @@ func (s *store) GetAllPosts(ctx context.Context, limit, offset int) ([]core.Post
         return nil, 0, err
     }
 
-    if err := query.Offset(offset).Limit(limit).Find(&posts).Error; err != nil {
+    if err := query.Select("posts.*").Find(&posts).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return nil, 0, core.ErrPostNotFound
@@ -74,32 +85,36 @@ func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 	return post, nil
 }
 
-func (s *store) CreatePost(ctx context.Context, post core.Post) error {
+func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	post.CreatedAt = time.Now()
 	post.UpdatedAt = time.Now()
 
-	if err := s.DB.WithContext(ctx).Create(&post).Error; err != nil {
+	var createPost core.Post
+
+	if err := s.DB.WithContext(ctx).Create(&post).First(&createPost).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return err
+		return core.Post{}, err
 	}
 	
-	return nil
+	return createPost, nil
 }
 
-func (s *store) UpdatePost(ctx context.Context, post core.Post) error {
+func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	post.UpdatedAt = time.Now()
 
-	if err := s.DB.WithContext(ctx).Save(&post).Error; err != nil {
+	var updatePost core.Post
+
+	if err := s.DB.WithContext(ctx).Save(&post).First(&updatePost).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.ErrPostNotFound
+			return core.Post{}, core.ErrPostNotFound
 		}
 
 		logger.Log().Error(ctx, err.Error())
-		return err
+		return core.Post{}, err
 	}
 	
-	return nil
+	return updatePost, nil
 }
 
 func (s *store) DeletePost(ctx context.Context, id int) error{

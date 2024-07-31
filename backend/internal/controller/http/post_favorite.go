@@ -30,46 +30,19 @@ func (r *Router) getFavoritePostsUserByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
 
-    posts, total, err := r.postService.GetFavouritePosts(ctx.UserContext(), userID, getAllPostsParams.Limit, getAllPostsParams.Offset)
+    postsDetails, total, err := r.postService.GetFavouritePosts(ctx.UserContext(), userID, getAllPostsParams.Limit, getAllPostsParams.Offset)
     if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
 			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
 		}
-        logger.Log().Error(ctx.UserContext(), core.ErrInternalServerError.Error())
-        return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
+        logger.Log().Error(ctx.UserContext(), err.Error())
+        return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
     }
 
 	pagination := paginate(total, getAllPostsParams.Limit, getAllPostsParams.Offset)
 
-    responsePosts := make([]postModel.PostPesponse, len(posts))
-    for i, post := range posts {
-
-        authorUsername, err := r.postService.GetAuthorUsernameByID(ctx.UserContext(), post.AuthorID)
-        if err != nil {
-			if errors.Is(err, core.ErrUsernameNotFound) {
-				logger.Log().Error(ctx.UserContext(), core.ErrUsernameNotFound.Error())
-				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrUsernameNotFound.Error()))
-			}
-			logger.Log().Error(ctx.UserContext(), core.ErrInternalServerError.Error())
-            return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
-        }
-
-		// не знаю как выводить animal
-		animal, err := r.postService.GetAnimalByID(ctx.UserContext(), post.AnimalID)
-        if err != nil {
-			if errors.Is(err, core.ErrAnimalNotFound) {
-				logger.Log().Error(ctx.UserContext(), core.ErrAnimalNotFound.Error())
-				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrAnimalNotFound.Error()))
-			}
-            logger.Log().Error(ctx.UserContext(), err.Error())
-            return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
-        }
-
-		responsePosts[i] = postModel.ToPostPesponse(authorUsername, post, animal)
-    }
-
-	response := postModel.ToResponse(pagination, responsePosts)
+	response := postModel.ToResponse(pagination, postsDetails)
 
     return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
@@ -87,27 +60,17 @@ func (r *Router) getFavoritePostUserAndPostByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
 
-	post, animal, err := r.postService.GetFavouritePostByID(ctx.UserContext(), userID, postID)
+	postDetails, err := r.postService.GetFavouritePostByID(ctx.UserContext(), userID, postID)
 	if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
 			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
 		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	authorUsername, err := r.postService.GetAuthorUsernameByID(ctx.UserContext(), post.AuthorID)
-	if err != nil {
-		if errors.Is(err, core.ErrUsernameNotFound) {
-			logger.Log().Error(ctx.UserContext(), core.ErrUsernameNotFound.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrUsernameNotFound.Error()))
-		}
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
-	}
-
-	PostResponse := postModel.ToPostPesponse(authorUsername, post, animal) 
+	PostResponse := postModel.ToPostPesponse(postDetails) 
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(PostResponse))
 }

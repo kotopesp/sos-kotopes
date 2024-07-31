@@ -31,7 +31,7 @@ type (
 	AnimalStore interface {
 		CreateAnimal(ctx context.Context, animal Animal) (Animal, error)
 		GetAnimalByID(ctx context.Context, id int) (Animal, error)
-		UpdateAnimal(ctx context.Context, animal Animal) error
+		UpdateAnimal(ctx context.Context, animal Animal) (Animal, error)
 	}
 )
 

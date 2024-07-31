@@ -1,4 +1,4 @@
-package postfavouritestore
+package postfavourite
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type store struct {
 	*postgres.Postgres
 }
 
-func NewFavouritePostStore(pg *postgres.Postgres) core.PostFavouriteStore {
+func New(pg *postgres.Postgres) core.PostFavouriteStore {
 	return &store{pg}
 }
 

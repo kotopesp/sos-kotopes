@@ -47,18 +47,22 @@ func (s *store) GetAnimalByID(ctx context.Context, id int) (core.Animal, error) 
 	return animal, nil
 }
 
-func (s *store) UpdateAnimal(ctx context.Context, animal core.Animal) error {
+func (s *store) UpdateAnimal(ctx context.Context, animal core.Animal) (core.Animal, error) {
 	animal.UpdatedAt = time.Now()
 
-	if err := s.DB.WithContext(ctx).Save(&animal).Error; err != nil {
+	// TODO
+
+	var updateAnimal core.Animal
+
+	if err := s.DB.WithContext(ctx).Save(&animal).First(&updateAnimal).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.ErrAnimalNotFound
+			return core.Animal{}, core.ErrAnimalNotFound
 		}
 
 		logger.Log().Error(ctx, err.Error())
-		return err
+		return core.Animal{}, err
 	}
 	
-	return nil
+	return updateAnimal, nil
 }
