@@ -4,16 +4,12 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	"io"
 	"mime/multipart"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
-	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
-	animalModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/animal"
 )
 
 // token helpers: getting info from token
@@ -36,95 +32,44 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 }
 
 // validation helpers
-func parseAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, apiUser *user.User) (fiberError, parseOrValidationError error) {
-	if err := ctx.BodyParser(apiUser); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
+func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
+	if err := ctx.BodyParser(data); err != nil {
+	  logger.Log().Error(ctx.UserContext(), err.Error())
+	  return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
 	}
-	errs := formValidator.Validate(apiUser)
-	if len(errs) > 0 {
-		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		})), model.ErrValidationFailed
+  
+	return validate(ctx, formValidator, data)
+}
+  
+func parseQueryAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
+	if err := ctx.QueryParser(data); err != nil {
+	  logger.Log().Error(ctx.UserContext(), err.Error())
+	  return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
 	}
-	return nil, nil
+  
+	return validate(ctx, formValidator, data)
+}
+  
+func parseParamsAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
+	if err := ctx.ParamsParser(data); err != nil {
+	  logger.Log().Error(ctx.UserContext(), err.Error())
+	  return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
+	}
+  
+	return validate(ctx, formValidator, data)
 }
 
-func parseAndValidatePosts(ctx *fiber.Ctx, formValidator validator.FormValidatorService, post *post.Post) (fiberError, parseOrValidationError error) {
-	if err := ctx.BodyParser(post); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
-	}
-	errs := formValidator.Validate(post)
+// helper for parse...AndValidate
+func validate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
+	errs := formValidator.Validate(data)
 	if len(errs) > 0 {
-		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		})), model.ErrValidationFailed
+	  logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
+	  return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
+		"validation_errors": errs,
+	  })), model.ErrValidationFailed
 	}
 	return nil, nil
-}
-
-func parseQueryAndValidatePosts(ctx *fiber.Ctx, formValidator validator.FormValidatorService, getAllPostsParams *postModel.GetAllPostsParams) (fiberError, parseOrValidationError error) {
-	if err := ctx.QueryParser(getAllPostsParams); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
-	}
-	errs := formValidator.Validate(getAllPostsParams)
-	if len(errs) > 0 {
-		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		})), model.ErrValidationFailed
-	}
-	return nil, nil
-}
-
-func parseAndValidateAnimal(ctx *fiber.Ctx, formValidator validator.FormValidatorService, animal *animalModel.Animal) (fiberError, parseOrValidationError error) {
-	if err := ctx.BodyParser(animal); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
-	}
-	errs := formValidator.Validate(animal)
-	if len(errs) > 0 {
-		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		})), model.ErrValidationFailed
-	}
-	return nil, nil
-}
-
-func parseAndValidateUpdateRequestPost(ctx *fiber.Ctx, formValidator validator.FormValidatorService, updateRequestPost *postModel.UpdateRequestBodyPost) (fiberError, parseOrValidationError error) {
-	if err := ctx.BodyParser(updateRequestPost); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
-	}
-	errs := formValidator.Validate(updateRequestPost)
-	if len(errs) > 0 {
-		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		})), model.ErrValidationFailed
-	}
-	return nil, nil
-}
-
-func parseAndValidateUpdateRequestAnimal(ctx *fiber.Ctx, formValidator validator.FormValidatorService, updateRequestAnimal *animalModel.UpdateRequestBodyAnimal) (fiberError, parseOrValidationError error) {
-	if err := ctx.BodyParser(updateRequestAnimal); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
-	}
-	errs := formValidator.Validate(updateRequestAnimal)
-	if len(errs) > 0 {
-		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": errs,
-		})), model.ErrValidationFailed
-	}
-	return nil, nil
-}
+  }
 
 func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	file, err := photo.Open()

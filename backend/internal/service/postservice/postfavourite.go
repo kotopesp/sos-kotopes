@@ -10,7 +10,7 @@ func (s *postService) GetFavouritePosts(ctx context.Context, userID, limit, offs
 	posts, total, err := s.PostFavouriteStore.GetFavouritePosts(ctx, userID, limit, offset)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return nil, 0, core.ErrPostNotFound
+		return nil, 0, err
 	}
 
 	return posts, total, nil
@@ -20,20 +20,25 @@ func (s *postService) GetFavouritePostByID(ctx context.Context, userID, postID i
 	post, err := s.PostFavouriteStore.GetFavouritePostByID(ctx, userID, postID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.Post{}, core.Animal{}, core.ErrPostNotFound
+		return core.Post{}, core.Animal{}, err
 	}
 
 	animal, err := s.AnimalStore.GetAnimalByID(ctx, post.AnimalID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.Post{}, core.Animal{}, core.ErrAnimalNotFound
+		return core.Post{}, core.Animal{}, err
 	}
 
 	return post, animal, nil
 }
 
-func (s *postService) AddToFavourites(ctx context.Context, postFavorite core.PostFavourite) (error) {
-    return s.PostFavouriteStore.AddToFavourites(ctx, postFavorite)
+func (s *postService) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) (error) {
+    err := s.PostFavouriteStore.AddToFavourites(ctx, postFavourite)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+	return nil
 }
 
 func (s *postService) DeleteFromFavourites(ctx context.Context, postID, userID int) error {

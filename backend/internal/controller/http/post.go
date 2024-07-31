@@ -19,7 +19,7 @@ const (
 
 func (r *Router) getPosts(ctx *fiber.Ctx) error {
     var getAllPostsParams postModel.GetAllPostsParams
-	fiberError, parseOrValidationError := parseQueryAndValidatePosts(ctx, r.formValidator, &getAllPostsParams)
+	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
 
 	if fiberError != nil || parseOrValidationError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
@@ -43,6 +43,10 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 
         authorUsername, err := r.postService.GetAuthorUsernameByID(ctx.UserContext(), post.AuthorID)
         if err != nil {
+			if errors.Is(err, core.ErrUsernameNotFound) {
+				logger.Log().Error(ctx.UserContext(), core.ErrUsernameNotFound.Error())
+				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrUsernameNotFound.Error()))
+			}
 			logger.Log().Error(ctx.UserContext(), core.ErrInternalServerError.Error())
             return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
         }
@@ -50,6 +54,10 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 		// не знаю как выводить animal
 		animal, err := r.postService.GetAnimalByID(ctx.UserContext(), post.AnimalID)
         if err != nil {
+			if errors.Is(err, core.ErrAnimalNotFound) {
+				logger.Log().Error(ctx.UserContext(), core.ErrAnimalNotFound.Error())
+				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrAnimalNotFound.Error()))
+			}
             logger.Log().Error(ctx.UserContext(), err.Error())
             return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
         }
@@ -81,6 +89,10 @@ func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 
 	authorUsername, err := r.postService.GetAuthorUsernameByID(ctx.UserContext(), post.AuthorID)
 	if err != nil {
+		if errors.Is(err, core.ErrUsernameNotFound) {
+			logger.Log().Error(ctx.UserContext(), core.ErrUsernameNotFound.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrUsernameNotFound.Error()))
+		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(core.ErrInternalServerError.Error()))
 	}
@@ -93,13 +105,13 @@ func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 func (r *Router) createPost(ctx *fiber.Ctx) error {
 	var postRequest  postModel.Post
 
-	fiberError, parseOrValidationError := parseAndValidatePosts(ctx, r.formValidator, &postRequest)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &postRequest)
 	if fiberError != nil || parseOrValidationError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError
 	}
 
-	authorID, err := getIDFromToken(ctx) //from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
+	authorID, err := getIDFromToken(ctx) // from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
@@ -113,10 +125,10 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 
 	corePost := postRequest.ToCorePost(authorID)
 
-	//create coreAnimal
+	// create coreAnimal
 	var animalRequest animalModel.Animal
 
-	fiberError, parseOrValidationError = parseAndValidateAnimal(ctx, r.formValidator, &animalRequest)
+	fiberError, parseOrValidationError = parseBodyAndValidate(ctx, r.formValidator, &animalRequest)
 	if fiberError != nil || parseOrValidationError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError
@@ -142,7 +154,7 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 
 	var updateRequestPost postModel.UpdateRequestBodyPost
 
-	fiberError, parseOrValidationError := parseAndValidateUpdateRequestPost(ctx, r.formValidator, &updateRequestPost)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &updateRequestPost)
 	if fiberError != nil || parseOrValidationError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError
@@ -150,7 +162,7 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 
 	var updateRequestAnimal animalModel.UpdateRequestBodyAnimal
 
-	fiberError, parseOrValidationError = parseAndValidateUpdateRequestAnimal(ctx, r.formValidator, &updateRequestAnimal)
+	fiberError, parseOrValidationError = parseBodyAndValidate(ctx, r.formValidator, &updateRequestAnimal)
 	if fiberError != nil || parseOrValidationError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError
@@ -171,6 +183,10 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 
 	err = r.postService.UpdatePost(ctx.UserContext(), post, animal)
 	if err != nil {
+		if errors.Is(err, core.ErrPostNotFound) {
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
@@ -187,6 +203,10 @@ func (r *Router) deletePost(ctx *fiber.Ctx) error {
 
 	err = r.postService.DeletePost(ctx.UserContext(), id)
 	if err != nil {
+		if errors.Is(err, core.ErrPostNotFound) {
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}

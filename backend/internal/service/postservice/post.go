@@ -3,7 +3,6 @@ package postservice
 import (
 	"context"
 	"mime/multipart"
-	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -59,12 +58,8 @@ func (s *postService) CreatePost(ctx context.Context, post core.Post, fileHeader
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
-	post.Photo = *photoBytes
-	post.CreatedAt = time.Now()
-	post.UpdatedAt = time.Now()
 
-	animal.CreatedAt = time.Now()
-	animal.UpdatedAt = time.Now()
+	post.Photo = *photoBytes
 
 	animal, err = s.AnimalStore.CreateAnimal(ctx, animal)
 	if err != nil {
@@ -84,6 +79,7 @@ func (s *postService) UpdatePost(ctx context.Context, post core.Post, animal cor
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
+	
 	err = s.AnimalStore.UpdateAnimal(ctx, animal)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())

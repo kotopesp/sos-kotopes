@@ -22,6 +22,7 @@ func New(pg *postgres.Postgres) core.AnimalStore {
 func (s *store) CreateAnimal(ctx context.Context, animal core.Animal) (core.Animal, error) {
 	animal.CreatedAt = time.Now()
 	animal.UpdatedAt = time.Now()
+
 	if err := s.DB.WithContext(ctx).Create(&animal).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
         return core.Animal{}, err
@@ -36,7 +37,7 @@ func (s *store) GetAnimalByID(ctx context.Context, id int) (core.Animal, error) 
 	if err := s.DB.WithContext(ctx).Where("id = ?", id).First(&animal).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.Animal{}, core.ErrPostNotFound
+			return core.Animal{}, core.ErrAnimalNotFound
 		}
 
 		logger.Log().Error(ctx, err.Error())
@@ -48,7 +49,13 @@ func (s *store) GetAnimalByID(ctx context.Context, id int) (core.Animal, error) 
 
 func (s *store) UpdateAnimal(ctx context.Context, animal core.Animal) error {
 	animal.UpdatedAt = time.Now()
+
 	if err := s.DB.WithContext(ctx).Save(&animal).Error; err != nil {
+		if errors.Is(err, core.ErrRecordNotFound) {
+			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+			return core.ErrAnimalNotFound
+		}
+
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}

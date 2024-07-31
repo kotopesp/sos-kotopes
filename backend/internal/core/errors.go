@@ -21,4 +21,5 @@ var (
 	ErrRecordNotFound 				= gorm.ErrRecordNotFound
 	ErrAnimalNotFound 				= errors.New("animal not found")
 	ErrInvalidUserID 				= errors.New("invalid user ID")
+	ErrUsernameNotFound 			= errors.New("username not found")
 )

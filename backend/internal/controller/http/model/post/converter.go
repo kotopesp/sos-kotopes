@@ -5,14 +5,14 @@ import (
 	modelAnimal "github.com/kotopesp/sos-kotopes/internal/controller/http/model/animal"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
-func (p *Post) ToCorePost(AuthorID int) core.Post {
+func (p *Post) ToCorePost(authorID int) core.Post {
 	if (p == nil) {
 		return core.Post{}
 	}
 	return core.Post{
 		Title:     p.Title,
 		Content:   p.Content,
-		AuthorID:    AuthorID,
+		AuthorID:  authorID,
 	}
 }
 
@@ -23,21 +23,21 @@ func ToResponse(meta pagination.Pagination, posts []PostPesponse) Response {
 	}
 }
 
-func ToPostPesponse(AuthorUsername string, post core.Post, animal core.Animal) PostPesponse {
+func ToPostPesponse(authorUsername string, post core.Post, animal core.Animal) PostPesponse {
 	return PostPesponse{
 		Title:          post.Title,
 		Content:        post.Content,
-		AuthorUsername: AuthorUsername,
+		AuthorUsername: authorUsername,
 		CreatedAt:      post.CreatedAt,
 		Animal:         modelAnimal.ToAnimalResponse(&animal),
 		Photo:          post.Photo,
 	}
 }
 
-func ToCorePostFavourite(userId, postId int) core.PostFavourite {
+func ToCorePostFavourite(userID, postID int) core.PostFavourite {
 	return core.PostFavourite{
-		UserID: userId,
-		PostID: postId,
+		UserID: userID,
+		PostID: postID,
 	}
 }
 
