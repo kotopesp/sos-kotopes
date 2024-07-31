@@ -50,8 +50,6 @@ func (s *store) GetAnimalByID(ctx context.Context, id int) (core.Animal, error) 
 func (s *store) UpdateAnimal(ctx context.Context, animal core.Animal) (core.Animal, error) {
 	animal.UpdatedAt = time.Now()
 
-	// TODO
-
 	var updateAnimal core.Animal
 
 	if err := s.DB.WithContext(ctx).Save(&animal).First(&updateAnimal).Error; err != nil {

@@ -102,7 +102,12 @@ func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetai
 	}
 
 	postDetails.Post.AnimalID = animal.ID
+
 	post, err := s.postStore.CreatePost(ctx, postDetails.Post)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.PostDetails{}, err
+	}
 
 	user, err := s.userStore.GetUserByID(ctx, post.AuthorID)
 	if err != nil {
