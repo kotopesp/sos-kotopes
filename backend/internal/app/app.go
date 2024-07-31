@@ -2,6 +2,9 @@ package app
 
 import (
 	"context"
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/post_store"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,9 +18,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	commentsservice "github.com/kotopesp/sos-kotopes/internal/service/comments_service"
 	"github.com/kotopesp/sos-kotopes/internal/service/name"
-	commentsstore "github.com/kotopesp/sos-kotopes/internal/store/comments_store"
 	"github.com/kotopesp/sos-kotopes/internal/store/entity"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -41,11 +42,15 @@ func Run(cfg *config.Config) {
 	// Stores
 	entityStore := entity.New(pg)
 	userStore := user.New(pg)
-	commentsStore := commentsstore.NewCommentsStore(pg)
+	commentStore := commentstore.New(pg)
+	postStore := poststore.New(pg)
 
 	// Services
 	entityService := name.New(entityStore)
-	commentsService := commentsservice.NewCommentsService(commentsStore)
+	commentService := commentservice.New(
+		commentStore,
+		postStore,
+	)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -73,7 +78,7 @@ func Run(cfg *config.Config) {
 		entityService,
 		formValidator,
 		authService,
-		commentsService,
+		commentService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

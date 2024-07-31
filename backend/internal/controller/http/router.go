@@ -8,11 +8,11 @@ import (
 )
 
 type Router struct {
-	app             *fiber.App
-	entityService   core.EntityService
-	authService     core.AuthService
-	commentsService core.CommentsService
-	formValidator   validator.FormValidatorService
+	app            *fiber.App
+	entityService  core.EntityService
+	authService    core.AuthService
+	commentService core.CommentService
+	formValidator  validator.FormValidatorService
 }
 
 func NewRouter(
@@ -20,14 +20,14 @@ func NewRouter(
 	entityService core.EntityService,
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
-	commentsService core.CommentsService,
+	commentsService core.CommentService,
 ) {
 	router := &Router{
-		app:             app,
-		entityService:   entityService,
-		formValidator:   formValidator,
-		authService:     authService,
-		commentsService: commentsService,
+		app:            app,
+		entityService:  entityService,
+		formValidator:  formValidator,
+		authService:    authService,
+		commentService: commentsService,
 	}
 	router.initRequestMiddlewares()
 
@@ -45,8 +45,8 @@ func (r *Router) initRoutes() {
 	v1.Get("/entities", r.getEntities)
 	v1.Get("/entities/:id", r.getEntityByID)
 
-	// comments
-	v1.Get("/posts/:post_id/comments", r.getCommentsByPostID)
+	// comment_service
+	v1.Get("/posts/:post_id/comments", r.getComments)
 	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
 	v1.Put("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
 	v1.Delete("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.deleteComment)

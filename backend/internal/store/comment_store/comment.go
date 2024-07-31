@@ -1,10 +1,9 @@
-package comments
+package commentstore
 
 import (
 	"context"
 	"errors"
 	"gorm.io/gorm"
-	"strings"
 	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -15,14 +14,14 @@ type store struct {
 	*postgres.Postgres
 }
 
-func NewCommentsStore(pg *postgres.Postgres) core.CommentsStore {
+func New(pg *postgres.Postgres) core.CommentStore {
 	return &store{
 		pg,
 	}
 }
 
-func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comments, error) {
-	var comment core.Comments
+func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comment, error) {
+	var comment core.Comment
 	if err := s.DB.WithContext(ctx).First(&comment, "id=?", commentID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return comment, core.ErrNoSuchComment
@@ -33,8 +32,8 @@ func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comment
 	return comment, nil
 }
 
-func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParamsComments, postID int) (data []core.Comments, total int, err error) {
-	var comments []core.Comments
+func (s *store) GetAllComments(ctx context.Context, params core.GetAllCommentsParams) (data []core.Comment, total int, err error) {
+	var comments []core.Comment
 
 	query := s.DB.WithContext(ctx).Order(
 		"COALESCE(parent_id, id), (parent_id IS NULL)::int DESC, id",
@@ -48,17 +47,14 @@ func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParam
 		query = query.Offset(*params.Offset)
 	}
 
-	if err := query.Find(&comments, "posts_id=?", postID).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, 0, core.ErrNoSuchComment
-		}
+	if err := query.Find(&comments, "posts_id=?", params.PostID).Error; err != nil {
 		return nil, 0, err
 	}
 
 	var totalInt64 int64
 	if err := s.DB.WithContext(ctx).
-		Model(&core.Comments{}).
-		Where("posts_id=?", postID).
+		Model(&core.Comment{}).
+		Where("posts_id=?", params.PostID).
 		Count(&totalInt64).Error; err != nil {
 		return nil, 0, err
 	}
@@ -66,23 +62,20 @@ func (s *store) GetCommentsByPostID(ctx context.Context, params core.GetAllParam
 	return comments, int(totalInt64), nil
 }
 
-func (s *store) CreateComment(ctx context.Context, comment core.Comments) (core.Comments, error) {
+func (s *store) CreateComment(ctx context.Context, comment core.Comment) (core.Comment, error) {
 	if err := s.DB.WithContext(ctx).Create(&comment).Error; err != nil {
-		if strings.Contains(err.Error(), "comments_posts_id_fkey") {
-			return comment, core.ErrNoSuchPost
-		}
 		return comment, err
 	}
 
 	return comment, nil
 }
 
-func (s *store) UpdateComments(ctx context.Context, comment core.Comments) (core.Comments, error) {
+func (s *store) UpdateComment(ctx context.Context, comment core.Comment) (core.Comment, error) {
 	if err := s.DB.WithContext(ctx).Updates(comment).Error; err != nil {
 		return comment, err
 	}
 
-	// unfortunately, updates does not update `comment` variable
+	// unfortunately, updates does not update `comment_service` variable
 	if err := s.DB.WithContext(ctx).First(&comment, "id=?", comment.ID).Error; err != nil {
 		return comment, err
 	}
@@ -90,12 +83,12 @@ func (s *store) UpdateComments(ctx context.Context, comment core.Comments) (core
 	return comment, nil
 }
 
-func (s *store) DeleteComments(ctx context.Context, comment core.Comments) error {
+func (s *store) DeleteComment(ctx context.Context, comment core.Comment) error {
 	comment.IsDeleted = true
 	now := time.Now()
 	comment.DeletedAt = &now
 
-	if err := s.DB.WithContext(ctx).Updates(&comment).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Updates(comment).Error; err != nil {
 		return err
 	}
 
