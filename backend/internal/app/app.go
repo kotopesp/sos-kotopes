@@ -10,12 +10,11 @@ import (
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/service/name"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/kotopesp/sos-kotopes/internal/store/entity"
+
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
@@ -39,10 +38,8 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	entityStore := entity.New(pg)
 	userStore := user.New(pg)
 	// Services
-	entityService := name.New(entityStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -67,7 +64,6 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		entityService,
 		formValidator,
 		authService,
 	)
