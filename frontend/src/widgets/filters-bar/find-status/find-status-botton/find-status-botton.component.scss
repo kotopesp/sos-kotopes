@@ -6,9 +6,6 @@
     padding-left: 46px;
 }
 
-//colors
-
-
 // bottons' view
 @mixin find-status_solid($bg-color) {
     cursor: pointer;
@@ -32,7 +29,7 @@
     padding: 6px 18px;
     border-radius: 10px;
     background: var($bg-color);
-    border: var($border-color) 2px solid; 
+    outline: var($border-color) 2px solid; 
     white-space: nowrap;
     padding: 6px 18px;
     width: max-content;
@@ -56,7 +53,7 @@
 .lost_status_inactive {
     @include find-status_solid(--red-hover-bg);
 
-    &::hover {
+    &:hover {
         @include find-status_with-border(--red-hover-bg, --red-hover-border);
     }
 }
@@ -64,7 +61,7 @@
 .looking-for-home_status_inactive {
     @include find-status_solid(--orange-hover-bg);
 
-    &::hover {
+    &:hover {
         @include find-status_with-border(--orange-hover-bg, --orange-hover-border);
     }
 }
@@ -72,7 +69,7 @@
 .found-home_status_inactive {
     @include find-status_solid(--green-hover-bg);
         
-    &::hover {
+    &:hover {
         @include find-status_with-border(--green-hover-bg, --green-hover-border);
     }
 }
