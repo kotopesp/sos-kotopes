@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS post_photos CASCADE;
+
+ALTER TABLE IF EXISTS posts
+    ADD photo BYTEA;
