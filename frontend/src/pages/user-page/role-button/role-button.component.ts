@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-role-button',
@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   templateUrl: './role-button.component.html',
   styleUrl: './role-button.component.scss'
 })
-export class RoleButtonComponent {
+export class RoleButtonComponent implements OnInit {
   @Input() label = ''
   @Input() buttonColor = ''
   @Input() icon = ''

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import {HeaderComponent} from "../../widgets/header/header.component";
 import { UserService } from '../../services/user-service/user.service';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './user-page.component.html',
   styleUrl: './user-page.component.scss'
 })
-export class UserPageComponent {
+export class UserPageComponent implements OnInit {
   firstName = 'Тимофей';
   secondName = 'Зайнулин';
   onlineStatus = 'В сети';

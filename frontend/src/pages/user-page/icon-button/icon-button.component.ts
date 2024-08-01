@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-icon-button',
@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   templateUrl: './icon-button.component.html',
   styleUrl: './icon-button.component.scss'
 })
-export class IconButtonComponent {
+export class IconButtonComponent implements OnInit {
   @Input() label = ''
   @Input() buttonColor = ''
   @Input() textColor = ''
