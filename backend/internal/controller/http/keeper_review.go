@@ -13,7 +13,7 @@ import (
 func (r *Router) getKeeperReviews(ctx *fiber.Ctx) error {
 	var params keeperreview.GetAllKeeperReviewsParams
 
-	fiberError, parseOrValidationError := parseAndValidateQuery(ctx, r.formValidator, &params)
+	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &params)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -31,7 +31,7 @@ func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
 	var newReview keeperreview.KeeperReviewsCreate
 
 	// parse review
-	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &newReview)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &newReview)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -64,7 +64,7 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 	var updateReview keeperreview.KeeperReviewsUpdate
 
 	// parse review
-	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &updateReview)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &updateReview)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
