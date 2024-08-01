@@ -23,19 +23,19 @@ type GetAllKeeperReviewsParams struct {
 }
 
 type KeeperReviewsStore interface {
-	GetAll(ctx *context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviews, error)
-	Create(ctx *context.Context, keeperReview KeeperReviews) error
-	DeleteByID(ctx *context.Context, id int) error
-	SoftDeleteByID(ctx *context.Context, id int) error
-	UpdateByID(ctx *context.Context, keeperReview KeeperReviews) error
+	GetAll(ctx context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviews, error)
+	Create(ctx context.Context, keeperReview KeeperReviews) error
+	DeleteByID(ctx context.Context, id int) error
+	SoftDeleteByID(ctx context.Context, id int) error
+	UpdateByID(ctx context.Context, keeperReview KeeperReviews) error
 }
 
 type KeeperReviewsService interface {
-	GetAll(ctx *context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviews, error)
-	Create(ctx *context.Context, keeperReview KeeperReviews) error
-	DeleteByID(ctx *context.Context, id int) error
-	SoftDeleteByID(ctx *context.Context, id int) error
-	UpdateByID(ctx *context.Context, keeperReview KeeperReviews) error
+	GetAll(ctx context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviews, error)
+	Create(ctx context.Context, keeperReview KeeperReviews) error
+	DeleteByID(ctx context.Context, id int) error
+	SoftDeleteByID(ctx context.Context, id int) error
+	UpdateByID(ctx context.Context, keeperReview KeeperReviews) error
 }
 
 // TableName table name in db for gorm

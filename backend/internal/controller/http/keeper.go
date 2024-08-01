@@ -19,9 +19,8 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	usrCtx := ctx.UserContext()
 	coreParams := params.FromKeeperRequest()
-	coreKeepers, err := r.keeperService.GetAll(&usrCtx, coreParams)
+	coreKeepers, err := r.keeperService.GetAll(ctx.UserContext(), coreParams)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -49,8 +48,7 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	usrCtx := ctx.UserContext()
-	k, err := r.keeperService.GetByID(&usrCtx, int(id))
+	k, err := r.keeperService.GetByID(ctx.UserContext(), int(id))
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
@@ -77,8 +75,7 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 
 	// create keeper
 	k := newKeeper.ToCoreNewKeeper()
-	usrCtx := ctx.UserContext()
-	if err := r.keeperService.Create(&usrCtx, k); err != nil {
+	if err := r.keeperService.Create(ctx.UserContext(), k); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
@@ -111,8 +108,7 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 	}
 
 	// update
-	var usrCtx = ctx.UserContext()
-	if err := r.keeperService.UpdateByID(&usrCtx, core.Keepers{
+	if err := r.keeperService.UpdateByID(ctx.UserContext(), core.Keepers{
 		ID:          int(id),
 		Description: updateKeeper.Description,
 		Price:       updateKeeper.Price,
@@ -134,8 +130,7 @@ func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 	}
 
 	// delete
-	var usrCtx = ctx.UserContext()
-	if err := r.keeperService.DeleteByID(&usrCtx, int(id)); err != nil {
+	if err := r.keeperService.DeleteByID(ctx.UserContext(), int(id)); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		if err == gorm.ErrRecordNotFound {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))

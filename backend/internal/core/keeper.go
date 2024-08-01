@@ -28,19 +28,19 @@ type GetAllKeepersParams struct {
 }
 
 type KeeperStore interface {
-	GetAll(ctx *context.Context, params GetAllKeepersParams) ([]Keepers, error)
-	GetByID(ctx *context.Context, id int) (Keepers, error)
-	Create(ctx *context.Context, keeper Keepers) error
-	DeleteByID(ctx *context.Context, id int) error
-	UpdateByID(ctx *context.Context, keeper Keepers) error
+	GetAll(ctx context.Context, params GetAllKeepersParams) ([]Keepers, error)
+	GetByID(ctx context.Context, id int) (Keepers, error)
+	Create(ctx context.Context, keeper Keepers) error
+	DeleteByID(ctx context.Context, id int) error
+	UpdateByID(ctx context.Context, keeper Keepers) error
 }
 
 type KeeperService interface {
-	GetAll(ctx *context.Context, params GetAllKeepersParams) ([]Keepers, error)
-	GetByID(ctx *context.Context, id int) (Keepers, error)
-	Create(ctx *context.Context, keeper Keepers) error
-	DeleteByID(ctx *context.Context, id int) error
-	UpdateByID(ctx *context.Context, keeper Keepers) error
+	GetAll(ctx context.Context, params GetAllKeepersParams) ([]Keepers, error)
+	GetByID(ctx context.Context, id int) (Keepers, error)
+	Create(ctx context.Context, keeper Keepers) error
+	DeleteByID(ctx context.Context, id int) error
+	UpdateByID(ctx context.Context, keeper Keepers) error
 }
 
 // TableName table name in db for gorm
