@@ -1,2 +1,44 @@
 <app-header />
-<p>user-page works!</p>
+<section class="user__main">
+    <div class="user__about">
+        <div class="user__pfp">
+            <img [src]="profilePhoto" alt="profile image">
+        </div>
+        <div class="user__info">
+            <div class="user__header">
+                <span class="user__first_second_name">{{ firstName }} {{ secondName }}</span>
+                <span class="user__online_status">{{ onlineStatus }}</span>
+            </div>
+            <div class="user__subheader">
+                <span class="user__username">&#64;{{ username }}</span>
+                <span class="user__posts_count">{{ totalPosts }} объявления</span>
+            </div>
+            <div class="user__role_info">
+                <app-role-button icon="../../assets/icons/hand-icon.svg" label="Передержка"
+                    buttonColor="var(--role-orange-color)" />
+                <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"
+                    buttonColor="var(--role-purple-color)" />
+                <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
+                    buttonColor="var(--role-green-color)" />
+            </div>
+            <div class="user__description">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, harum sunt. Earum expedita minus
+                repellat accusantium eaque ipsum maiores doloremque nihil, magni explicabo odio culpa numquam.
+                Doloremque optio alias voluptatum recusandae iure, nam reprehenderit illo in dignissimos, atque
+                voluptates. Suscipit deleniti, maiores error earum magni iste ipsum id rem ipsam!
+            </div>
+            <div class="user__actions">
+                <!-- depending on user profile (own | other) change buttons -->
+
+            </div>
+        </div>
+    </div>
+    <div class="user__posts">
+        <div class="user__posts__tab">
+            tabs here!
+        </div>
+        <div class="user__posts_content">
+            posts here!
+        </div>
+    </div>
+</section>
