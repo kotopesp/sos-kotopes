@@ -28,10 +28,10 @@ type KeepersUpdate struct {
 type GetAllKeepersParams struct {
 	Sort      string  `query:"sort"`
 	Location  string  `query:"location"`
-	MinRating float64 `query:"minrating"`
-	MaxRating float64 `query:"maxrating"`
-	MinPrice  float64 `query:"minprice"`
-	MaxPrice  float64 `query:"maxprice"`
+	MinRating float64 `query:"min_rating"`
+	MaxRating float64 `query:"max_rating"`
+	MinPrice  float64 `query:"min_price"`
+	MaxPrice  float64 `query:"max_price"`
 	Limit     int     `query:"limit"`
 	Offset    int     `query:"offset"`
 }
