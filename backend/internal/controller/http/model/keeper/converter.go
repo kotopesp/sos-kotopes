@@ -1,11 +1,16 @@
 package keeper
 
-import "github.com/kotopesp/sos-kotopes/internal/core"
+import (
+	"strings"
+
+	"github.com/kotopesp/sos-kotopes/internal/core"
+)
 
 func (p *GetAllKeepersParams) FromKeeperRequest() core.GetAllKeepersParams {
+	sortBy, sortOrder := p.ParseSort()
 	return core.GetAllKeepersParams{
-		SortBy:    &p.SortBy,
-		SortOrder: &p.SortOrder,
+		SortBy:    &sortBy,
+		SortOrder: &sortOrder,
 		Location:  &p.Location,
 		MinRating: &p.MinRating,
 		MaxRating: &p.MaxRating,
@@ -14,6 +19,19 @@ func (p *GetAllKeepersParams) FromKeeperRequest() core.GetAllKeepersParams {
 		Limit:     &p.Limit,
 		Offset:    &p.Offset,
 	}
+}
+
+func (p *GetAllKeepersParams) ParseSort() (string, string) {
+	parts := strings.Split(p.Sort, ":")
+	sortBy := ""
+	sortOrder := ""
+	if len(parts[0]) > 0 {
+		sortBy = parts[0]
+	}
+	if len(parts[1]) > 0 {
+		sortOrder = parts[1]
+	}
+	return sortBy, sortOrder
 }
 
 func (k *KeepersCreate) ToCoreNewKeeper() core.Keepers {

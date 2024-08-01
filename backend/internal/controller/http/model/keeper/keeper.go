@@ -26,8 +26,7 @@ type KeepersUpdate struct {
 }
 
 type GetAllKeepersParams struct {
-	SortBy    string  `query:"sortby"`
-	SortOrder string  `query:"sortorder"`
+	Sort      string  `query:"sort"`
 	Location  string  `query:"location"`
 	MinRating float64 `query:"minrating"`
 	MaxRating float64 `query:"maxrating"`
