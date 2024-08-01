@@ -13,7 +13,7 @@ import (
 func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	var params keeper.GetAllKeepersParams
 
-	fiberError, parseOrValidationError := parseAndValidateQueryAny(ctx, r.formValidator, &params)
+	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &params)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -57,7 +57,7 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 	var newKeeper keeper.KeepersCreate
 
-	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &newKeeper)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &newKeeper)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -90,7 +90,7 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 	var updateKeeper keeper.KeepersUpdate
 
 	// parse keeper
-	fiberError, parseOrValidationError := parseAndValidateAny(ctx, r.formValidator, &updateKeeper)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &updateKeeper)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}

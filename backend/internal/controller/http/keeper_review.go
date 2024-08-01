@@ -13,7 +13,7 @@ import (
 func (r *Router) getKeeperReviews(ctx *fiber.Ctx) error {
 	var params keeperreview.GetAllKeeperReviewsParams
 
-	fiberError, parseOrValidationError := parseAndValidateQueryAny(ctx, r.formValidator, &params)
+	fiberError, parseOrValidationError := parseAndValidateQuery(ctx, r.formValidator, &params)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
