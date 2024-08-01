@@ -13,9 +13,7 @@ export class UserService {
   constructor(private http: HttpClient) { }
 
   getById(id: number): Observable<User> {
-    return this.http.get(`${this.apiUrl}/users/${id}`).pipe(
-      map((user:User) => user)
-    )
+    return this.http.get<User>(`${this.apiUrl}/users/${id}`)
   }
 
   update(user: User): Observable<User> {

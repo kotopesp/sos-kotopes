@@ -1,45 +1,46 @@
 <app-header />
-<section class="user__main">
-    <div class="user__about">
-        <div class="user__pfp">
-            <img [src]="profilePhoto" alt="profile image">
-        </div>
-        <div class="user__info">
-            <div class="user__header">
-                <span class="user__first_second_name ft36 fw400 lh46">{{ firstName }} {{ secondName }}</span>
-                <span class="user__online_status ft20 fw400">{{ onlineStatus }}</span>
+<div *ngIf="user$ | async as user">
+    <section class="user__main">
+        <div class="user__about">
+            <div class="user__pfp">
+                <img [src]="profilePhoto" alt="profile image">
             </div>
-            <div class="user__subheader">
-                <span class="user__username ft24 fw400">&#64;{{ username }}</span>
-                <span class="user__posts_count ft20 fw400">{{ totalPosts }} объявления</span>
-            </div>
-            <div class="user__role_info ft20 fw400">
-                <app-role-button icon="../../assets/icons/hand-icon.svg" label="Передержка"
-                    buttonColor="var(--role-orange-color)" />
-                <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"
-                    buttonColor="var(--role-purple-color)" />
-                <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
-                    buttonColor="var(--role-green-color)" />
-            </div>
-            <div class="user__description ft20 fw400">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, harum sunt. Earum expedita minus
-                repellat accusantium eaque ipsum maiores doloremque nihil, magni explicabo odio culpa numquam.
-                Doloremque optio alias voluptatum recusandae iure, nam reprehenderit illo in dignissimos, atque
-                voluptates. Suscipit deleniti, maiores error earum magni iste ipsum id rem ipsam!
-            </div>
-            <div class="user__actions">
-                @if (isOwnAccount) {
+            <div class="user__info">
+                <div class="user__header">
+                    <span class="user__first_second_name ft36 fw400 lh46">{{ user.firstName }} {{ secondName }}</span>
+                    <span class="user__online_status ft20 fw400">{{ onlineStatus }}</span>
+                </div>
+                <div class="user__subheader">
+                    <span class="user__username ft24 fw400">&#64;{{ username }}</span>
+                    <span class="user__posts_count ft20 fw400">{{ totalPosts }} объявления</span>
+                </div>
+                <div class="user__role_info ft20 fw400">
+                    <app-role-button icon="../../assets/icons/hand-icon.svg" label="Передержка"
+                        buttonColor="var(--role-orange-color)" />
+                    <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"
+                        buttonColor="var(--role-purple-color)" />
+                    <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
+                        buttonColor="var(--role-green-color)" />
+                </div>
+                <div class="user__description ft20 fw400">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, harum sunt. Earum expedita minus
+                    repellat accusantium eaque ipsum maiores doloremque nihil, magni explicabo odio culpa numquam.
+                    Doloremque optio alias voluptatum recusandae iure, nam reprehenderit illo in dignissimos, atque
+                    voluptates. Suscipit deleniti, maiores error earum magni iste ipsum id rem ipsam!
+                </div>
+                <div class="user__actions">
+                    @if (isOwnAccount) {
 
-                } @else {
-                <app-icon-button buttonColor="var(--pink-color-bg)" textColor="var(--brown-main-color)" label="Написать"
-                    icon="../../assets/icons/comment-icon-round.svg" />
-                <app-icon-button buttonColor="var(--pink-light-color-bg)" textColor="var(--brown-main-color)"
-                    label="В избранное" icon="../../assets/icons/heart-icon.svg" />
-                }
+                    } @else {
+                    <app-icon-button buttonColor="var(--pink-color-bg)" textColor="var(--brown-main-color)"
+                        label="Написать" icon="../../assets/icons/comment-icon-round.svg" />
+                    <app-icon-button buttonColor="var(--pink-light-color-bg)" textColor="var(--brown-main-color)"
+                        label="В избранное" icon="../../assets/icons/heart-icon.svg" />
+                    }
+                </div>
             </div>
         </div>
-    </div>
-    <!-- <div class="user__posts">
+        <!-- <div class="user__posts">
         <div class="user__posts__tab">
             tabs here!
         </div>
@@ -47,4 +48,5 @@
             posts here!
         </div>
     </div> -->
-</section>
+    </section>
+</div>
