@@ -2,19 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-role-button',
+  selector: 'app-icon-button',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './role-button.component.html',
-  styleUrl: './role-button.component.scss'
+  templateUrl: './icon-button.component.html',
+  styleUrl: './icon-button.component.scss'
 })
-export class RoleButtonComponent {
+export class IconButtonComponent {
   @Input() label = ''
   @Input() buttonColor = ''
+  @Input() textColor = ''
   @Input() icon = ''
   @Output() onClick = new EventEmitter<any>()
 
-  anotherIconUrl = 'url("../../assets/icons/arrow-down.svg")'
   iconUrl = ''
   ngOnInit() {
     this.iconUrl = `url("${this.icon}")`;

@@ -1,8 +1,9 @@
-<button [ngStyle]="{ 'background-color': buttonColor }" class="user__role_button ptbold fw700"
-    (click)="onClickButton($event)">
+<button [ngStyle]="{ 'background-color': buttonColor }" class="user__role_button" (click)="onClickButton($event)">
     <div class="user__role_button_icon"
-        [ngStyle]="{ 'background-image': iconUrl, 'background-repeat': 'no-repeat', 'background-position': 'left center' }">
+        [ngStyle]="{ 'background-image': iconUrl, 'background-repeat': 'no-repeat', 'background-position': 'center', 'background-size': 'contain' }">
     </div>
-    {{ label }}
-    <div class="user__role_button_show"></div>
+    <span class="user__role_button_label ptbold ft20 fw700">{{ label }}</span>
+    <div class="user__role_button_show"
+        [ngStyle]="{ 'background-image': anotherIconUrl, 'background-repeat': 'no-repeat', 'background-position': 'center', 'background-size': 'contain' }">
+    </div>
 </button>

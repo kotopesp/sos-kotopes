@@ -109,3 +109,16 @@
         font-family: 'PT Sans Caption Regular';
     }
 }
+
+.user__description {
+    line-height: 26px;
+    margin-bottom: 40px;
+}
+
+.user__actions {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: left;
+    align-items: center;
+}

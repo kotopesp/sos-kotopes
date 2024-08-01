@@ -8,10 +8,23 @@
     border-radius: 10px;
     font-family: 'PT Sans Caption Regular';
     padding: 8px 18px 8px 18px;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+    }
 
     .user__role_button_icon {
-        width: 20px;
+        width: 30px;
         height: 100%;
         filter: invert(1) brightness(100) saturate(0);
+        margin-right: 10px;
+    }
+
+    .user__role_button_show {
+        width: 20px;
+        height: 100%;
+        // filter: invert(1) brightness(100) saturate(0);
+        margin-left: 10px;
     }
 }

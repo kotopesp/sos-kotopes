@@ -21,15 +21,21 @@
                 <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
                     buttonColor="var(--role-green-color)" />
             </div>
-            <div class="user__description">
+            <div class="user__description ft20 fw400">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, harum sunt. Earum expedita minus
                 repellat accusantium eaque ipsum maiores doloremque nihil, magni explicabo odio culpa numquam.
                 Doloremque optio alias voluptatum recusandae iure, nam reprehenderit illo in dignissimos, atque
                 voluptates. Suscipit deleniti, maiores error earum magni iste ipsum id rem ipsam!
             </div>
             <div class="user__actions">
-                <!-- depending on user profile (own | other) change buttons -->
+                @if (isOwnAccount) {
 
+                } @else {
+                <app-icon-button buttonColor="var(--pink-color-bg)" textColor="var(--brown-main-color)" label="Написать"
+                    icon="../../assets/icons/comment-icon-round.svg" />
+                <app-icon-button buttonColor="var(--pink-light-color-bg)" textColor="var(--brown-main-color)"
+                    label="В избранное" icon="../../assets/icons/heart-icon.svg" />
+                }
             </div>
         </div>
     </div>
