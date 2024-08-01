@@ -1,6 +1,7 @@
 package http
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
@@ -37,6 +38,11 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 // validation helpers
 func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(data); err != nil {
+		if errors.Is(err, fiber.ErrUnprocessableEntity) {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(model.ErrInvalidBody.Error())), err
+		}
+
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
 	}
@@ -90,18 +96,17 @@ func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	return &photoBytes, nil
 }
 
-
 func paginate(total, limit, offset int) pagination.Pagination {
 	var (
-	  currentPage = (offset / limit) + 1
-	  perPage     = limit
-	  totalPages  = (total + perPage - 1) / perPage
+		currentPage = (offset / limit) + 1
+		perPage     = limit
+		totalPages  = (total + perPage - 1) / perPage
 	)
 
 	return pagination.Pagination{
-	  Total:       total,
-	  TotalPages:  totalPages,
-	  CurrentPage: currentPage,
-	  PerPage:     perPage,
+		Total:       total,
+		TotalPages:  totalPages,
+		CurrentPage: currentPage,
+		PerPage:     perPage,
 	}
 }
