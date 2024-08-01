@@ -81,6 +81,13 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
+	userId, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	newKeeper.UserID = userId
+
 	// create keeper
 	k := newKeeper.ToCoreNewKeeper()
 	if err := r.keeperService.Create(ctx.UserContext(), k); err != nil {

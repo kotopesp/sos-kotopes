@@ -49,6 +49,13 @@ func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
+	authorId, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	newReview.AuthorID = authorId
+
 	// create review
 	coreReview := newReview.ToCoreNewKeeperReview()
 	if err := r.keeperReviewsService.Create(ctx.UserContext(), coreReview); err != nil {
