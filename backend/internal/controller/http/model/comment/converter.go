@@ -26,10 +26,13 @@ func ToModelComment(c core.Comment) Comment {
 	}
 
 	return Comment{
-		ID:        c.ID,
-		AuthorID:  c.AuthorID,
-		ParentID:  c.ParentID,
-		ReplyID:   c.ReplyID,
+		ID:       c.ID,
+		ParentID: c.ParentID,
+		ReplyID:  c.ReplyID,
+		User: User{
+			ID:       c.Author.ID,
+			Username: c.Author.Username,
+		},
 		Content:   c.Content,
 		IsDeleted: c.IsDeleted,
 		CreatedAt: c.CreatedAt,

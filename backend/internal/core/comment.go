@@ -10,8 +10,9 @@ type Comment struct {
 	ID        int        `gorm:"column:id"`
 	ParentID  *int       `gorm:"column:parent_id"`
 	ReplyID   *int       `gorm:"column:reply_id"`
-	AuthorID  int        `gorm:"column:author_id"`
 	PostID    int        `gorm:"column:posts_id"`
+	AuthorID  int        `gorm:"column:author_id"`
+	Author    User       `gorm:"foreignKey:AuthorID;references:ID"`
 	Content   string     `gorm:"column:content"`
 	IsDeleted bool       `gorm:"column:is_deleted"`
 	DeletedAt *time.Time `gorm:"column:deleted_at"`
@@ -32,7 +33,6 @@ type CommentService interface {
 	GetAllComments(ctx context.Context, params GetAllCommentsParams) (data []Comment, total int, err error)
 	UpdateComment(ctx context.Context, comments Comment) (data Comment, err error)
 	DeleteComment(ctx context.Context, comments Comment) error
-	GetCommentByID(ctx context.Context, commentID int) (data Comment, err error)
 }
 
 type GetAllCommentsParams struct {

@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/comment"
@@ -35,6 +36,8 @@ func (r *Router) getComments(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
+
+	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("%v", coreComments[0].Author))
 
 	modelComments := comment.ToModelCommentsSlice(coreComments)
 

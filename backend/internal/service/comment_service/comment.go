@@ -2,23 +2,25 @@ package commentservice
 
 import (
 	"context"
+	"fmt"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type service struct {
 	commentStore core.CommentStore
 	postStore    core.PostStore
+	userStore    core.UserStore
 }
 
-func New(commentStore core.CommentStore, postStore core.PostStore) core.CommentService {
+func New(
+	commentStore core.CommentStore,
+	postStore core.PostStore,
+) core.CommentService {
 	return &service{
 		commentStore: commentStore,
 		postStore:    postStore,
 	}
-}
-
-func (s *service) GetCommentByID(ctx context.Context, commentID int) (data core.Comment, err error) {
-	return s.commentStore.GetCommentByID(ctx, commentID)
 }
 
 func (s *service) GetAllComments(ctx context.Context, params core.GetAllCommentsParams) (data []core.Comment, total int, err error) {
@@ -38,11 +40,13 @@ func (s *service) CreateComment(ctx context.Context, comment core.Comment) (data
 }
 
 func (s *service) UpdateComment(ctx context.Context, comment core.Comment) (data core.Comment, err error) {
-	// checking if the author id and user id are equal
-	dbComment, err := s.GetCommentByID(ctx, comment.ID)
+	dbComment, err := s.commentStore.GetCommentByID(ctx, comment.ID)
 	if err != nil {
 		return comment, err
 	}
+
+	logger.Log().Debug(ctx, fmt.Sprintf("%v", dbComment))
+	logger.Log().Debug(ctx, fmt.Sprintf("%v", comment))
 
 	if dbComment.AuthorID != comment.AuthorID {
 		return comment, core.ErrCommentAuthorIDMismatch
@@ -56,7 +60,7 @@ func (s *service) UpdateComment(ctx context.Context, comment core.Comment) (data
 }
 
 func (s *service) DeleteComment(ctx context.Context, comment core.Comment) error {
-	dbComment, err := s.GetCommentByID(ctx, comment.ID)
+	dbComment, err := s.commentStore.GetCommentByID(ctx, comment.ID)
 	if err != nil {
 		return err
 	}

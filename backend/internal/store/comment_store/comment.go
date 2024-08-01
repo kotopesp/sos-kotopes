@@ -15,14 +15,13 @@ type store struct {
 }
 
 func New(pg *postgres.Postgres) core.CommentStore {
-	return &store{
-		pg,
-	}
+	return &store{pg}
 }
 
 func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comment, error) {
 	var comment core.Comment
-	if err := s.DB.WithContext(ctx).First(&comment, "id=?", commentID).Error; err != nil {
+	if err := s.DB.WithContext(ctx).
+		First(&comment, "id=?", commentID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return comment, core.ErrNoSuchComment
 		}
@@ -47,7 +46,9 @@ func (s *store) GetAllComments(ctx context.Context, params core.GetAllCommentsPa
 		query = query.Offset(*params.Offset)
 	}
 
-	if err := query.Find(&comments, "posts_id=?", params.PostID).Error; err != nil {
+	if err := query.
+		Preload("Author").
+		Find(&comments, "posts_id=?", params.PostID).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -67,6 +68,10 @@ func (s *store) CreateComment(ctx context.Context, comment core.Comment) (core.C
 		return comment, err
 	}
 
+	if err := s.DB.WithContext(ctx).Preload("Author").First(&comment).Error; err != nil {
+		return comment, err
+	}
+
 	return comment, nil
 }
 
@@ -76,7 +81,9 @@ func (s *store) UpdateComment(ctx context.Context, comment core.Comment) (core.C
 	}
 
 	// unfortunately, updates does not update `comment_service` variable
-	if err := s.DB.WithContext(ctx).First(&comment, "id=?", comment.ID).Error; err != nil {
+	if err := s.DB.WithContext(ctx).
+		Preload("Author").
+		First(&comment, "id=?", comment.ID).Error; err != nil {
 		return comment, err
 	}
 

@@ -8,12 +8,17 @@ import (
 
 type Comment struct {
 	ID        int       `json:"id"`
-	AuthorID  int       `json:"author_id"`
 	ParentID  *int      `json:"parent_id" form:"parent_id"`
 	ReplyID   *int      `json:"reply_id" form:"reply_id"`
+	User      User      `json:"user"`
 	Content   string    `json:"content" form:"content" validate:"required"`
 	IsDeleted bool      `json:"is_deleted"`
 	CreatedAt time.Time `json:"updated_at"`
+}
+
+type User struct {
+	ID       int    `json:"id"`
+	Username string `json:"username"`
 }
 
 type GetAllCommentsResponse struct {
