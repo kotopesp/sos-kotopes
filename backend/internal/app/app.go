@@ -10,18 +10,22 @@ import (
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/service/name"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/kotopesp/sos-kotopes/internal/store/entity"
+
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+
+	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
+    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
 // Run creates objects via constructors.
@@ -39,10 +43,12 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	entityStore := entity.New(pg)
 	userStore := user.New(pg)
+	postStore := poststore.New(pg)
+	postFavouriteStore := postfavouritestore.New(pg)
+	animalStore := animalstore.New(pg)
+
 	// Services
-	entityService := name.New(entityStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -52,6 +58,7 @@ func Run(cfg *config.Config) {
 			VKCallback:     cfg.VKCallback,
 		},
 	)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -67,9 +74,9 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		entityService,
 		formValidator,
 		authService,
+		postService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
