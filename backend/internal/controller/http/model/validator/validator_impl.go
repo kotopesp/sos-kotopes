@@ -3,16 +3,19 @@ package validator
 import (
 	"context"
 	"errors"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"regexp"
+
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	validatorPkg "github.com/go-playground/validator/v10"
 )
 
 var (
-	uppercase = regexp.MustCompile(`[A-Z]`).MatchString
-	digit     = regexp.MustCompile(`\d`).MatchString
-	alphaNum  = regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString
+	uppercase      = regexp.MustCompile(`[A-Z]`).MatchString
+	digit          = regexp.MustCompile(`\d`).MatchString
+	alphaNum       = regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString
+	numericNatural = regexp.MustCompile(`^[1-9]\d*$`).MatchString
+	notBlank       = regexp.MustCompile(`.*\S+.*`).MatchString
 )
 
 // custom validator tags
@@ -31,6 +34,18 @@ func customValidationOptions(ctx context.Context, validator *validatorPkg.Valida
 	}
 	err = validator.RegisterValidation("no_specials", func(fl validatorPkg.FieldLevel) bool {
 		return alphaNum(fl.Field().String())
+	})
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	err = validator.RegisterValidation("numeric_natural", func(fl validatorPkg.FieldLevel) bool {
+		return numericNatural(fl.Field().String())
+	})
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	err = validator.RegisterValidation("notblank", func(fl validatorPkg.FieldLevel) bool {
+		return notBlank(fl.Field().String())
 	})
 	if err != nil {
 		logger.Log().Fatal(ctx, err.Error())

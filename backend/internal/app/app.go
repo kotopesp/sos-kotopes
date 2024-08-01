@@ -2,10 +2,13 @@ package app
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	keeperservice "github.com/kotopesp/sos-kotopes/internal/service/keeper"
+	keeperreviewsservice "github.com/kotopesp/sos-kotopes/internal/service/keeper_review"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -14,6 +17,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	keeperstore "github.com/kotopesp/sos-kotopes/internal/store/keeper"
+	keeperreviewsstore "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
 
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
@@ -22,9 +27,9 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
-    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
@@ -43,12 +48,16 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
+	keepersStore := keeperstore.New(pg)
+	keeperReviewsStore := keeperreviewsstore.New(pg)
 	userStore := user.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
+	keeperService := keeperservice.New(keepersStore)
+	keeperReviewsService := keeperreviewsservice.New(keeperReviewsStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -76,6 +85,8 @@ func Run(cfg *config.Config) {
 		app,
 		formValidator,
 		authService,
+		keeperService,
+		keeperReviewsService,
 		postService,
 	)
 

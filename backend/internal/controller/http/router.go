@@ -8,20 +8,25 @@ import (
 )
 
 type Router struct {
-	app           *fiber.App
-	formValidator validator.FormValidatorService
-	authService   core.AuthService
-	postService   core.PostService
+	app                  *fiber.App
+	formValidator        validator.FormValidatorService
+	authService          core.AuthService
+	postService          core.PostService
+	keeperService        core.KeeperService
+	keeperReviewsService core.KeeperReviewsService
 }
 
 func NewRouter(
 	app *fiber.App,
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
+	keeperService core.KeeperService,
+	keeperReviewsService core.KeeperReviewsService,
 	postService core.PostService,
 ) {
 	router := &Router{
 		app:           app,
+		keeperService: keeperService,
 		formValidator: formValidator,
 		authService:   authService,
 		postService:   postService,
@@ -50,6 +55,19 @@ func (r *Router) initRoutes() {
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)
 	v1.Get("/auth/login/vk/callback", r.callback)
+
+	// keepers
+	v1.Get("/keepers", r.getKeepers)
+	v1.Get("/keepers/:id", r.getKeeperByID)
+	v1.Post("/keepers", r.protectedMiddleware(), r.createKeeper)
+	v1.Put("/keepers/:id", r.updateKeeperByID)
+	v1.Delete("/keepers/:id", r.deleteKeeperByID)
+
+	// keeper reviews
+	v1.Get("/keepers/:id/keeper_reviews", r.getKeeperReviews)
+	v1.Post("/keepers/:id/keeper_reviews", r.protectedMiddleware(), r.createKeeperReview)
+	v1.Put("/keeper_reviews/:id", r.updateKeeperReview)
+	v1.Delete("/keeper_reviews/:id", r.deleteKeeperReview)
 
 	// posts
 	v1.Get("/posts", r.getPosts)
