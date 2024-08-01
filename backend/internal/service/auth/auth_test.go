@@ -3,6 +3,8 @@ package auth
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/core/mocks"
 	"github.com/stretchr/testify/assert"
@@ -10,12 +12,46 @@ import (
 	"testing"
 )
 
+var (
+	secret = []byte("secret")
+
+	errInvalidToken = errors.New("invalid token")
+)
+
+func validateToken(tokenString string) (id int, username *string, err error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return secret, nil
+	})
+	if err != nil {
+		return 0, nil, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		id, ok := claims["id"].(float64)
+		if !ok {
+			return 0, nil, errInvalidToken
+		}
+
+		username, _ := claims["username"].(string)
+
+		return int(id), &username, nil
+	}
+
+	return 0, nil, errInvalidToken
+}
+
 func TestLoginBasic(t *testing.T) {
 	mockUserStore := mocks.NewUserStore(t)
 	ctx := context.Background()
 
 	authService := New(mockUserStore, core.AuthServiceConfig{
-		JWTSecret: []byte("secret"),
+		JWTSecret:            secret,
+		AccessTokenLifetime:  2,
+		RefreshTokenLifetime: 43800,
 	})
 
 	tests := []struct {
@@ -66,8 +102,18 @@ func TestLoginBasic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockUserStore.On("GetUserByUsername", ctx, tt.argUser.Username).Return(tt.mockRetUser, tt.mockRetError)
 
-			_, _, err := authService.LoginBasic(ctx, tt.argUser)
+			accessToken, refreshToken, err := authService.LoginBasic(ctx, tt.argUser)
 			assert.ErrorIs(t, err, tt.wantErr)
+			if err == nil {
+				id, username, err := validateToken(*accessToken)
+				assert.ErrorIs(t, err, nil)
+				assert.Equal(t, tt.mockRetUser.Username, *username)
+				assert.Equal(t, tt.mockRetUser.ID, id)
+
+				id, username, err = validateToken(*refreshToken)
+				assert.ErrorIs(t, err, nil)
+				assert.Equal(t, tt.mockRetUser.ID, id)
+			}
 		})
 	}
 }
@@ -77,7 +123,9 @@ func TestSignupBasic(t *testing.T) {
 	ctx := context.Background()
 
 	authService := New(mockUserStore, core.AuthServiceConfig{
-		JWTSecret: []byte("secret"),
+		JWTSecret:            secret,
+		AccessTokenLifetime:  2,
+		RefreshTokenLifetime: 43800,
 	})
 
 	tests := []struct {
@@ -109,10 +157,10 @@ func TestSignupBasic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockUserStore.On("AddUser", ctx, mock.MatchedBy(func(user core.User) bool {
 				return user.Username == tt.argUser.Username
-			})).Return(0, tt.mockRetError)
+			})).Return(0, tt.mockRetError).Once()
 
 			err := authService.SignupBasic(ctx, tt.argUser)
-			assert.ErrorIs(t, err, tt.wantErr)
+			assert.ErrorIs(t, tt.wantErr, err)
 		})
 	}
 }
@@ -122,7 +170,9 @@ func TestRefresh(t *testing.T) {
 	ctx := context.Background()
 
 	authService := New(mockUserStore, core.AuthServiceConfig{
-		JWTSecret: []byte("secret"),
+		JWTSecret:            secret,
+		AccessTokenLifetime:  2,
+		RefreshTokenLifetime: 43800,
 	})
 
 	errInvalidID := errors.New("invalid id")
@@ -155,10 +205,20 @@ func TestRefresh(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockUserStore.On("GetUserByID", ctx, tt.id).Return(tt.mockRetUser, tt.mockRetError)
+			mockUserStore.On("GetUserByID", ctx, tt.id).Return(tt.mockRetUser, tt.mockRetError).Once()
 
-			_, err := authService.Refresh(ctx, tt.id)
+			accessToken, err := authService.Refresh(ctx, tt.id)
 			assert.ErrorIs(t, err, tt.wantErr)
+			if err == nil {
+				id, username, err := validateToken(*accessToken)
+				assert.ErrorIs(t, err, nil)
+				assert.Equal(t, tt.mockRetUser.Username, *username)
+				assert.Equal(t, tt.mockRetUser.ID, id)
+			}
 		})
 	}
+}
+
+func TestAuthorizeVK(t *testing.T) {
+	t.Log("Need to think how to test...")
 }

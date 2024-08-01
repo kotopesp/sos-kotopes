@@ -46,10 +46,12 @@ func Run(cfg *config.Config) {
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
-			JWTSecret:      cfg.JWTSecret,
-			VKClientID:     cfg.VKClientID,
-			VKClientSecret: cfg.VKClientSecret,
-			VKCallback:     cfg.VKCallback,
+			JWTSecret:            cfg.JWTSecret,
+			VKClientID:           cfg.VKClientID,
+			VKClientSecret:       cfg.VKClientSecret,
+			VKCallback:           cfg.VKCallback,
+			AccessTokenLifetime:  cfg.AccessTokenLifetime,
+			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
 
