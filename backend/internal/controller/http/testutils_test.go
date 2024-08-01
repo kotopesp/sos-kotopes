@@ -11,8 +11,8 @@ import (
 
 type (
 	appDependencies struct {
-		entityService *mocks.EntityService
-		authService   *mocks.AuthService
+		authService *mocks.AuthService
+		postService *mocks.PostService
 	}
 )
 
@@ -24,8 +24,8 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	app := fiber.New()
 	ctx := context.Background()
 
-	mockEntityService := mocks.NewEntityService(t)
 	mockAuthService := mocks.NewAuthService(t)
+	mockPostService := mocks.NewPostService(t)
 	formValidatorService := validator.New(ctx, baseValidator.New())
 
 	mockAuthService.On("GetJWTSecret").Return(secret)
@@ -33,13 +33,13 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	// mock your dependencies and put them here
 	NewRouter(
 		app,
-		mockEntityService,
 		formValidatorService,
 		mockAuthService,
+		mockPostService,
 	)
 
 	return app, appDependencies{
-		entityService: mockEntityService,
-		authService:   mockAuthService,
+		authService: mockAuthService,
+		postService: mockPostService,
 	}
 }
