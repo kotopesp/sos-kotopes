@@ -1,8 +1,6 @@
 package http
 
 import (
-	"strconv"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	keeperreview "github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper_review"
@@ -71,7 +69,7 @@ func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
 
 func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 	// get id
-	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
@@ -100,7 +98,7 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 
 func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 	// get id
-	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))

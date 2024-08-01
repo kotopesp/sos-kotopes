@@ -1,8 +1,6 @@
 package http
 
 import (
-	"strconv"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper"
@@ -47,7 +45,7 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
-	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
@@ -98,7 +96,7 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 
 func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 	// get id
-	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
@@ -128,7 +126,7 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 
 func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 	// get id
-	id, err := strconv.ParseInt(ctx.Params("id"), 10, 0)
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
