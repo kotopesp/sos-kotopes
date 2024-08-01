@@ -14,9 +14,9 @@ import (
 func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	var params keeper.GetAllKeepersParams
 
-	if err := ctx.QueryParser(params); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	fiberError, parseOrValidationError := parseAndValidateQueryAny(ctx, r.formValidator, &params)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
 	usrCtx := ctx.UserContext()

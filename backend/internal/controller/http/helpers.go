@@ -60,6 +60,21 @@ func parseAndValidateAny[T any](ctx *fiber.Ctx, formValidator validator.FormVali
 	return nil, nil
 }
 
+func parseAndValidateQueryAny[T any](ctx *fiber.Ctx, formValidator validator.FormValidatorService, entity *T) (fiberError, parseOrValidationError error) {
+	if err := ctx.QueryParser(entity); err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
+	}
+	errs := formValidator.Validate(entity)
+	if len(errs) > 0 {
+		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
+			"validation_errors": errs,
+		})), model.ErrValidationFailed
+	}
+	return nil, nil
+}
+
 func Map[T, V any](ts []T, fn func(T) V) []V {
 	result := make([]V, len(ts))
 	for i, t := range ts {
