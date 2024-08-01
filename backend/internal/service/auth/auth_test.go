@@ -56,7 +56,6 @@ func TestLoginBasic(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		ctx          context.Context
 		argUser      core.User
 		mockRetUser  core.User
 		mockRetError error
@@ -130,7 +129,6 @@ func TestSignupBasic(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		ctx          context.Context
 		argUser      core.User
 		mockRetError error
 		wantErr      error

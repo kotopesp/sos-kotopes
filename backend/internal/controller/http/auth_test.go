@@ -193,7 +193,9 @@ func TestLoginBasic(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.wantErrs == nil {
-				dependencies.authService.On("LoginBasic", mock.Anything, tt.mockArgUser.ToCoreUser()).Return(&tt.mockRetAccessToken, &tt.mockRetRefreshToken, tt.mockRetError).Once()
+				at := tt.mockRetAccessToken
+				rt := tt.mockRetRefreshToken
+				dependencies.authService.On("LoginBasic", mock.Anything, tt.mockArgUser.ToCoreUser()).Return(&at, &rt, tt.mockRetError).Once()
 			}
 
 			// request body (multipart)
@@ -514,7 +516,8 @@ func TestRefresh(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.mockUserID != nil {
-				dependencies.authService.On("Refresh", mock.Anything, *tt.mockUserID).Return(&tt.mockRetAccessToken, tt.mockRetError).Once()
+				at := tt.mockRetAccessToken
+				dependencies.authService.On("Refresh", mock.Anything, *tt.mockUserID).Return(&at, tt.mockRetError).Once()
 			}
 
 			req := httptest.NewRequest(http.MethodPost, route, http.NoBody)
