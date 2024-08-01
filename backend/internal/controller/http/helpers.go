@@ -6,6 +6,10 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
+	"io"
+	"mime/multipart"
 )
 
 // token helpers: getting info from token
@@ -68,4 +72,36 @@ func validate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data
 		})), model.ErrValidationFailed
 	}
 	return nil, nil
+}
+
+func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
+	file, err := photo.Open()
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	photoBytes, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return &photoBytes, nil
+}
+
+
+func paginate(total, limit, offset int) pagination.Pagination {
+	var (
+	  currentPage = (offset / limit) + 1
+	  perPage     = limit
+	  totalPages  = (total + perPage - 1) / perPage
+	)
+
+	return pagination.Pagination{
+	  Total:       total,
+	  TotalPages:  totalPages,
+	  CurrentPage: currentPage,
+	  PerPage:     perPage,
+	}
 }
