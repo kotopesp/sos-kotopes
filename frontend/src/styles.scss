@@ -22,6 +22,10 @@
   --brown-ads-color: #2C2210;
   --gray-color-button: #4E4E4E;
   --gray-text-tag: #5D5D5D;
+
+  --role-orange-color: #B77300;
+  --role-purple-color: #41216B;
+  --role-green-color: #2F5955;
 }
 
 
@@ -44,11 +48,14 @@ body {
     0% {
       opacity: 0;
     }
+
     100% {
       opacity: 1;
     }
   }
-  font-family: "PT Sans Caption Regular", sans-serif;
+
+  font-family: "PT Sans Caption Regular",
+  sans-serif;
 }
 
 
@@ -123,4 +130,3 @@ body {
   font-weight: 400;
   font-style: italic;
 }
-
