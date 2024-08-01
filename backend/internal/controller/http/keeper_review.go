@@ -119,7 +119,7 @@ func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 	if err := r.keeperReviewsService.SoftDeleteByID(ctx.UserContext(), int(id)); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		if errors.Is(err, core.ErrRecordNotFound) {
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))
 		}
 
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
