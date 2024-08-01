@@ -44,7 +44,7 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &apiUser)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -86,7 +86,7 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 
 func (r *Router) signup(ctx *fiber.Ctx) error {
 	var apiUser user.User
-	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &apiUser)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
