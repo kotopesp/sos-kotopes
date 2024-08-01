@@ -57,7 +57,7 @@ func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 
 	postResponse := postModel.ToPostResponse(postDetails)
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(postResponse))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(postResponse)) 
 }
 
 // createPost handles the request to create a new post
