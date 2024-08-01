@@ -13,14 +13,13 @@ import (
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/service/name"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/kotopesp/sos-kotopes/internal/store/entity"
 	keeperstore "github.com/kotopesp/sos-kotopes/internal/store/keeper"
 	keeperreviewsstore "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
+
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
@@ -44,14 +43,14 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	entityStore := entity.New(pg)
 	keepersStore := keeperstore.New(pg)
 	keeperReviewsStore := keeperreviewsstore.New(pg)
 	userStore := user.New(pg)
 	// Services
-	entityService := name.New(entityStore)
 	keeperService := keeperservice.New(keepersStore)
 	keeperReviewsService := keeperreviewsservice.New(keeperReviewsStore)
+	// userStore := user.New(pg)
+	// Services
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -76,9 +75,10 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		entityService, keeperService, keeperReviewsService,
 		formValidator,
 		authService,
+		keeperService,
+		keeperReviewsService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

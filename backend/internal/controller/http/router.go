@@ -9,7 +9,6 @@ import (
 
 type Router struct {
 	app                  *fiber.App
-	entityService        core.EntityService
 	formValidator        validator.FormValidatorService
 	authService          core.AuthService
 	keeperService        core.KeeperService
@@ -18,15 +17,13 @@ type Router struct {
 
 func NewRouter(
 	app *fiber.App,
-	entityService core.EntityService,
-	keeperService core.KeeperService,
-	keeperReviewsService core.KeeperReviewsService,
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
+	keeperService core.KeeperService,
+	keeperReviewsService core.KeeperReviewsService,
 ) {
 	router := &Router{
 		app:           app,
-		entityService: entityService,
 		keeperService: keeperService,
 		formValidator: formValidator,
 		authService:   authService,
@@ -43,10 +40,6 @@ func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
-
-	// entities
-	v1.Get("/entities", r.getEntities)
-	v1.Get("/entities/:id", r.getEntityByID)
 
 	// e.g. protected resource
 	v1.Get("/protected", r.protectedMiddleware(), r.protected)
