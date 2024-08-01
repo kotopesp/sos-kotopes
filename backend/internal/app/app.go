@@ -21,6 +21,11 @@ import (
 	"github.com/kotopesp/sos-kotopes/config"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+
+	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
+    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
 // Run creates objects via constructors.
@@ -39,6 +44,10 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	userStore := user.New(pg)
+	postStore := poststore.New(pg)
+	postFavouriteStore := postfavouritestore.New(pg)
+	animalStore := animalstore.New(pg)
+
 	// Services
 	authService := auth.New(
 		userStore,
@@ -49,6 +58,7 @@ func Run(cfg *config.Config) {
 			VKCallback:     cfg.VKCallback,
 		},
 	)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -66,6 +76,7 @@ func Run(cfg *config.Config) {
 		app,
 		formValidator,
 		authService,
+		postService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
