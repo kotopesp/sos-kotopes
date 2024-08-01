@@ -5,10 +5,10 @@ import "time"
 // KeeperReviews represents the review entity for keepers.
 type KeeperReviews struct {
 	ID        int       `json:"id"`
-	AuthorID  int       `json:"author_id" validate:"required,gt=0"`
+	AuthorID  int       `json:"author_id" validate:"required,min=0"`
 	Content   string    `json:"content" validate:"required,notblank,max=2000"`
 	Grade     int       `json:"grade" validate:"required,numeric,min=1,max=5"`
-	KeeperID  int       `json:"keeper_id" validate:"required,gt=0"`
+	KeeperID  int       `json:"keeper_id" validate:"required,min=0"`
 	IsDeleted bool      `json:"is_deleted"`
 	DeletedAt time.Time `json:"deleted_at"`
 	CreatedAt time.Time `json:"created_at"`
@@ -17,10 +17,10 @@ type KeeperReviews struct {
 
 // KeeperReviewsCreate represents the data required to create a new keeper review.
 type KeeperReviewsCreate struct {
-	AuthorID int    `json:"author_id" validate:"required,gt=0"`
+	AuthorID int    `json:"author_id" validate:"required,min=0"`
 	Content  string `json:"content" validate:"required,notblank,max=2000"`
 	Grade    int    `json:"grade" validate:"required,numeric,min=1,max=5"`
-	KeeperID int    `json:"keeper_id" validate:"required,gt=0"`
+	KeeperID int    `json:"keeper_id" validate:"required,min=0"`
 }
 
 // KeeperReviewsUpdate represents the data to update an existing keeper review.

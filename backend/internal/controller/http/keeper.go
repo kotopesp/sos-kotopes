@@ -122,13 +122,10 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
+	updateKeeper.ID = int(id)
+
 	// update
-	if err := r.keeperService.UpdateByID(ctx.UserContext(), core.Keepers{
-		ID:          int(id),
-		Description: updateKeeper.Description,
-		Price:       updateKeeper.Price,
-		Location:    updateKeeper.Location,
-	}); err != nil {
+	if err := r.keeperService.UpdateByID(ctx.UserContext(), updateKeeper.ToCoreUpdatedKeeper()); err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}

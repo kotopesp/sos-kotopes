@@ -45,3 +45,15 @@ func (k *KeepersCreate) ToCoreNewKeeper() core.Keepers {
 		Location:    k.Location,
 	}
 }
+
+func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.Keepers {
+	if k == nil {
+		return core.Keepers{}
+	}
+	return core.Keepers{
+		ID:          k.ID,
+		Description: k.Description,
+		Price:       k.Price,
+		Location:    k.Location,
+	}
+}
