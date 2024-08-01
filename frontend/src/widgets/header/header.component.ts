@@ -1,10 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, Input, signal, WritableSignal} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
 import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
 import {NotificationPopupComponent} from "./ui/notification-popup/notification-popup.component";
 import {MessagePopupComponent} from "./ui/message-popup/message-popup.component";
 import {AuthOverlayComponent} from "./ui/auth-overlay/auth-overlay.component";
+import {RegisterOverlayComponent} from "./ui/register-overlay/register-overlay.component";
 
 @Component({
   selector: 'app-header',
@@ -17,14 +18,16 @@ import {AuthOverlayComponent} from "./ui/auth-overlay/auth-overlay.component";
     ProfilePopupComponent,
     NotificationPopupComponent,
     MessagePopupComponent,
-    AuthOverlayComponent
+    AuthOverlayComponent,
+    RegisterOverlayComponent,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
   isAuth: boolean = false;
-  loginOverlay: boolean = true;
+  isAuthOverlay: WritableSignal<boolean> = signal<boolean>(false);
+  isRegisterOverlay: WritableSignal<boolean> = signal<boolean>(false);
 
   headerItems = [
     {

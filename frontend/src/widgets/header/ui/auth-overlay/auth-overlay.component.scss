@@ -1,6 +1,7 @@
 .block__auth__overlay {
   width: 100%;
   height: 100%;
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,9 +54,33 @@
       align-items: center;
       padding: 40px 40px 40px 45px;
 
+      .block__password {
+        position: relative;
+
+        .password__eye {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+        }
+
+        .password__eye__line {
+          position: absolute;
+          width: 25px;
+          right: -1px;
+          top: 40%;
+          border-bottom: 2px solid var(--white-color);
+          transform: translateY(-50%) rotate(45deg);
+        }
+      }
+
       .password__info {
         display: flex;
         gap: 10px;
+
         .wrong_password {
           gap: 5px;
           color: var(--red-color-button);
@@ -114,3 +139,4 @@
     }
   }
 }
+

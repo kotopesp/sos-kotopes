@@ -1,0 +1,82 @@
+<div class="block__registration__overlay">
+  <div class="registration__overlay">
+    <div class="block__title__and__icon">
+      <div class="close__cross">
+        <img src="/assets/icons/exit-cross-icon.svg" alt="">
+      </div>
+
+      <div class="title__and__icon">
+        <img src="/assets/icons/profile-icon.svg" alt="" height="89" width="82">
+        <span class="title__registration ft24 fw400">Регистрация</span>
+      </div>
+    </div>
+
+    <div class="block__registration__info">
+      <div>
+        <p class="ft20 fw400">Имя</p>
+        <div>
+          <input type="text" placeholder="Введите своё настоящее имя" class="input__text ft20 fw400"/>
+        </div>
+      </div>
+
+      <div>
+        <p class="ft20 fw400">Логин</p>
+        <div>
+          <input type="text" placeholder="Введите имя пользователя" class="input__text ft20 fw400"/>
+        </div>
+      </div>
+
+      <div>
+        <p class="ft20 fw400">Фамилия</p>
+        <div>
+          <input type="text" placeholder="Введите свою фамилию" class="input__text ft20 fw400"/>
+        </div>
+      </div>
+
+      <div>
+        <span class="ft20 fw400">Пароль</span>
+        <div class="block__password">
+          <input [type]="isPasswordVisible() ? 'text' : 'password' " placeholder="Введите пароль"
+                 class="input__text ft20 fw400"/>
+          <button class="password__eye" (click)="isPasswordVisible.set(!isPasswordVisible())">
+            <img src="/assets/icons/password-eye-icon.svg" alt="">
+            <div *ngIf="!isPasswordVisible()" class="password__eye__line"></div>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <p class="ft20 fw400">E-mail</p>
+        <div>
+          <input type="text" placeholder="Введите адрес почты" class="input__text ft20 fw400"/>
+        </div>
+      </div>
+
+      <div>
+        <p class="ft20 fw400">Повторите пароль</p>
+        <div>
+          <input type="text" placeholder="Введите пароль" class="input__text ft20 fw400"/>
+        </div>
+      </div>
+
+      <div class="registration__roles">
+        <button>Я могу организовать передержку</button>
+        <button>Я отловщик</button>
+        <button>Я ветеринар</button>
+        <button>Я здесь по другой причине</button>
+      </div>
+
+      <div class="block__about__user">
+        <p class="ft20 fw400">Напишите о себе</p>
+        <div>
+          <textarea class="about__user__area ft20 fw400" placeholder="Необязательно"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="block__registration__button">
+      <button class="registration__button ft20 fw700">Зарегистрироваться</button>
+    </div>
+  </div>
+</div>
