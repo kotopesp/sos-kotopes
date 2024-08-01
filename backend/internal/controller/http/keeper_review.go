@@ -8,7 +8,6 @@ import (
 	keeperreview "github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper_review"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"gorm.io/gorm"
 )
 
 func (r *Router) getKeeperReviews(ctx *fiber.Ctx) error {
@@ -99,7 +98,7 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 		Grade:   updateReview.Grade,
 	}); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		}
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -119,7 +118,7 @@ func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 	// delete
 	if err := r.keeperReviewsService.SoftDeleteByID(ctx.UserContext(), int(id)); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		if errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		}
 

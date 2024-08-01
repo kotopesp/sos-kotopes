@@ -6,7 +6,6 @@ import (
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-	"gorm.io/gorm"
 )
 
 type store struct {
@@ -27,7 +26,7 @@ func (s *store) Create(ctx context.Context, keeper core.Keepers) error {
 func (s *store) DeleteByID(ctx context.Context, id int) error {
 	result := s.DB.WithContext(ctx).Delete(core.Keepers{}, id)
 	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
+		return core.ErrRecordNotFound
 	}
 
 	return result.Error
@@ -36,7 +35,7 @@ func (s *store) DeleteByID(ctx context.Context, id int) error {
 func (s *store) UpdateByID(ctx context.Context, keeper core.Keepers) error {
 	result := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", keeper.ID).Updates(keeper)
 	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
+		return core.ErrRecordNotFound
 	}
 
 	return result.Error
