@@ -29,6 +29,8 @@ type (
 
 	// UpdateRequestBodyPost represents the request body for updating a post.
 	UpdateRequestBodyPost struct {
+		ID          *int
+		AuthorID    *int
 		Title       *string
 		Content     *string 
 		Photo       *[]byte
@@ -53,19 +55,19 @@ type (
 	}
 
 	PostStore interface {
-		GetAllPosts(ctx context.Context, params GetAllPostsParams) (data []Post, total int, err error)
-		GetPostByID(ctx context.Context, id int) (data Post, err error)
-		CreatePost(ctx context.Context, post Post) (data Post, err error)
-		UpdatePost(ctx context.Context, post Post) (data Post, err error)
-		DeletePost(ctx context.Context, id int) (err error)
+		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]Post, int, error)
+		GetPostByID(ctx context.Context, id int) (Post, error)
+		CreatePost(ctx context.Context, post Post) (Post, error)
+		UpdatePost(ctx context.Context, post Post) (Post, error)
+		DeletePost(ctx context.Context, id int) error
 	}
 
 	PostService interface {
-		GetAllPosts(ctx context.Context, params GetAllPostsParams) (data []PostDetails, total int, err error)
+		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]PostDetails, int, error)
 		GetPostByID(ctx context.Context, id int) (PostDetails, error)
 		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
-		UpdatePost(ctx context.Context, id int, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
-		DeletePost(ctx context.Context, id int) (err error)
+		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
+		DeletePost(ctx context.Context, post Post) error
 
 		PostFavouriteService
 	}

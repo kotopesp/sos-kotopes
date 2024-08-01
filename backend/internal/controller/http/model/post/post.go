@@ -11,12 +11,12 @@ type (
 		Title     string   `form:"title" json:"title" validate:"required,max=200"`
 		Content   string   `form:"content" json:"content" validate:"required,max=2000"`
 		Photo     []byte   `form:"photo" json:"photo"`
-		AnimalType  string `form:"animal_type" json:"animal_type" validate:"required"` 
+		AnimalType  string `form:"animal_type" json:"animal_type" validate:"required,oneof=dog cat"` 
 		Age         int    `form:"age" json:"age" validate:"gte=0"`
 		Color       string `form:"color" json:"color" validate:"required"`
-		Gender      string `form:"gender" json:"gender" validate:"required"`
+		Gender      string `form:"gender" json:"gender" validate:"required,oneof=male female"`
 		Description string `form:"description" json:"description"`
-		Status      string `form:"status" json:"status" validate:"required"`
+		Status      string `form:"status" json:"status" validate:"required,oneof=lost found need_home"`
 	}
 
 	// PostResponse represents the structure of a post response with additional details
@@ -36,7 +36,7 @@ type (
 		Comments       int 		 `form:"comments" json:"comments"`
 	}
 
-	// the structures used for updating an existing post
+	// UpdatePost, UpdateRequestBodyPost used for updating an existing post
 	UpdatePost struct {
 		Title   *string `form:"title" json:"title" validate:"max=200"`
 		Content *string `form:"content" json:"content" validate:"max=2000"`
@@ -47,12 +47,12 @@ type (
 		Title   	*string `form:"title" json:"title" validate:"omitempty,max=200"`
 		Content 	*string `form:"content" json:"content" validate:"omitempty,max=2000"`
 		Photo   	*[]byte `form:"photo" json:"photo"`
-		AnimalType  *string `form:"animal_type" json:"animal_type"`
-		Age         *int    `form:"age" json:"age"`
+		AnimalType  *string `form:"animal_type" json:"animal_type" validate:"omitempty,oneof=dog cat"`
+		Age         *int    `form:"age" json:"age" validate:"omitempty,gte=0"`
 		Color       *string `form:"color" json:"color"`
-		Gender      *string `form:"gender" json:"gender"`
+		Gender      *string `form:"gender" json:"gender" validate:"omitempty,oneof=male female"`
 		Description *string `form:"description" json:"description"`
-		Status      *string `form:"status" json:"status"`
+		Status      *string `form:"status" json:"status" validate:"omitempty,oneof=lost found need_home"`
 	}
 
 	// Meta represents metadata about the pagination of posts
@@ -78,5 +78,9 @@ type (
 		Gender     *string `query:"gender" validate:"omitempty,oneof=male female"`          // Filter by gender of the associated animal
 		Color      *string `query:"color" validate:"omitempty"`								// Filter by color of the associated animal
 		Location   *string `query:"location" validate:"omitempty"`                          // Filter by location of the associated animal
+	}
+
+	PathParams struct {
+		PostID int `params:"id" validate:"omitempty,gt=0"`
 	}
 )

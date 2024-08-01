@@ -2,11 +2,12 @@ package post
 
 import (
 	"context"
+	"fmt"
 	"mime/multipart"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http"
 )
 
 type (
@@ -99,22 +100,29 @@ func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetai
 }
 
 // UpdatePost updates an existing post with the provided details
-func (s *postService) UpdatePost(ctx context.Context, id int, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
-	postDetails, err := s.GetPostByID(ctx, id)
+func (s *postService) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
+	logger.Log().Debug(ctx, fmt.Sprintf("%v", *postUpdateRequest.ID))
+	dbPost, err := s.GetPostByID(ctx, *postUpdateRequest.ID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
 	}
 
-	postDetails = FuncUpdateRequestBodyPost(postDetails, postUpdateRequest)
+	if dbPost.Post.AuthorID != *postUpdateRequest.AuthorID {
+		return core.PostDetails{}, core.ErrPostAuthorIDMismatch
+	} else if dbPost.Post.IsDeleted {
+		return core.PostDetails{}, core.ErrPostIsDeleted
+	}
 
-	post, err := s.postStore.UpdatePost(ctx, postDetails.Post)
+	dbPost = FuncUpdateRequestBodyPost(dbPost, postUpdateRequest)
+
+	post, err := s.postStore.UpdatePost(ctx, dbPost.Post)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
 	}
 	
-	animal, err := s.animalStore.UpdateAnimal(ctx, postDetails.Animal)
+	animal, err := s.animalStore.UpdateAnimal(ctx, dbPost.Animal)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
@@ -129,8 +137,19 @@ func (s *postService) UpdatePost(ctx context.Context, id int, postUpdateRequest 
 }
 
 // DeletePost deletes a post by its ID
-func (s *postService) DeletePost(ctx context.Context, id int) error {
-	err := s.postStore.DeletePost(ctx, id)
+func (s *postService) DeletePost(ctx context.Context, post core.Post) error {
+	dbPost, err := s.postStore.GetPostByID(ctx, post.ID)
+	if err != nil {
+		return err
+	}
+
+	if dbPost.AuthorID != post.AuthorID {
+		return core.ErrPostAuthorIDMismatch
+	} else if dbPost.IsDeleted {
+		return core.ErrPostIsDeleted
+	}
+
+	err = s.postStore.DeletePost(ctx, post.ID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err

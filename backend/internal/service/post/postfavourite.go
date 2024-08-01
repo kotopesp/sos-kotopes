@@ -7,7 +7,7 @@ import (
 )
 
 func (s *postService) GetFavouritePosts(ctx context.Context, userID int) ([]core.PostDetails, int, error) {
-	// TODO: add params processing
+	// TODO: add GetAllPostsParams
 	limit := 0
 	offset := 0
 

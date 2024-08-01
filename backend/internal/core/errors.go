@@ -10,10 +10,8 @@ var (
     ErrInvalidPostID      		    = errors.New("invalid post ID")
     ErrPostNotFound       		    = errors.New("post not found")
 	ErrRecordNotFound 				= gorm.ErrRecordNotFound
-
-	// file errors
-	ErrFailedToOpenImage   		    = errors.New("failed to open image")
-	ErrFailedToReadImage  		    = errors.New("failed to read image")
+	ErrPostIsDeleted        		= errors.New("post is deleted")
+	ErrPostAuthorIDMismatch         = errors.New("your user_id and db author_id mismatch")
 
 	// user errors
 	ErrFailedToGetAuthorIDFromToken = errors.New("failed to get author ID from token")

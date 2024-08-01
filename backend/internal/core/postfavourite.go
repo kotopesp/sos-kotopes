@@ -13,15 +13,15 @@ type (
 	}
 
 	PostFavouriteStore interface {
-		GetFavouritePosts(ctx context.Context, userID, limit, offset int) (data []Post, total int, err error)
-		AddToFavourites(ctx context.Context, postFavourite PostFavourite) (err error)
-		DeleteFromFavourites(ctx context.Context, postID, userID int) (err error)
+		GetFavouritePosts(ctx context.Context, userID, limit, offset int) ([]Post, int, error)
+		AddToFavourites(ctx context.Context, postFavourite PostFavourite) error
+		DeleteFromFavourites(ctx context.Context, postID, userID int) error
 	}
 
 	PostFavouriteService interface {
-		GetFavouritePosts(ctx context.Context, userID int) (data []PostDetails, total int, err error)
-		AddToFavourites(ctx context.Context, postFavourite PostFavourite) (err error)
-		DeleteFromFavourites(ctx context.Context, postID, userID int) (err error)
+		GetFavouritePosts(ctx context.Context, userID int) ([]PostDetails, int, error)
+		AddToFavourites(ctx context.Context, postFavourite PostFavourite) error
+		DeleteFromFavourites(ctx context.Context, postID, userID int) error
 	}
 )
 

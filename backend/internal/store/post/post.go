@@ -118,7 +118,7 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 }
 
 // DeletePost marks a post as deleted in the database by updating the is_deleted flag and setting the deleted_at timestamp
-func (s *store) DeletePost(ctx context.Context, id int) error{
+func (s *store) DeletePost(ctx context.Context, id int) error {
 	updates := map[string]interface{}{
         "is_deleted": true,
         "deleted_at": time.Now(), 
