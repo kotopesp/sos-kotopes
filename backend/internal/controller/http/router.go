@@ -11,6 +11,7 @@ type Router struct {
 	app                  *fiber.App
 	formValidator        validator.FormValidatorService
 	authService          core.AuthService
+	postService          core.PostService
 	keeperService        core.KeeperService
 	keeperReviewsService core.KeeperReviewsService
 }
@@ -21,12 +22,14 @@ func NewRouter(
 	authService core.AuthService,
 	keeperService core.KeeperService,
 	keeperReviewsService core.KeeperReviewsService,
+	postService core.PostService,
 ) {
 	router := &Router{
 		app:           app,
 		keeperService: keeperService,
 		formValidator: formValidator,
 		authService:   authService,
+		postService:   postService,
 	}
 
 	router.initRequestMiddlewares()
@@ -65,6 +68,18 @@ func (r *Router) initRoutes() {
 	v1.Post("/keepers/:id/keeper_reviews", r.protectedMiddleware(), r.createKeeperReview)
 	v1.Put("/keeper_reviews/:id", r.updateKeeperReview)
 	v1.Delete("/keeper_reviews/:id", r.deleteKeeperReview)
+
+	// posts
+	v1.Get("/posts", r.getPosts)
+	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
+	v1.Get("/posts/:id", r.getPostByID)
+	v1.Post("/posts", r.protectedMiddleware(), r.createPost)
+	v1.Patch("/posts/:id", r.protectedMiddleware(), r.updatePost)
+	v1.Delete("/posts/:id", r.protectedMiddleware(), r.deletePost)
+
+	// favourites posts
+	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
+	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
