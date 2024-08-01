@@ -1,10 +1,10 @@
-import {Component, Input, signal, WritableSignal} from '@angular/core';
+import {Component, signal, WritableSignal} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
 import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
 import {NotificationPopupComponent} from "./ui/notification-popup/notification-popup.component";
 import {MessagePopupComponent} from "./ui/message-popup/message-popup.component";
-import {AuthOverlayComponent} from "./ui/auth-overlay/auth-overlay.component";
+import {AuthServiceOverlayComponent} from "./ui/auth-overlay/auth-service-overlay.component";
 import {RegisterOverlayComponent} from "./ui/register-overlay/register-overlay.component";
 
 @Component({
@@ -18,7 +18,7 @@ import {RegisterOverlayComponent} from "./ui/register-overlay/register-overlay.c
     ProfilePopupComponent,
     NotificationPopupComponent,
     MessagePopupComponent,
-    AuthOverlayComponent,
+    AuthServiceOverlayComponent,
     RegisterOverlayComponent,
   ],
   templateUrl: './header.component.html',

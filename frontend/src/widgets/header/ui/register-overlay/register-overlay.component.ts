@@ -1,4 +1,4 @@
-import {Component, signal} from '@angular/core';
+import {Component, Input, signal} from '@angular/core';
 import {NgIf} from "@angular/common";
 
 @Component({
@@ -11,6 +11,7 @@ import {NgIf} from "@angular/common";
   styleUrl: './register-overlay.component.scss'
 })
 export class RegisterOverlayComponent {
+  @Input() isRegisterOverlay: any;
   isPasswordVisible = signal<boolean>(false);
   isPasswordVisibleRepeat = signal<boolean>(false);
 }
