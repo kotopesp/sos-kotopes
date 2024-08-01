@@ -1,6 +1,8 @@
 package http
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	keeperreview "github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper_review"
@@ -106,8 +108,8 @@ func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 
 	// delete
 	if err := r.keeperReviewsService.SoftDeleteByID(ctx.UserContext(), int(id)); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		if err == gorm.ErrRecordNotFound {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		}
 

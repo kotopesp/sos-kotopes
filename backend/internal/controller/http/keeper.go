@@ -1,6 +1,8 @@
 package http
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper"
@@ -54,7 +56,10 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 	k, err := r.keeperService.GetByID(ctx.UserContext(), int(id))
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		}
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.Keepers{
@@ -135,7 +140,7 @@ func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 	// delete
 	if err := r.keeperService.DeleteByID(ctx.UserContext(), int(id)); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		}
 
