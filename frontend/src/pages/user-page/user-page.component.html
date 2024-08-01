@@ -6,14 +6,14 @@
         </div>
         <div class="user__info">
             <div class="user__header">
-                <span class="user__first_second_name">{{ firstName }} {{ secondName }}</span>
-                <span class="user__online_status">{{ onlineStatus }}</span>
+                <span class="user__first_second_name ft36 fw400 lh46">{{ firstName }} {{ secondName }}</span>
+                <span class="user__online_status ft20 fw400">{{ onlineStatus }}</span>
             </div>
             <div class="user__subheader">
-                <span class="user__username">&#64;{{ username }}</span>
-                <span class="user__posts_count">{{ totalPosts }} объявления</span>
+                <span class="user__username ft24 fw400">&#64;{{ username }}</span>
+                <span class="user__posts_count ft20 fw400">{{ totalPosts }} объявления</span>
             </div>
-            <div class="user__role_info">
+            <div class="user__role_info ft20 fw400">
                 <app-role-button icon="../../assets/icons/hand-icon.svg" label="Передержка"
                     buttonColor="var(--role-orange-color)" />
                 <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"

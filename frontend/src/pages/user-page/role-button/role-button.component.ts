@@ -16,7 +16,7 @@ export class RoleButtonComponent {
 
   iconUrl = ''
   ngOnInit() {
-    this.iconUrl = `url("${this.icon}")`
+    this.iconUrl = `url("${this.icon}")`;
   }
   onClickButton(event: any) {
     this.onClick.emit(event)

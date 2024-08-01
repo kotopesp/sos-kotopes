@@ -12,9 +12,9 @@ import { RoleButtonComponent } from './role-button/role-button.component';
   styleUrl: './user-page.component.scss'
 })
 export class UserPageComponent {
-  firstName = 'John'
-  secondName = 'Johnson'
-  onlineStatus = 'online'
+  firstName = 'Тимофей'
+  secondName = 'Зайнулин'
+  onlineStatus = 'В сети'
   username = 'tim.violine'
   totalPosts = '22'
   profilePhoto = '../../assets/images/test-cat.png'

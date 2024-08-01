@@ -1,5 +1,17 @@
-.user__role_button_icon {
-    width: 200px;
-    height: 40px;
-    display: block;
+.user__role_button {
+    height: 46px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 10px;
+    font-family: 'PT Sans Caption Regular';
+    padding: 8px 18px 8px 18px;
+
+    .user__role_button_icon {
+        width: 20px;
+        height: 100%;
+        filter: invert(1) brightness(100) saturate(0);
+    }
 }
