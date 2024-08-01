@@ -21,14 +21,14 @@ func (p *GetAllKeepersParams) FromKeeperRequest() core.GetAllKeepersParams {
 	}
 }
 
-func (p *GetAllKeepersParams) ParseSort() (string, string) {
+func (p *GetAllKeepersParams) ParseSort() (sortBy, sortOrder string) {
 	parts := strings.Split(p.Sort, ":")
-	sortBy := ""
-	sortOrder := ""
-	if len(parts[0]) > 0 {
+	sortBy = ""
+	sortOrder = ""
+	if parts[0] != "" {
 		sortBy = parts[0]
 	}
-	if len(parts[1]) > 0 {
+	if parts[1] != "" {
 		sortOrder = parts[1]
 	}
 	return sortBy, sortOrder

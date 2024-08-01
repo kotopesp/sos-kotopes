@@ -49,7 +49,6 @@ func Run(cfg *config.Config) {
 	// Services
 	keeperService := keeperservice.New(keepersStore)
 	keeperReviewsService := keeperreviewsservice.New(keeperReviewsStore)
-	// userStore := user.New(pg)
 	// Services
 	authService := auth.New(
 		userStore,

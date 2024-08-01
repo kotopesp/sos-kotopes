@@ -96,10 +96,3 @@ func generatePaginationMeta(totalItems, itemsPerPage, currentOffset int) paginat
 		CurrentPage:  currentPage,
 	}
 }
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}

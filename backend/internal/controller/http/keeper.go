@@ -29,9 +29,7 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	currentCoreKeepers := coreKeepers[*coreParams.Offset:min(*coreParams.Offset+*coreParams.Limit, totalKeepers)]
 	responseKeepers := fiber.Map{
 		"meta": generatePaginationMeta(totalKeepers, params.Offset, params.Limit),
-		"data": Map(currentCoreKeepers, func(k core.Keepers) keeper.KeepersResponse {
-			return keeper.FromCoreKeeperReview(k)
-		}),
+		"data": Map(currentCoreKeepers, keeper.FromCoreKeeperReview),
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(responseKeepers))
@@ -44,7 +42,7 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	k, err := r.keeperService.GetByID(ctx.UserContext(), int(id))
+	k, err := r.keeperService.GetByID(ctx.UserContext(), id)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		if errors.Is(err, core.ErrRecordNotFound) {
@@ -64,12 +62,12 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	userId, err := getIDFromToken(ctx)
+	userID, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}
-	newKeeper.UserID = userId
+	newKeeper.UserID = userID
 
 	// create keeper
 	k := newKeeper.ToCoreNewKeeper()
@@ -97,7 +95,7 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	updateKeeper.ID = int(id)
+	updateKeeper.ID = id
 
 	// update
 	if err := r.keeperService.UpdateByID(ctx.UserContext(), updateKeeper.ToCoreUpdatedKeeper()); err != nil {
@@ -120,7 +118,7 @@ func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 	}
 
 	// delete
-	if err := r.keeperService.DeleteByID(ctx.UserContext(), int(id)); err != nil {
+	if err := r.keeperService.DeleteByID(ctx.UserContext(), id); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))

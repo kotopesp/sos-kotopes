@@ -3,9 +3,7 @@ package validator
 import (
 	"context"
 	"errors"
-	"reflect"
 	"regexp"
-	"strings"
 
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
@@ -17,6 +15,7 @@ var (
 	digit          = regexp.MustCompile(`\d`).MatchString
 	alphaNum       = regexp.MustCompile(`^[a-zA-Z0-9]*$`).MatchString
 	numericNatural = regexp.MustCompile(`^[1-9]\d*$`).MatchString
+	notBlank       = regexp.MustCompile(`.*\S+.*`).MatchString
 )
 
 // custom validator tags
@@ -46,18 +45,7 @@ func customValidationOptions(ctx context.Context, validator *validatorPkg.Valida
 		logger.Log().Fatal(ctx, err.Error())
 	}
 	err = validator.RegisterValidation("notblank", func(fl validatorPkg.FieldLevel) bool {
-		field := fl.Field()
-
-		switch field.Kind() {
-		case reflect.String:
-			return len(strings.TrimSpace(field.String())) > 0
-		case reflect.Chan, reflect.Map, reflect.Slice, reflect.Array:
-			return field.Len() > 0
-		case reflect.Ptr, reflect.Interface, reflect.Func:
-			return !field.IsNil()
-		default:
-			return field.IsValid() && field.Interface() != reflect.Zero(field.Type()).Interface()
-		}
+		return notBlank(fl.Field().String())
 	})
 	if err != nil {
 		logger.Log().Fatal(ctx, err.Error())
