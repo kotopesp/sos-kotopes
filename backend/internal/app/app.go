@@ -7,8 +7,8 @@ import (
 	"syscall"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	keeperServiceImp "github.com/kotopesp/sos-kotopes/internal/service/keeper"
-	keeperReviewsServiceImp "github.com/kotopesp/sos-kotopes/internal/service/keeper_review"
+	keeperservice "github.com/kotopesp/sos-kotopes/internal/service/keeper"
+	keeperreviewsservice "github.com/kotopesp/sos-kotopes/internal/service/keeper_review"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -19,8 +19,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/kotopesp/sos-kotopes/internal/store/entity"
-	keeperStoreImp "github.com/kotopesp/sos-kotopes/internal/store/keeper"
-	keeperReviewsStoreImp "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
+	keeperstore "github.com/kotopesp/sos-kotopes/internal/store/keeper"
+	keeperreviewsstore "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
@@ -45,13 +45,13 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	entityStore := entity.New(pg)
-	keepersStore := keeperStoreImp.New(pg)
-	keeperReviewsStore := keeperReviewsStoreImp.New(pg)
+	keepersStore := keeperstore.New(pg)
+	keeperReviewsStore := keeperreviewsstore.New(pg)
 	userStore := user.New(pg)
 	// Services
 	entityService := name.New(entityStore)
-	keeperService := keeperServiceImp.New(keepersStore)
-	keeperReviewsService := keeperReviewsServiceImp.New(keeperReviewsStore)
+	keeperService := keeperservice.New(keepersStore)
+	keeperReviewsService := keeperreviewsservice.New(keeperReviewsStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
