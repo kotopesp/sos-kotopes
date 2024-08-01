@@ -57,3 +57,15 @@ func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.Keepers {
 		Location:    k.Location,
 	}
 }
+
+func FromCoreKeeperReview(coreKeeper core.Keepers) KeepersResponse {
+	return KeepersResponse{
+		ID:          coreKeeper.ID,
+		UserID:      coreKeeper.UserID,
+		Description: coreKeeper.Description,
+		Price:       coreKeeper.Price,
+		Location:    coreKeeper.Location,
+		CreatedAt:   coreKeeper.CreatedAt,
+		UpdatedAt:   coreKeeper.UpdatedAt,
+	}
+}

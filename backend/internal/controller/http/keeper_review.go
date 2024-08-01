@@ -24,18 +24,8 @@ func (r *Router) getKeeperReviews(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(Map(reviews, func(review core.KeeperReviews) keeperreview.KeeperReviews {
-		return keeperreview.KeeperReviews{
-			ID:        review.ID,
-			AuthorID:  review.AuthorID,
-			Content:   review.Content,
-			Grade:     review.Grade,
-			KeeperID:  review.KeeperID,
-			IsDeleted: review.IsDeleted,
-			DeletedAt: review.DeletedAt,
-			CreatedAt: review.CreatedAt,
-			UpdatedAt: review.UpdatedAt,
-		}
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(Map(reviews, func(review core.KeeperReviews) keeperreview.KeeperReviewsResponse {
+		return keeperreview.FromCoreKeeperReview(review)
 	})))
 }
 
@@ -62,17 +52,7 @@ func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(keeperreview.KeeperReviews{
-		ID:        coreReview.ID,
-		AuthorID:  coreReview.AuthorID,
-		Content:   coreReview.Content,
-		Grade:     coreReview.Grade,
-		KeeperID:  coreReview.KeeperID,
-		IsDeleted: coreReview.IsDeleted,
-		DeletedAt: coreReview.DeletedAt,
-		CreatedAt: coreReview.CreatedAt,
-		UpdatedAt: coreReview.UpdatedAt,
-	}))
+	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(keeperreview.FromCoreKeeperReview(coreReview)))
 }
 
 func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {

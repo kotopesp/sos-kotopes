@@ -29,6 +29,18 @@ type KeeperReviewsUpdate struct {
 	Grade   int    `json:"grade" validate:"numeric,min=1,max=5"`
 }
 
+// KeeperReviewsResponse represents the data to send keeper review back to client.
+type KeeperReviewsResponse struct {
+	ID        int       `json:"id"`
+	AuthorID  int       `json:"author_id" validate:"required,min=0"`
+	Content   string    `json:"content" validate:"required,notblank,max=2000"`
+	Grade     int       `json:"grade" validate:"required,numeric,min=1,max=5"`
+	KeeperID  int       `json:"keeper_id" validate:"required,min=0"`
+	DeletedAt time.Time `json:"deleted_at"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 // GetAllKeeperReviewsParams represents the query parameters for fetching multiple keeper reviews.
 type GetAllKeeperReviewsParams struct {
 	Limit  int `query:"limit" validate:"omitempty,gt=0"`

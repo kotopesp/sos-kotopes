@@ -29,16 +29,8 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	currentCoreKeepers := coreKeepers[*coreParams.Offset:min(*coreParams.Offset+*coreParams.Limit, totalKeepers)]
 	responseKeepers := fiber.Map{
 		"meta": generatePaginationMeta(totalKeepers, params.Offset, params.Limit),
-		"data": Map(currentCoreKeepers, func(k core.Keepers) keeper.Keepers {
-			return keeper.Keepers{
-				ID:          k.ID,
-				UserID:      k.UserID,
-				Description: k.Description,
-				Price:       k.Price,
-				Location:    k.Location,
-				CreatedAt:   k.CreatedAt,
-				UpdatedAt:   k.UpdatedAt,
-			}
+		"data": Map(currentCoreKeepers, func(k core.Keepers) keeper.KeepersResponse {
+			return keeper.FromCoreKeeperReview(k)
 		}),
 	}
 
@@ -61,15 +53,7 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.Keepers{
-		ID:          k.ID,
-		UserID:      k.UserID,
-		Description: k.Description,
-		Price:       k.Price,
-		Location:    k.Location,
-		CreatedAt:   k.CreatedAt,
-		UpdatedAt:   k.UpdatedAt,
-	}))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.FromCoreKeeperReview(k)))
 }
 
 func (r *Router) createKeeper(ctx *fiber.Ctx) error {
@@ -94,15 +78,7 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(keeper.Keepers{
-		ID:          k.ID,
-		UserID:      k.UserID,
-		Description: k.Description,
-		Price:       k.Price,
-		Location:    k.Location,
-		CreatedAt:   k.CreatedAt,
-		UpdatedAt:   k.UpdatedAt,
-	}))
+	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(keeper.FromCoreKeeperReview(k)))
 }
 
 func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {

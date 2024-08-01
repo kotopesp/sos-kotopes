@@ -21,3 +21,16 @@ func (k *KeeperReviewsCreate) ToCoreNewKeeperReview() core.KeeperReviews {
 		KeeperID: k.KeeperID,
 	}
 }
+
+func FromCoreKeeperReview(coreReview core.KeeperReviews) KeeperReviewsResponse {
+	return KeeperReviewsResponse{
+		ID:        coreReview.ID,
+		AuthorID:  coreReview.AuthorID,
+		Content:   coreReview.Content,
+		Grade:     coreReview.Grade,
+		KeeperID:  coreReview.KeeperID,
+		DeletedAt: coreReview.DeletedAt,
+		CreatedAt: coreReview.CreatedAt,
+		UpdatedAt: coreReview.UpdatedAt,
+	}
+}

@@ -29,6 +29,17 @@ type KeepersUpdate struct {
 	Location    string  `json:"location"`
 }
 
+// KeepersResponse represents the response keeper entity.
+type KeepersResponse struct {
+	ID          int       `json:"id"`
+	UserID      int       `json:"user_id"`
+	Description string    `json:"description" validate:"required,notblank,max=600"`
+	Price       float64   `json:"price" validate:"min=0"`
+	Location    string    `json:"location" validate:"required"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
 // GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
 type GetAllKeepersParams struct {
 	Sort      string  `query:"sort" validate:"omitempty"`
