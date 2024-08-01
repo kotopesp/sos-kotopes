@@ -105,7 +105,7 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(updateReview))
+	return ctx.SendStatus(fiber.StatusOK)
 }
 
 func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {

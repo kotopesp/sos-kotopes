@@ -133,7 +133,7 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(updateKeeper))
+	return ctx.SendStatus(fiber.StatusOK)
 }
 
 func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
