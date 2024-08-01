@@ -110,7 +110,7 @@ func TestLoginBasic(t *testing.T) {
 				assert.Equal(t, tt.mockRetUser.Username, *username)
 				assert.Equal(t, tt.mockRetUser.ID, id)
 
-				id, username, err = validateToken(*refreshToken)
+				id, _, err = validateToken(*refreshToken)
 				assert.ErrorIs(t, err, nil)
 				assert.Equal(t, tt.mockRetUser.ID, id)
 			}

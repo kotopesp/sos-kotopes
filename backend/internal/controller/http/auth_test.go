@@ -28,6 +28,10 @@ type TestValidationErrorResponse struct {
 	} `json:"data"`
 }
 
+func stringPtr(s string) *string {
+	return &s
+}
+
 func TestLoginBasic(t *testing.T) {
 	app, dependencies := newTestApp(t)
 
@@ -198,7 +202,10 @@ func TestLoginBasic(t *testing.T) {
 			_ = mp.WriteField("username", tt.mockArgUser.Username)
 			_ = mp.WriteField("password", tt.mockArgUser.Password)
 
-			mp.Close()
+			err := mp.Close()
+			if err != nil {
+				t.Fatal(err)
+			}
 
 			// request
 			req := httptest.NewRequest(http.MethodPost, route, reqBody)
@@ -437,7 +444,10 @@ func TestSignup(t *testing.T) {
 				_ = mp.WriteField("description", *tt.mockArgUser.Description)
 			}
 
-			mp.Close()
+			err := mp.Close()
+			if err != nil {
+				t.Fatal(err.Error())
+			}
 
 			// request
 			req := httptest.NewRequest(http.MethodPost, route, reqBody)
@@ -463,11 +473,6 @@ func TestRefresh(t *testing.T) {
 	const route = "/api/v1/auth/token/refresh"
 
 	var (
-		correctRefreshToken1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MX0.tjVEMiS5O2yNzclwLdaZ-FuzrhyqOT7UwM9Hfc0ZQ8Q"
-		correctRefreshToken2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mn0.-ScBrpAXat0bA0Q-kJnL7xnst1-dd_SsIzseTUPT2wE"
-		invalidRefreshToken1 = "invalid token"
-		invalidRefreshToken2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwMH0.sgK75UAPVpqB8iQG3wNw2zlevle3OiOkpqWJLcHAllA"
-
 		userID1 = 1
 		userID2 = 2
 	)
@@ -482,26 +487,26 @@ func TestRefresh(t *testing.T) {
 	}{
 		{
 			name:               "success",
-			cookieRefreshToken: &correctRefreshToken1,
+			cookieRefreshToken: stringPtr("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MX0.tjVEMiS5O2yNzclwLdaZ-FuzrhyqOT7UwM9Hfc0ZQ8Q"),
 			mockUserID:         &userID1,
 			mockRetAccessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAifQ.Tn0GaHKhAZZB9Y3fZwP4QDG-yvjUXMx3dzAbLKjCX9M",
 			wantCode:           http.StatusOK,
 		},
 		{
 			name:               "invalid refresh token",
-			cookieRefreshToken: &invalidRefreshToken1,
+			cookieRefreshToken: stringPtr("invalid token"),
 			wantCode:           http.StatusUnauthorized,
 		},
 		{
 			name:               "internal server error",
-			cookieRefreshToken: &correctRefreshToken2,
+			cookieRefreshToken: stringPtr("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mn0.-ScBrpAXat0bA0Q-kJnL7xnst1-dd_SsIzseTUPT2wE"),
 			mockUserID:         &userID2,
 			mockRetError:       errors.New("internal server error"),
 			wantCode:           http.StatusInternalServerError,
 		},
 		{
 			name:               "invalid refresh token (invalid id but correct sign)",
-			cookieRefreshToken: &invalidRefreshToken2,
+			cookieRefreshToken: stringPtr("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwMH0.sgK75UAPVpqB8iQG3wNw2zlevle3OiOkpqWJLcHAllA"),
 			wantCode:           http.StatusInternalServerError,
 		},
 	}
@@ -512,7 +517,7 @@ func TestRefresh(t *testing.T) {
 				dependencies.authService.On("Refresh", mock.Anything, *tt.mockUserID).Return(&tt.mockRetAccessToken, tt.mockRetError).Once()
 			}
 
-			req := httptest.NewRequest(http.MethodPost, route, nil)
+			req := httptest.NewRequest(http.MethodPost, route, http.NoBody)
 			if tt.cookieRefreshToken != nil {
 				req.AddCookie(&http.Cookie{
 					Name:  "refresh_token",
