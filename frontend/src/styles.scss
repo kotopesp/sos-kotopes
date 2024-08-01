@@ -8,6 +8,7 @@
   --white-color: #FFF;
   --black-color: #000;
   --text-brown-light-color: #443416;
+  --pink-border-color: #EABAB3;
   --yellow-color-bg: #F6DE8A;
   --pink-color-bg: #F5D3B4;
   --purple-color-bg: #E3CFFD;
@@ -28,6 +29,12 @@
   --role-green-color: #2F5955;
 
   --pink-light-color-bg: #FFC4B7;
+
+  --brown-dark-light-color: #352303;
+  --red-brown-color: #2B1800;
+  --purple-color-messages: #221630;
+  --cyan-color-messages: #182C2A;
+
 }
 
 
@@ -60,6 +67,11 @@ body {
   sans-serif;
 }
 
+a,
+button {
+  cursor: pointer;
+}
+
 
 .ft48 {
   font-size: 48px;
@@ -81,6 +93,15 @@ body {
   font-size: 36px;
 }
 
+.ft18 {
+  font-size: 18px;
+}
+
+.ft16 {
+  font-size: 16px;
+
+}
+
 .roboto {
   font-family: "Roboto Slab", sans-serif;
 }
@@ -99,6 +120,10 @@ body {
 
 .fw700 {
   font-weight: 700;
+}
+
+.lh26 {
+  line-height: 26px;
 }
 
 .lh52 {
