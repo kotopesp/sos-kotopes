@@ -98,7 +98,10 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 		Content: updateReview.Content,
 		Grade:   updateReview.Grade,
 	}); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		}
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
