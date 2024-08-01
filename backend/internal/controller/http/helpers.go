@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -81,4 +82,24 @@ func Map[T, V any](ts []T, fn func(T) V) []V {
 		result[i] = fn(t)
 	}
 	return result
+}
+
+func generatePaginationMeta(totalItems, itemsPerPage, currentOffset int) pagination.PaginationMeta {
+	totalPages := (totalItems + itemsPerPage - 1) / itemsPerPage
+	currentPage := (currentOffset / itemsPerPage) + 1
+
+	return pagination.PaginationMeta{
+		TotalItems:   totalItems,
+		ItemCount:    min(itemsPerPage, totalItems-currentOffset),
+		ItemsPerPage: itemsPerPage,
+		TotalPages:   totalPages,
+		CurrentPage:  currentPage,
+	}
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
