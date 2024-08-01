@@ -1,0 +1,147 @@
+/* You can add global styles to this file, and also import other style files */
+@import "fonts";
+
+:root {
+  --brown-main-color: #21190B;
+  --brown-light-color: #4B432A;
+  --brown-button-color: #352B1A;
+  --white-color: #FFF;
+  --black-color: #000;
+  --text-brown-light-color: #443416;
+  --pink-border-color: #EABAB3;
+  --yellow-color-bg: #F6DE8A;
+  --pink-color-bg: #F5D3B4;
+  --purple-color-bg: #E3CFFD;
+  --green-color-bg: #86C8C0;
+  --blue-color-bg: #79B0E3;
+  --brown-bg-color: #312611;
+  --brown-hover-color: #503E00;
+  --red-hover-color: #5A2B00;
+  --red-color-button: #8A372699;
+  --orange-color-button: #916943;
+  --green-color-button: #467430;
+  --brown-ads-color: #2C2210;
+  --gray-color-button: #4E4E4E;
+  --gray-text-tag: #5D5D5D;
+  --brown-dark-light-color: #352303;
+  --red-brown-color: #2B1800;
+  --purple-color-messages: #221630;
+  --cyan-color-messages: #182C2A;
+}
+
+
+*,
+*:before,
+*:after {
+  color: var(--white-color);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+}
+
+body {
+  opacity: 0;
+  animation: ani 2.5s forwards;
+
+  @keyframes ani {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  font-family: "PT Sans Caption Regular", sans-serif;
+}
+
+a, button {
+  cursor: pointer;
+}
+
+
+.ft48 {
+  font-size: 48px;
+}
+
+.ft40 {
+  font-size: 40px;
+}
+
+.ft20 {
+  font-size: 20px;
+}
+
+.ft24 {
+  font-size: 24px;
+}
+
+.ft18 {
+  font-size: 18px;
+}
+
+.ft16 {
+  font-size: 16px;
+}
+
+.roboto {
+  font-family: "Roboto Slab", sans-serif;
+}
+
+.ptbold {
+  font-family: "PT Sans Caption Bold", sans-serif;
+}
+
+.fw400 {
+  font-weight: 400;
+}
+
+.fw600 {
+  font-weight: 600;
+}
+
+.fw700 {
+  font-weight: 700;
+}
+
+.lh26 {
+  line-height: 26px;
+}
+
+.lh52 {
+  line-height: 52px;
+}
+
+.yellow-color {
+  background: var(--yellow-color-bg);
+  color: var(--yellow-color-bg)
+}
+
+.pink-color {
+  background: var(--pink-color-bg);
+  color: var(--pink-color-bg)
+}
+
+.purple-color {
+  background: var(--purple-color-bg);
+  color: var(--purple-color-bg)
+}
+
+.green-color {
+  background: var(--green-color-bg);
+  color: var(--green-color-bg)
+}
+
+.blue-color {
+  background: var(--blue-color-bg);
+  color: var(--blue-color-bg)
+}
+
+.user_tag {
+  color: var(--gray-text-tag);
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+}
+

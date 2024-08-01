@@ -1,0 +1,142 @@
+.block__auth__overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .auth__overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 40px 40px 20px 20px;
+    width: 413px;
+    height: 806px;
+    background: var(--brown-main-color);
+
+    .title__and__close {
+      width: 100%;
+      height: 242px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-image: url(/assets/images/steps-profile.svg);
+
+      .close__cross {
+        width: 100%;
+        display: flex;
+        justify-content: end;
+        padding-right: 20px;
+        cursor: pointer;
+      }
+
+      .title__login {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        row-gap: 20px;
+
+        .login__to__account {
+          color: rgba(255, 255, 255, 0.6);
+        }
+      }
+    }
+
+    .block__login__and__password {
+      background: var(--brown-ads-color);
+      width: 413px;
+      height: 479px;
+      display: grid;
+      align-items: center;
+      padding: 40px 40px 40px 45px;
+
+      .block__password {
+        position: relative;
+
+        .password__eye {
+          position: absolute;
+          right: 12px;
+          background: none;
+          border: none;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+        }
+
+        .password__eye__line {
+          position: absolute;
+          width: 25px;
+          right: -1px;
+          top: 40%;
+          border-bottom: 2px solid var(--white-color);
+          transform: translateY(-50%) rotate(45deg);
+        }
+      }
+
+      .password__info {
+        display: flex;
+        gap: 10px;
+
+        .wrong_password {
+          gap: 5px;
+          color: var(--red-color-button);
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      .registration__link {
+        color: var(--yellow-color-bg);
+      }
+
+      #forgot__pass {
+        color: rgba(255, 255, 255, 0.2);
+        margin-bottom: 30px;
+
+        &:hover {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+          width: fit-content;
+        }
+      }
+
+      .input__text {
+        width: 333px;
+        height: 46px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 10px;
+        padding: 10px;
+      }
+
+      .image__login__with__VK {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    .block__log-in__button {
+      height: 118px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url(/assets/images/steps-profile.svg);
+
+      #button__login {
+        width: 333px;
+        height: 54px;
+        background: var(--white-color);
+        border-radius: 10px;
+        color: var(--brown-ads-color);
+        background-image: url(/assets/images/steps-profile.svg);
+      }
+    }
+  }
+}
+

@@ -1,0 +1,29 @@
+.main__ads {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  min-height: 180vh;
+  height: fit-content;
+
+  main__ads:after {
+    background: url(../../../../public/assets/images/ads-bg-steps.png) repeat;
+    opacity: 0.12;
+  }
+
+
+  .left__list {
+    width: 100%;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    row-gap: 40px;
+    border-right: 5px solid var(--black-color)
+  }
+
+  .main_menu_ads {
+    .ads {
+      height: fit-content;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
