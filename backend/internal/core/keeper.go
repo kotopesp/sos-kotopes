@@ -10,7 +10,7 @@ type Keepers struct {
 	UserID      int       `gorm:"column:user_id"`
 	Description string    `gorm:"column:description"`
 	Price       float64   `gorm:"column:price"`
-	Location    string    `gorm:"type:varchar(100);column:location"`
+	Location    string    `gorm:"column:location"`
 	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
 }
