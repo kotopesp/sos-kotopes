@@ -60,16 +60,15 @@ func (r *Router) initRoutes() {
 
 	// posts
 	v1.Get("/posts", r.getPosts)
-	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavoritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
+	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
 	v1.Get("/posts/:id", r.getPostByID)
 	v1.Post("/posts", r.protectedMiddleware(), r.createPost)
-	v1.Patch("/posts/:id", r.updatePost)
-	v1.Delete("/posts/:id", r.deletePost)
+	v1.Patch("/posts/:id", r.protectedMiddleware(), r.updatePost)
+	v1.Delete("/posts/:id", r.protectedMiddleware(), r.deletePost)
 
-	// favorites posts
-	v1.Get("/posts/favourites/:id", r.protectedMiddleware(), r.getFavoritePostUserAndPostByID)
-	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavoritePost)
-	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavoritePostByID)
+	// favourites posts
+	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
+	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

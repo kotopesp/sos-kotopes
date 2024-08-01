@@ -2,57 +2,62 @@ package post
 
 import (
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	modelAnimal "github.com/kotopesp/sos-kotopes/internal/controller/http/model/animal"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
-func ToSplitPostAndAnimal(p CreateRequestBodyPost) (Post, modelAnimal.Animal) {
-	post := Post{
-		Title:   p.Title,
-		Content: p.Content,
-		Photo:   p.Photo,
-	}
-
-	animal := modelAnimal.Animal{
-		AnimalType: p.AnimalType,
-		Age:        p.Age,
-		Color:      p.Color,
-		Gender:     p.Gender,
-		Description: p.Description,
-		Status:     p.Status,
-	}
-	return post, animal
-}
-
-func ToCorePostDetails(p *CreateRequestBodyPost, authorID int) core.PostDetails {
+// ToCorePostDetails converts CreateRequestBodyPost from model to core.PostDetails
+func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails {
 	if (p == nil) {
 		return core.PostDetails{}
 	}
 
-	post, animal := ToSplitPostAndAnimal(*p)
+	post := core.Post{
+		Title:    p.Title,
+		Content:  p.Content,
+		Photo:    p.Photo,
+		AuthorID: authorID,
+	}
+
+	animal := core.Animal{
+		KeeperID:    authorID,
+		AnimalType:  p.AnimalType,
+		Age:         p.Age,
+		Color:       p.Color,
+		Gender:      p.Gender,
+		Description: p.Description,
+		Status:      p.Status,
+	}
+
 	return core.PostDetails{
-		Post: ToCorePost(&post, authorID),
-		Animal: modelAnimal.ToCoreAnimal(&animal, authorID), 
+		Post: 	post,
+		Animal: animal, 
 	}
 }
 
-func ToCorePost(post *Post, authorID int) core.Post {
-	if (post == nil) {
-		return core.Post{}
+func (p *UpdateRequestBodyPost) ToCorePostDetails() core.UpdateRequestBodyPost {
+	if (p == nil) {
+		return core.UpdateRequestBodyPost{}
 	}
-	return core.Post{
-		Title:     post.Title,
-		Content:   post.Content,
-		Photo:     post.Photo,
-		AuthorID:  authorID,
+
+	return core.UpdateRequestBodyPost{
+		Title:       p.Title,
+		Content:     p.Content,
+		Photo:       p.Photo,
+		AnimalType:  p.AnimalType,
+		Age:         p.Age,
+		Color:       p.Color,
+		Gender:      p.Gender,
+		Description: p.Description,
+		Status:      p.Status, 
 	}
 }
 
+// ToResponse converts a list of core.PostDetails to Response with pagination meta
 func ToResponse(meta pagination.Pagination, posts []core.PostDetails) Response {
 	res := make([]PostResponse, len(posts))
 
 	for i, post := range posts {
-		res[i] = ToPostPesponse(post)
+		res[i] = ToPostResponse(post)
 	}
 
 	return Response{
@@ -61,7 +66,8 @@ func ToResponse(meta pagination.Pagination, posts []core.PostDetails) Response {
 	}
 }
 
-func ToPostPesponse(post core.PostDetails) PostResponse {
+// ToPostResponse converts core.PostDetails to PostResponse
+func ToPostResponse(post core.PostDetails) PostResponse {
 	return PostResponse{
 		Title:          post.Post.Title,
 		Content:        post.Post.Content,
@@ -74,10 +80,12 @@ func ToPostPesponse(post core.PostDetails) PostResponse {
 		Description: 	post.Animal.Description,
 		Status:      	post.Animal.Status,
 		Photo:          post.Post.Photo,
+		IsFavourite:    false,
 		Comments:       0,
 	}
 }
 
+// ToCorePostFavourite converts user ID and post ID to core.PostFavourite
 func ToCorePostFavourite(userID, postID int) core.PostFavourite {
 	return core.PostFavourite{
 		UserID: userID,
@@ -85,68 +93,7 @@ func ToCorePostFavourite(userID, postID int) core.PostFavourite {
 	}
 }
 
-func ToSplitUpdateRequestBodyPost(updateRequestPost UpdateRequestBodyPost) (UpdatePost,  modelAnimal.UpdateAnimal) {
-
-	post := UpdatePost{
-		Title:   updateRequestPost.Title,
-		Content: updateRequestPost.Content,
-		Photo:   updateRequestPost.Photo,
-	}
-
-	animal := modelAnimal.UpdateAnimal{
-		AnimalType: updateRequestPost.AnimalType,
-		Age:        updateRequestPost.Age,
-		Color:      updateRequestPost.Color,
-		Gender:     updateRequestPost.Gender,
-		Description: updateRequestPost.Description,
-		Status:     updateRequestPost.Status,
-	}
-
-	return post, animal
-}
-
-func FuncUpdateRequestBodyPost(postDetails core.PostDetails, updateRequestPost UpdateRequestBodyPost) core.PostDetails {
-	updatePost, updateAnimal := ToSplitUpdateRequestBodyPost(updateRequestPost)
-
-	if updatePost.Title != nil {
-		postDetails.Post.Title = *updatePost.Title
-	}
-
-	if updatePost.Content != nil {
-		postDetails.Post.Content = *updatePost.Content
-	}
-
-	if updatePost.Photo != nil {
-		postDetails.Post.Photo = *updatePost.Photo
-	}
-
-	if updateAnimal.AnimalType != nil {
-		postDetails.Animal.AnimalType = *updateAnimal.AnimalType
-	}
-
-	if updateAnimal.Age != nil {
-		postDetails.Animal.Age = *updateAnimal.Age
-	}
-
-	if updateAnimal.Color != nil {
-		postDetails.Animal.Color = *updateAnimal.Color
-	}
-
-	if updateAnimal.Gender != nil {
-		postDetails.Animal.Gender = *updateAnimal.Gender
-	}
-
-	if updateAnimal.Description != nil {
-		postDetails.Animal.Description = *updateAnimal.Description
-	}
-
-	if updateAnimal.Status != nil {
-		postDetails.Animal.Status = *updateAnimal.Status
-	}
-
-	return postDetails
-}
-
+// ToCoreGetAllPostsParams converts GetAllPostsParams from model to core.GetAllPostsParams
 func (p *GetAllPostsParams) ToCoreGetAllPostsParams() core.GetAllPostsParams{
 	if p == nil {
 		return core.GetAllPostsParams{}

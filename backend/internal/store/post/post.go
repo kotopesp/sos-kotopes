@@ -19,7 +19,7 @@ func New(pg *postgres.Postgres) core.PostStore {
 	return &store{pg}
 }
 
-
+// GetAllPosts retrieves all posts from the database based on the GetAllPostsParams
 func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.Post, int, error) {
     var posts []core.Post
 
@@ -27,6 +27,7 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 			Joins("JOIN animals ON posts.animal_id = animals.id").
 			Where("posts.is_deleted = ?", false)
 
+	// Apply filtering based on the GetAllPostsParams
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)
 	}
@@ -58,10 +59,6 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
     }
 
     if err := query.Select("posts.*").Find(&posts).Error; err != nil {
-		if errors.Is(err, core.ErrRecordNotFound) {
-			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return nil, 0, core.ErrPostNotFound
-		}
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
     }
@@ -69,6 +66,7 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
     return posts, int(total), nil
 }
 
+// GetPostByID retrieves a post from the database by its ID
 func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 	var post core.Post
 
@@ -85,6 +83,7 @@ func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 	return post, nil
 }
 
+// CreatePost inserts a new post record into the database
 func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	post.CreatedAt = time.Now()
 	post.UpdatedAt = time.Now()
@@ -99,6 +98,7 @@ func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, erro
 	return createdPost, nil
 }
 
+// UpdatePost updates an existing post record in the database
 func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	post.UpdatedAt = time.Now()
 
@@ -117,6 +117,7 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 	return updatedPost, nil
 }
 
+// DeletePost marks a post as deleted in the database by updating the is_deleted flag and setting the deleted_at timestamp
 func (s *store) DeletePost(ctx context.Context, id int) error{
 	updates := map[string]interface{}{
         "is_deleted": true,

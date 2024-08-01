@@ -10,6 +10,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
+// getPosts handles the request to get all posts with optional filters
  func (r *Router) getPosts(ctx *fiber.Ctx) error {
     var getAllPostsParams postModel.GetAllPostsParams
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
@@ -23,9 +24,9 @@ import (
 
     postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), coreGetAllPostsParams)
     if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+		if errors.Is(err, core.ErrAnimalNotFound) {
+			logger.Log().Error(ctx.UserContext(), core.ErrAnimalNotFound.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrAnimalNotFound.Error()))
 		}
         logger.Log().Error(ctx.UserContext(), err.Error())
         return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -38,6 +39,7 @@ import (
     return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
+// getPostByID handles the request to get a single post by its ID
 func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
@@ -47,19 +49,24 @@ func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 
 	postDetails, err := r.postService.GetPostByID(ctx.UserContext(), id)
 	if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+		switch err {
+			case core.ErrPostNotFound:
+				logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
+				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+			case core.ErrAnimalNotFound:
+				logger.Log().Error(ctx.UserContext(), core.ErrAnimalNotFound.Error())
+				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrAnimalNotFound.Error()))
 		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	postResponse := postModel.ToPostPesponse(postDetails)
+	postResponse := postModel.ToPostResponse(postDetails)
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(postResponse))
 }
 
+// createPost handles the request to create a new post
 func (r *Router) createPost(ctx *fiber.Ctx) error {
 	var postRequest  postModel.CreateRequestBodyPost
 
@@ -77,23 +84,36 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 
 	fileHeader, err := ctx.FormFile("photo") // TODO: check if photo = picture and check size
 	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrPhotoRequired.Error()))
-	}
-
-	corePostDetails := postModel.ToCorePostDetails(&postRequest, authorID)
-
-	postDetails, err := r.postService.CreatePost(ctx.UserContext(), corePostDetails, fileHeader)
-	if err != nil {
+		switch err {
+			case core.ErrFailedToOpenImage:
+				logger.Log().Error(ctx.UserContext(), core.ErrFailedToOpenImage.Error())
+				return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrFailedToOpenImage.Error()))
+			case core.ErrFailedToReadImage:
+				logger.Log().Error(ctx.UserContext(), core.ErrFailedToReadImage.Error())
+				return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrFailedToReadImage.Error()))
+		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	postResponse := postModel.ToPostPesponse(postDetails)
+	corePostDetails := postRequest.ToCorePostDetails(authorID) 
+
+	postDetails, err := r.postService.CreatePost(ctx.UserContext(), corePostDetails, fileHeader)
+	if err != nil {
+		if errors.Is(err, core.ErrNoSuchUser) {
+			logger.Log().Error(ctx.UserContext(), core.ErrNoSuchUser.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrNoSuchUser.Error()))
+		}
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	postResponse := postModel.ToPostResponse(postDetails)
 
 	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(postResponse))
 }
 
+// updatePost handles the request to update an existing post
 func (r *Router) updatePost(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
@@ -109,33 +129,28 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	postDetails, err := r.postService.GetPostByID(ctx.UserContext(), id)
-    if err != nil {
-        if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), err.Error())
-            return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
-        }
-		logger.Log().Error(ctx.UserContext(), err.Error())
-        return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-    }
+	coreUpdateRequestPost := updateRequestPost.ToCorePostDetails()
 
-    postDetails = postModel.FuncUpdateRequestBodyPost(postDetails, updateRequestPost)
-
-	postDetails, err = r.postService.UpdatePost(ctx.UserContext(), postDetails)
+	postDetails, err := r.postService.UpdatePost(ctx.UserContext(), id, coreUpdateRequestPost)
 	if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+		switch err {
+			case core.ErrPostNotFound:
+				logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
+				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+			case core.ErrAnimalNotFound:
+				logger.Log().Error(ctx.UserContext(), core.ErrAnimalNotFound.Error())
+				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrAnimalNotFound.Error()))
 		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	postResponse := postModel.ToPostPesponse(postDetails)
+	postResponse := postModel.ToPostResponse(postDetails)
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(postResponse))
 }
 
+// deletePost handles the request to delete a post by its ID
 func (r *Router) deletePost(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {

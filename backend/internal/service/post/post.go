@@ -18,6 +18,7 @@ type (
 	}
 )
 
+// New initializes a new instance of postService
 func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, animalStore core.AnimalStore, userStore core.UserStore) core.PostService {
 	return &postService{
 		postStore: 			postStore,
@@ -27,6 +28,7 @@ func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, a
 	}
 }
 
+// GetAllPosts retrieves all posts with the given parameters
 func (s *postService) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
 
 	posts, total, err := s.postStore.GetAllPosts(ctx, params)
@@ -35,29 +37,16 @@ func (s *postService) GetAllPosts(ctx context.Context, params core.GetAllPostsPa
 		return nil, 0, err
 	}
 
-	postDetails := make([]core.PostDetails, total)
-	for i, post := range posts {
-		animal, err := s.animalStore.GetAnimalByID(ctx, post.AnimalID)
-		if err != nil {
-			logger.Log().Error(ctx, err.Error())
-			return nil, 0, err
-		}
-		user, err := s.userStore.GetUserByID(ctx, post.AuthorID)
-		if err != nil {
-			logger.Log().Error(ctx, err.Error())
-			return nil, 0, err
-		}
-
-		postDetails[i] = core.PostDetails{
-			Post: post,
-			Animal: animal,
-			Username: user.Username,
-		}
+	postDetails, err := s.BuildPostDetailsList(ctx, posts, total)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return nil, 0, err
 	}
 
 	return postDetails, total, nil
 }
 
+// GetPostByID retrieves a post by its ID
 func (s *postService) GetPostByID(ctx context.Context, id int) (core.PostDetails, error) {
 	post, err := s.postStore.GetPostByID(ctx, id)
 	if err != nil {
@@ -65,27 +54,16 @@ func (s *postService) GetPostByID(ctx context.Context, id int) (core.PostDetails
 		return core.PostDetails{}, err
 	}
 
-	animal, err := s.animalStore.GetAnimalByID(ctx, post.AnimalID)
+	postDetails, err := s.BuildPostDetails(ctx, post)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
-	}
-
-	user, err := s.userStore.GetUserByID(ctx, post.AuthorID)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.PostDetails{}, err
-	}
-
-	postDetails := core.PostDetails{
-		Post: post,
-		Animal: animal,
-		Username: user.Username,
 	}
 
 	return postDetails, nil
 }
 
+// CreatePost creates a new post with the provided details and photo
 func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetails, fileHeader *multipart.FileHeader) (core.PostDetails, error) {
 	photoBytes, err := http.GetPhotoBytes(fileHeader)
 	if err != nil {
@@ -115,16 +93,21 @@ func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetai
 		return core.PostDetails{}, err
 	}
 
-	var createPostDetails core.PostDetails
-
-	createPostDetails.Post = post
-	createPostDetails.Animal = animal
-	createPostDetails.Username = user.Username
+	createPostDetails := ToCorePostDetails(post, animal, user.Username)
 
 	return createPostDetails, err
 }
 
-func (s *postService) UpdatePost(ctx context.Context, postDetails core.PostDetails) (core.PostDetails, error) {
+// UpdatePost updates an existing post with the provided details
+func (s *postService) UpdatePost(ctx context.Context, id int, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
+	postDetails, err := s.GetPostByID(ctx, id)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.PostDetails{}, err
+	}
+
+	postDetails = FuncUpdateRequestBodyPost(postDetails, postUpdateRequest)
+
 	post, err := s.postStore.UpdatePost(ctx, postDetails.Post)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -145,11 +128,13 @@ func (s *postService) UpdatePost(ctx context.Context, postDetails core.PostDetai
 	return updatePostDetails, nil
 }
 
+// DeletePost deletes a post by its ID
 func (s *postService) DeletePost(ctx context.Context, id int) error {
 	err := s.postStore.DeletePost(ctx, id)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
+	
 	return nil
 }

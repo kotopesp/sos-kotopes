@@ -6,20 +6,21 @@ import (
 )
 
 var (
+	// post errors
     ErrInvalidPostID      		    = errors.New("invalid post ID")
     ErrPostNotFound       		    = errors.New("post not found")
-	ErrInvalidInput        		    = errors.New("invalid input")
-	ErrInvalidAuthorID       		= errors.New("invalid author ID")
-	ErrInvalidAnimalID     		    = errors.New("invalid animal ID")
+	ErrRecordNotFound 				= gorm.ErrRecordNotFound
+
+	// file errors
 	ErrFailedToOpenImage   		    = errors.New("failed to open image")
 	ErrFailedToReadImage  		    = errors.New("failed to read image")
-	ErrPhotoNotFound       		    = errors.New("photo not found")
-	ErrPhotoRequired 	   		    = errors.New("photo is required")
+
+	// user errors
 	ErrFailedToGetAuthorIDFromToken = errors.New("failed to get author ID from token")
-	ErrPostAlreadyInFavorites 	    = errors.New("post already added to favorites")
-	ErrRecordNotFound 				= gorm.ErrRecordNotFound
+
+	// animal errors
 	ErrAnimalNotFound 				= errors.New("animal not found")
-	ErrInvalidUserID 				= errors.New("invalid user ID")
-	ErrUsernameNotFound 			= errors.New("username not found")
-	ErrUserNotFound 				= errors.New("user not found")
+
+	// favourite errors
+	ErrPostAlreadyInFavourites 	    = errors.New("post already added to favourites")
 )

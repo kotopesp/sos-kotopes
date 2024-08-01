@@ -6,12 +6,7 @@ import (
 )
 
 type (
-	Post struct {
-		Title     string `form:"title" json:"title" validate:"required,max=200"`
-		Content   string `form:"content" json:"content" validate:"required,max=2000"`
-		Photo     []byte `form:"photo" json:"photo"`
-	}
-
+	// CreateRequestBodyPost is the structure used for creating a new post
 	CreateRequestBodyPost struct {
 		Title     string   `form:"title" json:"title" validate:"required,max=200"`
 		Content   string   `form:"content" json:"content" validate:"required,max=2000"`
@@ -24,6 +19,7 @@ type (
 		Status      string `form:"status" json:"status" validate:"required"`
 	}
 
+	// PostResponse represents the structure of a post response with additional details
 	PostResponse struct {
 		Title          string   `form:"title" json:"title"`
 		Content        string    `form:"content" json:"content"`
@@ -36,9 +32,11 @@ type (
 		Gender         string 	 `form:"gender" json:"gender"`
 		Description    string 	 `form:"description" json:"description"`
 		Status         string 	 `form:"status" json:"status"`
+		IsFavourite    bool 	 `form:"is_favourite" json:"is_favourite"`
 		Comments       int 		 `form:"comments" json:"comments"`
 	}
 
+	// the structures used for updating an existing post
 	UpdatePost struct {
 		Title   *string `form:"title" json:"title" validate:"max=200"`
 		Content *string `form:"content" json:"content" validate:"max=2000"`
@@ -57,6 +55,7 @@ type (
 		Status      *string `form:"status" json:"status"`
 	}
 
+	// Meta represents metadata about the pagination of posts
 	Meta struct {
 		Total       int `json:"total"`
 		TotalPages  int `json:"total_pages"`
@@ -64,18 +63,20 @@ type (
 		PerPage     int `json:"per_page"`
 	}
 	
+	// Response represents the response structure for a list of posts with pagination
 	Response struct {
 		Meta  pagination.Pagination `json:"meta"`
 		Posts []PostResponse		`json:"posts"`
 	}
 
+	// GetAllPostsParams represents the parameters for fetching a list of posts with filters
 	GetAllPostsParams struct {
-		Limit      int     `query:"limit" validate:"gt=0"`
-		Offset     int     `query:"offset" validate:"gte=0"`
-		Status     *string `query:"status" validate:"omitempty,oneof=lost found need_home"`
-		AnimalType *string `query:"animal_type" validate:"omitempty,oneof=dog cat"`
-		Gender     *string `query:"gender" validate:"omitempty,oneof=male female"`
-		Color      *string `query:"color" validate:"omitempty"`
-		Location   *string `query:"location" validate:"omitempty"`
+		Limit      int     `query:"limit" validate:"gt=0"`								    // Limit on the number of posts to retrieve
+		Offset     int     `query:"offset" validate:"gte=0"`							    // Offset for pagination
+		Status     *string `query:"status" validate:"omitempty,oneof=lost found need_home"` // Filter by status of the associated animal
+		AnimalType *string `query:"animal_type" validate:"omitempty,oneof=dog cat"`         // Filter by type of the associated animal
+		Gender     *string `query:"gender" validate:"omitempty,oneof=male female"`          // Filter by gender of the associated animal
+		Color      *string `query:"color" validate:"omitempty"`								// Filter by color of the associated animal
+		Location   *string `query:"location" validate:"omitempty"`                          // Filter by location of the associated animal
 	}
 )

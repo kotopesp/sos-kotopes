@@ -10,12 +10,8 @@ import (
 
 )
 
-const (
-	PostAddFromFavorites = "Post added to favorites"
-    PostDeletedFromFavorites = "Post deleted from favorites"
-)
-
-func (r *Router) getFavoritePostsUserByID(ctx *fiber.Ctx) error {
+// getFavouritePostsUserByID handles the request to get all favourite posts of the user
+func (r *Router) getFavouritePostsUserByID(ctx *fiber.Ctx) error {
     var getAllPostsParams postModel.GetAllPostsParams
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
 
@@ -24,13 +20,13 @@ func (r *Router) getFavoritePostsUserByID(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-    userID, err := getIDFromToken(ctx) // from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
+    userID, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
 
-    postsDetails, total, err := r.postService.GetFavouritePosts(ctx.UserContext(), userID, getAllPostsParams.Limit, getAllPostsParams.Offset)
+    postsDetails, total, err := r.postService.GetFavouritePosts(ctx.UserContext(), userID) // TODO: add params
     if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
 			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
@@ -47,42 +43,15 @@ func (r *Router) getFavoritePostsUserByID(ctx *fiber.Ctx) error {
     return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
-func (r *Router) getFavoritePostUserAndPostByID(ctx *fiber.Ctx) error {
-	postID, err := ctx.ParamsInt("id")
-	if err != nil {
-        logger.Log().Error(ctx.UserContext(), core.ErrInvalidPostID.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrInvalidPostID.Error()))
-	}
-
-    userID, err := getIDFromToken(ctx) // from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
-	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
-	}
-
-	postDetails, err := r.postService.GetFavouritePostByID(ctx.UserContext(), userID, postID)
-	if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
-		}
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	PostResponse := postModel.ToPostPesponse(postDetails) 
-
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(PostResponse))
-}
-
-func (r *Router) addFavoritePost(ctx *fiber.Ctx) error {
+// addFavouritePost handles the request to add a post to the favourites posts
+func (r *Router) addFavouritePost(ctx *fiber.Ctx) error {
     postID, err := ctx.ParamsInt("id")
     if err != nil {
         logger.Log().Error(ctx.UserContext(), core.ErrInvalidPostID.Error())
         return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrInvalidPostID.Error()))
     }
 
-    userID, err := getIDFromToken(ctx) // from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
+    userID, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
@@ -92,25 +61,30 @@ func (r *Router) addFavoritePost(ctx *fiber.Ctx) error {
 
     err = r.postService.AddToFavourites(ctx.UserContext(), postFavourite)
     if err != nil {
-        if errors.Is(err, core.ErrPostAlreadyInFavorites) {
-            logger.Log().Error(ctx.UserContext(), err.Error())
-            return ctx.Status(fiber.StatusConflict).JSON(model.ErrorResponse(err.Error()))
-        }
+		switch err {
+			case core.ErrPostNotFound:
+				logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
+				return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
+			case core.ErrPostAlreadyInFavourites:
+				logger.Log().Error(ctx.UserContext(), core.ErrPostAlreadyInFavourites.Error())
+				return ctx.Status(fiber.StatusConflict).JSON(model.ErrorResponse(core.ErrPostAlreadyInFavourites.Error()))
+		}
         logger.Log().Error(ctx.UserContext(), err.Error())
         return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
     }
 
-    return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(PostAddFromFavorites))
+    return ctx.SendStatus(fiber.StatusOK)
 }
 
-func (r *Router) deleteFavoritePostByID(ctx *fiber.Ctx) error {
+// deleteFavouritePostByID handles the request to delete a post from the favourites posts by its ID
+func (r *Router) deleteFavouritePostByID(ctx *fiber.Ctx) error {
     postID, err := ctx.ParamsInt("id")
 	if err != nil {
         logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(core.ErrInvalidPostID.Error()))
 	}
 
-	userID, err := getIDFromToken(ctx) // from the file helpers.go method "getIDFromToken(ctx *fiber.Ctx) (id int, err error)"
+	userID, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
@@ -120,11 +94,11 @@ func (r *Router) deleteFavoritePostByID(ctx *fiber.Ctx) error {
 	if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
 			logger.Log().Error(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+			return ctx.SendStatus(fiber.StatusNoContent)
 		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(PostDeletedFromFavorites))
+	return ctx.SendStatus(fiber.StatusNoContent)
 }
