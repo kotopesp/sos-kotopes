@@ -63,13 +63,13 @@ func (r *Router) initRoutes() {
 	// keepers
 	v1.Get("/keepers", r.getKeepers)
 	v1.Get("/keepers/:id", r.getKeeperByID)
-	v1.Post("/keepers", r.createKeeper)
+	v1.Post("/keepers", r.protectedMiddleware(), r.createKeeper)
 	v1.Put("/keepers/:id", r.updateKeeperByID)
 	v1.Delete("/keepers/:id", r.deleteKeeperByID)
 
 	// keeper reviews
 	v1.Get("/keepers/:id/keeper_reviews", r.getKeeperReviews)
-	v1.Post("/keepers/:id/keeper_reviews", r.createKeeperReview)
+	v1.Post("/keepers/:id/keeper_reviews", r.protectedMiddleware(), r.createKeeperReview)
 	v1.Put("/keeper_reviews/:id", r.updateKeeperReview)
 	v1.Delete("/keeper_reviews/:id", r.deleteKeeperReview)
 }
