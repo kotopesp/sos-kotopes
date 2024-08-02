@@ -14,6 +14,6 @@ import {RegisterOverlayComponent} from "../register-overlay/register-overlay.com
 })
 export class AuthOverlayComponent {
   @Input() isAuthOverlay: any;
-  passwordValid: boolean = true;
+  passwordValid = true;
   isPasswordVisible: WritableSignal<boolean> = signal<boolean>(false);
 }

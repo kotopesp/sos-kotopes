@@ -1,0 +1,2 @@
+ALTER TABLE IF EXISTS posts
+    ADD photo BYTEA;

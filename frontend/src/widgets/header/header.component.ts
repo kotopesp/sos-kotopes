@@ -25,7 +25,7 @@ import {RegisterOverlayComponent} from "./ui/register-overlay/register-overlay.c
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  isAuth: boolean = false;
+  isAuth = false;
   isAuthOverlay: WritableSignal<boolean> = signal<boolean>(false);
   isRegisterOverlay: WritableSignal<boolean> = signal<boolean>(false);
 

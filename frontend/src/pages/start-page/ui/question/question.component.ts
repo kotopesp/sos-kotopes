@@ -13,7 +13,7 @@ import {NgForOf, NgIf} from "@angular/common";
 })
 export class QuestionComponent {
   @Input() questionItem: any
-  active: string = "active";
-  notActive: string = "";
-  hideAnswer: boolean = false;
+  active = "active";
+  notActive = "";
+  hideAnswer = false;
 }
