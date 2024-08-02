@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
 import {HeaderComponent} from "../../../widgets/header/header.component";
-import {PostComponent} from "./post/post.component";
+import { PostComponent } from "../../../shared/post/post.component";
 import {FiltersBarComponent} from "../../../widgets/filters-bar/filters-bar.component";
 
 @Component({
-  selector: 'app-posts',
+  selector: 'posts',
   standalone: true,
   imports: [
     HeaderComponent,

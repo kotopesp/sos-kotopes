@@ -1,4 +1,4 @@
-// bottons' layout
+// buttons' layout
 .bottons {
     display: flex;
     flex-direction: column;
@@ -6,7 +6,7 @@
     padding-left: 46px;
 }
 
-// bottons' view
+// buttons' view
 @mixin find-status_solid($bg-color) {
     cursor: pointer;
     text-align: center;

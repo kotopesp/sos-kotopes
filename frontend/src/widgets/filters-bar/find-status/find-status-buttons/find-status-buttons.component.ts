@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { NgClass } from "@angular/common";
 
 @Component({
-  selector: 'app-find-status-botton',
+  selector: 'find-status-buttons',
   standalone: true,
   imports: [NgClass],
-  templateUrl: './find-status-botton.component.html',
-  styleUrl: './find-status-botton.component.scss'
+  templateUrl: './find-status-buttons.component.html',
+  styleUrl: './find-status-buttons.component.scss'
 })
-export class FindStatusBottonComponent {
+export class FindStatusButtonsComponent {
   isPressedLost: boolean = false
   pressButtonLost() {
     this.isPressedLost = !this.isPressedLost

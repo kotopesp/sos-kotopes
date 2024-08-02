@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {NgClass} from "@angular/common";
 
 @Component({
-  selector: 'app-favorites-button',
+  selector: 'favorites-button',
   standalone: true,
   imports: [NgClass],
   templateUrl: './favorites-button.component.html',

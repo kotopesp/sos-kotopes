@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { FavoritesButtonComponent } from "./favorites-button/favorites-button.component";
-import { FindStatusFlagComponent } from "../../../../widgets/filters-bar/find-status/find-status-flag/find-status-flag.component";
+import { FindStatusFlagComponent } from "../../pages/posts/ui/find-status-flag/find-status-flag.component";
 
 @Component({
-  selector: 'app-post',
+  selector: 'post',
   standalone: true,
   imports: [FavoritesButtonComponent, FindStatusFlagComponent],
   templateUrl: './post.component.html',

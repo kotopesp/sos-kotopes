@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgClass } from "@angular/common";
 
 @Component({
-  selector: 'app-find-status-flag',
+  selector: 'find-status-flag',
   standalone: true,
   imports: [NgClass],
   templateUrl: './find-status-flag.component.html',

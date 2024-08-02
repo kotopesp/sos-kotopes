@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { FindStatusBottonComponent } from "./find-status/find-status-botton/find-status-botton.component";
+import { FindStatusButtonsComponent } from "./find-status/find-status-buttons/find-status-buttons.component";
 
 @Component({
-  selector: 'app-filters-bar',
+  selector: 'filters-bar',
   standalone: true,
-  imports: [FindStatusBottonComponent],
+  imports: [FindStatusButtonsComponent],
   templateUrl: './filters-bar.component.html',
   styleUrl: './filters-bar.component.scss'
 })
