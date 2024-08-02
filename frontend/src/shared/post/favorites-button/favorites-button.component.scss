@@ -1,7 +1,7 @@
 .favorites_button {
     width: 50px;
     height: 50px;
-    .active-button {
+    .inactive-button {
         path {
             fill: var(--white-color);
             fill-opacity: 50%;
@@ -14,13 +14,13 @@
         }
     }
 
-    .inactive-button {
+    .active-button {
         path {
             fill: var(--red-color-favorites);
             fill-opacity: 100%;
             stroke: var(--red-color-favorites);
             stroke-width: 2px;
-
+              
             &:hover {
                 stroke: var(--white-color);
             }
