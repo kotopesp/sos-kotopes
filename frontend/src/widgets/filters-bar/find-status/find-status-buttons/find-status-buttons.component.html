@@ -1,16 +1,11 @@
 <div class="buttons">
-    <button [ngClass]="{'lost_status_active': isPressedLost, 
-                    'lost_status_inactive': !isPressedLost}" (click)="pressButtonLost()" class="ft20 fw400">
+    <button [ngClass]="isPressedLost ? 'lost_status_active' : 'lost_status_inactive'" (click)="pressButtonLost()" class="ft20 fw400">
                     Пропал
                 </button>
-
-    <button [ngClass]="{'found-home_status_active': isPressedFoundHome, 
-                    'found-home_status_inactive': !isPressedFoundHome}" (click)="pressButtonFoundHome()" class="ft20 fw400">
+    <button [ngClass]="isPressedFoundHome ? 'found-home_status_active' : 'found-home_status_inactive'" (click)="pressButtonFoundHome()" class="ft20 fw400">
                     Найден
                 </button>
-
-    <button [ngClass]="{'looking-for-home_status_active': isPressedLookingFor, 
-                    'looking-for-home_status_inactive': !isPressedLookingFor}" (click)="pressButtonLookingFor()" class="ft20 fw400">
+    <button [ngClass]="isPressedLookingFor ? 'looking-for-home_status_active' : 'looking-for-home_status_inactive'" (click)="pressButtonLookingFor()" class="ft20 fw400">
                     Ищет дом
                 </button>
 </div>
