@@ -8,5 +8,39 @@
         <div [class]="headerItem.className">{{ headerItem.text }} </div>
       </a>
     </div>
+
+    <div *ngIf="!isAuth" class="header__button">
+      <a class="header__link">
+        <div (click)="isAuthOverlay.set(true)">Войти</div>
+      </a>
+    </div>
+
+    <div *ngIf="isAuth" class="header__auth__profile">
+      <div class="header__auth__button message__block">
+        <a>
+          <img src="/assets/icons/message-icon.svg" class="header__message__icon" alt="icon">
+        </a>
+        <app-message-popup class="popups message__popup"/>
+      </div>
+      <div class="header__auth__button notification__block">
+        <a>
+          <img src="/assets/icons/notification-icon.svg" class="header__notification__icon" alt="icon">
+        </a>
+        <app-notification-popup class="popups notification__popup"/>
+      </div>
+      <div class="header__auth__button profile__block">
+        <a>
+          <img src="/assets/images/test-cat2.png" class="header__profile__image" alt="profile">
+        </a>
+        <app-profile-popup class="popups profile__popup"/>
+      </div>
+    </div>
   </div>
+  <div *ngIf="isAuthOverlay()">
+    <app-auth-overlay [isAuthOverlay]="isAuthOverlay()" class="auth__overlay"/>
+  </div>
+  @if (isRegisterOverlay()) {
+  <app-register-overlay
+  class="register__overlay" />
+  }
 </div>

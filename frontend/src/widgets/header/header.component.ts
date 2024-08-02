@@ -1,18 +1,34 @@
-import {Component} from '@angular/core';
+import {Component, Input, signal, WritableSignal} from '@angular/core';
 import {RouterLink} from "@angular/router";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
+import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
+import {NotificationPopupComponent} from "./ui/notification-popup/notification-popup.component";
+import {MessagePopupComponent} from "./ui/message-popup/message-popup.component";
+import {AuthOverlayComponent} from "./ui/auth-overlay/auth-overlay.component";
+import {RegisterOverlayComponent} from "./ui/register-overlay/register-overlay.component";
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     RouterLink,
-    NgForOf
+    NgForOf,
+    NgIf,
+    ProfilePopupComponent,
+    ProfilePopupComponent,
+    NotificationPopupComponent,
+    MessagePopupComponent,
+    AuthOverlayComponent,
+    RegisterOverlayComponent,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  isAuth: boolean = false;
+  isAuthOverlay: WritableSignal<boolean> = signal<boolean>(false);
+  isRegisterOverlay: WritableSignal<boolean> = signal<boolean>(false);
+
   headerItems = [
     {
       path: 'posts',
@@ -30,14 +46,14 @@ export class HeaderComponent {
       className: 'header__ads'
     },
     {
+      path: 'vets',
+      text: 'Ветеринары',
+      className: 'header__vets'
+    },
+    {
       path: '',
       text: 'Как я могу помочь?',
       className: 'header__how-to-help'
-    },
-    {
-      path: 'login',
-      text: 'Войти',
-      className: 'header__login'
     },
   ]
 }

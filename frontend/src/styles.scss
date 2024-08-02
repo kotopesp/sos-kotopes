@@ -5,10 +5,12 @@
   --white-color: #FFF;
   --black-color: #000;
 
-  // brown
+   // brown
   --brown-filter-color: #1C1508;
   --brown-main-color: #21190B;
   --brown-bg-color: #2C2210;
+  --brown-bg-color: #312611;
+  --brown-dark-light-color: #352303;
   --brown-button-color: #352B1A;
   --text-brown-light-color: #443416;
   --brown-light-color: #4B432A;
@@ -31,13 +33,16 @@
   --red-hover-bg: rgba(155, 52, 29, 0.1);
   --red-active-button-bg: rgba(138, 55, 38, 1);
   --red-hover-border: rgba(109, 36, 21, 1);
+  --red-brown-color: #2B1800;
   --red-hover-color: #5A2B00;
   --red-color-favorites: #BA2C21;
+  --pink-border-color: #EABAB3;
   --pink-color-bg: #F5D3B4;
 
   // blue
+  --cyan-color-messages: #182C2A;
   --blue-color-bg: #79B0E3;
-
+  
   //orange
   --russet-filter-color: #765536;
   --creamy-filter-color: #9F9184;
@@ -46,6 +51,7 @@
   --orange-hover-bg: rgba(172, 117, 65, 0.1);
 
   // purple
+  --purple-color-messages: #221630;
   --purple-color-bg: #E3CFFD;
 
   // yellow
@@ -79,6 +85,10 @@ body {
   font-family: "PT Sans Caption Regular", sans-serif;
 }
 
+a, button {
+  cursor: pointer;
+}
+
 
 .ft48 {
   font-size: 48px;
@@ -94,6 +104,14 @@ body {
 
 .ft24 {
   font-size: 24px;
+}
+
+.ft18 {
+  font-size: 18px;
+}
+
+.ft16 {
+  font-size: 16px;
 }
 
 .roboto {
@@ -119,6 +137,10 @@ body {
 
 .fw700 {
   font-weight: 700;
+}
+
+.lh26 {
+  line-height: 26px;
 }
 
 .lh52 {

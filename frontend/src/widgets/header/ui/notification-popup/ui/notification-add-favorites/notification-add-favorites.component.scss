@@ -1,0 +1,24 @@
+@import "../notification-styles";
+
+.notification__add-favorites {
+  height: fit-content;
+  @include notification__block;
+
+  .block__notification__info {
+    display: flex;
+
+    .block__notification__image {
+      @include block__images;
+      .notification__image {
+        @include main__image(1);
+      }
+    }
+  }
+
+  .block__notification__date {
+    padding-top: 10px;
+    .notification__date {
+      @include notification__date;
+    }
+  }
+}
