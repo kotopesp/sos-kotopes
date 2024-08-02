@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FavoritesButtonComponent } from "./favorites-button/favorites-button.component";
-import { FindStatusFlagComponent } from "../../pages/posts/ui/find-status-flag/find-status-flag.component";
+import { FindStatusFlagComponent } from "./find-status-flag/find-status-flag.component";
 
 @Component({
   selector: 'post',
