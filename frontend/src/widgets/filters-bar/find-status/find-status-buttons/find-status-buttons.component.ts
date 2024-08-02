@@ -2,24 +2,24 @@ import { Component } from '@angular/core';
 import { NgClass } from "@angular/common";
 
 @Component({
-  selector: 'find-status-buttons',
+  selector: 'app-find-status-buttons',
   standalone: true,
   imports: [NgClass],
   templateUrl: './find-status-buttons.component.html',
   styleUrl: './find-status-buttons.component.scss'
 })
 export class FindStatusButtonsComponent {
-  isPressedLost: boolean = false
+  isPressedLost = false
   pressButtonLost() {
     this.isPressedLost = !this.isPressedLost
   }
 
-  isPressedFoundHome:boolean = false
+  isPressedFoundHome = false
   pressButtonFoundHome() {
     this.isPressedFoundHome = !this.isPressedFoundHome
   }
 
-  isPressedLookingFor: boolean = false
+  isPressedLookingFor = false
   pressButtonLookingFor() {
     this.isPressedLookingFor = !this.isPressedLookingFor
   }

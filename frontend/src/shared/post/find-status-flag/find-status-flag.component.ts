@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgClass } from "@angular/common";
 
 @Component({
-  selector: 'find-status-flag',
+  selector: 'app-find-status-flag',
   standalone: true,
   imports: [NgClass],
   templateUrl: './find-status-flag.component.html',
   styleUrl: './find-status-flag.component.scss'
 })
-export class FindStatusFlagComponent {
+export class FindStatusFlagComponent implements OnInit {
   // here we get data from the backend, ex. we get initialState = "Найден"
   initialStateArr = ["Пропал", "Найден", "Ищет дом"]
   initialState: string = this.initialStateArr[Math.floor(Math.random() * 3)]
@@ -17,8 +17,8 @@ export class FindStatusFlagComponent {
     this.setFlagClass();
   }
 
-  petStatusClass: string = ""
-  buttonLabel: string = ""
+  petStatusClass = ""
+  buttonLabel = ""
   setFlagClass() {
     switch(this.initialState) {
       case "Пропал": {

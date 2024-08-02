@@ -3,7 +3,7 @@ import { FavoritesButtonComponent } from "./favorites-button/favorites-button.co
 import { FindStatusFlagComponent } from "./find-status-flag/find-status-flag.component";
 
 @Component({
-  selector: 'post',
+  selector: 'app-post',
   standalone: true,
   imports: [FavoritesButtonComponent, FindStatusFlagComponent],
   templateUrl: './post.component.html',

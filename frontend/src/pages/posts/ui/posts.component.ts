@@ -4,7 +4,7 @@ import { PostComponent } from "../../../shared/post/post.component";
 import {FiltersBarComponent} from "../../../widgets/filters-bar/filters-bar.component";
 
 @Component({
-  selector: 'posts',
+  selector: 'app-posts',
   standalone: true,
   imports: [
     HeaderComponent,
