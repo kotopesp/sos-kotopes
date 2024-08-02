@@ -54,31 +54,11 @@
             </div>
         </div>
         <div class="filter__container">
-            <p class="property-name ptbold">Пол</p>
+            <p class="property-name ptbold">Окрас</p>
             <div class="list__container">
-                <div class="list_item">
-                    <button class="black_button"></button>
-                    <p class="list_item_name">Чёрный</p>
-                </div>
-                <div class="list_item">
-                    <button class="white_button"></button>
-                    <p class="list_item_name">Белый</p>
-                </div>
-                <div class="list_item">
-                    <button class="brown_button"></button>
-                    <p class="list_item_name">Коричневый</p>
-                </div>
-                <div class="list_item">
-                    <button class="russet_button"></button>
-                    <p class="list_item_name">Рыжий</p>
-                </div>
-                <div class="list_item">
-                    <button class="gray_button"></button>
-                    <p class="list_item_name">Серый</p>
-                </div>
-                <div class="list_item">
-                    <button class="creamy_button"></button>
-                    <p class="list_item_name">Кремовый</p>
+                <div *ngFor="let colorItem of colorFilterItems" class="list_item">
+                    <button [class]="colorItem.class"></button>
+                    <p class="list_item_name">{{ colorItem.title }}</p>
                 </div>
             </div>
         </div>
