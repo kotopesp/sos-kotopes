@@ -2,31 +2,60 @@
 @import "fonts";
 
 :root {
-  --brown-main-color: #21190B;
-  --brown-light-color: #4B432A;
-  --brown-button-color: #352B1A;
   --white-color: #FFF;
   --black-color: #000;
-  --text-brown-light-color: #443416;
-  --pink-border-color: #EABAB3;
-  --yellow-color-bg: #F6DE8A;
-  --pink-color-bg: #F5D3B4;
-  --purple-color-bg: #E3CFFD;
-  --green-color-bg: #86C8C0;
-  --blue-color-bg: #79B0E3;
+
+  // brown
+  --brown-filter-color: #1C1508;
+  --brown-main-color: #21190B;
+  --brown-bg-color: #2C2210;
   --brown-bg-color: #312611;
+  --brown-dark-light-color: #352303;
+  --brown-button-color: #352B1A;
+  --text-brown-light-color: #443416;
+  --brown-light-color: #4B432A;
   --brown-hover-color: #503E00;
-  --red-hover-color: #5A2B00;
-  --red-color-button: #8A372699;
-  --orange-color-button: #916943;
-  --green-color-button: #467430;
-  --brown-ads-color: #2C2210;
+
+  // gray
+  --gray-filter-color: #363636;
   --gray-color-button: #4E4E4E;
   --gray-text-tag: #5D5D5D;
-  --brown-dark-light-color: #352303;
+  --light-gray-color: #D8D8D8;
+
+  // green
+  --green-active-button-bg: rgba(70, 116, 48, 1);
+  --green-hover-bg: rgba(59, 126, 28, 0.1);  ;
+  --green-hover-border: rgba(42, 88, 20, 1);
+  --green-color-button: #467430;
+  --green-color-bg: #86C8C0;
+
+  // red and pink
+  --red-hover-bg: rgba(155, 52, 29, 0.1);
+  --red-active-button-bg: rgba(138, 55, 38, 1);
+  --red-hover-border: rgba(109, 36, 21, 1);
   --red-brown-color: #2B1800;
-  --purple-color-messages: #221630;
+  --red-hover-color: #5A2B00;
+  --red-color-favorites: #BA2C21;
+  --pink-border-color: #EABAB3;
+  --pink-color-bg: #F5D3B4;
+
+  // blue
   --cyan-color-messages: #182C2A;
+  --blue-color-bg: #79B0E3;
+  
+  //orange
+  --russet-filter-color: #765536;
+  --creamy-filter-color: #9F9184;
+  --orange-hover-border: rgba(121, 82, 46, 1);
+  --orange-active-button-bg: rgba(145, 105, 67, 1);
+  --orange-hover-bg: rgba(172, 117, 65, 0.1);
+
+  // purple
+  --purple-color-messages: #221630;
+  --purple-color-bg: #E3CFFD;
+
+  // yellow
+  --yellow-color-bg: #F6DE8A;
 }
 
 
@@ -70,7 +99,7 @@ a, button {
 }
 
 .ft20 {
-  font-size: 20px;
+  font-size: 1.3em;
 }
 
 .ft24 {
@@ -91,6 +120,11 @@ a, button {
 
 .ptbold {
   font-family: "PT Sans Caption Bold", sans-serif;
+}
+
+.ptitalic {
+  font-family: "PT Sans Caption Regular", sans-serif;
+  font-style: italic;
 }
 
 .fw400 {
