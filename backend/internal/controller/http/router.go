@@ -9,26 +9,27 @@ import (
 
 type Router struct {
 	app            *fiber.App
-	entityService  core.EntityService
+	formValidator  validator.FormValidatorService
 	authService    core.AuthService
 	commentService core.CommentService
-	formValidator  validator.FormValidatorService
+	postService    core.PostService
 }
 
 func NewRouter(
 	app *fiber.App,
-	entityService core.EntityService,
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
-	commentsService core.CommentService,
+	commentService core.CommentService,
+	postService core.PostService,
 ) {
 	router := &Router{
 		app:            app,
-		entityService:  entityService,
 		formValidator:  formValidator,
 		authService:    authService,
-		commentService: commentsService,
+		commentService: commentService,
+		postService:    postService,
 	}
+
 	router.initRequestMiddlewares()
 
 	router.initRoutes()
@@ -40,11 +41,6 @@ func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
-
-	// entities
-	v1.Get("/entities", r.getEntities)
-	v1.Get("/entities/:id", r.getEntityByID)
-
 	// comment_service
 	v1.Get("/posts/:post_id/comments", r.getComments)
 	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
@@ -62,6 +58,18 @@ func (r *Router) initRoutes() {
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)
 	v1.Get("/auth/login/vk/callback", r.callback)
+
+	// posts
+	v1.Get("/posts", r.getPosts)
+	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
+	v1.Get("/posts/:id", r.getPostByID)
+	v1.Post("/posts", r.protectedMiddleware(), r.createPost)
+	v1.Patch("/posts/:id", r.protectedMiddleware(), r.updatePost)
+	v1.Delete("/posts/:id", r.protectedMiddleware(), r.deletePost)
+
+	// favourites posts
+	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
+	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

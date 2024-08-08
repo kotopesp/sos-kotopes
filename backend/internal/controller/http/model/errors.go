@@ -18,4 +18,5 @@ var (
 	ErrInvalidTokenUsername = errors.New("invalid token username")
 	ErrOAuthStateMismatch   = errors.New("states do not match")
 	ErrValidationFailed     = errors.New("validation failed")
+	ErrInvalidBody          = errors.New("invalid body")
 )

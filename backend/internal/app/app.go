@@ -2,9 +2,6 @@ package app
 
 import (
 	"context"
-	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
-	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
-	poststore "github.com/kotopesp/sos-kotopes/internal/store/post_store"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,11 +15,16 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/service/name"
-	"github.com/kotopesp/sos-kotopes/internal/store/entity"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
+	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
 // Run creates objects via constructors.
@@ -40,13 +42,13 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	entityStore := entity.New(pg)
 	userStore := user.New(pg)
 	commentStore := commentstore.New(pg)
 	postStore := poststore.New(pg)
+	postFavouriteStore := postfavouritestore.New(pg)
+	animalStore := animalstore.New(pg)
 
 	// Services
-	entityService := name.New(entityStore)
 	commentService := commentservice.New(
 		commentStore,
 		postStore,
@@ -54,12 +56,15 @@ func Run(cfg *config.Config) {
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
-			JWTSecret:      cfg.JWTSecret,
-			VKClientID:     cfg.VKClientID,
-			VKClientSecret: cfg.VKClientSecret,
-			VKCallback:     cfg.VKCallback,
+			JWTSecret:            cfg.JWTSecret,
+			VKClientID:           cfg.VKClientID,
+			VKClientSecret:       cfg.VKClientSecret,
+			VKCallback:           cfg.VKCallback,
+			AccessTokenLifetime:  cfg.AccessTokenLifetime,
+			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -75,10 +80,10 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		entityService,
 		formValidator,
 		authService,
 		commentService,
+		postService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

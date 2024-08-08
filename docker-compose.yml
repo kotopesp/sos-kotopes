@@ -14,7 +14,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: "./backend -db_url postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB} -log_level ${LOG_LEVEL} -port ${PORT}"
+    command: "./backend -db_url postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB} -log_level ${LOG_LEVEL} -port ${PORT} -vk_client_id ${VK_CLIENT_ID} -vk_client_secret ${VK_CLIENT_SECRET}"
   postgres:
     image: postgres:16.3
     container_name: postgres

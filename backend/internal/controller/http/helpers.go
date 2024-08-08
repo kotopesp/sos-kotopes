@@ -1,12 +1,16 @@
 package http
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
+	"io"
+	"mime/multipart"
 )
 
 // token helpers: getting info from token
@@ -31,9 +35,13 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 	return username, nil
 }
 
-// validation helpers
 func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(data); err != nil {
+		if errors.Is(err, fiber.ErrUnprocessableEntity) {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(model.ErrInvalidBody.Error())), err
+		}
+
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
 	}
@@ -85,4 +93,20 @@ func paginate(total, limit, offset int) pagination.Pagination {
 		CurrentPage: currentPage,
 		PerPage:     perPage,
 	}
+}
+
+func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
+	file, err := photo.Open()
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+
+	photoBytes, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return &photoBytes, nil
 }
