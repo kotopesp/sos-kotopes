@@ -5,7 +5,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
 	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
-	userFavouriteService "github.com/kotopesp/sos-kotopes/internal/service/userfavourite"
 	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
 	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 	"os"
@@ -59,8 +58,7 @@ func Run(cfg *config.Config) {
 
 	// Services
 	roleService := rolesService.New(roleStore, userStore)
-	userService := usersService.New(userStore)
-	favouriteUserService := userFavouriteService.New(favouriteUserStore)
+	userService := usersService.New(userStore, favouriteUserStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -90,7 +88,6 @@ func Run(cfg *config.Config) {
 		authService,
 		userService,
 		roleService,
-		favouriteUserService,
 		formValidator,
 		postService,
 	)

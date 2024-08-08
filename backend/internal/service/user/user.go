@@ -6,12 +6,14 @@ import (
 )
 
 type service struct {
-	userStore core.UserStore
+	userStore          core.UserStore
+	userFavouriteStore core.UserFavouriteStore
 }
 
-func New(store core.UserStore) core.UserService {
+func New(store core.UserStore, favouriteStore core.UserFavouriteStore) core.UserService {
 	return &service{
-		userStore: store,
+		userStore:          store,
+		userFavouriteStore: favouriteStore,
 	}
 }
 
