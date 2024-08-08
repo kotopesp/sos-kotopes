@@ -9,8 +9,8 @@ import (
 // ToCorePostDetails creates a core.PostDetails object from a core.Post, core.Animal, and username string.
 func ToCorePostDetails(post core.Post, animal core.Animal, userName string) core.PostDetails {
 	return core.PostDetails{
-		Post: post,
-		Animal: animal,
+		Post:     post,
+		Animal:   animal,
 		Username: userName,
 	}
 }

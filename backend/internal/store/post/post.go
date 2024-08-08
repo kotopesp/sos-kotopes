@@ -2,11 +2,11 @@ package poststore
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"time"
 	"errors"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+	"time"
 )
 
 type (
@@ -21,11 +21,11 @@ func New(pg *postgres.Postgres) core.PostStore {
 
 // GetAllPosts retrieves all posts from the database based on the GetAllPostsParams
 func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.Post, int, error) {
-    var posts []core.Post
+	var posts []core.Post
 
-    query := s.DB.WithContext(ctx).Model(&core.Post{}).
-			Joins("JOIN animals ON posts.animal_id = animals.id").
-			Where("posts.is_deleted = ?", false)
+	query := s.DB.WithContext(ctx).Model(&core.Post{}).
+		Joins("JOIN animals ON posts.animal_id = animals.id").
+		Where("posts.is_deleted = ?", false)
 
 	// Apply filtering based on the GetAllPostsParams
 	if params.Limit != nil {
@@ -52,18 +52,18 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 		query = query.Where("animals.color = ?", *params.Color)
 	}
 
-    var total int64
-    if err := query.Count(&total).Error; err != nil {
-		logger.Log().Error(ctx, err.Error())
-        return nil, 0, err
-    }
-
-    if err := query.Select("posts.*").Find(&posts).Error; err != nil {
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
-    }
+	}
 
-    return posts, int(total), nil
+	if err := query.Select("posts.*").Find(&posts).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return nil, 0, err
+	}
+
+	return posts, int(total), nil
 }
 
 // GetPostByID retrieves a post from the database by its ID
@@ -94,7 +94,7 @@ func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, erro
 		logger.Log().Error(ctx, err.Error())
 		return core.Post{}, err
 	}
-	
+
 	return createdPost, nil
 }
 
@@ -113,16 +113,16 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 		logger.Log().Error(ctx, err.Error())
 		return core.Post{}, err
 	}
-	
+
 	return updatedPost, nil
 }
 
 // DeletePost marks a post as deleted in the database by updating the is_deleted flag and setting the deleted_at timestamp
 func (s *store) DeletePost(ctx context.Context, id int) error {
 	updates := map[string]interface{}{
-        "is_deleted": true,
-        "deleted_at": time.Now(), 
-    }
+		"is_deleted": true,
+		"deleted_at": time.Now(),
+	}
 
 	result := s.DB.WithContext(ctx).Model(&core.Post{}).Where("id = ?", id).Updates(updates)
 	if result.Error != nil {
@@ -131,13 +131,13 @@ func (s *store) DeletePost(ctx context.Context, id int) error {
 			return core.ErrPostNotFound
 		}
 		logger.Log().Error(ctx, result.Error.Error())
-        return result.Error
-    }
+		return result.Error
+	}
 
-    if result.RowsAffected == 0 {
+	if result.RowsAffected == 0 {
 		logger.Log().Error(ctx, core.ErrPostNotFound.Error())
-        return core.ErrPostNotFound
-    }
+		return core.ErrPostNotFound
+	}
 
-    return nil
+	return nil
 }

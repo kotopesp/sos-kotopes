@@ -27,7 +27,6 @@ func (s *store) GetUserByUsername(ctx context.Context, username string) (data co
 	return user, err
 }
 
-
 func (s *store) GetUserByID(ctx context.Context, id int) (data core.User, err error) {
 	var user core.User
 	err = s.DB.WithContext(ctx).First(&user, "id=?", id).Error

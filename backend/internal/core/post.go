@@ -2,8 +2,8 @@ package core
 
 import (
 	"context"
-	"time"
 	"mime/multipart"
+	"time"
 )
 
 type (
@@ -22,7 +22,7 @@ type (
 
 	// Post Details joins post, animal, username
 	PostDetails struct {
-		Post 	 Post
+		Post     Post
 		Animal   Animal
 		Username string
 	}
@@ -32,7 +32,7 @@ type (
 		ID          *int
 		AuthorID    *int
 		Title       *string
-		Content     *string 
+		Content     *string
 		Photo       *[]byte
 		AnimalType  *string
 		Age         *int
@@ -40,7 +40,6 @@ type (
 		Gender      *string
 		Description *string
 		Status      *string
-
 	}
 
 	// the GetAllPostsParams are needed for processing posts in the database

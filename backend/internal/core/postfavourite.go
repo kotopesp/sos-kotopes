@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 )
+
 type (
 	PostFavourite struct {
 		ID        int       `gorm:"column:id"`         // Unique identifier for the favourite record

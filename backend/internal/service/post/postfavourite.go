@@ -28,17 +28,17 @@ func (s *postService) GetFavouritePosts(ctx context.Context, userID int) ([]core
 
 func (s *postService) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) error {
 	// TODO: return PostDetails
-    err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
+	err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
-	
+
 	return nil
 }
 
 func (s *postService) DeleteFromFavourites(ctx context.Context, postID, userID int) error {
-    err := s.postFavouriteStore.DeleteFromFavourites(ctx, postID, userID)
+	err := s.postFavouriteStore.DeleteFromFavourites(ctx, postID, userID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err

@@ -35,7 +35,6 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 	return username, nil
 }
 
-// validation helpers
 func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(data); err != nil {
 		if errors.Is(err, fiber.ErrUnprocessableEntity) {
@@ -80,6 +79,22 @@ func validate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data
 	return nil, nil
 }
 
+// pagination helper
+func paginate(total, limit, offset int) pagination.Pagination {
+	var (
+		currentPage = (offset / limit) + 1
+		perPage     = limit
+		totalPages  = (total + perPage - 1) / perPage
+	)
+
+	return pagination.Pagination{
+		Total:       total,
+		TotalPages:  totalPages,
+		CurrentPage: currentPage,
+		PerPage:     perPage,
+	}
+}
+
 func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	file, err := photo.Open()
 	if err != nil {
@@ -94,19 +109,4 @@ func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	}
 
 	return &photoBytes, nil
-}
-
-func paginate(total, limit, offset int) pagination.Pagination {
-	var (
-		currentPage = (offset / limit) + 1
-		perPage     = limit
-		totalPages  = (total + perPage - 1) / perPage
-	)
-
-	return pagination.Pagination{
-		Total:       total,
-		TotalPages:  totalPages,
-		CurrentPage: currentPage,
-		PerPage:     perPage,
-	}
 }

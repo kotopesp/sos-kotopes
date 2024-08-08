@@ -8,23 +8,26 @@ import (
 )
 
 type Router struct {
-	app           *fiber.App
-	formValidator validator.FormValidatorService
-	authService   core.AuthService
-	postService   core.PostService
+	app            *fiber.App
+	formValidator  validator.FormValidatorService
+	authService    core.AuthService
+	commentService core.CommentService
+	postService    core.PostService
 }
 
 func NewRouter(
 	app *fiber.App,
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
+	commentService core.CommentService,
 	postService core.PostService,
 ) {
 	router := &Router{
-		app:           app,
-		formValidator: formValidator,
-		authService:   authService,
-		postService:   postService,
+		app:            app,
+		formValidator:  formValidator,
+		authService:    authService,
+		commentService: commentService,
+		postService:    postService,
 	}
 
 	router.initRequestMiddlewares()
@@ -38,6 +41,11 @@ func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
+	// comment_service
+	v1.Get("/posts/:post_id/comments", r.getComments)
+	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
+	v1.Put("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
+	v1.Delete("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.deleteComment)
 
 	// e.g. protected resource
 	v1.Get("/protected", r.protectedMiddleware(), r.protected)

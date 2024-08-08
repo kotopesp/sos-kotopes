@@ -12,19 +12,19 @@ import (
 
 type (
 	postService struct {
-		postStore core.PostStore
+		postStore          core.PostStore
 		postFavouriteStore core.PostFavouriteStore
-		animalStore core.AnimalStore
-		userStore core.UserStore
+		animalStore        core.AnimalStore
+		userStore          core.UserStore
 	}
 )
 
 // New initializes a new instance of postService
 func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, animalStore core.AnimalStore, userStore core.UserStore) core.PostService {
 	return &postService{
-		postStore: 			postStore,
+		postStore:          postStore,
 		postFavouriteStore: postFavouriteStore,
-		animalStore: 		animalStore,
+		animalStore:        animalStore,
 		userStore:          userStore,
 	}
 }
@@ -121,7 +121,7 @@ func (s *postService) UpdatePost(ctx context.Context, postUpdateRequest core.Upd
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
 	}
-	
+
 	animal, err := s.animalStore.UpdateAnimal(ctx, dbPost.Animal)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -154,6 +154,6 @@ func (s *postService) DeletePost(ctx context.Context, post core.Post) error {
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
-	
+
 	return nil
 }

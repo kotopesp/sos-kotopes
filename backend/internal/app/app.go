@@ -2,29 +2,28 @@ package app
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"os"
 	"os/signal"
 	"syscall"
 
-	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-
+	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-
-	"github.com/kotopesp/sos-kotopes/internal/store/user"
-
-	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
+	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/service/auth"
+	"github.com/kotopesp/sos-kotopes/internal/store/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
-    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
@@ -44,11 +43,16 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	userStore := user.New(pg)
+	commentStore := commentstore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
+	commentService := commentservice.New(
+		commentStore,
+		postStore,
+	)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -78,6 +82,7 @@ func Run(cfg *config.Config) {
 		app,
 		formValidator,
 		authService,
+		commentService,
 		postService,
 	)
 
