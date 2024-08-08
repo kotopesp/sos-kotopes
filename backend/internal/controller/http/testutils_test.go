@@ -35,11 +35,11 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	// mock your dependencies and put them here
 	NewRouter(
 		app,
-		formValidatorService,
 		mockAuthService,
-		mockPostService,
+		mockUserService,
 		mockRoleService,
-		mockUserService
+		formValidatorService,
+		mockPostService,
 	)
 
 	return app, appDependencies{

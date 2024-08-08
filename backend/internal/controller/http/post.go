@@ -42,9 +42,15 @@ func (r *Router) GetUserPosts(ctx *fiber.Ctx) error {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
-	var getAllPostsParams postModel.GetAllPostsParams
-	postsDetails, total, err := r.postService.GetUserPosts(ctx.UserContext(), id)
 
+	var getAllPostsParams postModel.GetAllPostsParams
+	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
+	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), fiberError.Error())
+		return fiberError
+	}
+
+	postsDetails, total, err := r.postService.GetUserPosts(ctx.UserContext(), id)
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):

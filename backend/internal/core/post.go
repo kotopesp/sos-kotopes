@@ -77,19 +77,3 @@ type (
 func (Post) TableName() string {
 	return "posts"
 }
-
-//
-//func (p *Post) ToPostDetails(name string) PostDetails {
-//	if p == nil {
-//		return PostDetails{}
-//	}
-//	return PostDetails{
-//		ID:        p.ID,
-//		Title:     p.Title,
-//		Content:   p.Content,
-//		Username:  name,
-//		CreatedAt: p.CreatedAt,
-//		UpdatedAt: p.UpdatedAt,
-//		AnimalID:  p.AnimalID,
-//	}
-//}
