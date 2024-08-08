@@ -51,7 +51,6 @@ func (r *Router) initRoutes() {
 	// users
 	v1.Patch("/users", r.protectedMiddleware(), r.UpdateUser)
 	v1.Get("/users/:id", r.GetUser)
-	v1.Get("/users/:id/posts", r.GetUserPosts)
 
 	// user roles
 	v1.Get("/users/:id/roles", r.GetUserRoles)
@@ -78,6 +77,7 @@ func (r *Router) initRoutes() {
 
 	// posts
 	v1.Get("/posts", r.getPosts)
+	v1.Get("/users/:id/posts", r.GetUserPosts)
 	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
 	v1.Get("/posts/:id", r.getPostByID)
 	v1.Post("/posts", r.protectedMiddleware(), r.createPost)

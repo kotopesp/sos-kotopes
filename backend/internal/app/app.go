@@ -85,8 +85,6 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	//	v1.NewRouter(app, authService, userService, roleService, favouriteUserService, formValidator)
-
 	v1.NewRouter(
 		app,
 		authService,

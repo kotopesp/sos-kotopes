@@ -97,21 +97,6 @@ func (s *store) GetUser(ctx context.Context, id int) (user core.User, err error)
 	return user, nil
 }
 
-func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, err error) {
-	err = s.DB.WithContext(ctx).
-		Where("author_id = ?", id).
-		Order("created_at DESC").
-		Find(&posts).Error
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, core.ErrNoSuchUser
-		}
-		return nil, err
-	}
-	return posts, nil
-}
-
 func (s *store) GetUserByUsername(ctx context.Context, username string) (data core.User, err error) {
 	var user core.User
 	err = s.DB.WithContext(ctx).First(&user, "username=?", username).Error
@@ -120,7 +105,6 @@ func (s *store) GetUserByUsername(ctx context.Context, username string) (data co
 	}
 	return user, err
 }
-
 
 func (s *store) GetUserByID(ctx context.Context, id int) (data core.User, err error) {
 	var user core.User

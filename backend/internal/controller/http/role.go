@@ -46,7 +46,7 @@ func (r *Router) GiveRoleToUser(ctx *fiber.Ctx) error {
 	}
 
 	var givenRole role.GivenRole
-	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &givenRole)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &givenRole)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -74,7 +74,7 @@ func (r *Router) DeleteUserRole(ctx *fiber.Ctx) error {
 	}
 
 	var givenRole role.GivenRole
-	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &givenRole)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &givenRole)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
@@ -103,7 +103,7 @@ func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 	var updateRole role.UpdateRole
-	fiberError, parseOrValidationError := parseAndValidate(ctx, r.formValidator, &updateRole)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &updateRole)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}

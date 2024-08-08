@@ -5,21 +5,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
-//func ToPost(postDetails *core.PostDetails) Post {
-//	if postDetails == nil {
-//		return Post{}
-//	}
-//	return Post{
-//		ID:        postDetails.ID,
-//		Title:     postDetails.Title,
-//		Content:   postDetails.Content,
-//		Username:  postDetails.Username,
-//		CreatedAt: postDetails.CreatedAt,
-//		UpdatedAt: postDetails.UpdatedAt,
-//		AnimalID:  postDetails.AnimalID,
-//	}
-//}
-
 // ToCorePostDetails converts CreateRequestBodyPost from model to core.PostDetails
 func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails {
 	if p == nil {

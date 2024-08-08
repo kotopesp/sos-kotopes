@@ -6,7 +6,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-func (s *postService) GetFavouritePosts(ctx context.Context, userID int) ([]core.PostDetails, int, error) {
+func (s *service) GetFavouritePosts(ctx context.Context, userID int) ([]core.PostDetails, int, error) {
 	// TODO: add GetAllPostsParams
 	limit := 0
 	offset := 0
@@ -26,19 +26,19 @@ func (s *postService) GetFavouritePosts(ctx context.Context, userID int) ([]core
 	return postDetails, total, nil
 }
 
-func (s *postService) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) error {
+func (s *service) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) error {
 	// TODO: return PostDetails
-    err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
+	err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
-	
+
 	return nil
 }
 
-func (s *postService) DeleteFromFavourites(ctx context.Context, postID, userID int) error {
-    err := s.postFavouriteStore.DeleteFromFavourites(ctx, postID, userID)
+func (s *service) DeleteFromFavourites(ctx context.Context, postID, userID int) error {
+	err := s.postFavouriteStore.DeleteFromFavourites(ctx, postID, userID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err

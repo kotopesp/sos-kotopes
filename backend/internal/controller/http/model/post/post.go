@@ -7,15 +7,6 @@ import (
 
 type (
 	// CreateRequestBodyPost is the structure used for creating a new post
-	Post struct {
-		ID        int       `json:"id"`
-		Title     string    `json:"title"`
-		Content   string    `json:"content"`
-		Username  string    `json:"username"`
-		CreatedAt time.Time `json:"created_at"`
-		UpdatedAt time.Time `json:"updated_at"`
-		AnimalID  int       `json:"animal_id"`
-	}
 	CreateRequestBodyPost struct {
 		Title       string `form:"title" json:"title" validate:"required,max=200"`
 		Content     string `form:"content" json:"content" validate:"required,max=2000"`

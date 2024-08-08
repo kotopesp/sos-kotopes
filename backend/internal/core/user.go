@@ -31,7 +31,6 @@ type (
 	UserStore interface {
 		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)
 		GetUser(ctx context.Context, id int) (user User, err error)
-		GetUserPosts(ctx context.Context, id int) (posts []Post, err error)
 		GetUserByID(ctx context.Context, id int) (data User, err error)
 		GetUserByUsername(ctx context.Context, username string) (data User, err error)
 		GetUserByExternalID(ctx context.Context, externalID int) (data ExternalUser, err error)
@@ -41,7 +40,6 @@ type (
 	UserService interface {
 		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)
 		GetUser(ctx context.Context, id int) (user User, err error)
-		GetUserPosts(ctx context.Context, id int) (posts []PostDetails, err error)
 	}
 
 	ExternalUser struct {
