@@ -21,8 +21,6 @@ import (
 
 	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
-	//"github.com/kotopesp/sos-kotopes/internal/store/user"
-
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
