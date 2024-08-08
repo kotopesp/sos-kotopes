@@ -15,12 +15,11 @@ import (
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/service/name"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/kotopesp/sos-kotopes/internal/store/entity"
+
 	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
@@ -44,14 +43,12 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	entityStore := entity.New(pg)
 	roleStore := rolesStore.New(pg)
 	favouriteUserStore := userFavouriteStore.New(pg)
 	userStore := usersStore.New(pg)
 
 	// Services
 	roleService := rolesService.New(roleStore, userStore)
-	entityService := name.New(entityStore)
 	userService := usersService.New(userStore)
 	favouriteUserService := userFavouriteService.New(favouriteUserStore)
 
@@ -76,7 +73,7 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, entityService, authService, userService, roleService, favouriteUserService, formValidator)
+	v1.NewRouter(app, authService, userService, roleService, favouriteUserService, formValidator)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
