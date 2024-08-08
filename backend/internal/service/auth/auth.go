@@ -39,6 +39,7 @@ func (s *service) GetJWTSecret() []byte {
 	return s.authServiceConfig.JWTSecret
 }
 
+// LoginBasic Login through username and password
 func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, refreshToken *string, err error) {
 	dbUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
@@ -69,6 +70,7 @@ func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, 
 	return at, rt, nil
 }
 
+// SignupBasic Signup through username and password (can be additional fields)
 func (s *service) SignupBasic(ctx context.Context, user core.User) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), 12)
 	if err != nil {
@@ -87,6 +89,7 @@ func (s *service) SignupBasic(ctx context.Context, user core.User) error {
 	return nil
 }
 
+// AuthorizeVK Authorization through VK (user automatically signs up if not exists): getting info from vk, signup, login
 func (s *service) AuthorizeVK(ctx context.Context, token string) (accessToken, refreshToken *string, err error) {
 	vkUserID, err := s.getVKUserID(token)
 	if err != nil {
@@ -101,6 +104,7 @@ func (s *service) AuthorizeVK(ctx context.Context, token string) (accessToken, r
 	return accessToken, refreshToken, err
 }
 
+// loginVK Signup if user not exists, then login
 func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken, refreshToken *string, err error) {
 	externalUser, err := s.userStore.GetUserByExternalID(ctx, externalUserID)
 
@@ -136,6 +140,7 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 	})
 }
 
+// signupVK Creating external user
 func (s *service) signupVK(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), 12)
 	if err != nil {
@@ -150,6 +155,7 @@ func (s *service) signupVK(ctx context.Context, user core.User, externalUserID i
 	return userID, nil
 }
 
+// Refresh Getting new accessToken, when another one expires; need to have refreshToken in cookie
 func (s *service) Refresh(ctx context.Context, id int) (accessToken *string, err error) {
 	user, err := s.userStore.GetUserByID(ctx, id)
 	if err != nil {

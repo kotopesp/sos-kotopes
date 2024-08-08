@@ -2,50 +2,73 @@ package core
 
 import (
 	"context"
+	"mime/multipart"
 	"time"
 )
 
 type (
 	Post struct {
-		ID        int       `gorm:"column:id"`
-		Title     string    `gorm:"column:title"`
-		Content   string    `gorm:"column:content"`
-		UserID    int       `gorm:"column:author_id"`
-		IsDeleted bool      `gorm:"column:is_deleted"`
-		DeletedAt time.Time `gorm:"column:deleted_at"`
-		CreatedAt time.Time `gorm:"column:created_at"`
-		UpdatedAt time.Time `gorm:"column:updated_at"`
-		AnimalID  int       `gorm:"column:animal_id"`
+		ID        int       `gorm:"column:id;primaryKey"` // Unique identifier for the post
+		Title     string    `gorm:"column:title"`         // Title of the post
+		Content   string    `gorm:"column:content"`       // Content of the post
+		AuthorID  int       `gorm:"column:author_id"`     // ID of the author of the post
+		AnimalID  int       `gorm:"column:animal_id"`     // ID of the associated animal
+		IsDeleted bool      `gorm:"column:is_deleted"`    // Flag indicating if the post is deleted
+		DeletedAt time.Time `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
+		CreatedAt time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
+		UpdatedAt time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
+		Photo     []byte    `gorm:"column:photo"`         // Photo animal
 	}
+
+	// Post Details joins post, animal, username
 	PostDetails struct {
-		ID        int       `gorm:"column:id"`
-		Title     string    `gorm:"column:title"`
-		Content   string    `gorm:"column:content"`
-		Username  string    `gorm:"-"`
-		CreatedAt time.Time `gorm:"column:created_at"`
-		UpdatedAt time.Time `gorm:"column:updated_at"`
-		AnimalID  int       `gorm:"column:animal_id"`
+		Post     Post
+		Animal   Animal
+		Username string
 	}
-	PostStore interface {
-		GetAll(ctx context.Context, params GetAllPostsParams) (data []Post, err error)
-		GetByID(ctx context.Context, id int) (data Post, err error)
-		Create(ctx context.Context, post Post) (data Post, err error)
-		Update(ctx context.Context, post Post) (data Post, err error)
-		Delete(ctx context.Context, id int) (err error)
+
+	// UpdateRequestBodyPost represents the request body for updating a post.
+	UpdateRequestBodyPost struct {
+		ID          *int
+		AuthorID    *int
+		Title       *string
+		Content     *string
+		Photo       *[]byte
+		AnimalType  *string
+		Age         *int
+		Color       *string
+		Gender      *string
+		Description *string
+		Status      *string
 	}
-	PostService interface {
-		GetAll(ctx context.Context, params GetAllPostsParams) (data []Post, total int, err error)
-		GetByID(ctx context.Context, id int) (data Post, err error)
-		Create(ctx context.Context, post Post) (data Post, err error)
-		Update(ctx context.Context, post Post) (data Post, err error)
-		Delete(ctx context.Context, id int) (err error)
-	}
+
+	// the GetAllPostsParams are needed for processing posts in the database
 	GetAllPostsParams struct {
-		SortBy     *string
-		SortOrder  *string
-		SearchTerm *string
-		Limit      *int
-		Offset     *int
+		Limit      *int    // Limit on the number of posts to retrieve
+		Offset     *int    // Offset for pagination
+		Status     *string // Filter by status of the associated animal
+		AnimalType *string // Filter by type of the associated animal
+		Gender     *string // Filter by gender of the associated animal
+		Color      *string // Filter by color of the associated animal
+		Location   *string // Filter by location of the associated animal
+	}
+
+	PostStore interface {
+		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]Post, int, error)
+		GetPostByID(ctx context.Context, id int) (Post, error)
+		CreatePost(ctx context.Context, post Post) (Post, error)
+		UpdatePost(ctx context.Context, post Post) (Post, error)
+		DeletePost(ctx context.Context, id int) error
+	}
+
+	PostService interface {
+		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]PostDetails, int, error)
+		GetPostByID(ctx context.Context, id int) (PostDetails, error)
+		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
+		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
+		DeletePost(ctx context.Context, post Post) error
+
+		PostFavouriteService
 	}
 )
 
@@ -53,17 +76,18 @@ func (Post) TableName() string {
 	return "posts"
 }
 
-func (p *Post) ToPostDetails(name string) PostDetails {
-	if p == nil {
-		return PostDetails{}
-	}
-	return PostDetails{
-		ID:        p.ID,
-		Title:     p.Title,
-		Content:   p.Content,
-		Username:  name,
-		CreatedAt: p.CreatedAt,
-		UpdatedAt: p.UpdatedAt,
-		AnimalID:  p.AnimalID,
-	}
-}
+//
+//func (p *Post) ToPostDetails(name string) PostDetails {
+//	if p == nil {
+//		return PostDetails{}
+//	}
+//	return PostDetails{
+//		ID:        p.ID,
+//		Title:     p.Title,
+//		Content:   p.Content,
+//		Username:  name,
+//		CreatedAt: p.CreatedAt,
+//		UpdatedAt: p.UpdatedAt,
+//		AnimalID:  p.AnimalID,
+//	}
+//}

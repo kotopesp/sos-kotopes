@@ -32,10 +32,12 @@ type (
 	}
 
 	Auth struct {
-		JWTSecret      []byte
-		VKClientID     string
-		VKClientSecret string
-		VKCallback     string
+		JWTSecret            []byte
+		VKClientID           string
+		VKClientSecret       string
+		VKCallback           string
+		AccessTokenLifetime  int
+		RefreshTokenLifetime int
 	}
 )
 
@@ -50,6 +52,9 @@ func NewConfig() (*Config, error) {
 	vkClientID := flag.String("vk_client_id", "", "vk id of our app")
 	vkClientSecret := flag.String("vk_client_secret", "", "key that used to access vk api")
 	vkCallback := flag.String("vk_callback", "https://59bf-91-223-89-38.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
+	accessTokenLifetime := flag.Int("access_token_lifetime", 2, "access token lifetime in minutes")
+	refreshTokenLifetime := flag.Int("refresh_token_lifetime", 43800, "refresh token lifetime in minutes")
+
 	flag.Parse()
 
 	cfg := &Config{
@@ -67,10 +72,12 @@ func NewConfig() (*Config, error) {
 			TLSKey:  *tlsKey,
 		},
 		Auth: Auth{
-			JWTSecret:      []byte(*jwtSecret),
-			VKClientID:     *vkClientID,
-			VKClientSecret: *vkClientSecret,
-			VKCallback:     *vkCallback,
+			JWTSecret:            []byte(*jwtSecret),
+			VKClientID:           *vkClientID,
+			VKClientSecret:       *vkClientSecret,
+			VKCallback:           *vkCallback,
+			AccessTokenLifetime:  *accessTokenLifetime,
+			RefreshTokenLifetime: *refreshTokenLifetime,
 		},
 	}
 

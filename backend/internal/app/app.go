@@ -22,10 +22,17 @@ import (
 
 	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
+	//"github.com/kotopesp/sos-kotopes/internal/store/user"
+
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
+	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
 // Run creates objects via constructors.
@@ -46,21 +53,26 @@ func Run(cfg *config.Config) {
 	roleStore := rolesStore.New(pg)
 	favouriteUserStore := userFavouriteStore.New(pg)
 	userStore := usersStore.New(pg)
+	postStore := poststore.New(pg)
+	postFavouriteStore := postfavouritestore.New(pg)
+	animalStore := animalstore.New(pg)
 
 	// Services
 	roleService := rolesService.New(roleStore, userStore)
 	userService := usersService.New(userStore)
 	favouriteUserService := userFavouriteService.New(favouriteUserStore)
-
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
-			JWTSecret:      cfg.JWTSecret,
-			VKClientID:     cfg.VKClientID,
-			VKClientSecret: cfg.VKClientSecret,
-			VKCallback:     cfg.VKCallback,
+			JWTSecret:            cfg.JWTSecret,
+			VKClientID:           cfg.VKClientID,
+			VKClientSecret:       cfg.VKClientSecret,
+			VKCallback:           cfg.VKCallback,
+			AccessTokenLifetime:  cfg.AccessTokenLifetime,
+			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -73,7 +85,17 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(app, authService, userService, roleService, favouriteUserService, formValidator)
+	//	v1.NewRouter(app, authService, userService, roleService, favouriteUserService, formValidator)
+
+	v1.NewRouter(
+		app,
+		authService,
+		userService,
+		roleService,
+		favouriteUserService,
+		formValidator,
+		postService,
+	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
