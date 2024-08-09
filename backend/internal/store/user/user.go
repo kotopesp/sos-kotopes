@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
 	"strings"
@@ -18,17 +19,36 @@ func New(pg *postgres.Postgres) core.UserStore {
 	return &store{pg}
 }
 
-func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) (user core.User, err error) {
+func (s *store) GetUser(ctx context.Context, id int) (user core.User, err error) {
+	err = s.DB.WithContext(ctx).
+		Table("users").
+		Where("id = ?", id).
+		First(&user).Error
 
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			logger.Log().Debug(ctx, err.Error())
+			return core.User{}, core.ErrNoSuchUser
+		}
+		logger.Log().Error(ctx, err.Error())
+		return core.User{}, err
+	}
+	return user, nil
+}
+
+func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) (user core.User, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 
 	if tx.Error != nil {
 		err = tx.Error
+		logger.Log().Error(ctx, err.Error())
+		tx.Rollback()
 		return core.User{}, err
 	}
 
 	defer func() {
 		if r := recover(); r != nil || err != nil {
+			logger.Log().Error(ctx, err.Error())
 			tx.Rollback()
 		}
 	}()
@@ -55,6 +75,7 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 	}
 
 	if len(updates) == 0 {
+		logger.Log().Error(ctx, core.ErrEmptyUpdateRequest.Error())
 		return core.User{}, core.ErrEmptyUpdateRequest
 	} else {
 		updates["updated_at"] = time.Now()
@@ -63,38 +84,25 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 	err = tx.WithContext(ctx).Table("users").Where("id = ?", id).Updates(updates).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			logger.Log().Debug(ctx, err.Error())
 			return core.User{}, core.ErrNoSuchUser
 		}
+		logger.Log().Error(ctx, err.Error())
 		return core.User{}, err
 	}
 
 	err = tx.WithContext(ctx).Table("users").Where("id = ?", id).First(&user).Error
-	if err != nil {
-		return core.User{}, err
-	}
+
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
+			logger.Log().Debug(ctx, err.Error())
 			return core.User{}, core.ErrNoSuchUser
 		}
+		logger.Log().Error(ctx, err.Error())
 		return core.User{}, err
 	}
 
 	return user, tx.Commit().Error
-}
-
-func (s *store) GetUser(ctx context.Context, id int) (user core.User, err error) {
-	err = s.DB.WithContext(ctx).
-		Table("users").
-		Where("id = ?", id).
-		First(&user).Error
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return core.User{}, core.ErrNoSuchUser
-		}
-		return core.User{}, err
-	}
-	return user, nil
 }
 
 func (s *store) GetUserByUsername(ctx context.Context, username string) (data core.User, err error) {

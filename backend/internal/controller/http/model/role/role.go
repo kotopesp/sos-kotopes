@@ -15,7 +15,12 @@ type GivenRole struct {
 	Name        string `json:"name" validate:"required,oneof=keeper seeker vet"`
 	Description string `json:"description" validate:"max=512"`
 }
+
 type UpdateRole struct {
 	Name        string  `json:"name" validate:"required,oneof=keeper seeker vet"`
 	Description *string `json:"description" validate:"max=512"`
+}
+
+type DeleteRole struct {
+	Name string `json:"name" validate:"required,oneof=keeper seeker vet"`
 }

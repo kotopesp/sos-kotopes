@@ -2,7 +2,6 @@ package http
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 
@@ -11,38 +10,11 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-func (r *Router) GetUserRoles(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
+func (r *Router) giveRoleToUser(ctx *fiber.Ctx) error {
+	id, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	userRoles, err := r.roleService.GetUserRoles(ctx.UserContext(), id)
-	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	if len(userRoles) == 0 {
-		return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
-			"message": "User has no roles",
-		})
-	}
-
-	posts := make([]role.Role, 0, len(userRoles))
-	for i := range userRoles {
-		posts = append(posts, role.ToRole(&userRoles[i]))
-	}
-
-	return ctx.Status(fiber.StatusOK).JSON(posts)
-}
-
-func (r *Router) GiveRoleToUser(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
-	if err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	var givenRole role.GivenRole
@@ -66,42 +38,38 @@ func (r *Router) GiveRoleToUser(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(addedRole)
 }
 
-func (r *Router) DeleteUserRole(ctx *fiber.Ctx) error {
+func (r *Router) getUserRoles(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	var givenRole role.GivenRole
-	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &givenRole)
-	if fiberError != nil || parseOrValidationError != nil {
-		return fiberError
-	}
-	coreGivenRole := givenRole.ToCoreGivenRole()
-
-	name := coreGivenRole.Name
-	err = r.roleService.DeleteUserRole(ctx.UserContext(), id, name)
+	userRoles, err := r.roleService.GetUserRoles(ctx.UserContext(), id)
 	if err != nil {
-		switch {
-		case errors.Is(err, core.ErrNoSuchUser):
-			logger.Log().Debug(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))
-		default:
-			logger.Log().Error(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-		}
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	fmt.Println(err)
-	return ctx.Status(fiber.StatusNoContent).JSON(id)
+
+	if len(userRoles) == 0 {
+		return ctx.Status(fiber.StatusOK).JSON(core.RoleDetails{})
+	}
+
+	roles := make([]role.Role, 0, len(userRoles))
+	for i := range userRoles {
+		roles = append(roles, role.ToRole(&userRoles[i]))
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(roles)
 }
 
-func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
+func (r *Router) updateUserRoles(ctx *fiber.Ctx) error {
+	id, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
+
 	var updateRole role.UpdateRole
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &updateRole)
 	if fiberError != nil || parseOrValidationError != nil {
@@ -115,6 +83,9 @@ func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
 		case errors.Is(err, core.ErrNoSuchUser):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, core.ErrUserRoleNotFound):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		default:
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -122,4 +93,32 @@ func (r *Router) UpdateUserRoles(ctx *fiber.Ctx) error {
 	}
 	modelRole := role.ToRole(&updatedRole)
 	return ctx.Status(fiber.StatusOK).JSON(modelRole)
+}
+
+func (r *Router) deleteUserRole(ctx *fiber.Ctx) error {
+	id, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	var deleteRole role.DeleteRole
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &deleteRole)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+
+	err = r.roleService.DeleteUserRole(ctx.UserContext(), id, deleteRole.Name)
+	if err != nil {
+		switch {
+		case errors.Is(err, core.ErrNoSuchUser):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+
+	return ctx.Status(fiber.StatusNoContent).JSON(id)
 }

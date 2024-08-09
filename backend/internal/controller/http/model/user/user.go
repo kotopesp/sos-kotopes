@@ -18,6 +18,15 @@ type (
 		Password    *string `json:"password" validate:"omitempty,min=8,max=72,contains_digit,contains_uppercase"`
 	}
 
+	ResponseUser struct {
+		ID          int     `json:"id"`
+		Username    string  `json:"username"`
+		Firstname   *string `json:"firstname"`
+		Lastname    *string `json:"lastname"`
+		Description *string `json:"description"`
+		Photo       *[]byte `json:"photo"`
+	}
+
 	GetFavourites struct {
 		Count  *int    `json:"count"`
 		Offset *int    `json:"offset"`

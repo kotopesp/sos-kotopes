@@ -45,6 +45,7 @@ func (s *service) GetAllPosts(ctx context.Context, params core.GetAllPostsParams
 	return postDetails, total, nil
 }
 
+// GetUserPosts retrieves all posts with the given user ID
 func (s *service) GetUserPosts(ctx context.Context, id int) (postsDetails []core.PostDetails, count int, err error) {
 	posts, total, err := s.postStore.GetUserPosts(ctx, id)
 	if err != nil {

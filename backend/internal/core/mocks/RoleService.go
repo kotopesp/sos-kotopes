@@ -19,7 +19,7 @@ func (_m *RoleService) DeleteUserRole(ctx context.Context, id int, role string) 
 	ret := _m.Called(ctx, id, role)
 
 	if len(ret) == 0 {
-		panic("no return value specified for DeleteUserRole")
+		panic("no return value specified for deleteUserRole")
 	}
 
 	var r0 error
@@ -37,7 +37,7 @@ func (_m *RoleService) GetUserRoles(ctx context.Context, id int) ([]core.RoleDet
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetUserRoles")
+		panic("no return value specified for getUserRoles")
 	}
 
 	var r0 []core.RoleDetails
@@ -67,7 +67,7 @@ func (_m *RoleService) GiveRoleToUser(ctx context.Context, id int, role core.Giv
 	ret := _m.Called(ctx, id, role)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GiveRoleToUser")
+		panic("no return value specified for giveRoleToUser")
 	}
 
 	var r0 core.RoleDetails

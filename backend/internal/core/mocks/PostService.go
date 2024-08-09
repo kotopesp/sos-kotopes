@@ -205,7 +205,7 @@ func (_m *PostService) GetUserPosts(ctx context.Context, id int) ([]core.PostDet
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetUserPosts")
+		panic("no return value specified for getUserPosts")
 	}
 
 	var r0 []core.PostDetails

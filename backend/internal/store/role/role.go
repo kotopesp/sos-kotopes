@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
 	"time"
@@ -17,18 +18,70 @@ func New(pg *postgres.Postgres) core.RoleStore {
 	return &store{pg}
 }
 
-const Seeker = "seeker"
-const Keeper = "keeper"
-const Vet = "vet"
+func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.GivenRole) (addedRole core.Role, err error) {
+	tx := s.DB.WithContext(ctx).Begin()
+	if tx.Error != nil {
+		logger.Log().Error(ctx, err.Error())
+		tx.Rollback()
+		return core.Role{}, tx.Error
+	}
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			logger.Log().Error(ctx, err.Error())
+			tx.Rollback()
+		}
+	}()
+
+	var user core.User
+	if err = tx.Table("users").First(&user, "id = ?", id).Error; err != nil {
+		return core.Role{}, core.ErrNoSuchUser
+	}
+
+	var tableName string
+	switch givenRole.Name {
+	case core.Seeker:
+		tableName = "seekers"
+	case core.Keeper:
+		tableName = "keepers"
+	case core.Vet:
+		tableName = "vets"
+	default:
+		return core.Role{}, core.ErrInvalidRole
+	}
+	now := time.Now()
+	role := core.Role{
+		UserID:      id,
+		Description: givenRole.Description,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+	if err := tx.Table(tableName).Create(&role).Error; err != nil {
+		return core.Role{}, err
+	}
+	addedRole = role
+
+	return addedRole, tx.Commit().Error
+}
 
 func (s *store) GetUserRoles(ctx context.Context, id int) (roles map[string]core.Role, err error) {
 	roles = make(map[string]core.Role)
 	tx := s.DB.WithContext(ctx).Begin()
 	if tx.Error != nil {
+		logger.Log().Error(ctx, err.Error())
+		tx.Rollback()
 		return nil, tx.Error
 	}
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			logger.Log().Error(ctx, err.Error())
+			tx.Rollback()
+		}
+	}()
+
 	tableNames := []string{"seekers", "keepers", "vets"}
-	roleNames := []string{Seeker, Keeper, Vet}
+	roleNames := []string{core.Seeker, core.Keeper, core.Vet}
 
 	for i, name := range tableNames {
 		var role core.Role
@@ -45,91 +98,21 @@ func (s *store) GetUserRoles(ctx context.Context, id int) (roles map[string]core
 	return roles, tx.Commit().Error
 }
 
-func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.GivenRole) (addedRole core.Role, err error) {
-
-	tx := s.DB.WithContext(ctx).Begin()
-	if tx.Error != nil {
-		return core.Role{}, tx.Error
-	}
-
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			tx.Rollback()
-		}
-	}()
-
-	var user core.User
-	if err = tx.Table("users").First(&user, "id = ?", id).Error; err != nil {
-		return core.Role{}, core.ErrNoSuchUser
-	}
-
-	var tableName string
-	switch givenRole.Name {
-	case Seeker:
-		tableName = "seekers"
-	case Keeper:
-		tableName = "keepers"
-	case Vet:
-		tableName = "vets"
-	default:
-		return core.Role{}, core.ErrInvalidRole
-	}
-	now := time.Now()
-	role := core.Role{
-		UserID:      id,
-		Description: givenRole.Description,
-		CreatedAt:   now,
-		UpdatedAt:   now,
-	}
-	if err := tx.Table(tableName).Create(&role).Error; err != nil {
-		return core.Role{}, err
-	} else {
-		addedRole = role
-	}
-
-	return addedRole, tx.Commit().Error
-}
-func (s *store) DeleteUserRole(ctx context.Context, id int, roleName string) (err error) {
-
-	tx := s.DB.WithContext(ctx).Begin()
-	if tx.Error != nil {
-		return tx.Error
-	}
-	var role core.Role
-	switch roleName {
-	case Seeker:
-		err = tx.Table("seekers").Where("user_id = ?", id).Delete(role).Error
-	case Keeper:
-		err = tx.Table("keepers").Where("user_id = ?", id).Delete(role).Error
-	case Vet:
-		err = tx.Table("vets").Where("user_id = ?", id).Delete(role).Error
-	default:
-		tx.Rollback()
-		return core.ErrInvalidRole
-	}
-
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit().Error
-
-}
-
 func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole core.UpdateRole) (updatedRole core.Role, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 
+	if tx.Error != nil {
+		tx.Rollback()
+		logger.Log().Error(ctx, err.Error())
+		return core.Role{}, err
+	}
+
 	defer func() {
 		if r := recover(); r != nil || err != nil {
+			logger.Log().Error(ctx, err.Error())
 			tx.Rollback()
 		}
 	}()
-
-	if tx.Error != nil {
-		tx.Rollback()
-		return core.Role{}, err
-	}
 
 	updates := make(map[string]interface{})
 	if updateRole.Description != nil {
@@ -145,16 +128,26 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole core.Upda
 	roleName := updateRole.Name
 	var tableName string
 	switch roleName {
-	case Seeker:
+	case core.Seeker:
 		tableName = "seekers"
-	case Keeper:
+	case core.Keeper:
 
 		tableName = "keepers"
-	case Vet:
+	case core.Vet:
 		tableName = "vets"
 	default:
 		return core.Role{}, core.ErrInvalidRole
 	}
+
+	var count int64
+	err = tx.Table(tableName).Where("user_id = ?", id).Count(&count).Error
+	if err != nil {
+		return core.Role{}, err
+	}
+	if count == 0 {
+		return core.Role{}, core.ErrUserRoleNotFound
+	}
+
 	err = tx.Table(tableName).Where("user_id = ?", id).Updates(updates).Error
 	if err != nil {
 		return core.Role{}, err
@@ -165,4 +158,40 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole core.Upda
 		return core.Role{}, err
 	}
 	return updatedRole, tx.Commit().Error
+}
+
+func (s *store) DeleteUserRole(ctx context.Context, id int, roleName string) (err error) {
+	tx := s.DB.WithContext(ctx).Begin()
+
+	if tx.Error != nil {
+		logger.Log().Error(ctx, err.Error())
+		tx.Rollback()
+		return tx.Error
+	}
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			logger.Log().Error(ctx, err.Error())
+			tx.Rollback()
+		}
+	}()
+
+	var role core.Role
+	switch roleName {
+	case core.Seeker:
+		err = tx.Table("seekers").Where("user_id = ?", id).Delete(role).Error
+	case core.Keeper:
+		err = tx.Table("keepers").Where("user_id = ?", id).Delete(role).Error
+	case core.Vet:
+		err = tx.Table("vets").Where("user_id = ?", id).Delete(role).Error
+	default:
+		return core.ErrInvalidRole
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit().Error
+
 }

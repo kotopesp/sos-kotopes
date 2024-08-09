@@ -19,7 +19,7 @@ func (_m *UserService) GetUser(ctx context.Context, id int) (core.User, error) {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetUser")
+		panic("no return value specified for getUser")
 	}
 
 	var r0 core.User
@@ -47,7 +47,7 @@ func (_m *UserService) UpdateUser(ctx context.Context, id int, update core.Updat
 	ret := _m.Called(ctx, id, update)
 
 	if len(ret) == 0 {
-		panic("no return value specified for UpdateUser")
+		panic("no return value specified for updateUser")
 	}
 
 	var r0 core.User

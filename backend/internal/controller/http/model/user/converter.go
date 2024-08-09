@@ -28,3 +28,17 @@ func (u *UpdateUser) ToCoreUpdateUser() core.UpdateUser {
 		Lastname:     u.Lastname,
 	}
 }
+
+func ToResponseUser(user *core.User) ResponseUser {
+	if user == nil {
+		return ResponseUser{}
+	}
+	return ResponseUser{
+		ID:          user.ID,
+		Username:    user.Username,
+		Lastname:    user.Lastname,
+		Firstname:   user.Firstname,
+		Photo:       user.Photo,
+		Description: user.Description,
+	}
+}

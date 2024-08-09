@@ -16,12 +16,13 @@ type (
 	}
 
 	RoleDetails struct {
-		Name        string    `gorm:"-"`
-		ID          int       `gorm:"id"`
-		Username    string    `gorm:"user_id"`
-		Description string    `gorm:"description"`
-		CreatedAt   time.Time `gorm:"created_at"`
-		UpdatedAt   time.Time `gorm:"updated_at"`
+		ID          int
+		Name        string
+		UserID      int
+		Username    string
+		Description string
+		CreatedAt   time.Time
+		UpdatedAt   time.Time
 	}
 	GivenRole struct {
 		Name        string `json:"name"`
@@ -33,7 +34,6 @@ type (
 		Description *string `json:"description"`
 	}
 
-	// todo
 	RoleService interface {
 		GetUserRoles(ctx context.Context, id int) (roles []RoleDetails, err error)
 		GiveRoleToUser(ctx context.Context, id int, role GivenRole) (addedRole RoleDetails, err error)
@@ -51,19 +51,11 @@ type (
 // errors
 var (
 	ErrInvalidRole      = errors.New("invalid role name")
+	ErrUserRoleNotFound = errors.New("user does not have the specified role")
+
 	ErrNoFieldsToUpdate = errors.New("no fields to update")
 )
 
-func (r *Role) ToRoleDetails(roleName, username string) RoleDetails {
-	if r == nil {
-		return RoleDetails{}
-	}
-	return RoleDetails{
-		Name:        roleName,
-		ID:          r.ID,
-		Username:    username,
-		Description: r.Description,
-		CreatedAt:   r.CreatedAt,
-		UpdatedAt:   r.UpdatedAt,
-	}
-}
+const Seeker = "seeker"
+const Keeper = "keeper"
+const Vet = "vet"

@@ -36,7 +36,8 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
-func (r *Router) GetUserPosts(ctx *fiber.Ctx) error {
+// getUserPosts handles the request to get all posts of specified user
+func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())

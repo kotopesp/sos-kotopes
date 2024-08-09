@@ -9,7 +9,29 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-func (r *Router) UpdateUser(ctx *fiber.Ctx) error {
+func (r *Router) getUser(ctx *fiber.Ctx) error {
+	id, err := ctx.ParamsInt("id")
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	currentUser, err := r.userService.GetUser(ctx.UserContext(), id)
+	if err != nil {
+		switch {
+		case errors.Is(err, core.ErrNoSuchUser):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(currentUser)
+}
+
+func (r *Router) updateUser(ctx *fiber.Ctx) error {
 	id, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
@@ -37,28 +59,7 @@ func (r *Router) UpdateUser(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
+	responseUser := user.ToResponseUser(&updatedUser)
 
-	return ctx.Status(fiber.StatusOK).JSON(updatedUser)
-}
-
-func (r *Router) GetUser(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
-	if err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	currentUser, err := r.userService.GetUser(ctx.UserContext(), id)
-	if err != nil {
-		switch {
-		case errors.Is(err, core.ErrNoSuchUser):
-			logger.Log().Debug(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
-		default:
-			logger.Log().Error(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-		}
-	}
-
-	return ctx.Status(fiber.StatusOK).JSON(currentUser)
+	return ctx.Status(fiber.StatusOK).JSON(responseUser)
 }
