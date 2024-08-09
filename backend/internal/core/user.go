@@ -20,6 +20,27 @@ type (
 		UpdatedAt    time.Time  `gorm:"column:updated_at"`
 		DeletedAt    *time.Time `gorm:"column:deleted_at"`
 	}
+	UpdateUser struct {
+		Username     *string `gorm:"column:username"`
+		Firstname    *string `gorm:"column:firstname"`
+		Lastname     *string `gorm:"column:lastname"`
+		Description  *string `gorm:"column:description"`
+		Photo        *[]byte `gorm:"column:photo"`
+		PasswordHash *string `gorm:"column:password"`
+	}
+	UserStore interface {
+		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)
+		GetUser(ctx context.Context, id int) (user User, err error)
+		GetUserByID(ctx context.Context, id int) (data User, err error)
+		GetUserByUsername(ctx context.Context, username string) (data User, err error)
+		GetUserByExternalID(ctx context.Context, externalID int) (data ExternalUser, err error)
+		AddUser(ctx context.Context, user User) (userID int, err error)
+		AddExternalUser(ctx context.Context, user User, externalUserID int, authProvider string) (userID int, err error)
+	}
+	UserService interface {
+		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)
+		GetUser(ctx context.Context, id int) (user User, err error)
+	}
 
 	ExternalUser struct {
 		ID           int    `gorm:"column:id"`
@@ -28,12 +49,27 @@ type (
 		AuthProvider string `gorm:"column:auth_provider"`
 	}
 
-	UserStore interface {
-		GetUserByID(ctx context.Context, id int) (data User, err error)
-		GetUserByUsername(ctx context.Context, username string) (data User, err error)
-		GetUserByExternalID(ctx context.Context, externalID int) (data ExternalUser, err error)
-		AddUser(ctx context.Context, user User) (userID int, err error)
-		AddExternalUser(ctx context.Context, user User, externalUserID int, authProvider string) (userID int, err error)
+	// todo
+	FavouriteUser struct {
+		ID        int    `gorm:"column:id"`
+		personID  int    `gorm:"column:person_id"`
+		userID    int    `gorm:"column:user_id"`
+		createdAt string `gorm:"column:created_at"`
+	}
+	UserFavouriteStore interface {
+		AddUserToFavourite(ctx context.Context, personID int, userID int) (err error)
+		GetFavouriteUsers(ctx context.Context, userID int, params GetFavourites) (favouriteUsers []User, err error)
+		DeleteUserFromFavourite(ctx context.Context, personID int, userID int) (err error)
+	}
+	UserFavouriteService interface {
+		AddUserToFavourite(ctx context.Context, personID int, userID int) (err error)
+		GetFavouriteUsers(ctx context.Context, userID int, params GetFavourites) (favouriteUsers []User, err error)
+		DeleteUserFromFavourite(ctx context.Context, personID int, userID int) (err error)
+	}
+	GetFavourites struct {
+		Count  *int
+		Offset *int
+		Sort   *string
 	}
 )
 
@@ -43,6 +79,7 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrNoResponseFromVK   = errors.New("no response from VK")
 	ErrNoSuchUser         = errors.New("user does not exist")
+	ErrEmptyUpdateRequest = errors.New("empty update request")
 )
 
 // TableName table name in db for gorm

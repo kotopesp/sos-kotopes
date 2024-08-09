@@ -8,16 +8,21 @@ import (
 )
 
 type Router struct {
-	app           *fiber.App
-	formValidator validator.FormValidatorService
-	authService   core.AuthService
-	postService   core.PostService
+	app                  *fiber.App
+	authService          core.AuthService
+	userService          core.UserService
+	roleService          core.RoleService
+	userFavouriteService core.UserFavouriteService
+	formValidator        validator.FormValidatorService
+	postService          core.PostService
 }
 
 func NewRouter(
 	app *fiber.App,
-	formValidator validator.FormValidatorService,
 	authService core.AuthService,
+	userService core.UserService,
+	roleService core.RoleService,
+	formValidator validator.FormValidatorService,
 	postService core.PostService,
 ) {
 	router := &Router{
@@ -25,6 +30,8 @@ func NewRouter(
 		formValidator: formValidator,
 		authService:   authService,
 		postService:   postService,
+		userService:   userService,
+		roleService:   roleService,
 	}
 
 	router.initRequestMiddlewares()
@@ -38,6 +45,21 @@ func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
+
+	// users
+	v1.Patch("/users", r.protectedMiddleware(), r.UpdateUser)
+	v1.Get("/users/:id", r.GetUser)
+
+	// user roles
+	v1.Get("/users/:id/roles", r.GetUserRoles)
+	v1.Post("/users/:id/roles", r.GiveRoleToUser)
+	v1.Delete("/users/:id/roles", r.DeleteUserRole)
+	v1.Patch("/users/:id/roles", r.UpdateUserRoles)
+
+	// favourites users todo
+	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
+	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
+	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
 
 	// e.g. protected resource
 	v1.Get("/protected", r.protectedMiddleware(), r.protected)
@@ -53,6 +75,7 @@ func (r *Router) initRoutes() {
 
 	// posts
 	v1.Get("/posts", r.getPosts)
+	v1.Get("/users/:id/posts", r.GetUserPosts)
 	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
 	v1.Get("/posts/:id", r.getPostByID)
 	v1.Post("/posts", r.protectedMiddleware(), r.createPost)

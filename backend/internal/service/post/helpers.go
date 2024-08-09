@@ -9,15 +9,15 @@ import (
 // ToCorePostDetails creates a core.PostDetails object from a core.Post, core.Animal, and username string.
 func ToCorePostDetails(post core.Post, animal core.Animal, userName string) core.PostDetails {
 	return core.PostDetails{
-		Post: post,
-		Animal: animal,
+		Post:     post,
+		Animal:   animal,
 		Username: userName,
 	}
 }
 
 // BuildPostDetailsList constructs a list of core.PostDetails from a list of core.Post objects.
 // It fetches the associated animal and user information for each post.
-func (s *postService) BuildPostDetailsList(ctx context.Context, posts []core.Post, total int) ([]core.PostDetails, error) {
+func (s *service) BuildPostDetailsList(ctx context.Context, posts []core.Post, total int) ([]core.PostDetails, error) {
 	postDetails := make([]core.PostDetails, total)
 
 	// Iterate through each post to build the post details
@@ -41,7 +41,7 @@ func (s *postService) BuildPostDetailsList(ctx context.Context, posts []core.Pos
 
 // BuildPostDetails constructs a core.PostDetails object from a core.Post object.
 // It fetches the associated animal and user information for the post.
-func (s *postService) BuildPostDetails(ctx context.Context, post core.Post) (core.PostDetails, error) {
+func (s *service) BuildPostDetails(ctx context.Context, post core.Post) (core.PostDetails, error) {
 	animal, err := s.animalStore.GetAnimalByID(ctx, post.AnimalID) // Fetch the animal details
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())

@@ -3,6 +3,10 @@ package app
 import (
 	"context"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
+	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,16 +19,16 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 
-	"github.com/kotopesp/sos-kotopes/internal/store/user"
+	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
-    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
@@ -43,12 +47,16 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	userStore := user.New(pg)
+	roleStore := rolesStore.New(pg)
+	favouriteUserStore := userFavouriteStore.New(pg)
+	userStore := usersStore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
+	roleService := rolesService.New(roleStore, userStore)
+	userService := usersService.New(userStore, favouriteUserStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -64,7 +72,6 @@ func Run(cfg *config.Config) {
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
-
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -76,8 +83,10 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		formValidator,
 		authService,
+		userService,
+		roleService,
+		formValidator,
 		postService,
 	)
 

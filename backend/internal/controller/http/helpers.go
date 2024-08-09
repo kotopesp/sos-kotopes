@@ -36,6 +36,7 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 }
 
 // validation helpers
+
 func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(data); err != nil {
 		if errors.Is(err, fiber.ErrUnprocessableEntity) {

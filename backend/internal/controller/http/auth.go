@@ -127,17 +127,16 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 }
 
 // getting items from token payload
+
 func getPayloadItem(ctx *fiber.Ctx, key string) any {
 	token, ok := ctx.Locals("user").(*jwt.Token)
 	if !ok {
 		return nil
 	}
-
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil
 	}
-
 	return claims[key]
 }
 
