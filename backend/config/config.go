@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
@@ -38,6 +39,7 @@ type (
 		VKCallback           string
 		AccessTokenLifetime  int
 		RefreshTokenLifetime int
+		TelegramAuthBotURL   string
 	}
 )
 
@@ -54,6 +56,7 @@ func NewConfig() (*Config, error) {
 	vkCallback := flag.String("vk_callback", "https://59bf-91-223-89-38.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
 	accessTokenLifetime := flag.Int("access_token_lifetime", 2, "access token lifetime in minutes")
 	refreshTokenLifetime := flag.Int("refresh_token_lifetime", 43800, "refresh token lifetime in minutes")
+	telegramAuthBotURL := flag.String("telegram_auth_bot_url", "https://t.me/SosKotopesAuthBot", "link to chat with auth bot")
 
 	flag.Parse()
 
@@ -78,6 +81,7 @@ func NewConfig() (*Config, error) {
 			VKCallback:           *vkCallback,
 			AccessTokenLifetime:  *accessTokenLifetime,
 			RefreshTokenLifetime: *refreshTokenLifetime,
+			TelegramAuthBotURL:   *telegramAuthBotURL,
 		},
 	}
 

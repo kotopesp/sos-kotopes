@@ -4,11 +4,12 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"io"
+	"mime/multipart"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"io"
-	"mime/multipart"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
@@ -40,6 +41,17 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 		},
 		ErrorHandler: authErrorHandler,
 		TokenLookup:  "cookie:refresh_token",
+	})
+}
+
+func (r *Router) telegramMiddleware() fiber.Handler {
+	return jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.HS256,
+			Key:    r.authService.GetJWTSecret(),
+		},
+		ErrorHandler: authErrorHandler,
+		TokenLookup:  "query:token",
 	})
 }
 
@@ -209,7 +221,7 @@ func setRefreshTokenCookie(ctx *fiber.Ctx, refreshToken string) {
 }
 
 // callback is invoked when the user login through VK
-func (r *Router) callback(ctx *fiber.Ctx) error {
+func (r *Router) callbackVK(ctx *fiber.Ctx) error {
 	token, err := r.authService.ConfigVK().Exchange(ctx.Context(), ctx.FormValue("code"))
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
@@ -222,6 +234,30 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 	}
 
 	accessToken, refreshToken, err := r.authService.AuthorizeVK(ctx.Context(), token.AccessToken)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	setRefreshTokenCookie(ctx, *refreshToken)
+
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
+		"access_token": accessToken,
+	}))
+}
+
+func (r *Router) loginTelegram(ctx *fiber.Ctx) error {
+	return ctx.Redirect(r.authService.GetTelegramAuthBotURL())
+}
+
+func (r *Router) callbackTelegram(ctx *fiber.Ctx) error {
+	id, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(model.ErrInvalidTokenID.Error()))
+	}
+
+	accessToken, refreshToken, err := r.authService.AuthorizeTelegram(ctx.Context(), id)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))

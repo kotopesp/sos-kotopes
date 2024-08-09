@@ -14,6 +14,7 @@ type (
 		VKCallback           string
 		AccessTokenLifetime  int
 		RefreshTokenLifetime int
+		TelegramAuthBotURL   string
 	}
 
 	AuthService interface {
@@ -23,6 +24,8 @@ type (
 		Refresh(ctx context.Context, id int) (accessToken *string, err error)
 		ConfigVK() *oauth2.Config
 		AuthorizeVK(ctx context.Context, token string) (accessToken, refreshToken *string, err error)
+		AuthorizeTelegram(ctx context.Context, telegramUserID int) (accessToken, refreshToken *string, err error)
+		GetTelegramAuthBotURL() string
 	}
 )
 

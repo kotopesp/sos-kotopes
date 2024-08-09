@@ -57,7 +57,11 @@ func (r *Router) initRoutes() {
 
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)
-	v1.Get("/auth/login/vk/callback", r.callback)
+	v1.Get("/auth/login/vk/callback", r.callbackVK)
+
+	// auth telegram
+	v1.Get("/auth/login/telegram", r.loginTelegram)
+	v1.Get("/auth/login/telegram/callback", r.telegramMiddleware(), r.callbackTelegram)
 
 	// posts
 	v1.Get("/posts", r.getPosts)

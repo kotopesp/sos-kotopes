@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -12,11 +13,13 @@ import (
 )
 
 const (
-	vkAuthProvider = "vk"
+	vkAuthProvider       = "vk"
+	telegramAuthProvider = "telegram"
 )
 
 var authProvidersPasswordPlugs = map[string]string{
-	vkAuthProvider: "vk_password",
+	vkAuthProvider:       "vk_password",
+	telegramAuthProvider: "telegram_password",
 }
 
 type service struct {
@@ -32,6 +35,10 @@ func New(
 		userStore:         userStore,
 		authServiceConfig: authServiceConfig,
 	}
+}
+
+func (s *service) GetTelegramAuthBotURL() string {
+	return s.authServiceConfig.TelegramAuthBotURL
 }
 
 // GetJWTSecret need to be accessed from middleware
@@ -96,7 +103,16 @@ func (s *service) AuthorizeVK(ctx context.Context, token string) (accessToken, r
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, err = s.loginVK(ctx, vkUserID)
+	accessToken, refreshToken, err = s.loginExternal(ctx, vkUserID, vkAuthProvider)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return accessToken, refreshToken, err
+}
+
+func (s *service) AuthorizeTelegram(ctx context.Context, telegramUserID int) (accessToken, refreshToken *string, err error) {
+	accessToken, refreshToken, err = s.loginExternal(ctx, telegramUserID, telegramAuthProvider)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -105,17 +121,19 @@ func (s *service) AuthorizeVK(ctx context.Context, token string) (accessToken, r
 }
 
 // loginVK Signup if user not exists, then login
-func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken, refreshToken *string, err error) {
+func (s *service) loginExternal(ctx context.Context,
+	externalUserID int,
+	authProvider string) (accessToken, refreshToken *string, err error) {
 	externalUser, err := s.userStore.GetUserByExternalID(ctx, externalUserID)
 
 	var userID int
 
 	if err != nil {
 		if errors.Is(err, core.ErrNoSuchUser) {
-			userID, err = s.signupVK(ctx, core.User{
+			userID, err = s.signupExternal(ctx, core.User{
 				Username:     uuid.New().String(),
-				PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
-			}, externalUserID, vkAuthProvider)
+				PasswordHash: authProvidersPasswordPlugs[authProvider],
+			}, externalUserID, authProvider)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -136,12 +154,12 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 
 	return s.LoginBasic(ctx, core.User{
 		Username:     user.Username,
-		PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
+		PasswordHash: authProvidersPasswordPlugs[authProvider],
 	})
 }
 
 // signupVK Creating external user
-func (s *service) signupVK(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
+func (s *service) signupExternal(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), 12)
 	if err != nil {
 		return 0, err

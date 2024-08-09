@@ -62,6 +62,7 @@ func Run(cfg *config.Config) {
 			VKCallback:           cfg.VKCallback,
 			AccessTokenLifetime:  cfg.AccessTokenLifetime,
 			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
+			TelegramAuthBotURL:   cfg.TelegramAuthBotURL,
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
