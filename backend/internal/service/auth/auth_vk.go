@@ -12,6 +12,7 @@ import (
 	"golang.org/x/oauth2/vk"
 )
 
+// ConfigVK OAuth VK config
 func (s *service) ConfigVK() *oauth2.Config {
 	conf := &oauth2.Config{
 		ClientID:     s.authServiceConfig.VKClientID,
@@ -23,6 +24,7 @@ func (s *service) ConfigVK() *oauth2.Config {
 	return conf
 }
 
+// getVKUserID Getting VK user ID (need to have token)
 func (s *service) getVKUserID(token string) (id int, err error) {
 	reqURL, err := url.Parse(core.VKGetUsersURL)
 	if err != nil {

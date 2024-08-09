@@ -8,32 +8,26 @@ import (
 )
 
 type Router struct {
-	app                  *fiber.App
-	entityService        core.EntityService
-	formValidator        validator.FormValidatorService
-	authService          core.AuthService
-	postService          core.PostService
-	postFavouriteService core.PostFavoriteService
-	postResponseService  core.PostResponseService
+	app                 *fiber.App
+	formValidator       validator.FormValidatorService
+	authService         core.AuthService
+	postService         core.PostService
+	postResponseService core.PostResponseService
 }
 
 func NewRouter(
 	app *fiber.App,
-	entityService core.EntityService,
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
 	postService core.PostService,
-	postFavouriteService core.PostFavoriteService,
 	postResponseService core.PostResponseService,
 ) {
 	router := &Router{
-		app:                  app,
-		entityService:        entityService,
-		formValidator:        formValidator,
-		authService:          authService,
-		postService:          postService,
-		postFavouriteService: postFavouriteService,
-		postResponseService:  postResponseService,
+		app:                 app,
+		formValidator:       formValidator,
+		authService:         authService,
+		postService:         postService,
+		postResponseService: postResponseService,
 	}
 
 	router.initRequestMiddlewares()
@@ -47,10 +41,6 @@ func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
-
-	// entities
-	v1.Get("/entities", r.getEntities)
-	v1.Get("/entities/:id", r.getEntityByID)
 
 	// e.g. protected resource
 	v1.Get("/protected", r.protectedMiddleware(), r.protected)
@@ -66,19 +56,15 @@ func (r *Router) initRoutes() {
 
 	// posts
 	v1.Get("/posts", r.getPosts)
-	v1.Get("/posts/favorites", r.getFavoritePosts) // получает все посты у user (могут быть коллизии с "/posts/:id")
+	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
 	v1.Get("/posts/:id", r.getPostByID)
-	v1.Get("/posts/:id/photo", r.getPostPhoto)
-	v1.Post("/posts", r.createPost)
-	v1.Put("/posts/:id", r.updatePost)
-	v1.Delete("/posts/:id", r.deletePost)
+	v1.Post("/posts", r.protectedMiddleware(), r.createPost)
+	v1.Patch("/posts/:id", r.protectedMiddleware(), r.updatePost)
+	v1.Delete("/posts/:id", r.protectedMiddleware(), r.deletePost)
 
-	// favorites posts
-
-	v1.Get("/posts/favorites/:id", r.getFavoritePostUserByID)
-	v1.Post("/posts/:id/favorites", r.addFavoritePost)
-	// v1.Delete("/posts/favorites", r.deleteFavoriteAllPostsFromUser) // удалить все посты у user (не знаю нужна ли)
-	v1.Delete("/posts/favorites/:id", r.deleteFavoritePostByID)
+	// favourites posts
+	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
+	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
 
 	// responses post
 	v1.Post("/posts/:post_id/responses", r.createPostResponse)

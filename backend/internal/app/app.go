@@ -11,12 +11,11 @@ import (
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/service/name"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/kotopesp/sos-kotopes/internal/store/entity"
+
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
@@ -26,10 +25,10 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
-	postfavouriteservice "github.com/kotopesp/sos-kotopes/internal/service/post_favorite_service"
-	postservice "github.com/kotopesp/sos-kotopes/internal/service/post_service"
-	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/post_favorite_store"
-	poststore "github.com/kotopesp/sos-kotopes/internal/store/post_store"
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
+	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
 // Run creates objects via constructors.
@@ -47,29 +46,29 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	entityStore := entity.New(pg)
 	userStore := user.New(pg)
-	postStore := poststore.NewPostStore(pg)
-	postFavouriteStore := postfavouritestore.NewFavoritePostStore(pg)
+	postStore := poststore.New(pg)
+	postFavouriteStore := postfavouritestore.New(pg)
+	animalStore := animalstore.New(pg)
 	postResponseStore := postresponsestore.New(pg)
 
 	// Services
-	entityService := name.New(entityStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
-			JWTSecret:      cfg.JWTSecret,
-			VKClientID:     cfg.VKClientID,
-			VKClientSecret: cfg.VKClientSecret,
-			VKCallback:     cfg.VKCallback,
+			JWTSecret:            cfg.JWTSecret,
+			VKClientID:           cfg.VKClientID,
+			VKClientSecret:       cfg.VKClientSecret,
+			VKCallback:           cfg.VKCallback,
+			AccessTokenLifetime:  cfg.AccessTokenLifetime,
+			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	postResponseService := postresponseservice.New(postResponseStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
-	postService := postservice.NewPostService(postStore)
-	postFavouriteService := postfavouriteservice.NewPostFavoriteService(postFavouriteStore)
-	postResponseService := postresponseservice.New(postResponseStore)
 
 	// HTTP Server
 	app := fiber.New(fiber.Config{
@@ -82,11 +81,9 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		entityService,
 		formValidator,
 		authService,
 		postService,
-		postFavouriteService,
 		postResponseService,
 	)
 
