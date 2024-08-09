@@ -1,13 +1,13 @@
 package post
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
+	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
 // ToCorePostDetails converts CreateRequestBodyPost from model to core.PostDetails
 func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails {
-	if (p == nil) {
+	if p == nil {
 		return core.PostDetails{}
 	}
 
@@ -29,13 +29,13 @@ func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails
 	}
 
 	return core.PostDetails{
-		Post: 	post,
-		Animal: animal, 
+		Post:   post,
+		Animal: animal,
 	}
 }
 
 func (p *UpdateRequestBodyPost) ToCorePostDetails() core.UpdateRequestBodyPost {
-	if (p == nil) {
+	if p == nil {
 		return core.UpdateRequestBodyPost{}
 	}
 
@@ -48,7 +48,7 @@ func (p *UpdateRequestBodyPost) ToCorePostDetails() core.UpdateRequestBodyPost {
 		Color:       p.Color,
 		Gender:      p.Gender,
 		Description: p.Description,
-		Status:      p.Status, 
+		Status:      p.Status,
 	}
 }
 
@@ -73,12 +73,12 @@ func ToPostResponse(post core.PostDetails) PostResponse {
 		Content:        post.Post.Content,
 		AuthorUsername: post.Username,
 		CreatedAt:      post.Post.CreatedAt,
-		AnimalType:  	post.Animal.AnimalType,
-		Age:         	post.Animal.Age,
-		Color:       	post.Animal.Color,
-		Gender:      	post.Animal.Gender,
-		Description: 	post.Animal.Description,
-		Status:      	post.Animal.Status,
+		AnimalType:     post.Animal.AnimalType,
+		Age:            post.Animal.Age,
+		Color:          post.Animal.Color,
+		Gender:         post.Animal.Gender,
+		Description:    post.Animal.Description,
+		Status:         post.Animal.Status,
 		Photo:          post.Post.Photo,
 		IsFavourite:    false,
 		Comments:       0,
@@ -94,16 +94,16 @@ func ToCorePostFavourite(userID, postID int) core.PostFavourite {
 }
 
 // ToCoreGetAllPostsParams converts GetAllPostsParams from model to core.GetAllPostsParams
-func (p *GetAllPostsParams) ToCoreGetAllPostsParams() core.GetAllPostsParams{
+func (p *GetAllPostsParams) ToCoreGetAllPostsParams() core.GetAllPostsParams {
 	if p == nil {
 		return core.GetAllPostsParams{}
 	}
 	return core.GetAllPostsParams{
-		Limit:  	&p.Limit,
-		Offset: 	&p.Offset,
-		Status: 	p.Status,
+		Limit:      &p.Limit,
+		Offset:     &p.Offset,
+		Status:     p.Status,
 		AnimalType: p.AnimalType,
-		Gender: 	p.Gender,
-		Color:  	p.Color,
+		Gender:     p.Gender,
+		Color:      p.Color,
 	}
 }

@@ -2,10 +2,11 @@ package app
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -19,12 +20,14 @@ import (
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
+	postresponseservice "github.com/kotopesp/sos-kotopes/internal/service/post_response"
+	postresponsestore "github.com/kotopesp/sos-kotopes/internal/store/post_response"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
-    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 
@@ -47,6 +50,7 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
+	postResponseStore := postresponsestore.New(pg)
 
 	// Services
 	authService := auth.New(
@@ -61,6 +65,7 @@ func Run(cfg *config.Config) {
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	postResponseService := postresponseservice.New(postResponseStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -79,6 +84,7 @@ func Run(cfg *config.Config) {
 		formValidator,
 		authService,
 		postService,
+		postResponseService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

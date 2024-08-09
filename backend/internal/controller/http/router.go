@@ -8,10 +8,11 @@ import (
 )
 
 type Router struct {
-	app           *fiber.App
-	formValidator validator.FormValidatorService
-	authService   core.AuthService
-	postService   core.PostService
+	app                 *fiber.App
+	formValidator       validator.FormValidatorService
+	authService         core.AuthService
+	postService         core.PostService
+	postResponseService core.PostResponseService
 }
 
 func NewRouter(
@@ -19,12 +20,14 @@ func NewRouter(
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
 	postService core.PostService,
+	postResponseService core.PostResponseService,
 ) {
 	router := &Router{
-		app:           app,
-		formValidator: formValidator,
-		authService:   authService,
-		postService:   postService,
+		app:                 app,
+		formValidator:       formValidator,
+		authService:         authService,
+		postService:         postService,
+		postResponseService: postResponseService,
 	}
 
 	router.initRequestMiddlewares()
@@ -62,6 +65,12 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
+
+	// responses post
+	v1.Post("/posts/:post_id/responses", r.createPostResponse)
+	v1.Get("/posts/:post_id/responses", r.getResponsesByPostID)
+	v1.Put("/posts/:post_id/responses", r.updatePostResponse)
+	v1.Delete("/posts/:post_id/responses", r.deletePostResponse)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
