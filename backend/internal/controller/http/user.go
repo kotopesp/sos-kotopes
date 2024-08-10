@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
@@ -39,11 +40,18 @@ func (r *Router) updateUser(ctx *fiber.Ctx) error {
 	}
 
 	var update user.UpdateUser
+	err, update.Photo = openAndValidatePhoto(ctx)
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &update)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
 	coreUpdate := update.ToCoreUpdateUser()
+	fmt.Println(coreUpdate)
 
 	updatedUser, err := r.userService.UpdateUser(ctx.UserContext(), id, coreUpdate)
 	if err != nil {
