@@ -2,8 +2,6 @@ package userfavourite
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
@@ -39,7 +37,7 @@ func (s *Store) AddUserToFavourite(ctx context.Context, favouriteUserID, userID 
 		return core.User{}, err
 	}
 	if count > 0 {
-		return core.User{}, errors.New("user is already in favorites")
+		return core.User{}, err
 	}
 
 	newFavorite := core.FavouriteUser{
@@ -65,12 +63,24 @@ func (s *Store) GetFavouriteUsers(ctx context.Context, userID int) (favouriteUse
 		Error
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to get favourite users: %w", err)
+		return nil, err
 	}
 
 	return favouriteUsers, nil
 }
 
 func (s *Store) DeleteUserFromFavourite(ctx context.Context, favouriteUserID, userID int) (err error) {
-	panic("implement me")
+	result := s.DB.WithContext(ctx).
+		Where("person_id = ? AND user_id = ?", favouriteUserID, userID).
+		Delete(core.FavouriteUser{})
+
+	if result.Error != nil {
+		return err
+	}
+
+	if result.RowsAffected == 0 {
+		return err
+	}
+
+	return nil
 }
