@@ -157,8 +157,8 @@ func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) 
 	return nil
 }
 
-// Works only for requests with one file
-func openAndValidatePhoto(ctx *fiber.Ctx) (err error, photoBytes *[]byte) {
+// !Works only for requests with one file
+func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 	if form, err := ctx.MultipartForm(); err == nil {
 		if files := form.File["photo"]; len(files) > 0 {
 			file := files[0]
@@ -166,21 +166,21 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (err error, photoBytes *[]byte) {
 			// Read file content
 			fileContent, err := file.Open()
 			if err != nil {
-				return err, nil
+				return nil, err
 			}
 			defer fileContent.Close()
 
 			buffer := bytes.NewBuffer(nil)
 			if _, err = io.Copy(buffer, fileContent); err != nil {
-				return err, nil
+				return nil, err
 			}
 			// Validate photo
-			if err = validatePhoto(ctx.UserContext(), file); err != nil {
-				return err, nil
+			if err := validatePhoto(ctx.UserContext(), file); err != nil {
+				return nil, err
 			}
-			bytes := buffer.Bytes()
-			photoBytes = &bytes
+			bytesTmp := buffer.Bytes()
+			photoBytes = &bytesTmp
 		}
 	}
-	return nil, photoBytes
+	return photoBytes, nil
 }

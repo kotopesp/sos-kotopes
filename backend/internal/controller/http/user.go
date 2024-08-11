@@ -37,7 +37,7 @@ func (r *Router) updateUser(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 	var update user.UpdateUser
-	err, update.Photo = openAndValidatePhoto(ctx)
+	update.Photo, err = openAndValidatePhoto(ctx)
 	if err != nil {
 		switch {
 		case errors.Is(err, model.ErrInvalidPhotoSize):
