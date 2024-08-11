@@ -6,8 +6,8 @@ import "context"
 type (
 	FavouriteUser struct {
 		ID        int    `gorm:"column:id"`
-		personID  int    `gorm:"column:person_id"`
-		userID    int    `gorm:"column:user_id"`
+		PersonID  int    `gorm:"column:person_id"`
+		UserID    int    `gorm:"column:user_id"`
 		createdAt string `gorm:"column:created_at"`
 	}
 	UserFavouriteStore interface {

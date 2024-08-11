@@ -18,7 +18,7 @@ func (r *Router) AddUserToFavourites(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	addedUser, err := r.userService.AddUserToFavourite(ctx.UserContext(), userID, favouriteUserID)
+	addedUser, err := r.userService.AddUserToFavourite(ctx.UserContext(), favouriteUserID, userID)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
