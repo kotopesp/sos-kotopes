@@ -28,7 +28,7 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 	totalKeepers := len(coreKeepers)
 	currentCoreKeepers := coreKeepers[*coreParams.Offset:min(*coreParams.Offset+*coreParams.Limit, totalKeepers)]
 	responseKeepers := fiber.Map{
-		"meta": generatePaginationMeta(totalKeepers, params.Offset, params.Limit),
+		"meta": paginate(totalKeepers, params.Limit, params.Offset),
 		"data": Map(currentCoreKeepers, keeper.FromCoreKeeperReview),
 	}
 

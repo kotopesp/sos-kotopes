@@ -2,11 +2,12 @@ package http
 
 import (
 	"context"
+	"testing"
+
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core/mocks"
-	"testing"
 )
 
 type (

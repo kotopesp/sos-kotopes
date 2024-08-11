@@ -25,11 +25,12 @@ func NewRouter(
 	postService core.PostService,
 ) {
 	router := &Router{
-		app:           app,
-		keeperService: keeperService,
-		formValidator: formValidator,
-		authService:   authService,
-		postService:   postService,
+		app:                  app,
+		keeperService:        keeperService,
+		keeperReviewsService: keeperReviewsService,
+		formValidator:        formValidator,
+		authService:          authService,
+		postService:          postService,
 	}
 
 	router.initRequestMiddlewares()
