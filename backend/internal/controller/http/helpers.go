@@ -9,7 +9,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -17,8 +16,6 @@ import (
 	"io"
 	"mime/multipart"
 )
-
-const MaxFileSize = 10 * 1024 * 1024 // 10 MB in bytes
 
 // token helpers: getting info from token
 func getIDFromToken(ctx *fiber.Ctx) (id int, err error) {
@@ -119,53 +116,39 @@ func paginate(total, limit, offset int) pagination.Pagination {
 	}
 }
 
-func IsValidExtension(ctx context.Context, filename string, allowedExtensions []string) (err error) {
-	ext := filepath.Ext(filename)
+func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedExtensions []string) (err error) {
+	ext := filepath.Ext(file.Filename)
 	for _, allowedExt := range allowedExtensions {
 		if strings.EqualFold(ext, allowedExt) {
 			return nil
 		}
 	}
-	logger.Log().Debug(ctx, err.Error())
+	logger.Log().Debug(ctx, model.ErrInvalidExtension.Error())
 	return model.ErrInvalidExtension
 }
 
-func IsValidPhotoSize(ctx context.Context, filename string) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		logger.Log().Debug(ctx, err.Error())
-		return err
-	}
-
-	defer file.Close()
-
-	fileInfo, err := file.Stat()
-	if err != nil {
-		logger.Log().Debug(ctx, err.Error())
-		return err
-	}
-
-	fileSize := fileInfo.Size()
-	if fileSize > MaxFileSize {
-		logger.Log().Debug(ctx, err.Error())
+func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err error) {
+	fileSize := file.Size
+	if fileSize > model.MaxFileSize {
+		logger.Log().Debug(ctx, model.ErrInvalidPhotoSize.Error())
 		return model.ErrInvalidPhotoSize
 	}
 
 	return nil
 }
 
-func validatePhoto(ctx context.Context, filename string) (err error) {
+func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) {
 	// Check file size
-	err = IsValidPhotoSize(ctx, filename)
+	err = IsValidPhotoSize(ctx, file)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
-
 	// Check file extension
 	allowedExtensions := []string{".jpg", ".jpeg", ".png"}
-	err = IsValidExtension(ctx, filename, allowedExtensions)
+	err = IsValidExtension(ctx, file, allowedExtensions)
 	if err != nil {
+		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
 
@@ -174,34 +157,27 @@ func validatePhoto(ctx context.Context, filename string) (err error) {
 	return nil
 }
 
+// Works only for requests with one file
 func openAndValidatePhoto(ctx *fiber.Ctx) (err error, photoBytes *[]byte) {
 	if form, err := ctx.MultipartForm(); err == nil {
-		fmt.Println(form.File["photo"])
-		fmt.Println("All form fields:", form.Value)
-		fmt.Println("All file fields:", form.File)
-
-		files := form.File["photo"]
-		fmt.Println("Photo files:", files)
 		if files := form.File["photo"]; len(files) > 0 {
 			file := files[0]
 
 			// Read file content
 			fileContent, err := file.Open()
 			if err != nil {
-				return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse("Failed to read uploaded file")), nil
+				return err, nil
 			}
 			defer fileContent.Close()
 
 			buffer := bytes.NewBuffer(nil)
-			if _, err := io.Copy(buffer, fileContent); err != nil {
-				return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse("Failed to process uploaded file")), nil
+			if _, err = io.Copy(buffer, fileContent); err != nil {
+				return err, nil
 			}
-
 			// Validate photo
-			if err := validatePhoto(ctx.UserContext(), file.Filename); err != nil {
-				return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), nil
+			if err = validatePhoto(ctx.UserContext(), file); err != nil {
+				return err, nil
 			}
-
 			bytes := buffer.Bytes()
 			photoBytes = &bytes
 		}

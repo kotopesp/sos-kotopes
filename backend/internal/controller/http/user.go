@@ -2,7 +2,6 @@ package http
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
@@ -16,7 +15,6 @@ func (r *Router) getUser(ctx *fiber.Ctx) error {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
-
 	currentUser, err := r.userService.GetUser(ctx.UserContext(), id)
 	if err != nil {
 		switch {
@@ -28,8 +26,8 @@ func (r *Router) getUser(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
-
-	return ctx.Status(fiber.StatusOK).JSON(currentUser)
+	responseUser := user.ToResponseUser(&currentUser)
+	return ctx.Status(fiber.StatusOK).JSON(responseUser)
 }
 
 func (r *Router) updateUser(ctx *fiber.Ctx) error {
@@ -38,12 +36,20 @@ func (r *Router) updateUser(ctx *fiber.Ctx) error {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-
 	var update user.UpdateUser
 	err, update.Photo = openAndValidatePhoto(ctx)
 	if err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		switch {
+		case errors.Is(err, model.ErrInvalidPhotoSize):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrInvalidExtension):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
 	}
 
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &update)
@@ -51,7 +57,6 @@ func (r *Router) updateUser(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 	coreUpdate := update.ToCoreUpdateUser()
-	fmt.Println(coreUpdate)
 
 	updatedUser, err := r.userService.UpdateUser(ctx.UserContext(), id, coreUpdate)
 	if err != nil {

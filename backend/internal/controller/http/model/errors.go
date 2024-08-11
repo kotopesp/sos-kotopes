@@ -5,6 +5,8 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 )
 
+const MaxFileSize = 1 * 1024 * 1024
+
 var (
 	ErrNotUniqueUsername = func(username string) validator.ResponseError {
 		return validator.ResponseError{
@@ -19,6 +21,6 @@ var (
 	ErrOAuthStateMismatch   = errors.New("states do not match")
 	ErrValidationFailed     = errors.New("validation failed")
 	ErrInvalidBody          = errors.New("invalid body")
-	ErrInvalidPhotoSize     = errors.New("invalid photo size")
+	ErrInvalidPhotoSize     = errors.New("photo is too large")
 	ErrInvalidExtension     = errors.New("invalid photo extension")
 )
