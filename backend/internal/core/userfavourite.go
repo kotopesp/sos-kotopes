@@ -11,14 +11,14 @@ type (
 		createdAt string `gorm:"column:created_at"`
 	}
 	UserFavouriteStore interface {
-		AddUserToFavourite(ctx context.Context, personID int, userID int) (err error)
-		GetFavouriteUsers(ctx context.Context, userID int, params GetFavourites) (favouriteUsers []User, err error)
-		DeleteUserFromFavourite(ctx context.Context, personID int, userID int) (err error)
+		AddUserToFavourite(ctx context.Context, favouriteUserID int, userID int) (user User, err error)
+		GetFavouriteUsers(ctx context.Context, userID int) (favouriteUsers []User, err error)
+		DeleteUserFromFavourite(ctx context.Context, favouriteUserID int, userID int) (err error)
 	}
 	UserFavouriteService interface {
-		AddUserToFavourite(ctx context.Context, personID int, userID int) (err error)
-		GetFavouriteUsers(ctx context.Context, userID int, params GetFavourites) (favouriteUsers []User, err error)
-		DeleteUserFromFavourite(ctx context.Context, personID int, userID int) (err error)
+		AddUserToFavourite(ctx context.Context, favouriteUserID int, userID int) (user User, err error)
+		GetFavouriteUsers(ctx context.Context, userID int) (favouriteUsers []User, err error)
+		DeleteUserFromFavourite(ctx context.Context, favouriteUserID int, userID int) (err error)
 	}
 	GetFavourites struct {
 		Count  *int

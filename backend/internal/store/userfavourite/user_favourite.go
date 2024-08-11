@@ -14,14 +14,14 @@ func New(pg *postgres.Postgres) core.UserFavouriteStore {
 	return &Store{pg}
 }
 
-func (s *Store) AddUserToFavourite(ctx context.Context, personID, userID int) (err error) {
+func (s *Store) AddUserToFavourite(ctx context.Context, favouriteUserID, userID int) (user core.User, err error) {
 	panic("implement me")
 }
 
-func (s *Store) GetFavouriteUsers(ctx context.Context, userID int, params core.GetFavourites) (favouriteUsers []core.User, err error) {
+func (s *Store) GetFavouriteUsers(ctx context.Context, userID int) (favouriteUsers []core.User, err error) {
 	panic("implement me")
 }
 
-func (s *Store) DeleteUserFromFavourite(ctx context.Context, personID, userID int) (err error) {
+func (s *Store) DeleteUserFromFavourite(ctx context.Context, favouriteUserID, userID int) (err error) {
 	panic("implement me")
 }
