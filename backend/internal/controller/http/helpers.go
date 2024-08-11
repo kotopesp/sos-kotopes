@@ -1,6 +1,7 @@
 package http
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,6 +18,9 @@ import (
 // token helpers: getting info from token
 func getIDFromToken(ctx *fiber.Ctx) (id int, err error) {
 	idItem := getPayloadItem(ctx, "id")
+
+	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("idItem: %v", idItem))
+
 	idFloat, ok := idItem.(float64)
 	if !ok {
 		return 0, model.ErrInvalidTokenID
@@ -36,6 +40,11 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 // validation helpers
 func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(data); err != nil {
+		if errors.Is(err, fiber.ErrUnprocessableEntity) {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(model.ErrInvalidBody.Error())), err
+		}
+
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
 	}
@@ -110,17 +119,4 @@ func Map[T, V any](ts []T, fn func(T) V) []V {
 		result[i] = fn(t)
 	}
 	return result
-}
-
-func generatePaginationMeta(totalItems, itemsPerPage, currentOffset int) pagination.PaginationMeta {
-	totalPages := (totalItems + itemsPerPage - 1) / itemsPerPage
-	currentPage := (currentOffset / itemsPerPage) + 1
-
-	return pagination.PaginationMeta{
-		TotalItems:   totalItems,
-		ItemCount:    min(itemsPerPage, totalItems-currentOffset),
-		ItemsPerPage: itemsPerPage,
-		TotalPages:   totalPages,
-		CurrentPage:  currentPage,
-	}
 }
