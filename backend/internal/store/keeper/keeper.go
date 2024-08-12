@@ -3,6 +3,7 @@ package keepestore
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
@@ -30,6 +31,12 @@ func (s *store) DeleteByID(ctx context.Context, id int) error {
 	}
 
 	return result.Error
+}
+
+func (s *store) SoftDeleteByID(ctx context.Context, id int) error {
+	err := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", id).Updates(core.Keepers{IsDeleted: true, DeletedAt: time.Now()}).Error
+
+	return err
 }
 
 func (s *store) UpdateByID(ctx context.Context, keeper core.Keepers) (core.Keepers, error) {

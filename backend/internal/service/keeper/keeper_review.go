@@ -32,9 +32,5 @@ func (s *service) SoftDeleteReviewByID(ctx context.Context, id int) error {
 }
 
 func (s *service) UpdateReviewByID(ctx context.Context, review core.KeeperReviews) error {
-	if review.Grade < 1 || review.Grade > 5 {
-		return core.ErrReviewGradeBounds
-	}
-
 	return s.KeeperReviewsStore.UpdateReviewByID(ctx, review)
 }

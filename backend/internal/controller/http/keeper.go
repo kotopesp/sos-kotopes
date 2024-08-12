@@ -117,7 +117,7 @@ func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 	}
 
 	// delete
-	if err := r.keeperService.DeleteByID(ctx.UserContext(), id); err != nil {
+	if err := r.keeperService.SoftDeleteByID(ctx.UserContext(), id); err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))
 		}

@@ -174,6 +174,24 @@ func (_m *KeeperService) GetByID(ctx context.Context, id int) (core.Keepers, err
 	return r0, r1
 }
 
+// SoftDeleteByID provides a mock function with given fields: ctx, id
+func (_m *KeeperService) SoftDeleteByID(ctx context.Context, id int) error {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SoftDeleteByID")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // SoftDeleteReviewByID provides a mock function with given fields: ctx, id
 func (_m *KeeperService) SoftDeleteReviewByID(ctx context.Context, id int) error {
 	ret := _m.Called(ctx, id)

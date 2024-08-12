@@ -39,6 +39,10 @@ func (s *service) DeleteByID(ctx context.Context, id int) error {
 	return s.keeperStore.DeleteByID(ctx, id)
 }
 
+func (s *service) SoftDeleteByID(ctx context.Context, id int) error {
+	return s.keeperStore.SoftDeleteByID(ctx, id)
+}
+
 func (s *service) UpdateByID(ctx context.Context, keeper core.Keepers) (core.Keepers, error) {
 	return s.keeperStore.UpdateByID(ctx, keeper)
 }

@@ -13,6 +13,8 @@ type Keepers struct {
 	Location    string    `gorm:"column:location"`
 	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
+	IsDeleted   bool      `gorm:"column:is_deleted"`
+	DeletedAt   time.Time `gorm:"column:deleted_at"`
 }
 
 type GetAllKeepersParams struct {
@@ -32,6 +34,7 @@ type KeeperStore interface {
 	GetByID(ctx context.Context, id int) (Keepers, error)
 	Create(ctx context.Context, keeper Keepers) error
 	DeleteByID(ctx context.Context, id int) error
+	SoftDeleteByID(ctx context.Context, id int) error
 	UpdateByID(ctx context.Context, keeper Keepers) (Keepers, error)
 }
 
@@ -40,6 +43,7 @@ type KeeperService interface {
 	GetByID(ctx context.Context, id int) (Keepers, error)
 	Create(ctx context.Context, keeper Keepers) error
 	DeleteByID(ctx context.Context, id int) error
+	SoftDeleteByID(ctx context.Context, id int) error
 	UpdateByID(ctx context.Context, keeper Keepers) (Keepers, error)
 
 	KeeperReviewsService
