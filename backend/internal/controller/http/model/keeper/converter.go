@@ -4,10 +4,11 @@ import (
 	"strings"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
-func (p *GetAllKeepersParams) FromKeeperRequest() core.GetAllKeepersParams {
+func (p *GetAllKeepersParams) ToCoreGetAllKeepersParams() core.GetAllKeepersParams {
 	sortBy, sortOrder := ParseSort(p.Sort)
 	return core.GetAllKeepersParams{
 		SortBy:    &sortBy,
@@ -50,11 +51,11 @@ func (k *KeepersCreate) ToCoreNewKeeper() core.Keepers {
 	}
 }
 
-func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.Keepers {
+func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.UpdateKeepers {
 	if k == nil {
-		return core.Keepers{}
+		return core.UpdateKeepers{}
 	}
-	return core.Keepers{
+	return core.UpdateKeepers{
 		ID:          k.ID,
 		Description: k.Description,
 		Price:       k.Price,
@@ -62,18 +63,18 @@ func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.Keepers {
 	}
 }
 
-func ToKeepersResponse(meta pagination.Pagination, coreKeepers []core.Keepers) KeepersResponseWithMeta {
+func ToKeepersResponse(meta pagination.Pagination, coreKeepersDetails []core.KeepersDetails) KeepersResponseWithMeta {
 	offset := (meta.CurrentPage - 1) * meta.PerPage
-	paginateCoreKeepers := coreKeepers[offset:min(offset+meta.PerPage, meta.Total)]
-	paginateResponseKeepers := make([]KeepersResponse, meta.PerPage)
+	paginateCoreKeepersDetails := coreKeepersDetails[offset:min(offset+meta.PerPage, meta.Total)]
+	paginateResponseKeepersWithUser := make([]KeepersResponseWithUser, meta.PerPage)
 
-	for i, coreKeeper := range paginateCoreKeepers {
-		paginateResponseKeepers[i] = FromCoreKeeper(coreKeeper)
+	for i, coreKeeperDetails := range paginateCoreKeepersDetails {
+		paginateResponseKeepersWithUser[i] = FromCoreKeeperDetails(coreKeeperDetails)
 	}
 
 	return KeepersResponseWithMeta{
 		Meta: meta,
-		Data: paginateResponseKeepers,
+		Data: paginateResponseKeepersWithUser,
 	}
 }
 
@@ -86,5 +87,12 @@ func FromCoreKeeper(coreKeeper core.Keepers) KeepersResponse {
 		Location:    coreKeeper.Location,
 		CreatedAt:   coreKeeper.CreatedAt,
 		UpdatedAt:   coreKeeper.UpdatedAt,
+	}
+}
+
+func FromCoreKeeperDetails(coreKeeperDetails core.KeepersDetails) KeepersResponseWithUser {
+	return KeepersResponseWithUser{
+		Keeper: FromCoreKeeper(coreKeeperDetails.Keeper),
+		User:   user.ToResponseUser(&coreKeeperDetails.User),
 	}
 }

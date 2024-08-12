@@ -2,10 +2,12 @@ package keepestore
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
@@ -39,13 +41,24 @@ func (s *store) SoftDeleteByID(ctx context.Context, id int) error {
 	return err
 }
 
-func (s *store) UpdateByID(ctx context.Context, keeper core.Keepers) (core.Keepers, error) {
-	result := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", keeper.ID).Updates(keeper)
-	if result.RowsAffected == 0 {
-		return keeper, core.ErrRecordNotFound
+func (s *store) UpdateByID(ctx context.Context, keeper core.UpdateKeepers) (core.Keepers, error) {
+	keeper.UpdatedAt = time.Now()
+
+	var updatedKeeper core.Keepers
+
+	result := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", keeper.ID).Updates(keeper).First(&updatedKeeper, keeper.ID)
+	if result.Error != nil {
+
+		if errors.Is(result.Error, core.ErrRecordNotFound) {
+			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+			return core.Keepers{}, core.ErrRecordNotFound
+		}
+
+		logger.Log().Error(ctx, result.Error.Error())
+		return core.Keepers{}, result.Error
 	}
 
-	return keeper, result.Error
+	return updatedKeeper, nil
 }
 
 func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keepers, error) {

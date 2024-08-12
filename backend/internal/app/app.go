@@ -64,7 +64,7 @@ func Run(cfg *config.Config) {
 	// Services
 	roleService := rolesService.New(roleStore, userStore)
 	userService := usersService.New(userStore, favouriteUserStore)
-	keeperService := keeperservice.New(keepersStore, keeperReviewsStore)
+	keeperService := keeperservice.New(keepersStore, keeperReviewsStore, userStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{

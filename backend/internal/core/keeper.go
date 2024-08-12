@@ -17,6 +17,19 @@ type Keepers struct {
 	DeletedAt   time.Time `gorm:"column:deleted_at"`
 }
 
+type UpdateKeepers struct {
+	ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
+	Description string    `gorm:"column:description"`
+	Price       float64   `gorm:"column:price"`
+	Location    string    `gorm:"column:location"`
+	UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
+}
+
+type KeepersDetails struct {
+	Keeper Keepers
+	User   User
+}
+
 type GetAllKeepersParams struct {
 	SortBy    *string
 	SortOrder *string
@@ -35,16 +48,16 @@ type KeeperStore interface {
 	Create(ctx context.Context, keeper Keepers) error
 	DeleteByID(ctx context.Context, id int) error
 	SoftDeleteByID(ctx context.Context, id int) error
-	UpdateByID(ctx context.Context, keeper Keepers) (Keepers, error)
+	UpdateByID(ctx context.Context, keeper UpdateKeepers) (Keepers, error)
 }
 
 type KeeperService interface {
-	GetAll(ctx context.Context, params GetAllKeepersParams) ([]Keepers, error)
-	GetByID(ctx context.Context, id int) (Keepers, error)
+	GetAll(ctx context.Context, params GetAllKeepersParams) ([]KeepersDetails, error)
+	GetByID(ctx context.Context, id int) (KeepersDetails, error)
 	Create(ctx context.Context, keeper Keepers) error
 	DeleteByID(ctx context.Context, id int) error
 	SoftDeleteByID(ctx context.Context, id int) error
-	UpdateByID(ctx context.Context, keeper Keepers) (Keepers, error)
+	UpdateByID(ctx context.Context, keeper UpdateKeepers) (KeepersDetails, error)
 
 	KeeperReviewsService
 }

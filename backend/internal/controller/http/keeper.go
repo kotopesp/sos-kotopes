@@ -19,16 +19,16 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	coreParams := params.FromKeeperRequest()
+	coreParams := params.ToCoreGetAllKeepersParams()
 
-	coreKeepers, err := r.keeperService.GetAll(ctx.UserContext(), coreParams)
+	coreKeepersDetails, err := r.keeperService.GetAll(ctx.UserContext(), coreParams)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	pagination := paginate(len(coreKeepers), params.Limit, params.Offset)
-	responseKeepers := keeper.ToKeepersResponse(pagination, coreKeepers)
+	pagination := paginate(len(coreKeepersDetails), params.Limit, params.Offset)
+	responseKeepers := keeper.ToKeepersResponse(pagination, coreKeepersDetails)
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(responseKeepers))
 }
@@ -49,7 +49,7 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.FromCoreKeeper(k)))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.FromCoreKeeperDetails(k)))
 }
 
 func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
@@ -80,7 +80,7 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.FromCoreKeeper(updatedKeeper)))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.FromCoreKeeperDetails(updatedKeeper)))
 }
 
 func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
