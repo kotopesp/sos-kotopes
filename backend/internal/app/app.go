@@ -8,7 +8,6 @@ import (
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	keeperservice "github.com/kotopesp/sos-kotopes/internal/service/keeper"
-	keeperreviewsservice "github.com/kotopesp/sos-kotopes/internal/service/keeper_review"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -18,7 +17,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	keeperstore "github.com/kotopesp/sos-kotopes/internal/store/keeper"
-	keeperreviewsstore "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
 
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
@@ -49,7 +47,6 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	keepersStore := keeperstore.New(pg)
-	keeperReviewsStore := keeperreviewsstore.New(pg)
 	userStore := user.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
@@ -57,7 +54,6 @@ func Run(cfg *config.Config) {
 
 	// Services
 	keeperService := keeperservice.New(keepersStore)
-	keeperReviewsService := keeperreviewsservice.New(keeperReviewsStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -87,9 +83,8 @@ func Run(cfg *config.Config) {
 		app,
 		formValidator,
 		authService,
-		keeperService,
-		keeperReviewsService,
 		postService,
+		keeperService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

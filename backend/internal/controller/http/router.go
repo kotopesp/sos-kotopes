@@ -8,29 +8,26 @@ import (
 )
 
 type Router struct {
-	app                  *fiber.App
-	formValidator        validator.FormValidatorService
-	authService          core.AuthService
-	postService          core.PostService
-	keeperService        core.KeeperService
-	keeperReviewsService core.KeeperReviewsService
+	app           *fiber.App
+	formValidator validator.FormValidatorService
+	authService   core.AuthService
+	postService   core.PostService
+	keeperService core.KeeperService
 }
 
 func NewRouter(
 	app *fiber.App,
 	formValidator validator.FormValidatorService,
 	authService core.AuthService,
-	keeperService core.KeeperService,
-	keeperReviewsService core.KeeperReviewsService,
 	postService core.PostService,
+	keeperService core.KeeperService,
 ) {
 	router := &Router{
-		app:                  app,
-		keeperService:        keeperService,
-		keeperReviewsService: keeperReviewsService,
-		formValidator:        formValidator,
-		authService:          authService,
-		postService:          postService,
+		app:           app,
+		keeperService: keeperService,
+		formValidator: formValidator,
+		authService:   authService,
+		postService:   postService,
 	}
 
 	router.initRequestMiddlewares()

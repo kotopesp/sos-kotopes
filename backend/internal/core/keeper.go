@@ -41,6 +41,8 @@ type KeeperService interface {
 	Create(ctx context.Context, keeper Keepers) error
 	DeleteByID(ctx context.Context, id int) error
 	UpdateByID(ctx context.Context, keeper Keepers) error
+
+	KeeperReviewsService
 }
 
 // TableName table name in db for gorm

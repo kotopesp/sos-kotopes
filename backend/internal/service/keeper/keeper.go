@@ -8,7 +8,8 @@ import (
 )
 
 type service struct {
-	keeperStore core.KeeperStore
+	keeperStore        core.KeeperStore
+	KeeperReviewsStore core.KeeperReviewsService
 }
 
 func New(keeperStore core.KeeperStore) core.KeeperService {

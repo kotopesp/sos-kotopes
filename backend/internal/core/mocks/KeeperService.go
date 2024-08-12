@@ -32,12 +32,48 @@ func (_m *KeeperService) Create(ctx context.Context, keeper core.Keepers) error 
 	return r0
 }
 
+// CreateReview provides a mock function with given fields: ctx, keeperReview
+func (_m *KeeperService) CreateReview(ctx context.Context, keeperReview core.KeeperReviews) error {
+	ret := _m.Called(ctx, keeperReview)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateReview")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.KeeperReviews) error); ok {
+		r0 = rf(ctx, keeperReview)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // DeleteByID provides a mock function with given fields: ctx, id
 func (_m *KeeperService) DeleteByID(ctx context.Context, id int) error {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteByID")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteReviewByID provides a mock function with given fields: ctx, id
+func (_m *KeeperService) DeleteReviewByID(ctx context.Context, id int) error {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteReviewByID")
 	}
 
 	var r0 error
@@ -80,6 +116,36 @@ func (_m *KeeperService) GetAll(ctx context.Context, params core.GetAllKeepersPa
 	return r0, r1
 }
 
+// GetAllReviews provides a mock function with given fields: ctx, params
+func (_m *KeeperService) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error) {
+	ret := _m.Called(ctx, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllReviews")
+	}
+
+	var r0 []core.KeeperReviews
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error)); ok {
+		return rf(ctx, params)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) []core.KeeperReviews); ok {
+		r0 = rf(ctx, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.KeeperReviews)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllKeeperReviewsParams) error); ok {
+		r1 = rf(ctx, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByID provides a mock function with given fields: ctx, id
 func (_m *KeeperService) GetByID(ctx context.Context, id int) (core.Keepers, error) {
 	ret := _m.Called(ctx, id)
@@ -108,6 +174,24 @@ func (_m *KeeperService) GetByID(ctx context.Context, id int) (core.Keepers, err
 	return r0, r1
 }
 
+// SoftDeleteReviewByID provides a mock function with given fields: ctx, id
+func (_m *KeeperService) SoftDeleteReviewByID(ctx context.Context, id int) error {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SoftDeleteReviewByID")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // UpdateByID provides a mock function with given fields: ctx, keeper
 func (_m *KeeperService) UpdateByID(ctx context.Context, keeper core.Keepers) error {
 	ret := _m.Called(ctx, keeper)
@@ -119,6 +203,24 @@ func (_m *KeeperService) UpdateByID(ctx context.Context, keeper core.Keepers) er
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, core.Keepers) error); ok {
 		r0 = rf(ctx, keeper)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateReviewByID provides a mock function with given fields: ctx, keeperReview
+func (_m *KeeperService) UpdateReviewByID(ctx context.Context, keeperReview core.KeeperReviews) error {
+	ret := _m.Called(ctx, keeperReview)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateReviewByID")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.KeeperReviews) error); ok {
+		r0 = rf(ctx, keeperReview)
 	} else {
 		r0 = ret.Error(0)
 	}
