@@ -7,6 +7,11 @@ import (
 	"syscall"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
+	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
+
 	keeperservice "github.com/kotopesp/sos-kotopes/internal/service/keeper"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
@@ -19,7 +24,7 @@ import (
 	keeperstore "github.com/kotopesp/sos-kotopes/internal/store/keeper"
 	keeperreviewstore "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
 
-	"github.com/kotopesp/sos-kotopes/internal/store/user"
+	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
@@ -47,14 +52,18 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
+	roleStore := rolesStore.New(pg)
+	favouriteUserStore := userFavouriteStore.New(pg)
 	keepersStore := keeperstore.New(pg)
 	keeperReviewsStore := keeperreviewstore.New(pg)
-	userStore := user.New(pg)
+	userStore := usersStore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
+	roleService := rolesService.New(roleStore, userStore)
+	userService := usersService.New(userStore, favouriteUserStore)
 	keeperService := keeperservice.New(keepersStore, keeperReviewsStore)
 	authService := auth.New(
 		userStore,
@@ -71,7 +80,6 @@ func Run(cfg *config.Config) {
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
-
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -83,8 +91,10 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		formValidator,
 		authService,
+		userService,
+		roleService,
+		formValidator,
 		postService,
 		keeperService,
 	)
