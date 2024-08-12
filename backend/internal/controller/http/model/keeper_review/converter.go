@@ -1,6 +1,9 @@
 package keeperreview
 
-import "github.com/kotopesp/sos-kotopes/internal/core"
+import (
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+)
 
 func (p *GetAllKeeperReviewsParams) FromKeeperReviewRequest() core.GetAllKeeperReviewsParams {
 	return core.GetAllKeeperReviewsParams{
@@ -22,6 +25,14 @@ func (k *KeeperReviewsCreate) ToCoreNewKeeperReview() core.KeeperReviews {
 	}
 }
 
+func (k *KeeperReviewsUpdate) ToCoreUpdateKeeperReview() core.UpdateKeeperReviews {
+	return core.UpdateKeeperReviews{
+		ID:      k.ID,
+		Grade:   k.Grade,
+		Content: k.Content,
+	}
+}
+
 func FromCoreKeeperReview(coreReview core.KeeperReviews) KeeperReviewsResponse {
 	return KeeperReviewsResponse{
 		ID:        coreReview.ID,
@@ -29,8 +40,14 @@ func FromCoreKeeperReview(coreReview core.KeeperReviews) KeeperReviewsResponse {
 		Content:   coreReview.Content,
 		Grade:     coreReview.Grade,
 		KeeperID:  coreReview.KeeperID,
-		DeletedAt: coreReview.DeletedAt,
 		CreatedAt: coreReview.CreatedAt,
 		UpdatedAt: coreReview.UpdatedAt,
+	}
+}
+
+func FromCoreKeeperReviewDetails(coreReview core.KeeperReviewsDetails) KeeperReviewsResponseWithUser {
+	return KeeperReviewsResponseWithUser{
+		Review: FromCoreKeeperReview(coreReview.Review),
+		User:   user.ToResponseUser(&coreReview.User),
 	}
 }

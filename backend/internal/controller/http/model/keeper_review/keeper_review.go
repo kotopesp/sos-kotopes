@@ -1,6 +1,10 @@
 package keeperreview
 
-import "time"
+import (
+	"time"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+)
 
 // KeeperReviews represents the review entity for keepers.
 type KeeperReviews struct {
@@ -25,6 +29,7 @@ type KeeperReviewsCreate struct {
 
 // KeeperReviewsUpdate represents the data to update an existing keeper review.
 type KeeperReviewsUpdate struct {
+	ID      int    `json:"id"`
 	Content string `json:"content" validate:"notblank,max=2000"`
 	Grade   int    `json:"grade" validate:"numeric,min=1,max=5"`
 }
@@ -36,9 +41,13 @@ type KeeperReviewsResponse struct {
 	Content   string    `json:"content" validate:"required,notblank,max=2000"`
 	Grade     int       `json:"grade" validate:"required,numeric,min=1,max=5"`
 	KeeperID  int       `json:"keeper_id" validate:"required,min=0"`
-	DeletedAt time.Time `json:"deleted_at"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type KeeperReviewsResponseWithUser struct {
+	Review KeeperReviewsResponse
+	User   user.ResponseUser
 }
 
 // GetAllKeeperReviewsParams represents the query parameters for fetching multiple keeper reviews.

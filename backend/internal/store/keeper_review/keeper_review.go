@@ -2,9 +2,11 @@ package keeperreviewstore
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
@@ -38,13 +40,23 @@ func (s *store) SoftDeleteReviewByID(ctx context.Context, id int) error {
 	return err
 }
 
-func (s *store) UpdateReviewByID(ctx context.Context, review core.KeeperReviews) error {
-	result := s.DB.WithContext(ctx).Model(&core.KeeperReviews{}).Where("id = ? AND is_deleted = ?", review.ID, false).Updates(review)
-	if result.RowsAffected == 0 {
-		return core.ErrRecordNotFound
-	}
+func (s *store) UpdateReviewByID(ctx context.Context, review core.UpdateKeeperReviews) (core.KeeperReviews, error) {
+	review.UpdatedAt = time.Now()
 
-	return result.Error
+	var updatedKeeperReview core.KeeperReviews
+
+	result := s.DB.WithContext(ctx).Model(&core.KeeperReviews{}).Where("id = ? AND is_deleted = ?", review.ID, false).Updates(review).First(&updatedKeeperReview, review.ID)
+	if result.Error != nil {
+
+		if errors.Is(result.Error, core.ErrRecordNotFound) {
+			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+			return core.KeeperReviews{}, core.ErrRecordNotFound
+		}
+
+		logger.Log().Error(ctx, result.Error.Error())
+		return core.KeeperReviews{}, result.Error
+	}
+	return updatedKeeperReview, nil
 }
 
 func (s *store) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error) {

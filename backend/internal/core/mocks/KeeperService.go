@@ -117,23 +117,23 @@ func (_m *KeeperService) GetAll(ctx context.Context, params core.GetAllKeepersPa
 }
 
 // GetAllReviews provides a mock function with given fields: ctx, params
-func (_m *KeeperService) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error) {
+func (_m *KeeperService) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviewsDetails, error) {
 	ret := _m.Called(ctx, params)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllReviews")
 	}
 
-	var r0 []core.KeeperReviews
+	var r0 []core.KeeperReviewsDetails
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) ([]core.KeeperReviewsDetails, error)); ok {
 		return rf(ctx, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) []core.KeeperReviews); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) []core.KeeperReviewsDetails); ok {
 		r0 = rf(ctx, params)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]core.KeeperReviews)
+			r0 = ret.Get(0).([]core.KeeperReviewsDetails)
 		}
 	}
 
@@ -239,21 +239,31 @@ func (_m *KeeperService) UpdateByID(ctx context.Context, keeper core.UpdateKeepe
 }
 
 // UpdateReviewByID provides a mock function with given fields: ctx, keeperReview
-func (_m *KeeperService) UpdateReviewByID(ctx context.Context, keeperReview core.KeeperReviews) error {
+func (_m *KeeperService) UpdateReviewByID(ctx context.Context, keeperReview core.UpdateKeeperReviews) (core.KeeperReviewsDetails, error) {
 	ret := _m.Called(ctx, keeperReview)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateReviewByID")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.KeeperReviews) error); ok {
+	var r0 core.KeeperReviewsDetails
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeeperReviews) (core.KeeperReviewsDetails, error)); ok {
+		return rf(ctx, keeperReview)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeeperReviews) core.KeeperReviewsDetails); ok {
 		r0 = rf(ctx, keeperReview)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(core.KeeperReviewsDetails)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, core.UpdateKeeperReviews) error); ok {
+		r1 = rf(ctx, keeperReview)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // NewKeeperService creates a new instance of KeeperService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

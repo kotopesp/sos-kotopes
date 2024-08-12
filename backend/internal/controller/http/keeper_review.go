@@ -24,7 +24,7 @@ func (r *Router) getKeeperReviews(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(Map(reviews, keeperreview.FromCoreKeeperReview)))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(Map(reviews, keeperreview.FromCoreKeeperReviewDetails)))
 }
 
 func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
@@ -69,12 +69,11 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
+	updateReview.ID = id
+
 	// update
-	if err := r.keeperService.UpdateReviewByID(ctx.UserContext(), core.KeeperReviews{
-		ID:      id,
-		Content: updateReview.Content,
-		Grade:   updateReview.Grade,
-	}); err != nil {
+	updatedKeeperReview, err := r.keeperService.UpdateReviewByID(ctx.UserContext(), updateReview.ToCoreUpdateKeeperReview())
+	if err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		}
@@ -82,7 +81,7 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.SendStatus(fiber.StatusOK)
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeperreview.FromCoreKeeperReviewDetails(updatedKeeperReview)))
 }
 
 func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {

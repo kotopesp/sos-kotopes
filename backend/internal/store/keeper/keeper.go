@@ -46,7 +46,7 @@ func (s *store) UpdateByID(ctx context.Context, keeper core.UpdateKeepers) (core
 
 	var updatedKeeper core.Keepers
 
-	result := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", keeper.ID).Updates(keeper).First(&updatedKeeper, keeper.ID)
+	result := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ? AND is_deleted = ?", keeper.ID, false).Updates(keeper).First(&updatedKeeper, keeper.ID)
 	if result.Error != nil {
 
 		if errors.Is(result.Error, core.ErrRecordNotFound) {
