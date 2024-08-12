@@ -20,7 +20,7 @@ func (r *Router) getKeeperReviews(ctx *fiber.Ctx) error {
 
 	reviews, err := r.keeperService.GetAllReviews(ctx.UserContext(), params.FromKeeperReviewRequest())
 	if err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
@@ -46,7 +46,7 @@ func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
 	// create review
 	coreReview := newReview.ToCoreNewKeeperReview()
 	if err := r.keeperService.CreateReview(ctx.UserContext(), coreReview); err != nil {
-		logger.Log().Debug(ctx.UserContext(), err.Error())
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
@@ -75,10 +75,10 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 		Content: updateReview.Content,
 		Grade:   updateReview.Grade,
 	}); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
 		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		}
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
@@ -95,11 +95,10 @@ func (r *Router) deleteKeeperReview(ctx *fiber.Ctx) error {
 
 	// delete
 	if err := r.keeperService.SoftDeleteReviewByID(ctx.UserContext(), id); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
 		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))
 		}
-
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
