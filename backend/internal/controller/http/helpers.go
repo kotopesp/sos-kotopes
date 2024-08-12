@@ -15,10 +15,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"io"
 	"mime/multipart"
-
-	"net/http"
-	"net/url"
-
 )
 
 func (r *Router) empty(ctx *fiber.Ctx) error {
@@ -194,44 +190,4 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 		}
 	}
 	return photoBytes, nil
-}
-
-func getUserIDAndCheckAuth(r *Router, ctx *fiber.Ctx) (int, error) {
-	var userID int
-	
-	reqURL, err := url.Parse("https://20eb-89-151-168-202.ngrok-free.app/api/v1/auth/check")
-	if err != nil {
-		return 0, err
-	}
-
-	tokenHeader := ctx.Get("Authorization")
-
-	req := &http.Request{
-		Method: http.MethodGet,
-		URL:    reqURL,
-		Header: map[string][]string{
-			"Authorization": {tokenHeader},
-		},
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return 0, err
-	}
-	defer resp.Body.Close()
-	
-	if resp.StatusCode == fiber.StatusOK && resp.StatusCode != fiber.StatusNotFound {
-		r.protectedMiddleware()(ctx)
-
-		userID, err = getIDFromToken(ctx)
-		if err != nil {
-			logger.Log().Error(ctx.UserContext(), err.Error())
-			return 0, err
-		}
-	} else {
-		userID = -1
-	}
-
-	return userID, nil
 }

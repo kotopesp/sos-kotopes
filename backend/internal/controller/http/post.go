@@ -11,13 +11,13 @@ import (
 
 // getPosts handles the request to get all posts with optional filters
 func (r *Router) getPosts(ctx *fiber.Ctx) error {
-	userID, err := getUserIDAndCheckAuth(r, ctx)
-	if err != nil {
+	userID, err := getIDFromToken(ctx)
+	if userID != 0 && err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-  var getAllPostsParams postModel.GetAllPostsParams
+    var getAllPostsParams postModel.GetAllPostsParams
 
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
 	if fiberError != nil || parseOrValidationError != nil {
@@ -27,11 +27,11 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 
 	coreGetAllPostsParams := getAllPostsParams.ToCoreGetAllPostsParams()
 
-  postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), userID, coreGetAllPostsParams)
-  if err != nil {
-    logger.Log().Error(ctx.UserContext(), err.Error())
-    return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-  }
+    postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), userID, coreGetAllPostsParams)
+    if err != nil {
+      logger.Log().Error(ctx.UserContext(), err.Error())
+      return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+    }
 
 	pagination := paginate(total, getAllPostsParams.Limit, getAllPostsParams.Offset)
 
@@ -74,10 +74,10 @@ func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 
 // getPostByID handles the request to get a single post by its ID
 func (r *Router) getPostByID(ctx *fiber.Ctx) error {
-	userID, err := getUserIDAndCheckAuth(r, ctx)
-	if err != nil {
+	userID, err := getIDFromToken(ctx)
+	if userID != 0 && err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	var pathParams postModel.PathParams
