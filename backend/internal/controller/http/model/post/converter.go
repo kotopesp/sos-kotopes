@@ -80,7 +80,7 @@ func ToPostResponse(post core.PostDetails) PostResponse {
 		Description: 	post.Animal.Description,
 		Status:      	post.Animal.Status,
 		Photo:          post.Post.Photo,
-		IsFavourite:    false,
+		IsFavourite:    post.Post.IsFavourite,
 		Comments:       0,
 	}
 }
@@ -105,5 +105,6 @@ func (p *GetAllPostsParams) ToCoreGetAllPostsParams() core.GetAllPostsParams{
 		AnimalType: p.AnimalType,
 		Gender: 	p.Gender,
 		Color:  	p.Color,
+		SearchWord: p.SearchWord,
 	}
 }

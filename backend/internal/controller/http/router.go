@@ -46,6 +46,7 @@ func (r *Router) initRoutes() {
 	v1.Post("/auth/login", r.loginBasic)
 	v1.Post("/auth/signup", r.signup)
 	v1.Post("/auth/token/refresh", r.refreshTokenMiddleware(), r.refresh)
+	v1.Get("/auth/check", r.protectedMiddleware(), r.empty) // check auth
 
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)

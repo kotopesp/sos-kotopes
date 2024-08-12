@@ -77,7 +77,8 @@ type (
 		AnimalType *string `query:"animal_type" validate:"omitempty,oneof=dog cat"`         // Filter by type of the associated animal
 		Gender     *string `query:"gender" validate:"omitempty,oneof=male female"`          // Filter by gender of the associated animal
 		Color      *string `query:"color" validate:"omitempty"`								// Filter by color of the associated animal
-		Location   *string `query:"location" validate:"omitempty"`                          // Filter by location of the associated animal
+		Location   *string `query:"location" validate:"omitempty"` 							// Filter by location of the associated animal
+		SearchWord *string `query:"search_word" validate:"omitempty"`                       // Filter by location of the associated animal
 	}
 
 	PathParams struct {

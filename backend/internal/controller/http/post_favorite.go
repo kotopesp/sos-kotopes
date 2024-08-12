@@ -16,7 +16,7 @@ func (r *Router) getFavouritePostsUserByID(ctx *fiber.Ctx) error {
 	
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
 	if fiberError != nil || parseOrValidationError != nil {
-		logger.Log().Error(ctx.UserContext(), fiberError.Error())
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
 
@@ -26,12 +26,10 @@ func (r *Router) getFavouritePostsUserByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
 
-    postsDetails, total, err := r.postService.GetFavouritePosts(ctx.UserContext(), userID) // TODO: add params
+	coreGetAllPostsParams := getAllPostsParams.ToCoreGetAllPostsParams()
+
+    postsDetails, total, err := r.postService.GetFavouritePosts(ctx.UserContext(), userID, coreGetAllPostsParams) // TODO: add params
     if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
-			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
-			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
-		}
         logger.Log().Error(ctx.UserContext(), err.Error())
         return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
     }
@@ -49,6 +47,7 @@ func (r *Router) addFavouritePost(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
 	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
 
@@ -60,7 +59,7 @@ func (r *Router) addFavouritePost(ctx *fiber.Ctx) error {
 
     postFavourite := postModel.ToCorePostFavourite(userID, pathParams.PostID)
 
-    err = r.postService.AddToFavourites(ctx.UserContext(), postFavourite)
+    postDetails, err := r.postService.AddToFavourites(ctx.UserContext(), postFavourite)
     if err != nil {
 		switch err {
 			case core.ErrPostNotFound:
@@ -74,7 +73,9 @@ func (r *Router) addFavouritePost(ctx *fiber.Ctx) error {
         return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
     }
 
-    return ctx.SendStatus(fiber.StatusOK)
+	postResponse := postModel.ToPostResponse(postDetails)
+
+    return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(postResponse))
 }
 
 // deleteFavouritePostByID handles the request to delete a post from the favourites posts by its ID
@@ -83,20 +84,28 @@ func (r *Router) deleteFavouritePostByID(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
 	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
 
+	var corePost core.PostFavourite
+	corePost.PostID = pathParams.PostID
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
+	corePost.UserID = userID
 
-	err = r.postService.DeleteFromFavourites(ctx.UserContext(), pathParams.PostID, userID)
+	err = r.postService.DeleteFromFavourites(ctx.UserContext(), corePost)
 	if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.SendStatus(fiber.StatusNoContent)
+		}
+		if errors.Is(err, core.ErrPostAuthorIDMismatch) {
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusForbidden).JSON(model.ErrorResponse(err.Error()))
 		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
