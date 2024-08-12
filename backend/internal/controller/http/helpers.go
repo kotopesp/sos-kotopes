@@ -17,6 +17,10 @@ import (
 	"mime/multipart"
 )
 
+const MaxFileSize = 1 * 1024 * 1024
+
+var AllowedExtensions = []string{".jpg", ".jpeg", ".png"}
+
 // token helpers: getting info from token
 func getIDFromToken(ctx *fiber.Ctx) (id int, err error) {
 	idItem := getPayloadItem(ctx, "id")
@@ -128,7 +132,7 @@ func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedEx
 
 func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err error) {
 	fileSize := file.Size
-	if fileSize > model.MaxFileSize {
+	if fileSize > MaxFileSize {
 		logger.Log().Debug(ctx, model.ErrInvalidPhotoSize.Error())
 		return model.ErrInvalidPhotoSize
 	}
@@ -143,15 +147,15 @@ func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) 
 		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
+
 	// Check file extension
-	allowedExtensions := []string{".jpg", ".jpeg", ".png"}
-	err = IsValidExtension(ctx, file, allowedExtensions)
+	err = IsValidExtension(ctx, file, AllowedExtensions)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
 
-	// You can add your checks
+	// Add additional photo validation checks here
 
 	return nil
 }

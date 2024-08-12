@@ -5,8 +5,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 )
 
-const MaxFileSize = 1 * 1024 * 1024
-
 var (
 	ErrNotUniqueUsername = func(username string) validator.ResponseError {
 		return validator.ResponseError{
