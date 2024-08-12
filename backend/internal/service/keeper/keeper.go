@@ -12,8 +12,11 @@ type service struct {
 	KeeperReviewsStore core.KeeperReviewsService
 }
 
-func New(keeperStore core.KeeperStore) core.KeeperService {
-	return &service{keeperStore: keeperStore}
+func New(keeperStore core.KeeperStore, keeperReviewStore core.KeeperReviewsStore) core.KeeperService {
+	return &service{
+		keeperStore:        keeperStore,
+		KeeperReviewsStore: keeperReviewStore,
+	}
 }
 
 func (s *service) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keepers, error) {
@@ -36,6 +39,6 @@ func (s *service) DeleteByID(ctx context.Context, id int) error {
 	return s.keeperStore.DeleteByID(ctx, id)
 }
 
-func (s *service) UpdateByID(ctx context.Context, keeper core.Keepers) error {
+func (s *service) UpdateByID(ctx context.Context, keeper core.Keepers) (core.Keepers, error) {
 	return s.keeperStore.UpdateByID(ctx, keeper)
 }

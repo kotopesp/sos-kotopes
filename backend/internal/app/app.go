@@ -17,6 +17,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	keeperstore "github.com/kotopesp/sos-kotopes/internal/store/keeper"
+	keeperreviewstore "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
 
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 
@@ -47,13 +48,14 @@ func Run(cfg *config.Config) {
 
 	// Stores
 	keepersStore := keeperstore.New(pg)
+	keeperReviewsStore := keeperreviewstore.New(pg)
 	userStore := user.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
-	keeperService := keeperservice.New(keepersStore)
+	keeperService := keeperservice.New(keepersStore, keeperReviewsStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{

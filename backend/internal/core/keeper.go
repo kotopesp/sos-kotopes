@@ -32,7 +32,7 @@ type KeeperStore interface {
 	GetByID(ctx context.Context, id int) (Keepers, error)
 	Create(ctx context.Context, keeper Keepers) error
 	DeleteByID(ctx context.Context, id int) error
-	UpdateByID(ctx context.Context, keeper Keepers) error
+	UpdateByID(ctx context.Context, keeper Keepers) (Keepers, error)
 }
 
 type KeeperService interface {
@@ -40,7 +40,7 @@ type KeeperService interface {
 	GetByID(ctx context.Context, id int) (Keepers, error)
 	Create(ctx context.Context, keeper Keepers) error
 	DeleteByID(ctx context.Context, id int) error
-	UpdateByID(ctx context.Context, keeper Keepers) error
+	UpdateByID(ctx context.Context, keeper Keepers) (Keepers, error)
 
 	KeeperReviewsService
 }

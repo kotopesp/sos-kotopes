@@ -32,13 +32,13 @@ func (s *store) DeleteByID(ctx context.Context, id int) error {
 	return result.Error
 }
 
-func (s *store) UpdateByID(ctx context.Context, keeper core.Keepers) error {
+func (s *store) UpdateByID(ctx context.Context, keeper core.Keepers) (core.Keepers, error) {
 	result := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", keeper.ID).Updates(keeper)
 	if result.RowsAffected == 0 {
-		return core.ErrRecordNotFound
+		return keeper, core.ErrRecordNotFound
 	}
 
-	return result.Error
+	return keeper, result.Error
 }
 
 func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keepers, error) {

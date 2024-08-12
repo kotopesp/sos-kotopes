@@ -3,6 +3,7 @@ package keeper
 import (
 	"strings"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
@@ -58,7 +59,22 @@ func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.Keepers {
 	}
 }
 
-func FromCoreKeeperReview(coreKeeper core.Keepers) KeepersResponse {
+func ToKeepersResponse(meta pagination.Pagination, coreKeepers []core.Keepers) KeepersResponseWithMeta {
+	offset := (meta.CurrentPage - 1) * meta.PerPage
+	paginateCoreKeepers := coreKeepers[offset:min(offset+meta.PerPage, meta.Total)]
+	paginateResponseKeepers := make([]KeepersResponse, meta.PerPage)
+
+	for i, coreKeeper := range paginateCoreKeepers {
+		paginateResponseKeepers[i] = FromCoreKeeper(coreKeeper)
+	}
+
+	return KeepersResponseWithMeta{
+		Meta: meta,
+		Data: paginateResponseKeepers,
+	}
+}
+
+func FromCoreKeeper(coreKeeper core.Keepers) KeepersResponse {
 	return KeepersResponse{
 		ID:          coreKeeper.ID,
 		UserID:      coreKeeper.UserID,

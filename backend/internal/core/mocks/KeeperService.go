@@ -193,21 +193,31 @@ func (_m *KeeperService) SoftDeleteReviewByID(ctx context.Context, id int) error
 }
 
 // UpdateByID provides a mock function with given fields: ctx, keeper
-func (_m *KeeperService) UpdateByID(ctx context.Context, keeper core.Keepers) error {
+func (_m *KeeperService) UpdateByID(ctx context.Context, keeper core.Keepers) (core.Keepers, error) {
 	ret := _m.Called(ctx, keeper)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateByID")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.Keepers) error); ok {
+	var r0 core.Keepers
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.Keepers) (core.Keepers, error)); ok {
+		return rf(ctx, keeper)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.Keepers) core.Keepers); ok {
 		r0 = rf(ctx, keeper)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(core.Keepers)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, core.Keepers) error); ok {
+		r1 = rf(ctx, keeper)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // UpdateReviewByID provides a mock function with given fields: ctx, keeperReview

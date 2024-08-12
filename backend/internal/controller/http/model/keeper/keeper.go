@@ -1,6 +1,10 @@
 package keeper
 
-import "time"
+import (
+	"time"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
+)
 
 // Keepers represents the keeper entity.
 type Keepers struct {
@@ -38,6 +42,12 @@ type KeepersResponse struct {
 	Location    string    `json:"location" validate:"required"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// KeepersResponseWithMeta represents the respose keeper entity with meta information.
+type KeepersResponseWithMeta struct {
+	Meta pagination.Pagination `json:"meta"`
+	Data []KeepersResponse     `json:"data"`
 }
 
 // GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
