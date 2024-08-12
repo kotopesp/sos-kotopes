@@ -26,6 +26,8 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 
 	mockAuthService := mocks.NewAuthService(t)
 	mockPostService := mocks.NewPostService(t)
+	mockRoleService := mocks.NewRoleService(t)
+	mockUserService := mocks.NewUserService(t)
 	formValidatorService := validator.New(ctx, baseValidator.New())
 
 	mockAuthService.On("GetJWTSecret").Return(secret)
@@ -33,8 +35,10 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	// mock your dependencies and put them here
 	NewRouter(
 		app,
-		formValidatorService,
 		mockAuthService,
+		mockUserService,
+		mockRoleService,
+		formValidatorService,
 		mockPostService,
 	)
 

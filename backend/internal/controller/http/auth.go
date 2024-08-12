@@ -132,12 +132,10 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 	if !ok {
 		return nil
 	}
-
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil
 	}
-
 	return claims[key]
 }
 

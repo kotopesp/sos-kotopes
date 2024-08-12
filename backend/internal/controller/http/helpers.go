@@ -1,17 +1,25 @@
 package http
 
 import (
+	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	"path/filepath"
+	"strings"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"io"
 	"mime/multipart"
 )
+
+const MaxFileSize = 1 * 1024 * 1024
+
+var AllowedExtensions = []string{".jpg", ".jpeg", ".png"}
 
 // token helpers: getting info from token
 func getIDFromToken(ctx *fiber.Ctx) (id int, err error) {
@@ -109,4 +117,73 @@ func paginate(total, limit, offset int) pagination.Pagination {
 		CurrentPage: currentPage,
 		PerPage:     perPage,
 	}
+}
+
+func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedExtensions []string) (err error) {
+	ext := filepath.Ext(file.Filename)
+	for _, allowedExt := range allowedExtensions {
+		if strings.EqualFold(ext, allowedExt) {
+			return nil
+		}
+	}
+	logger.Log().Debug(ctx, model.ErrInvalidExtension.Error())
+	return model.ErrInvalidExtension
+}
+
+func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err error) {
+	fileSize := file.Size
+	if fileSize > MaxFileSize {
+		logger.Log().Debug(ctx, model.ErrInvalidPhotoSize.Error())
+		return model.ErrInvalidPhotoSize
+	}
+
+	return nil
+}
+
+func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) {
+	// Check file size
+	err = IsValidPhotoSize(ctx, file)
+	if err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		return err
+	}
+
+	// Check file extension
+	err = IsValidExtension(ctx, file, AllowedExtensions)
+	if err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		return err
+	}
+
+	// Add additional photo validation checks here
+
+	return nil
+}
+
+// Works only for requests with one file
+func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
+	if form, err := ctx.MultipartForm(); err == nil {
+		if files := form.File["photo"]; len(files) > 0 {
+			file := files[0]
+
+			// Read file content
+			fileContent, err := file.Open()
+			if err != nil {
+				return nil, err
+			}
+			defer fileContent.Close()
+
+			buffer := bytes.NewBuffer(nil)
+			if _, err = io.Copy(buffer, fileContent); err != nil {
+				return nil, err
+			}
+			// Validate photo
+			if err := validatePhoto(ctx.UserContext(), file); err != nil {
+				return nil, err
+			}
+			bytesTmp := buffer.Bytes()
+			photoBytes = &bytesTmp
+		}
+	}
+	return photoBytes, nil
 }
