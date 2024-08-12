@@ -52,7 +52,7 @@ type KeepersResponseWithMeta struct {
 
 // GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
 type GetAllKeepersParams struct {
-	Sort      string  `query:"sort" validate:"omitempty"`
+	Sort      string  `query:"sort" validate:"omitempty,sort_keeper"`
 	Location  string  `query:"location"`
 	MinRating float64 `query:"min_rating" validate:"omitempty,gte=1,lte=5"`
 	MaxRating float64 `query:"max_rating" validate:"omitempty,gte=1,lte=5"`

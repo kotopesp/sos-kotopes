@@ -70,17 +70,7 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]
 		query = query.Having("AVG(keeper_reviews.grade) <= ?", *params.MaxRating)
 	}
 
-	if params.SortBy != nil {
-		sortField := *params.SortBy
-		sortOrder := "asc"
-		if params.SortOrder != nil && (*params.SortOrder == "desc" || *params.SortOrder == "DESC") {
-			sortOrder = "desc"
-		}
-
-		if sortField == "avg_grade" || sortField == "price" || sortField == "created_at" {
-			query = query.Order(sortField + " " + sortOrder)
-		}
-	}
+	query = query.Order(*params.SortBy + " " + *params.SortOrder)
 
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)

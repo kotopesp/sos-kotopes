@@ -8,7 +8,7 @@ import (
 )
 
 func (p *GetAllKeepersParams) FromKeeperRequest() core.GetAllKeepersParams {
-	sortBy, sortOrder := p.ParseSort()
+	sortBy, sortOrder := ParseSort(p.Sort)
 	return core.GetAllKeepersParams{
 		SortBy:    &sortBy,
 		SortOrder: &sortOrder,
@@ -22,8 +22,11 @@ func (p *GetAllKeepersParams) FromKeeperRequest() core.GetAllKeepersParams {
 	}
 }
 
-func (p *GetAllKeepersParams) ParseSort() (sortBy, sortOrder string) {
-	parts := strings.Split(p.Sort, ":")
+func ParseSort(sort string) (sortBy, sortOrder string) {
+	parts := strings.Split(sort, ":")
+	if len(parts) != 2 {
+		return "", ""
+	}
 	sortBy = ""
 	sortOrder = ""
 	if parts[0] != "" {

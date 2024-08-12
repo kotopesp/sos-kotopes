@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"regexp"
+	"strings"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	validatorPkg "github.com/go-playground/validator/v10"
@@ -46,6 +48,39 @@ func customValidationOptions(ctx context.Context, validator *validatorPkg.Valida
 	}
 	err = validator.RegisterValidation("notblank", func(fl validatorPkg.FieldLevel) bool {
 		return notBlank(fl.Field().String())
+	})
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	err = validator.RegisterValidation("sort_keeper", func(fl validatorPkg.FieldLevel) bool {
+		sort := fl.Field().String()
+		if sort == "" {
+			return true
+		}
+
+		sortBy, sortOrder := keeper.ParseSort(sort)
+		if sortBy == "" && sortOrder == "" {
+			return false
+		}
+
+		validFields := map[string]bool{
+			"avg_grade":  true,
+			"price":      true,
+			"created_at": true,
+		}
+		if _, ok := validFields[sortBy]; !ok {
+			return false
+		}
+
+		validOrders := map[string]bool{
+			"asc":  true,
+			"desc": true,
+		}
+		if _, ok := validOrders[strings.ToLower(sortOrder)]; !ok {
+			return false
+		}
+
+		return true
 	})
 	if err != nil {
 		logger.Log().Fatal(ctx, err.Error())

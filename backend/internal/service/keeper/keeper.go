@@ -20,6 +20,13 @@ func New(keeperStore core.KeeperStore, keeperReviewStore core.KeeperReviewsStore
 }
 
 func (s *service) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keepers, error) {
+	if *params.SortBy == "" {
+		*params.SortBy = "created_at"
+	}
+	if *params.SortOrder == "" {
+		*params.SortBy = "desc"
+	}
+
 	return s.keeperStore.GetAll(ctx, params)
 }
 
