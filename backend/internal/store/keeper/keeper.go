@@ -52,10 +52,6 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]
 	var keepers []core.Keepers
 	query := s.DB.WithContext(ctx).Model(&core.Keepers{})
 
-	if params.Location != nil {
-		query = query.Where("location LIKE = ?", "%"+*params.Location+"%")
-	}
-
 	if params.MinPrice != nil {
 		query = query.Where("price >= ?", *params.MinPrice)
 	}
