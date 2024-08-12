@@ -40,7 +40,6 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 }
 
 // validation helpers
-
 func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(data); err != nil {
 		if errors.Is(err, fiber.ErrUnprocessableEntity) {
@@ -157,7 +156,7 @@ func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) 
 	return nil
 }
 
-// !Works only for requests with one file
+// Works only for requests with one file
 func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 	if form, err := ctx.MultipartForm(); err == nil {
 		if files := form.File["photo"]; len(files) > 0 {
