@@ -52,31 +52,6 @@ func (r *Router) getKeeperByID(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.FromCoreKeeper(k)))
 }
 
-func (r *Router) createKeeper(ctx *fiber.Ctx) error {
-	var newKeeper keeper.KeepersCreate
-
-	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &newKeeper)
-	if fiberError != nil || parseOrValidationError != nil {
-		return fiberError
-	}
-
-	userID, err := getIDFromToken(ctx)
-	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
-	}
-	newKeeper.UserID = userID
-
-	// create keeper
-	k := newKeeper.ToCoreNewKeeper()
-	if err := r.keeperService.Create(ctx.UserContext(), k); err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(keeper.FromCoreKeeper(k)))
-}
-
 func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 	// get id
 	id, err := ctx.ParamsInt("id")
