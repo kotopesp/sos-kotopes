@@ -2,8 +2,6 @@ package http
 
 import (
 	"errors"
-
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"

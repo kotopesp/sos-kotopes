@@ -66,7 +66,7 @@ type (
 	PostService interface {
 		GetAllPosts(ctx context.Context, userID int, params GetAllPostsParams) ([]PostDetails, int, error)
 		GetPostByID(ctx context.Context, postID int, userID int) (PostDetails, error)
-    GetUserPosts(ctx context.Context, id int) (posts []PostDetails, count int, err error)
+    	GetUserPosts(ctx context.Context, id int) (posts []PostDetails, count int, err error)
 		CreatePost(ctx context.Context, postDetails PostDetails) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error

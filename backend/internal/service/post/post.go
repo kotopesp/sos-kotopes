@@ -24,7 +24,7 @@ func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, a
 }
 
 // GetAllPosts retrieves all posts with the given parameters
-func (s *postService) GetAllPosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
+func (s *service) GetAllPosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
 	posts, total, err := s.postStore.GetAllPosts(ctx, userID, params)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -52,7 +52,7 @@ func (s *service) GetUserPosts(ctx context.Context, id int) (postsDetails []core
 }
 
 // GetPostByID retrieves a post by its ID
-func (s *postService) GetPostByID(ctx context.Context, postID, userID int) (core.PostDetails, error) {
+func (s *service) GetPostByID(ctx context.Context, postID, userID int) (core.PostDetails, error) {
 	post, err := s.postStore.GetPostByID(ctx, postID, userID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -69,7 +69,7 @@ func (s *postService) GetPostByID(ctx context.Context, postID, userID int) (core
 }
 
 // CreatePost creates a new post with the provided details and photo
-func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetails) (core.PostDetails, error) {
+func (s *service) CreatePost(ctx context.Context, postDetails core.PostDetails) (core.PostDetails, error) {
 	animal, err := s.animalStore.CreateAnimal(ctx, postDetails.Animal)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -96,7 +96,7 @@ func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetai
 }
 
 // UpdatePost updates an existing post with the provided details
-func (s *postService) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
+func (s *service) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
 	dbPost, err := s.GetPostByID(ctx, *postUpdateRequest.ID, *postUpdateRequest.AuthorID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -132,7 +132,7 @@ func (s *postService) UpdatePost(ctx context.Context, postUpdateRequest core.Upd
 }
 
 // DeletePost deletes a post by its ID
-func (s *postService) DeletePost(ctx context.Context, post core.Post) error {
+func (s *service) DeletePost(ctx context.Context, post core.Post) error {
 	dbPost, err := s.postStore.GetPostByID(ctx, post.ID, post.AuthorID)
 	if err != nil {
 		return err
