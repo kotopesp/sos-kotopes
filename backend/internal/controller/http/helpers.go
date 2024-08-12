@@ -25,6 +25,10 @@ func (r *Router) empty(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(200)
 }
 
+const MaxFileSize = 1 * 1024 * 1024
+
+var AllowedExtensions = []string{".jpg", ".jpeg", ".png"}
+
 // token helpers: getting info from token
 func getIDFromToken(ctx *fiber.Ctx) (id int, err error) {
 	idItem := getPayloadItem(ctx, "id")
@@ -136,7 +140,7 @@ func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedEx
 
 func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err error) {
 	fileSize := file.Size
-	if fileSize > model.MaxFileSize {
+	if fileSize > MaxFileSize {
 		logger.Log().Debug(ctx, model.ErrInvalidPhotoSize.Error())
 		return model.ErrInvalidPhotoSize
 	}
@@ -151,20 +155,20 @@ func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) 
 		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
+
 	// Check file extension
-	allowedExtensions := []string{".jpg", ".jpeg", ".png"}
-	err = IsValidExtension(ctx, file, allowedExtensions)
+	err = IsValidExtension(ctx, file, AllowedExtensions)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
 
-	// You can add your checks
+	// Add additional photo validation checks here
 
 	return nil
 }
 
-// !Works only for requests with one file
+// Works only for requests with one file
 func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 	if form, err := ctx.MultipartForm(); err == nil {
 		if files := form.File["photo"]; len(files) > 0 {

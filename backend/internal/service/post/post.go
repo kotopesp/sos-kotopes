@@ -6,28 +6,25 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-type (
-	postService struct {
-		postStore core.PostStore
-		postFavouriteStore core.PostFavouriteStore
-		animalStore core.AnimalStore
-		userStore core.UserStore
-	}
-)
+type service struct {
+	postStore          core.PostStore
+	postFavouriteStore core.PostFavouriteStore
+	animalStore        core.AnimalStore
+	userStore          core.UserStore
+}
 
-// New initializes a new instance of postService
+// New initializes a new instance of service
 func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, animalStore core.AnimalStore, userStore core.UserStore) core.PostService {
-	return &postService{
-		postStore: 			postStore,
+	return &service{
+		postStore:          postStore,
 		postFavouriteStore: postFavouriteStore,
-		animalStore: 		animalStore,
+		animalStore:        animalStore,
 		userStore:          userStore,
 	}
 }
 
 // GetAllPosts retrieves all posts with the given parameters
 func (s *postService) GetAllPosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
-
 	posts, total, err := s.postStore.GetAllPosts(ctx, userID, params)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -41,6 +38,17 @@ func (s *postService) GetAllPosts(ctx context.Context, userID int, params core.G
 	}
 
 	return postDetails, total, nil
+}
+
+// GetUserPosts retrieves all posts with the given user ID
+func (s *service) GetUserPosts(ctx context.Context, id int) (postsDetails []core.PostDetails, count int, err error) {
+	posts, total, err := s.postStore.GetUserPosts(ctx, id)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return nil, 0, err
+	}
+	postsDetails, err = s.BuildPostDetailsList(ctx, posts, total)
+	return postsDetails, total, err
 }
 
 // GetPostByID retrieves a post by its ID
@@ -108,7 +116,7 @@ func (s *postService) UpdatePost(ctx context.Context, postUpdateRequest core.Upd
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
 	}
-	
+
 	animal, err := s.animalStore.UpdateAnimal(ctx, dbPost.Animal)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -141,6 +149,6 @@ func (s *postService) DeletePost(ctx context.Context, post core.Post) error {
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
-	
+
 	return nil
 }

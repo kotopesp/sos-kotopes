@@ -22,7 +22,7 @@ type (
 
 	// Post Details joins post, animal, username
 	PostDetails struct {
-		Post 	 Post
+		Post     Post
 		Animal   Animal
 		Username string
 	}
@@ -32,7 +32,7 @@ type (
 		ID          *int
 		AuthorID    *int
 		Title       *string
-		Content     *string 
+		Content     *string
 		Photo       *[]byte
 		AnimalType  *string
 		Age         *int
@@ -57,6 +57,7 @@ type (
 	PostStore interface {
 		GetAllPosts(ctx context.Context, userID int, params GetAllPostsParams) ([]Post, int, error)
 		GetPostByID(ctx context.Context, postID int, userID int) (Post, error)
+		GetUserPosts(ctx context.Context, id int) (posts []Post, count int, err error)
 		CreatePost(ctx context.Context, post Post) (Post, error)
 		UpdatePost(ctx context.Context, post Post) (Post, error)
 		DeletePost(ctx context.Context, id int) error
@@ -65,6 +66,7 @@ type (
 	PostService interface {
 		GetAllPosts(ctx context.Context, userID int, params GetAllPostsParams) ([]PostDetails, int, error)
 		GetPostByID(ctx context.Context, postID int, userID int) (PostDetails, error)
+    GetUserPosts(ctx context.Context, id int) (posts []PostDetails, count int, err error)
 		CreatePost(ctx context.Context, postDetails PostDetails) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
