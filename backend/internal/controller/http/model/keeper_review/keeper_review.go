@@ -8,10 +8,10 @@ import (
 
 // KeeperReviewsCreate represents the data required to create a new keeper review.
 type KeeperReviewsCreate struct {
-	AuthorID int    `form:"author_id" validate:"min=0"`
+	AuthorID int    `form:"author_id" validate:"required,min=0"`
 	Content  string `form:"content" validate:"required,notblank,max=2000"`
 	Grade    int    `form:"grade" validate:"required,numeric,min=1,max=5"`
-	KeeperID int    `form:"keeper_id" validate:"min=0"`
+	KeeperID int    `form:"keeper_id" validate:"required,min=0"`
 }
 
 // KeeperReviewsUpdate represents the data to update an existing keeper review.
