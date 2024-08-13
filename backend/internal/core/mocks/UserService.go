@@ -14,12 +14,88 @@ type UserService struct {
 	mock.Mock
 }
 
+// AddUserToFavourite provides a mock function with given fields: ctx, favouriteUserID, userID
+func (_m *UserService) AddUserToFavourite(ctx context.Context, favouriteUserID int, userID int) (core.User, error) {
+	ret := _m.Called(ctx, favouriteUserID, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for AddUserToFavourite")
+	}
+
+	var r0 core.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) (core.User, error)); ok {
+		return rf(ctx, favouriteUserID, userID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) core.User); ok {
+		r0 = rf(ctx, favouriteUserID, userID)
+	} else {
+		r0 = ret.Get(0).(core.User)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+		r1 = rf(ctx, favouriteUserID, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// DeleteUserFromFavourite provides a mock function with given fields: ctx, favouriteUserID, userID
+func (_m *UserService) DeleteUserFromFavourite(ctx context.Context, favouriteUserID int, userID int) error {
+	ret := _m.Called(ctx, favouriteUserID, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteUserFromFavourite")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
+		r0 = rf(ctx, favouriteUserID, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GetFavouriteUsers provides a mock function with given fields: ctx, userID
+func (_m *UserService) GetFavouriteUsers(ctx context.Context, userID int) ([]core.User, error) {
+	ret := _m.Called(ctx, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetFavouriteUsers")
+	}
+
+	var r0 []core.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) ([]core.User, error)); ok {
+		return rf(ctx, userID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int) []core.User); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.User)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
+		r1 = rf(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetUser provides a mock function with given fields: ctx, id
 func (_m *UserService) GetUser(ctx context.Context, id int) (core.User, error) {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for getUser")
+		panic("no return value specified for GetUser")
 	}
 
 	var r0 core.User
@@ -47,7 +123,7 @@ func (_m *UserService) UpdateUser(ctx context.Context, id int, update core.Updat
 	ret := _m.Called(ctx, id, update)
 
 	if len(ret) == 0 {
-		panic("no return value specified for updateUser")
+		panic("no return value specified for UpdateUser")
 	}
 
 	var r0 core.User

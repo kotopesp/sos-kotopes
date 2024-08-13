@@ -40,6 +40,7 @@ type (
 	UserService interface {
 		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)
 		GetUser(ctx context.Context, id int) (user User, err error)
+		UserFavouriteService
 	}
 
 	ExternalUser struct {

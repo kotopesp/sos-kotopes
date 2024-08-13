@@ -8,13 +8,12 @@ import (
 )
 
 type Router struct {
-	app                  *fiber.App
-	authService          core.AuthService
-	userService          core.UserService
-	roleService          core.RoleService
-	userFavouriteService core.UserFavouriteService
-	formValidator        validator.FormValidatorService
-	postService          core.PostService
+	app           *fiber.App
+	authService   core.AuthService
+	userService   core.UserService
+	roleService   core.RoleService
+	formValidator validator.FormValidatorService
+	postService   core.PostService
 }
 
 func NewRouter(
@@ -46,10 +45,9 @@ func (r *Router) initRoutes() {
 
 	v1 := r.app.Group("/api/v1")
 
-	// favourites users todo
 	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
-	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
-	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
+	v1.Post("/users/favourites/:id", r.protectedMiddleware(), r.AddUserToFavourites)
+	v1.Delete("/users/favourites/:id", r.protectedMiddleware(), r.DeleteUserFromFavourites)
 
 	// users
 	v1.Get("/users/:id", r.getUser)
