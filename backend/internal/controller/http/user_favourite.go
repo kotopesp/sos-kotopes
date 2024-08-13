@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
@@ -38,8 +39,8 @@ func (r *Router) AddUserToFavourites(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
-	//add convertation  to response
-	return ctx.Status(fiber.StatusOK).JSON(addedUser)
+	responseUser := user.ToResponseUser(&addedUser)
+	return ctx.Status(fiber.StatusOK).JSON(responseUser)
 }
 
 func (r *Router) GetFavouriteUsers(ctx *fiber.Ctx) error {
@@ -60,8 +61,11 @@ func (r *Router) GetFavouriteUsers(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
-	//add convertation to response
-	return ctx.Status(fiber.StatusOK).JSON(favouriteUsers)
+	responseUsers := make([]user.ResponseUser, 0, len(favouriteUsers))
+	for i := range favouriteUsers {
+		responseUsers = append(responseUsers, user.ToResponseUser(&favouriteUsers[i]))
+	}
+	return ctx.Status(fiber.StatusOK).JSON(responseUsers)
 }
 
 func (r *Router) DeleteUserFromFavourites(ctx *fiber.Ctx) error {
@@ -77,7 +81,7 @@ func (r *Router) DeleteUserFromFavourites(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	err = r.userService.DeleteUserFromFavourite(ctx.UserContext(), userID, favouriteUserID)
+	err = r.userService.DeleteUserFromFavourite(ctx.UserContext(), favouriteUserID, userID)
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):

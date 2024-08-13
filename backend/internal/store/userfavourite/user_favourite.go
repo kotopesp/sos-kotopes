@@ -102,7 +102,7 @@ func (s *Store) GetFavouriteUsers(ctx context.Context, userID int) (favouriteUse
 }
 
 func (s *Store) DeleteUserFromFavourite(ctx context.Context, favouriteUserID, userID int) (err error) {
-	err = s.DB.WithContext(ctx).
+	err = s.DB.WithContext(ctx).Table("favourite_persons").
 		Where("person_id = ? AND user_id = ?", favouriteUserID, userID).
 		Delete(core.FavouriteUser{}).Error
 
