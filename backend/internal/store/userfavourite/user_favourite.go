@@ -74,7 +74,7 @@ func (s *Store) AddUserToFavourite(ctx context.Context, favouriteUserID, userID 
 		PersonID: favouriteUserID,
 		UserID:   userID,
 	}
-	if err = tx.Table("favourite_persons").Create(&newFavorite).Error; err != nil {
+	if err := tx.Table("favourite_persons").Create(&newFavorite).Error; err != nil {
 		return core.User{}, err
 	}
 
@@ -82,7 +82,6 @@ func (s *Store) AddUserToFavourite(ctx context.Context, favouriteUserID, userID 
 }
 
 func (s *Store) GetFavouriteUsers(ctx context.Context, userID int) (favouriteUsers []core.User, err error) {
-	// is it works correcly?
 	err = s.DB.WithContext(ctx).
 		Model(&core.User{}).
 		Joins("INNER JOIN favourite_persons ON users.id = favourite_persons.person_id").
