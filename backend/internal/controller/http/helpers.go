@@ -116,7 +116,7 @@ func paginate(total, limit, offset int) pagination.Pagination {
 	}
 }
 
-func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedExtensions []string) (err error) {
+func isValidExtension(ctx context.Context, file *multipart.FileHeader, allowedExtensions []string) (err error) {
 	ext := filepath.Ext(file.Filename)
 	for _, allowedExt := range allowedExtensions {
 		if strings.EqualFold(ext, allowedExt) {
@@ -127,7 +127,7 @@ func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedEx
 	return model.ErrInvalidExtension
 }
 
-func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err error) {
+func isValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err error) {
 	fileSize := file.Size
 	if fileSize > model.MaxFileSize {
 		logger.Log().Debug(ctx, model.ErrInvalidPhotoSize.Error())
@@ -139,14 +139,14 @@ func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err erro
 
 func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) {
 	// Check file size
-	err = IsValidPhotoSize(ctx, file)
+	err = isValidPhotoSize(ctx, file)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
 	// Check file extension
 	allowedExtensions := []string{".jpg", ".jpeg", ".png"}
-	err = IsValidExtension(ctx, file, allowedExtensions)
+	err = isValidExtension(ctx, file, allowedExtensions)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return err
