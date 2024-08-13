@@ -42,7 +42,7 @@ type KeepersResponseWithUser struct {
 // KeepersResponseWithMeta represents the respose keeper entity with meta information.
 type KeepersResponseWithMeta struct {
 	Meta pagination.Pagination     `json:"meta"`
-	Data []KeepersResponseWithUser `json:"data"`
+	Data []KeepersResponseWithUser `json:"payload"`
 }
 
 // GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
