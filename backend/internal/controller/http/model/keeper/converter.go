@@ -13,11 +13,11 @@ func (p *GetAllKeepersParams) ToCoreGetAllKeepersParams() core.GetAllKeepersPara
 	return core.GetAllKeepersParams{
 		SortBy:    &sortBy,
 		SortOrder: &sortOrder,
-		Location:  &p.Location,
-		MinRating: &p.MinRating,
-		MaxRating: &p.MaxRating,
-		MinPrice:  &p.MinPrice,
-		MaxPrice:  &p.MaxPrice,
+		Location:  p.Location,
+		MinRating: p.MinRating,
+		MaxRating: p.MaxRating,
+		MinPrice:  p.MinPrice,
+		MaxPrice:  p.MaxPrice,
 		Limit:     &p.Limit,
 		Offset:    &p.Offset,
 	}
@@ -66,7 +66,7 @@ func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.UpdateKeepers {
 func ToKeepersResponse(meta pagination.Pagination, coreKeepersDetails []core.KeepersDetails) KeepersResponseWithMeta {
 	offset := (meta.CurrentPage - 1) * meta.PerPage
 	paginateCoreKeepersDetails := coreKeepersDetails[offset:min(offset+meta.PerPage, meta.Total)]
-	paginateResponseKeepersWithUser := make([]KeepersResponseWithUser, meta.PerPage)
+	paginateResponseKeepersWithUser := make([]KeepersResponseWithUser, len(paginateCoreKeepersDetails))
 
 	for i, coreKeeperDetails := range paginateCoreKeepersDetails {
 		paginateResponseKeepersWithUser[i] = FromCoreKeeperDetails(coreKeeperDetails)

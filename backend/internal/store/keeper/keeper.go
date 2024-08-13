@@ -3,7 +3,6 @@ package keepestore
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -93,7 +92,8 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]
 	}
 
 	if err := query.Find(&keepers).Error; err != nil {
-		return nil, fmt.Errorf("keepers.GetAll.find(): %s", err.Error())
+		logger.Log().Debug(ctx, err.Error())
+		return nil, err
 	}
 
 	return keepers, nil

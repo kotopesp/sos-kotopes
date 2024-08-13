@@ -27,7 +27,7 @@ func (s *service) GetAll(ctx context.Context, params core.GetAllKeepersParams) (
 		*params.SortBy = "created_at"
 	}
 	if *params.SortOrder == "" {
-		*params.SortBy = "desc"
+		*params.SortOrder = "desc"
 	}
 
 	keepers, err := s.keeperStore.GetAll(ctx, params)

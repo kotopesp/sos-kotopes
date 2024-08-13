@@ -6,32 +6,19 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 )
 
-// KeeperReviews represents the review entity for keepers.
-type KeeperReviews struct {
-	ID        int       `json:"id"`
-	AuthorID  int       `json:"author_id" validate:"required,min=0"`
-	Content   string    `json:"content" validate:"required,notblank,max=2000"`
-	Grade     int       `json:"grade" validate:"required,numeric,min=1,max=5"`
-	KeeperID  int       `json:"keeper_id" validate:"required,min=0"`
-	IsDeleted bool      `json:"is_deleted"`
-	DeletedAt time.Time `json:"deleted_at"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
 // KeeperReviewsCreate represents the data required to create a new keeper review.
 type KeeperReviewsCreate struct {
-	AuthorID int    `json:"author_id" validate:"required,min=0"`
-	Content  string `json:"content" validate:"required,notblank,max=2000"`
-	Grade    int    `json:"grade" validate:"required,numeric,min=1,max=5"`
-	KeeperID int    `json:"keeper_id" validate:"required,min=0"`
+	AuthorID int    `form:"author_id" validate:"min=0"`
+	Content  string `form:"content" validate:"required,notblank,max=2000"`
+	Grade    int    `form:"grade" validate:"required,numeric,min=1,max=5"`
+	KeeperID int    `form:"keeper_id" validate:"min=0"`
 }
 
 // KeeperReviewsUpdate represents the data to update an existing keeper review.
 type KeeperReviewsUpdate struct {
-	ID      int    `json:"id"`
-	Content string `json:"content" validate:"notblank,max=2000"`
-	Grade   int    `json:"grade" validate:"numeric,min=1,max=5"`
+	ID      int    `form:"id"`
+	Content string `form:"content" validate:"notblank,max=2000"`
+	Grade   int    `form:"grade" validate:"numeric,min=1,max=5"`
 }
 
 // KeeperReviewsResponse represents the data to send keeper review back to client.
