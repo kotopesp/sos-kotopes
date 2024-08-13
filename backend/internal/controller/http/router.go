@@ -46,9 +46,9 @@ func (r *Router) initRoutes() {
 	v1 := r.app.Group("/api/v1")
 
 	// favourites users todo
-	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)               //todo
-	v1.Post("/users/favourites/:id", r.protectedMiddleware(), r.AddUserToFavourites)        //todo
-	v1.Delete("/users/favourites/:id", r.protectedMiddleware(), r.DeleteUserFromFavourites) //todo
+	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)               // todo
+	v1.Post("/users/favourites/:id", r.protectedMiddleware(), r.AddUserToFavourites)        // todo
+	v1.Delete("/users/favourites/:id", r.protectedMiddleware(), r.DeleteUserFromFavourites) // todo
 
 	// users
 	v1.Get("/users/:id", r.getUser)

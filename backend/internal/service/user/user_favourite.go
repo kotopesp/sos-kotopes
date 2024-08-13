@@ -5,7 +5,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
-func (s *service) AddUserToFavourite(ctx context.Context, favouriteUserID, userID int) (user core.User, err error) {
+func (s *service) AddUserToFavourite(ctx context.Context, favouriteUserID, userID int) (favouriteUser core.User, err error) {
 	return s.userFavouriteStore.AddUserToFavourite(ctx, favouriteUserID, userID)
 }
 
