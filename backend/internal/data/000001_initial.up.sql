@@ -118,43 +118,6 @@ CREATE TABLE IF NOT EXISTS
     updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
--- Messages
-CREATE TYPE chat_types AS ENUM ('keeper', 'seeker', 'vet');
-
-CREATE TABLE IF NOT EXISTS
-    chats
-(
-    id         SERIAL PRIMARY KEY,
-    chat_type  chat_types,
-    is_deleted BOOLEAN   NOT NULL DEFAULT false,
-    deleted_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS
-    messages
-(
-    id         SERIAL PRIMARY KEY,
-    user_id    INTEGER   NOT NULL REFERENCES users (id),
-    chat_id    INTEGER   NOT NULL REFERENCES chats (id),
-    is_deleted BOOLEAN   NOT NULL DEFAULT false,
-    deleted_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS
-    chat_members
-(
-    id         SERIAL PRIMARY KEY,
-    user_id    INTEGER   NOT NULL REFERENCES users (id),
-    chat_id    INTEGER REFERENCES chats (id),
-    is_deleted BOOLEAN   NOT NULL DEFAULT false,
-    deleted_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
 -- Posts
 CREATE TABLE IF NOT EXISTS
     posts
@@ -164,19 +127,6 @@ CREATE TABLE IF NOT EXISTS
     animal_id  INTEGER   NOT NULL REFERENCES animals (id),
     title      VARCHAR   NOT NULL,
     content    VARCHAR,
-    is_deleted BOOLEAN   NOT NULL DEFAULT false,
-    deleted_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS
-    post_response
-(
-    id         SERIAL PRIMARY KEY,
-    post_id    INTEGER   NOT NULL REFERENCES posts (id),
-    author_id  INTEGER   NOT NULL REFERENCES users (id),
-    content    VARCHAR   NOT NULL,
     is_deleted BOOLEAN   NOT NULL DEFAULT false,
     deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -231,5 +181,43 @@ CREATE TABLE IF NOT EXISTS
     id         SERIAL PRIMARY KEY,
     comment_id INTEGER   NOT NULL REFERENCES comments (id),
     user_id    INTEGER   NOT NULL REFERENCES users (id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Messages
+CREATE TYPE chat_types AS ENUM ('response', 'keeper', 'seeker', 'vet');
+
+CREATE TABLE IF NOT EXISTS
+    chats
+(
+    id         SERIAL PRIMARY KEY,
+    chat_type  chat_types,
+    post_id    INTEGER REFERENCES posts (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS
+    messages
+(
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    chat_id    INTEGER   NOT NULL REFERENCES chats (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS
+    chat_members
+(
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER   NOT NULL REFERENCES users (id),
+    chat_id    INTEGER REFERENCES chats (id),
+    is_deleted BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
