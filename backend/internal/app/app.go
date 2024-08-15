@@ -2,10 +2,11 @@ package app
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -22,9 +23,9 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
-    postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
 

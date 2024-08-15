@@ -1,7 +1,7 @@
 import {Routes} from '@angular/router';
 import {PostsComponent} from "../pages/posts/ui/posts.component";
 import {StartPageComponent} from "../pages/start-page/ui/start-page.component";
-import { UserPageComponent } from '../pages/user-page/user-page.component';
+import { UserPageComponent } from '../pages/user-page/ui/user-page.component';
 
 export const routes: Routes = [
   {

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import {HeaderComponent} from "../../widgets/header/header.component";
-import { UserService } from '../../services/user-service/user.service';
+import {HeaderComponent} from "../../../widgets/header/header.component";
+import { UserService } from '../api/user.service';
 import { RoleButtonComponent } from './role-button/role-button.component';
 import { IconButtonComponent } from './icon-button/icon-button.component';
-import { User } from '../../model/user.interface';
+import { User } from '../model/user.interface';
 import { map, Observable, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
