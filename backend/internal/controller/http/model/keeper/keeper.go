@@ -18,6 +18,7 @@ type KeepersCreate struct {
 // KeepersUpdate represents the data to update an existing keeper.
 type KeepersUpdate struct {
 	ID          int     `form:"id"`
+	UserID      int     `form:"user_id"`
 	Description string  `form:"description" validate:"notblank,max=600"`
 	Price       float64 `form:"price" validate:"min=0"`
 	Location    string  `form:"location"`

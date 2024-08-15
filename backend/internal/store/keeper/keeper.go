@@ -25,15 +25,6 @@ func (s *store) Create(ctx context.Context, keeper core.Keepers) error {
 	return nil
 }
 
-func (s *store) DeleteByID(ctx context.Context, id int) error {
-	result := s.DB.WithContext(ctx).Delete(core.Keepers{}, id)
-	if result.RowsAffected == 0 {
-		return core.ErrRecordNotFound
-	}
-
-	return result.Error
-}
-
 func (s *store) SoftDeleteByID(ctx context.Context, id int) error {
 	err := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", id).Updates(core.Keepers{IsDeleted: true, DeletedAt: time.Now()}).Error
 

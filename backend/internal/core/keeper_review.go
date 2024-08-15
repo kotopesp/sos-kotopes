@@ -19,6 +19,7 @@ type KeeperReviews struct {
 
 type UpdateKeeperReviews struct {
 	ID        int       `gorm:"primaryKey;autoIncrement;column:id"`
+	AuthorID  int       `gorm:"column:author_id"`
 	Content   string    `gorm:"column:content"`
 	Grade     int       `gorm:"column:grade"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime;column:updated_at"`
@@ -36,8 +37,8 @@ type GetAllKeeperReviewsParams struct {
 
 type KeeperReviewsStore interface {
 	GetAllReviews(ctx context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviews, error)
+	GetByIDReview(ctx context.Context, id int) (KeeperReviews, error)
 	CreateReview(ctx context.Context, keeperReview KeeperReviews) error
-	DeleteReviewByID(ctx context.Context, id int) error
 	SoftDeleteReviewByID(ctx context.Context, id int) error
 	UpdateReviewByID(ctx context.Context, keeperReview UpdateKeeperReviews) (KeeperReviews, error)
 }
@@ -45,8 +46,7 @@ type KeeperReviewsStore interface {
 type KeeperReviewsService interface {
 	GetAllReviews(ctx context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviewsDetails, error)
 	CreateReview(ctx context.Context, keeperReview KeeperReviews) error
-	DeleteReviewByID(ctx context.Context, id int) error
-	SoftDeleteReviewByID(ctx context.Context, id int) error
+	SoftDeleteReviewByID(ctx context.Context, id int, userID int) error
 	UpdateReviewByID(ctx context.Context, keeperReview UpdateKeeperReviews) (KeeperReviewsDetails, error)
 }
 

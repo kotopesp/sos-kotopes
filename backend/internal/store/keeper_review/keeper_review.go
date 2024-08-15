@@ -25,15 +25,6 @@ func (s *store) CreateReview(ctx context.Context, review core.KeeperReviews) err
 	return nil
 }
 
-func (s *store) DeleteReviewByID(ctx context.Context, id int) error {
-	result := s.DB.WithContext(ctx).Delete(core.KeeperReviews{}, id)
-	if result.RowsAffected == 0 {
-		return core.ErrRecordNotFound
-	}
-
-	return result.Error
-}
-
 func (s *store) SoftDeleteReviewByID(ctx context.Context, id int) error {
 	err := s.DB.WithContext(ctx).Model(&core.KeeperReviews{}).Where("id = ?", id).Updates(core.KeeperReviews{IsDeleted: true, DeletedAt: time.Now()}).Error
 
@@ -74,4 +65,14 @@ func (s *store) GetAllReviews(ctx context.Context, params core.GetAllKeeperRevie
 
 	err := query.Find(&reviews).Error
 	return reviews, err
+}
+
+func (s *store) GetByIDReview(ctx context.Context, id int) (core.KeeperReviews, error) {
+	var review = core.KeeperReviews{ID: id}
+
+	if err := s.DB.WithContext(ctx).First(&review).Error; err != nil {
+		return core.KeeperReviews{}, err
+	}
+
+	return review, nil
 }

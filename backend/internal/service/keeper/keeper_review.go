@@ -45,15 +45,39 @@ func (s *service) CreateReview(ctx context.Context, review core.KeeperReviews) e
 	return s.keeperReviewsStore.CreateReview(ctx, review)
 }
 
-func (s *service) DeleteReviewByID(ctx context.Context, id int) error {
-	return s.keeperReviewsStore.DeleteReviewByID(ctx, id)
-}
+func (s *service) SoftDeleteReviewByID(ctx context.Context, id int, userID int) error {
+	storedReview, err := s.keeperReviewsStore.GetByIDReview(ctx, id)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
 
-func (s *service) SoftDeleteReviewByID(ctx context.Context, id int) error {
+	if storedReview.AuthorID != userID {
+		logger.Log().Error(ctx, core.ErrKeeperReviewUserIDMissmatch.Error())
+		return core.ErrKeeperReviewUserIDMissmatch
+	} else if storedReview.IsDeleted {
+		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+		return core.ErrRecordNotFound
+	}
+
 	return s.keeperReviewsStore.SoftDeleteReviewByID(ctx, id)
 }
 
 func (s *service) UpdateReviewByID(ctx context.Context, review core.UpdateKeeperReviews) (core.KeeperReviewsDetails, error) {
+	storedReview, err := s.keeperReviewsStore.GetByIDReview(ctx, review.ID)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.KeeperReviewsDetails{}, err
+	}
+
+	if storedReview.AuthorID != review.AuthorID {
+		logger.Log().Error(ctx, core.ErrKeeperReviewUserIDMissmatch.Error())
+		return core.KeeperReviewsDetails{}, core.ErrKeeperReviewUserIDMissmatch
+	} else if storedReview.IsDeleted {
+		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+		return core.KeeperReviewsDetails{}, core.ErrRecordNotFound
+	}
+
 	updatedKeeperReview, err := s.keeperReviewsStore.UpdateReviewByID(ctx, review)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())

@@ -79,14 +79,14 @@ func (r *Router) initRoutes() {
 	// keepers
 	v1.Get("/keepers", r.getKeepers)
 	v1.Get("/keepers/:id", r.getKeeperByID)
-	v1.Put("/keepers/:id", r.updateKeeperByID)
-	v1.Delete("/keepers/:id", r.deleteKeeperByID)
+	v1.Put("/keepers/:id", r.protectedMiddleware(), r.updateKeeperByID)
+	v1.Delete("/keepers/:id", r.protectedMiddleware(), r.deleteKeeperByID)
 
 	// keeper reviews
 	v1.Get("/keepers/:id/keeper_reviews", r.getKeeperReviews)
 	v1.Post("/keepers/:id/keeper_reviews", r.protectedMiddleware(), r.createKeeperReview)
-	v1.Put("/keeper_reviews/:id", r.updateKeeperReview)
-	v1.Delete("/keeper_reviews/:id", r.deleteKeeperReview)
+	v1.Put("/keeper_reviews/:id", r.protectedMiddleware(), r.updateKeeperReview)
+	v1.Delete("/keeper_reviews/:id", r.protectedMiddleware(), r.deleteKeeperReview)
 
 	// posts
 	v1.Get("/posts", r.getPosts)

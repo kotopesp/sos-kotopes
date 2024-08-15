@@ -16,9 +16,10 @@ type KeeperReviewsCreate struct {
 
 // KeeperReviewsUpdate represents the data to update an existing keeper review.
 type KeeperReviewsUpdate struct {
-	ID      int    `form:"id"`
-	Content string `form:"content" validate:"notblank,max=2000"`
-	Grade   int    `form:"grade" validate:"numeric,min=1,max=5"`
+	ID       int    `form:"id"`
+	AuthorID int    `form:"author_id" validate:"required,min=0"`
+	Content  string `form:"content" validate:"notblank,max=2000"`
+	Grade    int    `form:"grade" validate:"numeric,min=1,max=5"`
 }
 
 // KeeperReviewsResponse represents the data to send keeper review back to client.

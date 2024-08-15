@@ -57,6 +57,7 @@ func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.UpdateKeepers {
 	}
 	return core.UpdateKeepers{
 		ID:          k.ID,
+		UserID:      k.UserID,
 		Description: k.Description,
 		Price:       k.Price,
 		Location:    k.Location,

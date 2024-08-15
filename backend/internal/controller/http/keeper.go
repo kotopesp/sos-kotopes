@@ -60,6 +60,12 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
+	userID, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+
 	var updateKeeper keeper.KeepersUpdate
 
 	// parse keeper
@@ -69,6 +75,7 @@ func (r *Router) updateKeeperByID(ctx *fiber.Ctx) error {
 	}
 
 	updateKeeper.ID = id
+	updateKeeper.UserID = userID
 
 	// update
 	updatedKeeper, err := r.keeperService.UpdateByID(ctx.UserContext(), updateKeeper.ToCoreUpdatedKeeper())
@@ -91,8 +98,14 @@ func (r *Router) deleteKeeperByID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
+	userID, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+
 	// delete
-	if err := r.keeperService.SoftDeleteByID(ctx.UserContext(), id); err != nil {
+	if err := r.keeperService.SoftDeleteByID(ctx.UserContext(), id, userID); err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			return ctx.Status(fiber.StatusNoContent).JSON(model.ErrorResponse(err.Error()))
 		}

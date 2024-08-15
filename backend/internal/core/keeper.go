@@ -19,6 +19,7 @@ type Keepers struct {
 
 type UpdateKeepers struct {
 	ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
+	UserID      int       `gorm:"column:user_id"`
 	Description string    `gorm:"column:description"`
 	Price       float64   `gorm:"column:price"`
 	Location    string    `gorm:"column:location"`
@@ -46,7 +47,6 @@ type KeeperStore interface {
 	GetAll(ctx context.Context, params GetAllKeepersParams) ([]Keepers, error)
 	GetByID(ctx context.Context, id int) (Keepers, error)
 	Create(ctx context.Context, keeper Keepers) error
-	DeleteByID(ctx context.Context, id int) error
 	SoftDeleteByID(ctx context.Context, id int) error
 	UpdateByID(ctx context.Context, keeper UpdateKeepers) (Keepers, error)
 }
@@ -55,8 +55,7 @@ type KeeperService interface {
 	GetAll(ctx context.Context, params GetAllKeepersParams) ([]KeepersDetails, error)
 	GetByID(ctx context.Context, id int) (KeepersDetails, error)
 	Create(ctx context.Context, keeper Keepers) error
-	DeleteByID(ctx context.Context, id int) error
-	SoftDeleteByID(ctx context.Context, id int) error
+	SoftDeleteByID(ctx context.Context, id int, userID int) error
 	UpdateByID(ctx context.Context, keeper UpdateKeepers) (KeepersDetails, error)
 
 	KeeperReviewsService

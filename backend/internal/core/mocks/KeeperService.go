@@ -50,42 +50,6 @@ func (_m *KeeperService) CreateReview(ctx context.Context, keeperReview core.Kee
 	return r0
 }
 
-// DeleteByID provides a mock function with given fields: ctx, id
-func (_m *KeeperService) DeleteByID(ctx context.Context, id int) error {
-	ret := _m.Called(ctx, id)
-
-	if len(ret) == 0 {
-		panic("no return value specified for DeleteByID")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
-		r0 = rf(ctx, id)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// DeleteReviewByID provides a mock function with given fields: ctx, id
-func (_m *KeeperService) DeleteReviewByID(ctx context.Context, id int) error {
-	ret := _m.Called(ctx, id)
-
-	if len(ret) == 0 {
-		panic("no return value specified for DeleteReviewByID")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
-		r0 = rf(ctx, id)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
 // GetAll provides a mock function with given fields: ctx, params
 func (_m *KeeperService) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.KeepersDetails, error) {
 	ret := _m.Called(ctx, params)
@@ -174,17 +138,17 @@ func (_m *KeeperService) GetByID(ctx context.Context, id int) (core.KeepersDetai
 	return r0, r1
 }
 
-// SoftDeleteByID provides a mock function with given fields: ctx, id
-func (_m *KeeperService) SoftDeleteByID(ctx context.Context, id int) error {
-	ret := _m.Called(ctx, id)
+// SoftDeleteByID provides a mock function with given fields: ctx, id, userID
+func (_m *KeeperService) SoftDeleteByID(ctx context.Context, id int, userID int) error {
+	ret := _m.Called(ctx, id, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SoftDeleteByID")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
-		r0 = rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
+		r0 = rf(ctx, id, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -192,17 +156,17 @@ func (_m *KeeperService) SoftDeleteByID(ctx context.Context, id int) error {
 	return r0
 }
 
-// SoftDeleteReviewByID provides a mock function with given fields: ctx, id
-func (_m *KeeperService) SoftDeleteReviewByID(ctx context.Context, id int) error {
-	ret := _m.Called(ctx, id)
+// SoftDeleteReviewByID provides a mock function with given fields: ctx, id, userID
+func (_m *KeeperService) SoftDeleteReviewByID(ctx context.Context, id int, userID int) error {
+	ret := _m.Called(ctx, id, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SoftDeleteReviewByID")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
-		r0 = rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
+		r0 = rf(ctx, id, userID)
 	} else {
 		r0 = ret.Error(0)
 	}

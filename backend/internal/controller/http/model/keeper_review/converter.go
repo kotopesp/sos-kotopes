@@ -27,9 +27,10 @@ func (k *KeeperReviewsCreate) ToCoreNewKeeperReview() core.KeeperReviews {
 
 func (k *KeeperReviewsUpdate) ToCoreUpdateKeeperReview() core.UpdateKeeperReviews {
 	return core.UpdateKeeperReviews{
-		ID:      k.ID,
-		Grade:   k.Grade,
-		Content: k.Content,
+		ID:       k.ID,
+		AuthorID: k.AuthorID,
+		Grade:    k.Grade,
+		Content:  k.Content,
 	}
 }
 
