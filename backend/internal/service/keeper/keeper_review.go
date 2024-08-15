@@ -45,7 +45,7 @@ func (s *service) CreateReview(ctx context.Context, review core.KeeperReviews) e
 	return s.keeperReviewsStore.CreateReview(ctx, review)
 }
 
-func (s *service) SoftDeleteReviewByID(ctx context.Context, id int, userID int) error {
+func (s *service) SoftDeleteReviewByID(ctx context.Context, id, userID int) error {
 	storedReview, err := s.keeperReviewsStore.GetByIDReview(ctx, id)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())

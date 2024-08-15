@@ -81,7 +81,7 @@ func (s *service) Create(ctx context.Context, keeper core.Keepers) error {
 	return s.keeperStore.Create(ctx, keeper)
 }
 
-func (s *service) SoftDeleteByID(ctx context.Context, id int, userID int) error {
+func (s *service) SoftDeleteByID(ctx context.Context, id, userID int) error {
 	storedKeeper, err := s.keeperStore.GetByID(ctx, id)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
