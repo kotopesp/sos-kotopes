@@ -17,6 +17,6 @@ export class UserService {
   }
 
   update(user: User): Observable<User> {
-    return this.http.put(`${this.apiUrl}/users/${user.id}`, user)
+    return this.http.patch(`${this.apiUrl}/users`, user)
   }
 }

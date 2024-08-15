@@ -7,11 +7,12 @@
             </div>
             <div class="user__info">
                 <div class="user__header">
-                    <span class="user__first_second_name ft36 fw400 lh46">{{ user.firstName }} {{ secondName }}</span>
+                    <span class="user__first_second_name ft36 fw400 lh46">{{ user.firstname }} {{ user.lastname
+                        }}</span>
                     <span class="user__online_status ft20 fw400">{{ onlineStatus }}</span>
                 </div>
                 <div class="user__subheader">
-                    <span class="user__username ft24 fw400">&#64;{{ username }}</span>
+                    <span class="user__username ft24 fw400">&#64;{{ user.username }}</span>
                     <span class="user__posts_count ft20 fw400">{{ totalPosts }} объявления</span>
                 </div>
                 <div class="user__role_info ft20 fw400">
