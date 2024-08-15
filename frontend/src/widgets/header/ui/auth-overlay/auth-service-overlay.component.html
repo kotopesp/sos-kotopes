@@ -9,7 +9,7 @@
         <p class="ft24 fw400 login__to__account">Вход в аккаунт</p>
       </div>
     </div>
-    <form action="" [formGroup]="form"
+    <form action="" [formGroup]="formAuth"
           (ngSubmit)="onSubmit()"
     >
       <div class="block__login__and__password">
@@ -52,7 +52,7 @@
       </div>
 
       <div class="block__log-in__button">
-        <button id="button__login" type="submit" class="ft20 ptbold">Войти</button>
+        <button id="button__login" class="ft20 ptbold">Войти</button>
       </div>
     </form>
   </div>

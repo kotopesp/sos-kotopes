@@ -21,7 +21,7 @@ export class AuthServiceOverlayComponent {
   passwordValid: boolean = true;
   isPasswordVisible: WritableSignal<boolean> = signal<boolean>(false);
 
-  form = new FormGroup({
+  formAuth = new FormGroup({
     username: new FormControl(null, Validators.required),
     password: new FormControl(null, Validators.required)
   })
@@ -30,7 +30,7 @@ export class AuthServiceOverlayComponent {
 
   onSubmit() {
 
-    if (this.form.valid) {
+    if (this.formAuth.valid) {
 
       //@ts-ignore
       this.authService.login(this.form.value)
