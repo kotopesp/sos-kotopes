@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/comment"
@@ -86,6 +87,15 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 	)
 }
 
+func oneOfCommentErrors(err error) bool {
+	return oneOfErrors(
+		err,
+		core.ErrCommentPostIDMismatch,
+		core.ErrNoSuchComment,
+		core.ErrCommentIsDeleted,
+	)
+}
+
 func (r *Router) updateComment(ctx *fiber.Ctx) error {
 	var pathParams comment.PathParams
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
@@ -115,9 +125,7 @@ func (r *Router) updateComment(ctx *fiber.Ctx) error {
 	case errors.Is(err, core.ErrCommentAuthorIDMismatch):
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusForbidden).JSON(model.ErrorResponse(err.Error()))
-	case errors.Is(err, core.ErrCommentPostIDMismatch) ||
-		errors.Is(err, core.ErrNoSuchComment) ||
-		errors.Is(err, core.ErrCommentIsDeleted):
+	case oneOfCommentErrors(err):
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 	case err != nil:
@@ -151,10 +159,7 @@ func (r *Router) deleteComment(ctx *fiber.Ctx) error {
 	if errors.Is(err, core.ErrCommentAuthorIDMismatch) {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusForbidden).JSON(model.ErrorResponse(err.Error()))
-	} else if err != nil &&
-		!errors.Is(err, core.ErrNoSuchComment) &&
-		!errors.Is(err, core.ErrCommentPostIDMismatch) &&
-		!errors.Is(err, core.ErrCommentIsDeleted) {
+	} else if err != nil && !oneOfCommentErrors(err) {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}

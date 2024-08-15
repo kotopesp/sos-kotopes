@@ -3,14 +3,16 @@ package http
 import (
 	"errors"
 	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"io"
 	"mime/multipart"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
 // token helpers: getting info from token
@@ -93,6 +95,15 @@ func paginate(total, limit, offset int) pagination.Pagination {
 		CurrentPage: currentPage,
 		PerPage:     perPage,
 	}
+}
+
+func oneOfErrors(e error, errs ...error) bool {
+	for _, err := range errs {
+		if errors.Is(e, err) {
+			return true
+		}
+	}
+	return false
 }
 
 func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
