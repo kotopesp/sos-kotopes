@@ -2,16 +2,17 @@ package core
 
 import (
 	"context"
-
 	"golang.org/x/oauth2"
 )
 
 type (
 	AuthServiceConfig struct {
-		JWTSecret      []byte
-		VKClientID     string
-		VKClientSecret string
-		VKCallback     string
+		JWTSecret            []byte
+		VKClientID           string
+		VKClientSecret       string
+		VKCallback           string
+		AccessTokenLifetime  int
+		RefreshTokenLifetime int
 	}
 
 	AuthService interface {

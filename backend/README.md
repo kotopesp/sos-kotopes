@@ -1,101 +1,102 @@
-# SOS-Kotopes Web Application Backend
+# Бэкенд веб-приложения SOS-Котопес
 
-This repository contains the backend for the SOS-Kotopes web application.
-The backend is built using Go and provides RESTful APIs to interact with the system.
+Этот репозиторий содержит бэкенд для веб-приложения SOS-Котопес.
+Бэкенд построен с использованием Go и предоставляет RESTful API для взаимодействия с системой
 
-## To-Do List
+## Список задач
 
-The following tasks are pending to complete the backend development:
+Следующие задачи ожидают выполнения для завершения разработки бэкенда:
 
-- [ ] **Logger**
-    - Replace the default Fiber logger with a custom implementation.
+- [ ] **Логгер**
+- Заменить стандартный логгер Fiber на пользовательскую реализацию.
 
-- [ ] **CI (Continuous Integration)**
-    - Set up a CI pipeline to automate testing, building, and deployment.
+- [ ] **CI (Непрерывная интеграция)**
+- Настроить CI pipeline для автоматизации тестирования, сборки и развертывания.
 
-- [ ] **Docker Compose**
-    - `docker-compose.yml` file to orchestrate the application and its dependencies using Docker.
+- [X] **Docker Compose**
+- Файл `docker-compose.yml` для оркестрации приложения и его зависимостей с использованием Docker.
 
-- [ ] **License**
-    - LICENSE file to specify the licensing terms for the project.
+- [X] **Лицензия**
+- Файл LICENSE для указания условий лицензирования проекта.
 
-- [ ] **README**
-    - Write a comprehensive README file.
+- [X] **README**
+- Написать подробный файл README.
 
-- [ ] **Automatic Database Migrations**
-    - Implement automatic database migrations.
-  
-- [ ] **Swagger Documentation**
-  - Select library for automatic API Swagger generation, add annotations for handlers
+- [ ] **Автоматические миграции базы данных**
+- Реализовать автоматические миграции базы данных.
 
-## Getting Started
+- [ ] **Документация Swagger**
+- Выбрать библиотеку для автоматической генерации Swagger API, добавить аннотации для обработчиков.
 
-### Prerequisites
+
+## Начало работы
+
+### Предварительные требования
 
 - Go 1.22.5+
 - PostgreSQL
-- Docker (optional, for containerized deployment)
+- Docker (опционально, для развертывания в контейнерах)
 
-### Installation
+### Установка
 
-1. Clone the repository:
+1. Клонируйте репозиторий:
 
     ```sh
     git clone https://github.com/kotopesp/sos-kotopes.git
     cd sos-kotopes/backend
     ```
 
-2. Install dependencies:
+2. Установите зависимости:
 
     ```sh
     go mod tidy
     ```
 
-### Running the Application
+### Запуск приложения
 
-To run the application:
+Для запуска приложения выполните команду:
 
 ```sh
 make run
 ```
 
-*Note*: To run command `PG_URL` needs to be updated in the Makefile.
+*примечание*: Для выполнения команды `PG_URL` в Makefile должен быть обновлен.
 
-### Running with Docker Compose
+### Запуск через Docker Compose
 
-Fill the `docker-compose.yml` file (not provided yet) and run:
+Заполните `docker-compose.yml` файл (пока не поддерживается) и выполните команду:
 
 ```sh
 docker-compose up --build
 ```
 
-### Database Migrations
+### Миграции базы данных
 
-To run database migrations manually:
+Для того, чтобы вручную запустить миграцию базы данных выполните команду:
 
 ```sh
 make migrate-up
 ```
 
-*Note*: To run command `PG_URL` needs to be updated in the Makefile.
+*примечание*: Для выполнения команды `PG_URL` в Makefile должен быть обновлен.
 
-## Development Practices
+## Практики разработки
 
-### Adding Dependencies
+### Добавление зависимостей
 
-When adding new dependencies to the project:
+При добавлении новых зависимостей в проект:
 
-1. Add the dependency to your `go.mod` file using `go get` or directly editing `go.mod`.
-2. Run `go mod vendor` .
+1. Добавьте вашу зависимость в файл `go.mod` используя команду `go get` или напрямую редактируя `go.mod`.
+2. Выполните команду `go mod vendor` .
 
-### Code Quality Checks
+### Проверка качества кода
 
-To maintain code quality, follow these practices:
+Для поддержки качества кода, придерживайтесь данных практик:
 
-- Run `make lint` before committing changes or submitting a pull request to ensure your code meets the linting standards.
+- Выполняйте команду `make lint` перед коммитами или отправкой Pull Request'ов чтобы убедиться в том, что ваш код соответствует стандартам линтера.
 
 
-## Acknowledgments
+## Благодарности
 
 - [Fiber](https://github.com/gofiber/fiber/v2)
 - [GORM](https://gorm.io/)

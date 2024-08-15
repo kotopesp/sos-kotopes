@@ -17,6 +17,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
+// authErrorHandler Error handler if user is not authorized
 func authErrorHandler(ctx *fiber.Ctx, err error) error {
 	return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 }
@@ -42,6 +43,7 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 	})
 }
 
+// loginBasic Login through username and password
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	var apiUser user.User
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
@@ -68,6 +70,7 @@ func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	}))
 }
 
+// getPhotoBytes Getting photo from request body
 func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	file, err := photo.Open()
 	if err != nil {
@@ -84,6 +87,7 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	return &photoBytes, nil
 }
 
+// signup Signup through username and password (user can have additional field like photo description)
 func (r *Router) signup(ctx *fiber.Ctx) error {
 	var apiUser user.User
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
@@ -128,23 +132,20 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 	if !ok {
 		return nil
 	}
-
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil
 	}
-
 	return claims[key]
 }
 
+// refresh Refreshing token if one expires
 func (r *Router) refresh(ctx *fiber.Ctx) error {
-	sub := getPayloadItem(ctx, "sub")
-	idFloat, ok := sub.(float64)
-	if !ok {
-		logger.Log().Error(ctx.UserContext(), model.ErrInvalidTokenID.Error())
+	id, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(model.ErrInvalidTokenID.Error()))
 	}
-	id := int(idFloat)
 
 	accessToken, err := r.authService.Refresh(ctx.UserContext(), id)
 	if err != nil {
@@ -157,6 +158,7 @@ func (r *Router) refresh(ctx *fiber.Ctx) error {
 	}))
 }
 
+// generateState State generator to protect from CSRF
 func generateState(length int) (*string, error) {
 	b := make([]byte, length)
 
@@ -170,6 +172,7 @@ func generateState(length int) (*string, error) {
 	return &state, nil
 }
 
+// loginVK Login through VK
 func (r *Router) loginVK(ctx *fiber.Ctx) error {
 	cfg := r.authService.ConfigVK()
 
@@ -192,6 +195,7 @@ func (r *Router) loginVK(ctx *fiber.Ctx) error {
 	return ctx.Redirect(url)
 }
 
+// setRefreshTokenCookie Setting refresh token in cookie
 func setRefreshTokenCookie(ctx *fiber.Ctx, refreshToken string) {
 	ctx.Cookie(&fiber.Cookie{
 		Name:     "refresh_token",
@@ -202,6 +206,7 @@ func setRefreshTokenCookie(ctx *fiber.Ctx, refreshToken string) {
 	})
 }
 
+// callback is invoked when the user login through VK
 func (r *Router) callback(ctx *fiber.Ctx) error {
 	token, err := r.authService.ConfigVK().Exchange(ctx.Context(), ctx.FormValue("code"))
 	if err != nil {

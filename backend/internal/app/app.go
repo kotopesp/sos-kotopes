@@ -6,6 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
+	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
+
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
@@ -16,7 +21,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 
-	"github.com/kotopesp/sos-kotopes/internal/store/user"
+	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
@@ -44,26 +49,31 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	userStore := user.New(pg)
+	roleStore := rolesStore.New(pg)
+	favouriteUserStore := userFavouriteStore.New(pg)
+	userStore := usersStore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
+	roleService := rolesService.New(roleStore, userStore)
+	userService := usersService.New(userStore, favouriteUserStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
-			JWTSecret:      cfg.JWTSecret,
-			VKClientID:     cfg.VKClientID,
-			VKClientSecret: cfg.VKClientSecret,
-			VKCallback:     cfg.VKCallback,
+			JWTSecret:            cfg.JWTSecret,
+			VKClientID:           cfg.VKClientID,
+			VKClientSecret:       cfg.VKClientSecret,
+			VKCallback:           cfg.VKCallback,
+			AccessTokenLifetime:  cfg.AccessTokenLifetime,
+			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
-
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -75,8 +85,10 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		formValidator,
 		authService,
+		userService,
+		roleService,
+		formValidator,
 		postService,
 	)
 
