@@ -98,7 +98,6 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &postRequest)
 	if fiberError != nil || parseOrValidationError != nil {
-		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError
 	}
 
@@ -145,7 +144,6 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError = parseBodyAndValidate(ctx, r.formValidator, &updateRequestPost)
 	if fiberError != nil || parseOrValidationError != nil {
-		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError
 	}
 

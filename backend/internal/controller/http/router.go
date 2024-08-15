@@ -9,29 +9,32 @@ import (
 
 type Router struct {
 	app                  *fiber.App
+	formValidator        validator.FormValidatorService
 	authService          core.AuthService
+	commentService       core.CommentService
+	postService          core.PostService
 	userService          core.UserService
 	roleService          core.RoleService
 	userFavouriteService core.UserFavouriteService
-	formValidator        validator.FormValidatorService
-	postService          core.PostService
 }
 
 func NewRouter(
 	app *fiber.App,
 	authService core.AuthService,
+	commentService core.CommentService,
+	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
 	formValidator validator.FormValidatorService,
-	postService core.PostService,
 ) {
 	router := &Router{
-		app:           app,
-		formValidator: formValidator,
-		authService:   authService,
-		postService:   postService,
-		userService:   userService,
-		roleService:   roleService,
+		app:            app,
+		formValidator:  formValidator,
+		authService:    authService,
+		postService:    postService,
+		userService:    userService,
+		roleService:    roleService,
+		commentService: commentService,
 	}
 
 	router.initRequestMiddlewares()
@@ -45,6 +48,11 @@ func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
+	// comment_service
+	v1.Get("/posts/:post_id/comments", r.getComments)
+	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
+	v1.Patch("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
+	v1.Delete("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.deleteComment)
 
 	// favourites users todo
 	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
