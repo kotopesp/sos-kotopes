@@ -6,13 +6,19 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
+	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
+
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+
 	"github.com/kotopesp/sos-kotopes/config"
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
@@ -44,6 +50,8 @@ func Run(cfg *config.Config) {
 	// Stores
 	userStore := user.New(pg)
 	commentStore := commentstore.New(pg)
+	roleStore := rolesStore.New(pg)
+	favouriteUserStore := userFavouriteStore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
@@ -53,6 +61,8 @@ func Run(cfg *config.Config) {
 		commentStore,
 		postStore,
 	)
+	roleService := rolesService.New(roleStore, userStore)
+	userService := usersService.New(userStore, favouriteUserStore)
 	authService := auth.New(
 		userStore,
 		core.AuthServiceConfig{
@@ -68,7 +78,6 @@ func Run(cfg *config.Config) {
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
-
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -80,10 +89,12 @@ func Run(cfg *config.Config) {
 
 	v1.NewRouter(
 		app,
-		formValidator,
 		authService,
 		commentService,
 		postService,
+		userService,
+		roleService,
+		formValidator,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

@@ -34,4 +34,3 @@ migrate-up: ### apply all migrations
 
 migrate-down: ### migration down
 	migrate -path ./internal/data -database '$(PG_URL)?sslmode=disable' down
-

@@ -10,18 +10,16 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-type (
-	postService struct {
-		postStore          core.PostStore
-		postFavouriteStore core.PostFavouriteStore
-		animalStore        core.AnimalStore
-		userStore          core.UserStore
-	}
-)
+type service struct {
+	postStore          core.PostStore
+	postFavouriteStore core.PostFavouriteStore
+	animalStore        core.AnimalStore
+	userStore          core.UserStore
+}
 
-// New initializes a new instance of postService
+// New initializes a new instance of service
 func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, animalStore core.AnimalStore, userStore core.UserStore) core.PostService {
-	return &postService{
+	return &service{
 		postStore:          postStore,
 		postFavouriteStore: postFavouriteStore,
 		animalStore:        animalStore,
@@ -30,7 +28,7 @@ func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, a
 }
 
 // GetAllPosts retrieves all posts with the given parameters
-func (s *postService) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
+func (s *service) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
 
 	posts, total, err := s.postStore.GetAllPosts(ctx, params)
 	if err != nil {
@@ -47,8 +45,19 @@ func (s *postService) GetAllPosts(ctx context.Context, params core.GetAllPostsPa
 	return postDetails, total, nil
 }
 
+// GetUserPosts retrieves all posts with the given user ID
+func (s *service) GetUserPosts(ctx context.Context, id int) (postsDetails []core.PostDetails, count int, err error) {
+	posts, total, err := s.postStore.GetUserPosts(ctx, id)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return nil, 0, err
+	}
+	postsDetails, err = s.BuildPostDetailsList(ctx, posts, total)
+	return postsDetails, total, err
+}
+
 // GetPostByID retrieves a post by its ID
-func (s *postService) GetPostByID(ctx context.Context, id int) (core.PostDetails, error) {
+func (s *service) GetPostByID(ctx context.Context, id int) (core.PostDetails, error) {
 	post, err := s.postStore.GetPostByID(ctx, id)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -65,7 +74,7 @@ func (s *postService) GetPostByID(ctx context.Context, id int) (core.PostDetails
 }
 
 // CreatePost creates a new post with the provided details and photo
-func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetails, fileHeader *multipart.FileHeader) (core.PostDetails, error) {
+func (s *service) CreatePost(ctx context.Context, postDetails core.PostDetails, fileHeader *multipart.FileHeader) (core.PostDetails, error) {
 	photoBytes, err := http.GetPhotoBytes(fileHeader)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -100,7 +109,7 @@ func (s *postService) CreatePost(ctx context.Context, postDetails core.PostDetai
 }
 
 // UpdatePost updates an existing post with the provided details
-func (s *postService) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
+func (s *service) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
 	logger.Log().Debug(ctx, fmt.Sprintf("%v", *postUpdateRequest.ID))
 	dbPost, err := s.GetPostByID(ctx, *postUpdateRequest.ID)
 	if err != nil {
@@ -137,7 +146,7 @@ func (s *postService) UpdatePost(ctx context.Context, postUpdateRequest core.Upd
 }
 
 // DeletePost deletes a post by its ID
-func (s *postService) DeletePost(ctx context.Context, post core.Post) error {
+func (s *service) DeletePost(ctx context.Context, post core.Post) error {
 	dbPost, err := s.postStore.GetPostByID(ctx, post.ID)
 	if err != nil {
 		return err

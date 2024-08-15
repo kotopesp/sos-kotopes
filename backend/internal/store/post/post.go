@@ -6,14 +6,13 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+	"gorm.io/gorm"
 	"time"
 )
 
-type (
-	store struct {
-		*postgres.Postgres
-	}
-)
+type store struct {
+	*postgres.Postgres
+}
 
 func New(pg *postgres.Postgres) core.PostStore {
 	return &store{pg}
@@ -64,6 +63,24 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 	}
 
 	return posts, int(total), nil
+}
+
+// GetUserPosts retrieves all posts from the database based on the given user ID
+func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, count int, err error) {
+	err = s.DB.WithContext(ctx).
+		Where("author_id = ?", id).
+		Order("created_at DESC").
+		Find(&posts).Error
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, 0, core.ErrNoSuchUser
+		}
+		return nil, 0, err
+	}
+
+	count = len(posts)
+	return posts, count, nil
 }
 
 // GetPostByID retrieves a post from the database by its ID

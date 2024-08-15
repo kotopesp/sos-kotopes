@@ -36,6 +36,38 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
+// getUserPosts handles the request to get all posts of specified user
+func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
+	id, err := ctx.ParamsInt("id")
+	if err != nil {
+		logger.Log().Debug(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	var getAllPostsParams postModel.GetAllPostsParams
+	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
+	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), fiberError.Error())
+		return fiberError
+	}
+
+	postsDetails, total, err := r.postService.GetUserPosts(ctx.UserContext(), id)
+	if err != nil {
+		switch {
+		case errors.Is(err, core.ErrNoSuchUser):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+	pagination := paginate(total, getAllPostsParams.Limit, getAllPostsParams.Offset)
+	response := postModel.ToResponse(pagination, postsDetails)
+
+	return ctx.Status(fiber.StatusOK).JSON(response)
+}
+
 // getPostByID handles the request to get a single post by its ID
 func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 	var pathParams postModel.PathParams

@@ -2,11 +2,12 @@ package http
 
 import (
 	"context"
+	"testing"
+
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core/mocks"
-	"testing"
 )
 
 type (
@@ -27,6 +28,8 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	mockAuthService := mocks.NewAuthService(t)
 	mockPostService := mocks.NewPostService(t)
 	mockCommentService := mocks.NewCommentService(t)
+	mockRoleService := mocks.NewRoleService(t)
+	mockUserService := mocks.NewUserService(t)
 	formValidatorService := validator.New(ctx, baseValidator.New())
 
 	mockAuthService.On("GetJWTSecret").Return(secret)
@@ -34,10 +37,12 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	// mock your dependencies and put them here
 	NewRouter(
 		app,
-		formValidatorService,
 		mockAuthService,
 		mockCommentService,
 		mockPostService,
+		mockUserService,
+		mockRoleService,
+		formValidatorService,
 	)
 
 	return app, appDependencies{

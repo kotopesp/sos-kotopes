@@ -55,6 +55,7 @@ type (
 
 	PostStore interface {
 		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]Post, int, error)
+		GetUserPosts(ctx context.Context, id int) (posts []Post, count int, err error)
 		GetPostByID(ctx context.Context, id int) (Post, error)
 		CreatePost(ctx context.Context, post Post) (Post, error)
 		UpdatePost(ctx context.Context, post Post) (Post, error)
@@ -63,6 +64,7 @@ type (
 
 	PostService interface {
 		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]PostDetails, int, error)
+		GetUserPosts(ctx context.Context, id int) (posts []PostDetails, count int, err error)
 		GetPostByID(ctx context.Context, id int) (PostDetails, error)
 		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)

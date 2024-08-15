@@ -8,26 +8,33 @@ import (
 )
 
 type Router struct {
-	app            *fiber.App
-	formValidator  validator.FormValidatorService
-	authService    core.AuthService
-	commentService core.CommentService
-	postService    core.PostService
+	app                  *fiber.App
+	formValidator        validator.FormValidatorService
+	authService          core.AuthService
+	commentService       core.CommentService
+	postService          core.PostService
+	userService          core.UserService
+	roleService          core.RoleService
+	userFavouriteService core.UserFavouriteService
 }
 
 func NewRouter(
 	app *fiber.App,
-	formValidator validator.FormValidatorService,
 	authService core.AuthService,
 	commentService core.CommentService,
 	postService core.PostService,
+	userService core.UserService,
+	roleService core.RoleService,
+	formValidator validator.FormValidatorService,
 ) {
 	router := &Router{
 		app:            app,
 		formValidator:  formValidator,
 		authService:    authService,
-		commentService: commentService,
 		postService:    postService,
+		userService:    userService,
+		roleService:    roleService,
+		commentService: commentService,
 	}
 
 	router.initRequestMiddlewares()
@@ -47,6 +54,21 @@ func (r *Router) initRoutes() {
 	v1.Patch("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
 	v1.Delete("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.deleteComment)
 
+	// favourites users todo
+	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
+	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
+	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
+
+	// users
+	v1.Get("/users/:id", r.getUser)
+	v1.Patch("/users", r.protectedMiddleware(), r.updateUser)
+
+	// user roles
+	v1.Post("/users/roles", r.protectedMiddleware(), r.giveRoleToUser)
+	v1.Get("/users/:id/roles", r.getUserRoles)
+	v1.Patch("/users/roles", r.protectedMiddleware(), r.updateUserRoles)
+	v1.Delete("/users/roles", r.protectedMiddleware(), r.deleteUserRole)
+
 	// e.g. protected resource
 	v1.Get("/protected", r.protectedMiddleware(), r.protected)
 
@@ -61,6 +83,7 @@ func (r *Router) initRoutes() {
 
 	// posts
 	v1.Get("/posts", r.getPosts)
+	v1.Get("/users/:id/posts", r.getUserPosts)
 	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
 	v1.Get("/posts/:id", r.getPostByID)
 	v1.Post("/posts", r.protectedMiddleware(), r.createPost)
