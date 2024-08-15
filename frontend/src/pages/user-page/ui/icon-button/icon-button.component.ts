@@ -13,13 +13,13 @@ export class IconButtonComponent implements OnInit {
   @Input() buttonColor = ''
   @Input() textColor = ''
   @Input() icon = ''
-  @Output() onClick = new EventEmitter<any>()
+  @Output() clicked = new EventEmitter<any>()
 
   iconUrl = ''
   ngOnInit() {
     this.iconUrl = `url("${this.icon}")`;
   }
   onClickButton(event: any) {
-    this.onClick.emit(event)
+    this.clicked.emit(event)
   }
 }

@@ -12,7 +12,7 @@ export class RoleButtonComponent implements OnInit {
   @Input() label = ''
   @Input() buttonColor = ''
   @Input() icon = ''
-  @Output() onClick = new EventEmitter<any>()
+  @Output() clicked = new EventEmitter<any>()
 
   anotherIconUrl = 'url("../../assets/icons/arrow-down.svg")'
   iconUrl = ''
@@ -20,6 +20,6 @@ export class RoleButtonComponent implements OnInit {
     this.iconUrl = `url("${this.icon}")`;
   }
   onClickButton(event: any) {
-    this.onClick.emit(event)
+    this.clicked.emit(event)
   }
 }
