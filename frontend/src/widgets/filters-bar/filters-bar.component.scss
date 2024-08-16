@@ -1,0 +1,148 @@
+@mixin list_item_button($bg-color, $opacity) {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    background-color: var($bg-color);
+    opacity: $opacity;
+    border: none;
+    outline: none;
+
+    &:hover {
+        background-color: var(--brown-main-color);
+        outline: 1px solid var(--yellow-color-bg);
+    }
+}
+
+.filters-bar {
+    padding: 65px 24px 0 169px;
+    max-height: 1050px;
+    float: left;
+    right: 0;
+    position: sticky;
+
+    .content__container {
+        width: 313px;
+        float: left;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        row-gap: 40px;
+
+        .filter__container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .search_container {
+                height: 26px;
+                width: max-content;
+                display: flex;
+                align-items: center;
+                position: relative;
+
+                img {
+                    height: 18px;
+                }
+
+                .search-input {
+                    width: 238px;
+                    margin-left: 15px;
+                    border: none;
+                    outline: none;
+                    background: none;
+                    font-size: 20px;
+                    font-weight: 400;
+                    color: var(--white-color);
+                }
+            }
+
+            .search_container::after {
+                content: '';
+                position: absolute;
+                bottom: -1px;
+                left: 33px;
+                width: 238px;
+                height: 1px; 
+                background-color: var(--white-color);
+            }
+
+            .property-name {
+                font-weight: 700;
+                font-size: 24px;
+            }
+
+            .list__container {
+                margin-left: 46px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+
+                .list_item {
+                    display: flex;
+                    flex-direction: row;
+                    gap: 12px;
+                    align-items: center;
+                    height: 26px;
+
+                    .black_button {
+                        @include list_item_button(--black-color, 0.6);
+                    }
+
+                    .white_button {
+                        @include list_item_button(--white-color, 0.7);
+                    }
+
+                    .brown_button {
+                        @include list_item_button(--brown-filter-color, 0.6)
+                    }
+
+                    .russet_button {
+                        @include list_item_button(--russet-filter-color, 0.6);
+                    }
+
+                    .gray_button {
+                        @include list_item_button(--gray-filter-color, 1);
+                    }
+
+                    .creamy_button {
+                        @include list_item_button(--creamy-filter-color, 0.6);
+                    }
+
+                    .svg_button {
+                        width: 25px;
+                        height: 18px;
+                        background: none;
+                        border: none;
+                        padding: 0;
+                        outline: none;
+                        align-items: center;
+                        transition: stroke 0.3s ease;
+                        path {
+                            fill: var(--brown-filter-color);
+                            stroke: none;
+                            &:hover {
+                                stroke: var(--yellow-color-bg);
+                                stroke-opacity: 1;
+                            }
+                        }
+                    }
+
+                    .list_item_name {
+                        font-size: 20px;
+                        font-weight: 400;
+                    }
+                }
+            }
+        }
+    }
+}
+.filters-bar::after {
+    content: "";
+    background: var(--white-color);
+    width: 1px;
+    height: 450px;
+    right: 0px;
+    top: 163px;
+    position: absolute;
+}
