@@ -1,29 +1,104 @@
-.main__ads {
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  min-height: 180vh;
-  height: fit-content;
+.main__container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  position: absolute;
+  margin-top: 70px;
 
-  main__ads:after {
-    background: url(../../../../public/assets/images/ads-bg-steps.png) repeat;
-    opacity: 0.12;
-  }
-
-
-  .left__list {
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    right: 0;
+    min-width: 100%;
+    height: 100%;
+    background-size: 10%;
+    background: url(../../../../public/assets/images/bg-with-steps.jpg) repeat center;
+    opacity: 1;
+    z-index: -1;
+  }
+  
+
+  .container__page__posts {
+    position: relative;
     display: flex;
     flex-direction: column;
-    row-gap: 40px;
-    border-right: 5px solid var(--black-color)
-  }
-
-  .main_menu_ads {
-    .ads {
-      height: fit-content;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    min-height: 180vh;
+    height: fit-content;
+    margin-right: 126px;
+  
+    .container__upper__menu {
+      height: 218px;
+      display: flex;
+      flex-direction: column;
+  
+      .container__top-buttons {
+        margin: 51px 0px;
+        display: flex;
+        gap: 40px;
+        z-index: 1;
+        
+        .posts__search__bar {
+          width: max-content;
+          display: flex;
+          align-items: center;
+          border-radius: 20px;
+          padding: 18px 26px;
+          background: var(--brown-light-color);
+  
+          .search-input {
+            width: 350px;
+            color: var(--white-color);
+            margin-left: 24px;
+            outline: none;
+            border: none;
+            background: var(--brown-light-color);
+          }
+  
+          ::placeholder {
+            color: var(--white-color);
+            opacity: 1;
+          }
+        }
+  
+        .button__publish {
+          background: var(--light-gray-color);
+          border-radius: 20px;
+          color: var(--brown-bg-color);
+          padding: 18px 30px;
+          border: none;
+          text-align: center;
+        }
+  
+        .button__publish:hover {
+          background: var(--white-color);
+          text-decoration-line: underline;
+        }
+      }
+  
+      .container__info__posts-displaying {
+        margin: 0px 0px 23px 25px;
+        display: flex;
+  
+        .block__displaying-icons {
+          display: flex;
+          
+          img {
+            margin-right: 24px;
+          }
+        }
+      }
+    }
+  
+    .container__posts {
+      margin-left: 35px;
+  
+      .posts {
+        height: fit-content;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   }
 }
