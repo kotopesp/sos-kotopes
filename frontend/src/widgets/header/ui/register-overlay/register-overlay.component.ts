@@ -20,13 +20,8 @@ export class RegisterOverlayComponent {
   isPasswordVisibleRepeat = signal<boolean>(false);
 
   formRegister = new FormGroup({
-    firstName: new FormControl(null, Validators.required),
-    userName: new FormControl(null, Validators.required),
-    secondName: new FormControl(null, Validators.required),
+    username: new FormControl(null, Validators.required),
     password: new FormControl(null, Validators.required),
-    email: new FormControl(null, Validators.required),
-    repeatPassword: new FormControl(null, Validators.required),
-    aboutUser: new FormControl(null, Validators.required),
   })
 
   registerService = inject(RegisterService)
@@ -37,6 +32,7 @@ export class RegisterOverlayComponent {
 
       //@ts-ignore
       this.registerService.registration(this.formRegister.value)
+        .subscribe(res => console.log(res));
     }
   }
 }
