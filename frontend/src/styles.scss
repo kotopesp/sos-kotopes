@@ -8,9 +8,9 @@
   --white-color: #FFF;
   --black-color: #000;
   --text-brown-light-color: #443416;
-  --pink-border-color: #EABAB3;
   --yellow-color-bg: #F6DE8A;
   --pink-color-bg: #F5D3B4;
+  --pink-border-color: #EABAB3;
   --purple-color-bg: #E3CFFD;
   --green-color-bg: #86C8C0;
   --blue-color-bg: #79B0E3;
@@ -23,10 +23,6 @@
   --brown-ads-color: #2C2210;
   --gray-color-button: #4E4E4E;
   --gray-text-tag: #5D5D5D;
-  --brown-dark-light-color: #352303;
-  --red-brown-color: #2B1800;
-  --purple-color-messages: #221630;
-  --cyan-color-messages: #182C2A;
 }
 
 
@@ -56,10 +52,6 @@ body {
   font-family: "PT Sans Caption Regular", sans-serif;
 }
 
-a, button {
-  cursor: pointer;
-}
-
 
 .ft48 {
   font-size: 48px;
@@ -75,14 +67,6 @@ a, button {
 
 .ft24 {
   font-size: 24px;
-}
-
-.ft18 {
-  font-size: 18px;
-}
-
-.ft16 {
-  font-size: 16px;
 }
 
 .roboto {
@@ -103,10 +87,6 @@ a, button {
 
 .fw700 {
   font-weight: 700;
-}
-
-.lh26 {
-  line-height: 26px;
 }
 
 .lh52 {
