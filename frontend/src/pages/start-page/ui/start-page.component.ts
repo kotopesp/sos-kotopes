@@ -4,6 +4,8 @@ import {NgForOf, NgIf} from "@angular/common";
 import {StickerComponent} from "./sticker/sticker.component";
 import {QuestionComponent} from "./question/question.component";
 import {HeaderComponent} from "../../../widgets/header/header.component";
+import {Question} from "../../../model/question.interface";
+import {Sticker} from "../../../model/sticker.interface";
 
 @Component({
   selector: 'app-start-page',
@@ -13,7 +15,7 @@ import {HeaderComponent} from "../../../widgets/header/header.component";
   styleUrl: './start-page.component.scss'
 })
 export class StartPageComponent {
-  stickerItems = [
+  stickerItems: Sticker[] = [
     {
       class: 'yellow-color',
       title: 'Потеряшка',
@@ -80,7 +82,7 @@ export class StartPageComponent {
   // В будущем поменяется на рабочий вариант
   // ответов на вопросы
 
-  questionItems = [
+  questionItems: Question[] = [
     {
       question: 'Рыба текст, я не знаю, что здесть писать?',
       answer: 'Рыба текст, я не знаю, что здесть писать?Рыба текст, я не знаю, что здесть писать?Рыба текст, я не знаю, что здесть писать?Рыба текст, я не знаю, что здесть писать?Рыба текст, я не знаю, что здесть писать?Рыба текст, я не знаю, что здесть писать?'

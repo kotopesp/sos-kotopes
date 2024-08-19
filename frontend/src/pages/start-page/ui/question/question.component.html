@@ -1,4 +1,4 @@
-<div class="question__text ft24 fw400" [class]="hideAnswer ? active : notActive" (click)="hideAnswer = !hideAnswer">
+<div class="question__text ft24 fw400" [class]="hideAnswer ? active : notActive" (focus)="active" (click)="hideAnswer = !hideAnswer">
   <p>{{ questionItem.question }}</p>
   <div class="question__arrow"></div>
   <div class="class__answer">

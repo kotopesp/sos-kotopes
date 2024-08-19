@@ -16,9 +16,9 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
   styleUrl: './auth-service-overlay.component.scss'
 })
 export class AuthServiceOverlayComponent {
-  @Input() isAuthOverlay: any;
-  @Input() isRegisterOverlay: any;
-  passwordValid: boolean = true;
+  @Input() isAuthOverlay: WritableSignal<boolean>;
+  @Input() isRegisterOverlay: WritableSignal<boolean>;
+  passwordValid  = true;
   isPasswordVisible: WritableSignal<boolean> = signal<boolean>(false);
 
   formAuth = new FormGroup({
@@ -28,12 +28,16 @@ export class AuthServiceOverlayComponent {
 
   authService = inject(AuthService)
 
+  constructor() {
+    this.isAuthOverlay = signal<boolean>(false);
+    this.isRegisterOverlay = signal<boolean>(false);
+  }
+
   onSubmit() {
 
     if (this.formAuth.valid) {
 
-      //@ts-ignore
-      this.authService.login(this.form.value)
+      this.authService.login(this.formAuth.value)
     }
   }
 }

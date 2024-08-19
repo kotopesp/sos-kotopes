@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {ListRoleComponent} from "./ui/list-role/list-role.component";
 import {NgForOf} from "@angular/common";
+import {ListRole} from "../../../../model/list-role.interface";
 
 @Component({
   selector: 'app-message-popup',
@@ -13,7 +14,7 @@ import {NgForOf} from "@angular/common";
   styleUrl: './message-popup.component.scss'
 })
 export class MessagePopupComponent {
-  listRoles = [
+  listRoles: ListRole[] = [
     {
       color: 'brown-gray',
       icon: 'double-letter-icon.svg'

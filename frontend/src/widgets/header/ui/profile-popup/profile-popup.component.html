@@ -1,13 +1,13 @@
 <div class="profile__popup">
   <div class="info__about__user">
-    <img src="/assets/images/test-cat2.png" class="user__image">
+    <img src="/assets/images/test-cat2.png" class="user__image" alt="avatar">
     <p class="ft20 fw700">Ирина Шеремет</p>
   </div>
   <div class="block__control">
     <div *ngFor="let controlItem of controlItems">
       <a class="block__control__link">
         <div class="block__control__line">
-          <img src="/assets/icons/{{ controlItem.icon }}">
+          <img src="/assets/icons/{{ controlItem.icon }}" alt="icon">
           <p class="ft20 fw400">{{ controlItem.title }}</p>
         </div>
       </a>

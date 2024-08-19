@@ -1,4 +1,5 @@
 import {Component, Input} from '@angular/core';
+import {ListRole} from "../../../../../../model/list-role.interface";
 
 @Component({
   selector: 'app-list-role',
@@ -9,6 +10,17 @@ import {Component, Input} from '@angular/core';
 })
 export class ListRoleComponent {
 
-  @Input() listRole: any;
+  @Input() listRole: ListRole;
 
+  constructor() {
+    this.listRole = new class ListRole implements ListRole {
+      color: string;
+      icon: string;
+
+      constructor() {
+        this.color = '';
+        this.icon = '';
+      }
+    }
+  }
 }

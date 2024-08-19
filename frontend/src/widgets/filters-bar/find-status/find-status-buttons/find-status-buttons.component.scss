@@ -16,7 +16,6 @@
     background: var($bg-color);
     white-space: nowrap;
     border: none;
-    padding: 6px 18px;
     color: rgba(255, 255, 255, 1);
     float: left;
     width: max-content;
@@ -29,9 +28,8 @@
     padding: 6px 18px;
     border-radius: 10px;
     background: var($bg-color);
-    outline: var($border-color) 2px solid; 
+    outline: var($border-color) 2px solid;
     white-space: nowrap;
-    padding: 6px 18px;
     width: max-content;
     display: inline-block;
     color: rgba(255, 255, 255, 1);
@@ -68,7 +66,7 @@
 
 .found-home_status_inactive {
     @include find-status_solid(--green-hover-bg);
-        
+
     &:hover {
         @include find-status_with-border(--green-hover-bg, --green-hover-border);
     }

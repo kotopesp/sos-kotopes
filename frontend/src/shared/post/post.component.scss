@@ -20,7 +20,7 @@
       }
     }
   }
-  
+
   .post__inferior_container {
     flex: none;
     display: grid;
@@ -71,7 +71,7 @@
         background-size: cover;
         height: 37px;
         width: 46px;
-        padding: 6px 0px;
+        padding: 6px 0;
         text-align: center;
         align-content: center;
       }
@@ -99,7 +99,7 @@
       grid-template-columns: repeat(2, 1fr);
       column-gap: 20px;
       align-items: center;
-  
+
       .author-username__container {
         white-space: pre;
         overflow: hidden;
@@ -107,7 +107,7 @@
         text-overflow: ellipsis;
         min-width: 100px;
       }
-  
+
       .response_button {
         cursor: pointer;
         z-index: 1;
@@ -115,7 +115,6 @@
         border-radius: 10px;
         border: 1px solid var(--white-color);
         padding: 7px 18px;
-        background-color: none;
         background-color: rgba(28,28,28,0);
         white-space: nowrap;
       }

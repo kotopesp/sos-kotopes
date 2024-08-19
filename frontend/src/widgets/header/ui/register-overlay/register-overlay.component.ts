@@ -1,4 +1,4 @@
-import {Component, inject, Input, signal} from '@angular/core';
+import {Component, inject, Input, signal, WritableSignal} from '@angular/core';
 import {NgIf} from "@angular/common";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RegisterService} from "../../../../services/register-service/register.service";
@@ -15,7 +15,7 @@ import {RegisterService} from "../../../../services/register-service/register.se
   styleUrl: './register-overlay.component.scss'
 })
 export class RegisterOverlayComponent {
-  @Input() isRegisterOverlay: any;
+  @Input() isRegisterOverlay: WritableSignal<boolean>;
   isPasswordVisible = signal<boolean>(false);
   isPasswordVisibleRepeat = signal<boolean>(false);
 
@@ -26,11 +26,15 @@ export class RegisterOverlayComponent {
 
   registerService = inject(RegisterService)
 
+  constructor() {
+    this.isRegisterOverlay = signal<boolean>(false)
+  }
+
   onSubmit() {
 
     if (this.formRegister.valid) {
 
-      //@ts-ignore
+
       this.registerService.registration(this.formRegister.value)
         .subscribe(res => console.log(res));
     }

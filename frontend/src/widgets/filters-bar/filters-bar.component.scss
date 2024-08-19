@@ -19,7 +19,7 @@
     max-height: 1050px;
     float: left;
     right: 0;
-    position: sticky;
+    overflow: scroll;
 
     .content__container {
         width: 313px;
@@ -63,7 +63,7 @@
                 bottom: -1px;
                 left: 33px;
                 width: 238px;
-                height: 1px; 
+                height: 1px;
                 background-color: var(--white-color);
             }
 
@@ -124,6 +124,11 @@
                             &:hover {
                                 stroke: var(--yellow-color-bg);
                                 stroke-opacity: 1;
+                            }
+
+                            &:active {
+                              stroke: var(--black-color);
+                              fill: var(--yellow-color-bg);
                             }
                         }
                     }

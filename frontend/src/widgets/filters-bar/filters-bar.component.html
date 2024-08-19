@@ -57,7 +57,7 @@
             <p class="property-name ptbold">Окрас</p>
             <div class="list__container">
                 <div *ngFor="let colorItem of colorFilterItems" class="list_item">
-                    <button [class]="colorItem.class"></button>
+                    <div [class]="colorItem.class"></div>
                     <p class="list_item_name">{{ colorItem.title }}</p>
                 </div>
             </div>

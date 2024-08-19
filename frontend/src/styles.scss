@@ -2,31 +2,62 @@
 @import "fonts";
 
 :root {
+  // usually
+  --white-color: #FFF;
+  --black-color: #000;
+
+  // browns
   --brown-main-color: #21190B;
   --brown-light-color: #4B432A;
   --brown-button-color: #352B1A;
-  --white-color: #FFF;
-  --black-color: #000;
   --text-brown-light-color: #443416;
-  --pink-border-color: #EABAB3;
-  --yellow-color-bg: #F6DE8A;
-  --pink-color-bg: #F5D3B4;
-  --purple-color-bg: #E3CFFD;
-  --green-color-bg: #86C8C0;
-  --blue-color-bg: #79B0E3;
   --brown-bg-color: #312611;
   --brown-hover-color: #503E00;
-  --red-hover-color: #5A2B00;
-  --red-color-button: #8A372699;
-  --orange-color-button: #916943;
-  --green-color-button: #467430;
   --brown-ads-color: #2C2210;
+  --brown-dark-light-color: #352303;
+  --brown-filter-color: #1C150899;
+
+  // pink
+  --pink-border-color: #EABAB3;
+  --pink-color-bg: #F5D3B4;
+
+  // purple
+  --purple-color-bg: #E3CFFD;
+  --purple-color-messages: #221630;
+
+  // yellow
+  --yellow-color-bg: #F6DE8A;
+  --creamy-filter-color: #9F918499;
+
+  // green
+  --green-color-bg: #86C8C0;
+  --green-active-button-bg: #467430;
+  --green-hover-border: #2A5814;
+  --green-hover-bg: #3B7E1C1A;
+
+  // blue
+  --blue-color-bg: #79B0E3;
+  --cyan-color-messages: #182C2A;
+
+  // red
+  --red-hover-color: #5A2B00;
+  --red-active-button-bg: #8A3726;
+  --red-hover-border: #6D2415;
+  --red-hover-bg: #9B341D1A;
+  --red-brown-color: #2B1800;
+  --red-color-favorites: #BA2C21;
+
+  // orange
+  --orange-active-button-bg: #916943;
+  --orange-hover-border: #79522E;
+  --orange-hover-bg: #AC75411A;
+  --russet-filter-color: #76553699;
+
+  // gray
   --gray-color-button: #4E4E4E;
   --gray-text-tag: #5D5D5D;
-  --brown-dark-light-color: #352303;
-  --red-brown-color: #2B1800;
-  --purple-color-messages: #221630;
-  --cyan-color-messages: #182C2A;
+  --gray-filter-color: #363636;
+  --light-gray-color: #D8D8D8;
 }
 
 
