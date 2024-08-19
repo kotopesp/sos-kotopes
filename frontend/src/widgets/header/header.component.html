@@ -36,11 +36,16 @@
       </div>
     </div>
   </div>
-  <div *ngIf="isAuthOverlay()">
-    <app-auth-overlay [isAuthOverlay]="isAuthOverlay()" class="auth__overlay"/>
-  </div>
+  @if (isAuthOverlay()) {
+  <app-auth-service-overlay
+  [isAuthOverlay]="isAuthOverlay"
+  [isRegisterOverlay]="isRegisterOverlay"
+  class="auth__overlay"/>
+  }
+
   @if (isRegisterOverlay()) {
   <app-register-overlay
+  [isRegisterOverlay]="isRegisterOverlay"
   class="register__overlay" />
   }
 </div>

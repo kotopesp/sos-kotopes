@@ -2,7 +2,7 @@
   cursor: pointer;
 
   .sticker {
-
+    min-height: 400px;
     &:hover .block__button {
       max-height: 100px;
       transition: max-height .8s;
@@ -22,13 +22,17 @@
 
     .sticker__title {
       border-bottom: 3px solid var(--brown-bg-color);
+      padding-top: 15px;
 
       .title__icon {
+        position: relative;
         display: flex;
-        justify-content: space-around;
+        justify-content: start;
         align-items: center;
 
         .icon {
+          position: absolute;
+          right: 10px;
           max-width: 68px;
           max-height: 68px;
           margin-right: 20px;
@@ -38,7 +42,7 @@
 
     .block__button {
       display: grid;
-      padding-bottom: 20px;
+      padding-bottom: 40px;
       max-height: 0;
       transition: max-height .8s;
 

@@ -1,2 +1,0 @@
-ALTER TABLE IF EXISTS animals
-    ADD name VARCHAR;

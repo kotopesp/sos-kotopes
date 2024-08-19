@@ -75,8 +75,9 @@
 
     display: grid;
     min-height: fit-content;
+    height: 220vh;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 55vh);
+    grid-template-rows: repeat(2, 64vh);
     justify-items: end;
     column-gap: 40px;
 

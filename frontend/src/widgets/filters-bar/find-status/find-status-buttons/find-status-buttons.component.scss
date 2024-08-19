@@ -1,0 +1,76 @@
+// buttons' layout
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-left: 46px;
+}
+
+// buttons' view
+@mixin find-status_solid($bg-color) {
+    cursor: pointer;
+    text-align: center;
+    align-content: center;
+    padding: 6px 18px;
+    border-radius: 10px;
+    background: var($bg-color);
+    white-space: nowrap;
+    border: none;
+    padding: 6px 18px;
+    color: rgba(255, 255, 255, 1);
+    float: left;
+    width: max-content;
+}
+
+@mixin find-status_with-border($bg-color, $border-color) {
+    cursor: pointer;
+    text-align: center;
+    align-content: center;
+    padding: 6px 18px;
+    border-radius: 10px;
+    background: var($bg-color);
+    outline: var($border-color) 2px solid; 
+    white-space: nowrap;
+    padding: 6px 18px;
+    width: max-content;
+    display: inline-block;
+    color: rgba(255, 255, 255, 1);
+    float: left;
+}
+
+.lost_status_active {
+    @include find-status_solid(--red-active-button-bg);
+}
+
+.looking-for-home_status_active {
+    @include find-status_solid(--orange-active-button-bg);
+}
+
+.found-home_status_active {
+    @include find-status_solid(--green-active-button-bg);
+}
+
+.lost_status_inactive {
+    @include find-status_solid(--red-hover-bg);
+
+    &:hover {
+        @include find-status_with-border(--red-hover-bg, --red-hover-border);
+    }
+}
+
+.looking-for-home_status_inactive {
+    @include find-status_solid(--orange-hover-bg);
+
+    &:hover {
+        @include find-status_with-border(--orange-hover-bg, --orange-hover-border);
+    }
+}
+
+.found-home_status_inactive {
+    @include find-status_solid(--green-hover-bg);
+        
+    &:hover {
+        @include find-status_with-border(--green-hover-bg, --green-hover-border);
+    }
+}
+
