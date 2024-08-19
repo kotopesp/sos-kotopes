@@ -31,6 +31,19 @@ import (
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+
+	"database/sql"
+
+	"github.com/golang-migrate/migrate/v4"
+	psql "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
+)
+
+const (
+	DATABASE_URL    = "postgres://postgres:postgres@postgres:5432/soskot?sslmode=disable"
+	DB              = "postgres"
+	PATH_MIGRATIONS = "file:///app/internal/data/"
 )
 
 // Run creates objects via constructors.
@@ -46,6 +59,22 @@ func Run(cfg *config.Config) {
 		logger.Log().Fatal(ctx, "error with connection to database: %s", err.Error())
 	}
 	defer pg.Close(ctx)
+
+	db, err := sql.Open(DB, DATABASE_URL)
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	driver, err := psql.WithInstance(db, &psql.Config{})
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	m, err := migrate.NewWithDatabaseInstance(
+		PATH_MIGRATIONS,
+		DB, driver)
+	if err != nil {
+		logger.Log().Fatal(ctx, err.Error())
+	}
+	m.Up()
 
 	// Stores
 	userStore := user.New(pg)
