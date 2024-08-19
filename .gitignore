@@ -1,4 +1,8 @@
 .idea
 .vscode
 
+/frontend/node_modules/
+/frontend/.angular/
+
 *.exe
+

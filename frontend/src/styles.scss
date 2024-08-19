@@ -23,10 +23,18 @@
   --brown-ads-color: #2C2210;
   --gray-color-button: #4E4E4E;
   --gray-text-tag: #5D5D5D;
+
+  --role-orange-color: #B77300;
+  --role-purple-color: #41216B;
+  --role-green-color: #2F5955;
+
+  --pink-light-color-bg: #FFC4B7;
+
   --brown-dark-light-color: #352303;
   --red-brown-color: #2B1800;
   --purple-color-messages: #221630;
   --cyan-color-messages: #182C2A;
+
 }
 
 
@@ -49,14 +57,18 @@ body {
     0% {
       opacity: 0;
     }
+
     100% {
       opacity: 1;
     }
   }
-  font-family: "PT Sans Caption Regular", sans-serif;
+
+  font-family: "PT Sans Caption Regular",
+  sans-serif;
 }
 
-a, button {
+a,
+button {
   cursor: pointer;
 }
 
@@ -77,12 +89,17 @@ a, button {
   font-size: 24px;
 }
 
+.ft36 {
+  font-size: 36px;
+}
+
 .ft18 {
   font-size: 18px;
 }
 
 .ft16 {
   font-size: 16px;
+
 }
 
 .roboto {
@@ -111,6 +128,10 @@ a, button {
 
 .lh52 {
   line-height: 52px;
+}
+
+.lh46 {
+  line-height: 46px;
 }
 
 .yellow-color {
@@ -144,4 +165,3 @@ a, button {
   font-weight: 400;
   font-style: italic;
 }
-

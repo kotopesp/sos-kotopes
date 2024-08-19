@@ -1,0 +1,6 @@
+<button [ngStyle]="{ 'background-color': buttonColor }" class="icon_button__button" (click)="onClickButton($event)">
+    <div class="icon_button__icon"
+        [ngStyle]="{ 'background-image': iconUrl, 'background-repeat': 'no-repeat', 'background-position': 'center', 'background-size': 'contain', color: textColor }">
+    </div>
+    <span [ngStyle]="{ 'color': textColor }" class="icon_button__label ptbold ft20 fw700">{{ label }}</span>
+</button>
