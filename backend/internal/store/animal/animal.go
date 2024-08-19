@@ -1,11 +1,11 @@
 package animal
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"context"
 	"errors"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"time"
 )
 
@@ -27,10 +27,10 @@ func (s *store) CreateAnimal(ctx context.Context, animal core.Animal) (core.Anim
 
 	if err := s.DB.WithContext(ctx).Create(&animal).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
-        return core.Animal{}, err
-    }
+		return core.Animal{}, err
+	}
 
-    return animal, nil
+	return animal, nil
 }
 
 // GetAnimalByID retrieves an animal record from the database by its ID
@@ -66,6 +66,6 @@ func (s *store) UpdateAnimal(ctx context.Context, animal core.Animal) (core.Anim
 		logger.Log().Error(ctx, err.Error())
 		return core.Animal{}, err
 	}
-	
+
 	return updateAnimal, nil
 }
