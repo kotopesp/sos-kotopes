@@ -5,16 +5,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"path/filepath"
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"path/filepath"
-	"strings"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"io"
 	"mime/multipart"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
 const MaxFileSize = 1 * 1024 * 1024
@@ -43,7 +46,6 @@ func getUsernameFromToken(ctx *fiber.Ctx) (username string, err error) {
 	return username, nil
 }
 
-// validation helpers
 func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data interface{}) (fiberError, parseOrValidationError error) {
 	if err := ctx.BodyParser(data); err != nil {
 		if errors.Is(err, fiber.ErrUnprocessableEntity) {
@@ -88,6 +90,31 @@ func validate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data
 	return nil, nil
 }
 
+// pagination helper
+func paginate(total, limit, offset int) pagination.Pagination {
+	var (
+		currentPage = (offset / limit) + 1
+		perPage     = limit
+		totalPages  = (total + perPage - 1) / perPage
+	)
+
+	return pagination.Pagination{
+		Total:       total,
+		TotalPages:  totalPages,
+		CurrentPage: currentPage,
+		PerPage:     perPage,
+	}
+}
+
+func oneOfErrors(e error, errs ...error) bool {
+	for _, err := range errs {
+		if errors.Is(e, err) {
+			return true
+		}
+	}
+	return false
+}
+
 func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	file, err := photo.Open()
 	if err != nil {
@@ -102,21 +129,6 @@ func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	}
 
 	return &photoBytes, nil
-}
-
-func paginate(total, limit, offset int) pagination.Pagination {
-	var (
-		currentPage = (offset / limit) + 1
-		perPage     = limit
-		totalPages  = (total + perPage - 1) / perPage
-	)
-
-	return pagination.Pagination{
-		Total:       total,
-		TotalPages:  totalPages,
-		CurrentPage: currentPage,
-		PerPage:     perPage,
-	}
 }
 
 func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedExtensions []string) (err error) {

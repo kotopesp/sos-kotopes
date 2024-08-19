@@ -13,23 +13,24 @@ import (
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 
-	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
 
+	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 
-	usersStore "github.com/kotopesp/sos-kotopes/internal/store/user"
-
-	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/kotopesp/sos-kotopes/config"
+	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
+	"github.com/kotopesp/sos-kotopes/internal/store/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 )
@@ -49,14 +50,19 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
+	userStore := user.New(pg)
+	commentStore := commentstore.New(pg)
 	roleStore := rolesStore.New(pg)
 	favouriteUserStore := userFavouriteStore.New(pg)
-	userStore := usersStore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 
 	// Services
+	commentService := commentservice.New(
+		commentStore,
+		postStore,
+	)
 	roleService := rolesService.New(roleStore, userStore)
 	userService := usersService.New(userStore, favouriteUserStore)
 	authService := auth.New(
@@ -86,10 +92,11 @@ func Run(cfg *config.Config) {
 	v1.NewRouter(
 		app,
 		authService,
+		commentService,
+		postService,
 		userService,
 		roleService,
 		formValidator,
-		postService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

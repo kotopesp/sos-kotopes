@@ -1,8 +1,8 @@
 package core
 
 import (
-	"time"
 	"context"
+	"time"
 )
 
 type (
@@ -20,12 +20,12 @@ type (
 	}
 
 	UpdateRequestBodyAnimal struct {
-		AnimalType  string    `gorm:"column:animal_type"`
-		Age         int       `gorm:"column:age"`
-		Color       string    `gorm:"column:color"`
-		Gender      string    `gorm:"column:gender"`
-		Description string    `gorm:"column:description"`
-		Status      string    `gorm:"column:status"`
+		AnimalType  string `gorm:"column:animal_type"`
+		Age         int    `gorm:"column:age"`
+		Color       string `gorm:"column:color"`
+		Gender      string `gorm:"column:gender"`
+		Description string `gorm:"column:description"`
+		Status      string `gorm:"column:status"`
 	}
 
 	AnimalStore interface {
