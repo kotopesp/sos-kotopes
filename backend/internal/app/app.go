@@ -41,8 +41,8 @@ import (
 )
 
 const (
-	DatabaseUrl      = "postgres://postgres:postgres@postgres:5432/soskot?sslmode=disable"
-	Db               = "postgres"
+	DatabaseURL      = "postgres://postgres:postgres@postgres:5432/soskot?sslmode=disable"
+	DB               = "postgres"
 	PathToMogrations = "file:///app/internal/data/"
 )
 
@@ -61,7 +61,7 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Migrate up
-	db, err := sql.Open(Db, DatabaseUrl)
+	db, err := sql.Open(DB, DatabaseURL)
 	if err != nil {
 		logger.Log().Fatal(ctx, err.Error())
 	}
@@ -71,7 +71,7 @@ func Run(cfg *config.Config) {
 	}
 	m, err := migrate.NewWithDatabaseInstance(
 		PathToMogrations,
-		Db, driver)
+		DB, driver)
 	if err != nil {
 		logger.Log().Fatal(ctx, err.Error())
 	}
