@@ -27,6 +27,7 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 
 	mockAuthService := mocks.NewAuthService(t)
 	mockPostService := mocks.NewPostService(t)
+	mockKeeperService := mocks.NewKeeperService(t)
 	mockCommentService := mocks.NewCommentService(t)
 	mockRoleService := mocks.NewRoleService(t)
 	mockUserService := mocks.NewUserService(t)
@@ -43,6 +44,7 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 		mockUserService,
 		mockRoleService,
 		formValidatorService,
+		mockKeeperService,
 	)
 
 	return app, appDependencies{

@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -21,4 +22,11 @@ var (
 
 	// favourite errors
 	ErrPostAlreadyInFavourites = errors.New("post already added to favourites")
+
+	// keeper review errors
+	ErrReviewGradeBounds           = errors.New("grade must be between 1 and 5")
+	ErrKeeperReviewUserIDMissmatch = errors.New("keeper's review id missmatch with the review's author")
+
+	// keeper errors
+	ErrKeeperUserIDMissmatch = errors.New("keeper id missmatch with the keeper's user")
 )

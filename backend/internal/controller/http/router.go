@@ -16,6 +16,7 @@ type Router struct {
 	userService          core.UserService
 	roleService          core.RoleService
 	userFavouriteService core.UserFavouriteService
+	keeperService        core.KeeperService
 }
 
 func NewRouter(
@@ -26,6 +27,7 @@ func NewRouter(
 	userService core.UserService,
 	roleService core.RoleService,
 	formValidator validator.FormValidatorService,
+	keeperService core.KeeperService,
 ) {
 	router := &Router{
 		app:            app,
@@ -35,6 +37,7 @@ func NewRouter(
 		userService:    userService,
 		roleService:    roleService,
 		commentService: commentService,
+		keeperService:  keeperService,
 	}
 
 	router.initRequestMiddlewares()
@@ -80,6 +83,18 @@ func (r *Router) initRoutes() {
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)
 	v1.Get("/auth/login/vk/callback", r.callback)
+
+	// keepers
+	v1.Get("/keepers", r.getKeepers)
+	v1.Get("/keepers/:id", r.getKeeperByID)
+	v1.Put("/keepers/:id", r.protectedMiddleware(), r.updateKeeperByID)
+	v1.Delete("/keepers/:id", r.protectedMiddleware(), r.deleteKeeperByID)
+
+	// keeper reviews
+	v1.Get("/keepers/:id/keeper_reviews", r.getKeeperReviews)
+	v1.Post("/keepers/:id/keeper_reviews", r.protectedMiddleware(), r.createKeeperReview)
+	v1.Put("/keeper_reviews/:id", r.protectedMiddleware(), r.updateKeeperReview)
+	v1.Delete("/keeper_reviews/:id", r.protectedMiddleware(), r.deleteKeeperReview)
 
 	// posts
 	v1.Get("/posts", r.getPosts)
