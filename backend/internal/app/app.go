@@ -60,6 +60,7 @@ func Run(cfg *config.Config) {
 	}
 	defer pg.Close(ctx)
 
+	//Migrate up
 	db, err := sql.Open(DB, DATABASE_URL)
 	if err != nil {
 		logger.Log().Fatal(ctx, err.Error())
