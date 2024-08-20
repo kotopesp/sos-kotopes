@@ -63,11 +63,15 @@ func (s *store) UpdatePhotosPost(ctx context.Context, photos []core.Photo) ([]co
 
     err := s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
         for _, photo := range photos {
+
+			p := photo
+
             var updatedPhoto core.Photo
+
             if err := tx.
-                Where("id = ?", photo.ID).
-                Save(&photo).
-                First(&updatedPhoto, photo.ID).
+                Where("id = ?", p.ID).
+                Save(&p).
+                First(&updatedPhoto, p.ID).
                 Error; err != nil {
 
                 if errors.Is(err, gorm.ErrRecordNotFound) {
