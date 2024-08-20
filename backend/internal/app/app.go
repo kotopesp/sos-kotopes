@@ -30,6 +30,7 @@ import (
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+	photostore "github.com/kotopesp/sos-kotopes/internal/store/photo"
 )
 
 // Run creates objects via constructors.
@@ -53,6 +54,7 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
+	photoStore := photostore.New(pg)
 
 	// Services
 	roleService := rolesService.New(roleStore, userStore)
@@ -68,7 +70,7 @@ func Run(cfg *config.Config) {
 			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
-	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore, photoStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())

@@ -19,7 +19,7 @@ type (
 		UpdatedAt   time.Time `gorm:"column:updated_at"`    // Timestamp when the record was last updated
 	}
 
-	UpdateRequestBodyAnimal struct {
+	UpdateRequestAnimal struct {
 		AnimalType  string    `gorm:"column:animal_type"`
 		Age         int       `gorm:"column:age"`
 		Color       string    `gorm:"column:color"`

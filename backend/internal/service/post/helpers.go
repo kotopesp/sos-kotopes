@@ -4,39 +4,36 @@ import (
 	"context"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	"fmt"
 )
 
 // ToCorePostDetails creates a core.PostDetails object from a core.Post, core.Animal, and username string.
-func ToCorePostDetails(post core.Post, animal core.Animal, userName string) core.PostDetails {
+func ToCorePostDetails(post core.Post, animal core.Animal, userName string, photos []core.Photo) core.PostDetails {
 	return core.PostDetails{
 		Post:     post,
 		Animal:   animal,
 		Username: userName,
+		Photos:   photos,
 	}
 }
 
 // BuildPostDetailsList constructs a list of core.PostDetails from a list of core.Post objects.
 // It fetches the associated animal and user information for each post.
 func (s *service) BuildPostDetailsList(ctx context.Context, posts []core.Post, total int) ([]core.PostDetails, error) {
-	postDetails := make([]core.PostDetails, total)
+	postDetailsList := make([]core.PostDetails, 0, total)
 
 	// Iterate through each post to build the post details
-	for i, post := range posts {
-		animal, err := s.animalStore.GetAnimalByID(ctx, post.AnimalID) // Fetch the animal details
-		if err != nil {
-			logger.Log().Error(ctx, err.Error())
-			return nil, err
-		}
-		user, err := s.userStore.GetUserByID(ctx, post.AuthorID) // Fetch the user details
+	for _, post := range posts {
+		postDetails, err := s.BuildPostDetails(ctx, post)
 		if err != nil {
 			logger.Log().Error(ctx, err.Error())
 			return nil, err
 		}
 
-		postDetails[i] = ToCorePostDetails(post, animal, user.Username)
+		postDetailsList = append(postDetailsList, postDetails)
 	}
 
-	return postDetails, nil
+	return postDetailsList, nil
 }
 
 // BuildPostDetails constructs a core.PostDetails object from a core.Post object.
@@ -54,23 +51,25 @@ func (s *service) BuildPostDetails(ctx context.Context, post core.Post) (core.Po
 		return core.PostDetails{}, err
 	}
 
-	postDetails := ToCorePostDetails(post, animal, user.Username)
+	photos, err := s.photoStore.GetPhotosPost(ctx, post.ID)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.PostDetails{}, err
+	}
+
+	postDetails := ToCorePostDetails(post, animal, user.Username, photos)
 
 	return postDetails, nil
 }
 
-// FuncUpdateRequestBodyPost updates the post details based on UpdateRequestBodyPost
-func FuncUpdateRequestBodyPost(postDetails core.PostDetails, updatePost core.UpdateRequestBodyPost) core.PostDetails {
+// UpdateRequestPost updates the post details based on core.UpdateRequestBodyPost
+func UpdateRequestPost(postDetails core.PostDetails, updatePost core.UpdateRequestPost) core.PostDetails {
 	if updatePost.Title != nil {
 		postDetails.Post.Title = *updatePost.Title
 	}
 
 	if updatePost.Content != nil {
 		postDetails.Post.Content = *updatePost.Content
-	}
-
-	if updatePost.Photo != nil {
-		postDetails.Post.Photo = *updatePost.Photo
 	}
 
 	if updatePost.AnimalType != nil {
@@ -98,4 +97,15 @@ func FuncUpdateRequestBodyPost(postDetails core.PostDetails, updatePost core.Upd
 	}
 
 	return postDetails
+}
+
+func UpdateRequestPhotos(photos []core.Photo, updatePhotos core.UpdateRequestPhotos) []core.Photo {
+	fmt.Print("в UpdateRequestPhotos\n")
+	if updatePhotos.Photo != nil {
+		for i := range photos {
+			photos[i].Photo = (*updatePhotos.Photo)[i]
+		}
+	}
+
+	return photos
 }

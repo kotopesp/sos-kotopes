@@ -119,7 +119,7 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
 
-	photoBytes, err := openAndValidatePhoto(ctx)
+	photoBytes, err := openAndValidatePhotos(ctx)
 	if err != nil {
 		switch {
 		case errors.Is(err, model.ErrInvalidPhotoSize):
@@ -128,13 +128,16 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 		case errors.Is(err, model.ErrInvalidExtension):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrPhotoNotFound):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 		default:
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
 
-	postRequest.Photo = *photoBytes
+	postRequest.Photos = *photoBytes
 
 	corePostDetails := postRequest.ToCorePostDetails(authorID) 
 
@@ -171,9 +174,10 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	coreUpdateRequestPost := updateRequestPost.ToCorePostDetails()
+	coreUpdateRequestPost, coreUpdateRequestPhoto := updateRequestPost.ToCorePostDetails()
 
 	coreUpdateRequestPost.ID = &pathParams.PostID
+	coreUpdateRequestPhoto.PostID = pathParams.PostID
 
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
@@ -182,7 +186,7 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 	}
 	coreUpdateRequestPost.AuthorID = &userID
 
-	postDetails, err := r.postService.UpdatePost(ctx.UserContext(), coreUpdateRequestPost)
+	postDetails, err := r.postService.UpdatePost(ctx.UserContext(), coreUpdateRequestPost, coreUpdateRequestPhoto)
 	if err != nil {
 		switch err {
 		case core.ErrPostNotFound:

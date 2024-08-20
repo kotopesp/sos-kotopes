@@ -24,4 +24,5 @@ var (
 	ErrInvalidBody          = errors.New("invalid body")
 	ErrInvalidPhotoSize     = errors.New("photo is too large")
 	ErrInvalidExtension     = errors.New("invalid photo extension")
+	ErrPhotoNotFound        = errors.New("photo not found")
 )

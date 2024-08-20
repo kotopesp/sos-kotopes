@@ -13,6 +13,9 @@ var (
 	ErrPostIsDeleted        		= errors.New("post is deleted")
 	ErrPostAuthorIDMismatch         = errors.New("your user_id and db author_id mismatch")
 
+	// photo errors
+	ErrPhotoNotFound 				= errors.New("photo not found")
+
 	// user errors
 	ErrFailedToGetAuthorIDFromToken = errors.New("failed to get author ID from token")
 

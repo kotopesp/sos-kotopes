@@ -16,30 +16,41 @@ type (
 		DeletedAt   time.Time `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
 		CreatedAt   time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
 		UpdatedAt   time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
-		Photo       []byte    `gorm:"column:photo"`         // Photo animal
 		IsFavourite bool      `gorm:"column:is_favourite"`  // Flag indicating if the post is favourite
 	}
 
 	// Post Details joins post, animal, username
 	PostDetails struct {
 		Post     Post
+		Photos   []Photo
 		Animal   Animal
 		Username string
 	}
 
 	// UpdateRequestBodyPost represents the request body for updating a post.
-	UpdateRequestBodyPost struct {
+	UpdateRequestPost struct {
 		ID          *int
 		AuthorID    *int
 		Title       *string
 		Content     *string
-		Photo       *[]byte
+		// Photo       *[][]byte
 		AnimalType  *string
 		Age         *int
 		Color       *string
 		Gender      *string
 		Description *string
 		Status      *string
+	}
+
+	UpdateRequestPhoto struct {
+		ID     *int
+		Photo  *[]byte
+		PostID *int
+	}
+
+	UpdateRequestPhotos struct {
+		Photo  *[][]byte
+		PostID int
 	}
 
 	// the GetAllPostsParams are needed for processing posts in the database
@@ -68,7 +79,7 @@ type (
 		GetPostByID(ctx context.Context, postID int, userID int) (PostDetails, error)
     	GetUserPosts(ctx context.Context, id int) (posts []PostDetails, count int, err error)
 		CreatePost(ctx context.Context, postDetails PostDetails) (PostDetails, error)
-		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
+		UpdatePost(ctx context.Context, updateRequestPost UpdateRequestPost, updateRequestPhotos UpdateRequestPhotos) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
 
 		PostFavouriteService

@@ -18,12 +18,12 @@ func (s *service) GetFavouritePosts(ctx context.Context, userID int, params core
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
 	}
-
+	
 	return postDetails, total, nil
 }
 
 func (s *service) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) (core.PostDetails, error) {
-  post, err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
+	post, err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
@@ -40,15 +40,15 @@ func (s *service) AddToFavourites(ctx context.Context, postFavourite core.PostFa
 
 func (s *service) DeleteFromFavourites(ctx context.Context, post core.PostFavourite) error {
 	dbFavourite, err := s.postFavouriteStore.GetPostFavouriteByPostAndUserID(ctx, post.PostID, post.UserID)
-  if err != nil {
-    return err
-  }
+	if err != nil {
+		return err
+	}
 
 	if dbFavourite.UserID != post.UserID {
-    return core.ErrPostAuthorIDMismatch
-  }
+		return core.ErrPostAuthorIDMismatch
+	}
 
-  err = s.postFavouriteStore.DeleteFromFavourites(ctx, post.PostID, post.UserID)
+	err = s.postFavouriteStore.DeleteFromFavourites(ctx, post.PostID, post.UserID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err
