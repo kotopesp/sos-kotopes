@@ -23,16 +23,16 @@ func New(
 	}
 }
 
-func (s *service) GetAllComments(ctx context.Context, params core.GetAllCommentsParams) (data []core.Comment, total int, err error) {
-	if _, err := s.postStore.GetPostByID(ctx, params.PostID); err != nil {
+func (s *service) GetAllComments(ctx context.Context, params core.GetAllCommentsParams, userID int) (data []core.Comment, total int, err error) {
+	if _, err := s.postStore.GetPostByID(ctx, params.PostID, userID); err != nil {
 		return nil, 0, err
 	}
 
 	return s.commentStore.GetAllComments(ctx, params)
 }
 
-func (s *service) CreateComment(ctx context.Context, comment core.Comment) (data core.Comment, err error) {
-	if _, err := s.postStore.GetPostByID(ctx, comment.PostID); err != nil {
+func (s *service) CreateComment(ctx context.Context, comment core.Comment, userID int) (data core.Comment, err error) {
+	if _, err := s.postStore.GetPostByID(ctx, comment.PostID, userID); err != nil {
 		return comment, err
 	}
 

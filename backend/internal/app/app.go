@@ -25,10 +25,10 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
-	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
-	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 	photostore "github.com/kotopesp/sos-kotopes/internal/store/photo"

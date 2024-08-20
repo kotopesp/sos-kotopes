@@ -3,12 +3,9 @@ package postfavourite
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-    "github.com/kotopesp/sos-kotopes/pkg/logger"
-    "errors"
     "time"
     "gorm.io/gorm"
 )
