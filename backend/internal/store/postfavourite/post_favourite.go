@@ -2,7 +2,10 @@ package postfavourite
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
     "github.com/kotopesp/sos-kotopes/pkg/logger"
     "errors"
@@ -59,14 +62,14 @@ func (s *store) GetFavouritePosts(ctx context.Context, userID int, params core.G
     if err := query.Count(&total).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
-    }
+	}
 
     if err := query.Select("posts.*").Find(&posts).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
-    }
-    
-    return posts, int(total), nil
+	}
+
+	return posts, int(total), nil
 }
 
 // GetPostFavouriteByPostAndUserID retrieves a post favourite from the database based on the post ID and user ID
@@ -114,8 +117,8 @@ func (s *store) AddToFavourites(ctx context.Context, postFavourite core.PostFavo
         return core.Post{}, core.ErrPostAlreadyInFavourites
     }
 
-    postFavourite.CreatedAt = time.Now()
-
+	postFavourite.CreatedAt = time.Now()
+  
     if err := s.DB.WithContext(ctx).Create(&postFavourite).Error; err != nil {
         logger.Log().Error(ctx, err.Error())
         return core.Post{}, err
