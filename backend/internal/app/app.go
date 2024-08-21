@@ -31,19 +31,6 @@ import (
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
-
-	"database/sql"
-
-	"github.com/golang-migrate/migrate/v4"
-	psql "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
-	_ "github.com/lib/pq"
-)
-
-const (
-	DatabaseURL      = "postgres://postgres:postgres@postgres:5432/soskot?sslmode=disable"
-	DB               = "postgres"
-	PathToMogrations = "file:///app/internal/data/"
 )
 
 // Run creates objects via constructors.
@@ -61,22 +48,8 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Migrate up
-	db, err := sql.Open(DB, DatabaseURL)
-	if err != nil {
-		logger.Log().Fatal(ctx, err.Error())
-	}
-	driver, err := psql.WithInstance(db, &psql.Config{})
-	if err != nil {
-		logger.Log().Fatal(ctx, err.Error())
-	}
-	m, err := migrate.NewWithDatabaseInstance(
-		PathToMogrations,
-		DB, driver)
-	if err != nil {
-		logger.Log().Fatal(ctx, err.Error())
-	}
-	if m.Up() != nil {
-		logger.Log().Fatal(ctx, "error with up migrations for database")
+	if err := migrateUp(ctx, cfg.DB.URL); err != nil {
+		logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
 	}
 
 	// Stores
