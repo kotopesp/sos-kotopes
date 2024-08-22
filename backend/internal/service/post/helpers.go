@@ -2,9 +2,9 @@ package post
 
 import (
 	"context"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"fmt"
 )
 
 // ToCorePostDetails creates a core.PostDetails object from a core.Post, core.Animal, and username string.
@@ -100,11 +100,31 @@ func UpdateRequestPost(postDetails core.PostDetails, updatePost core.UpdateReque
 }
 
 func UpdateRequestPhotos(photos []core.Photo, updatePhotos core.UpdateRequestPhotos) []core.Photo {
-	fmt.Print("в UpdateRequestPhotos\n")
-	if updatePhotos.Photo != nil {
-		for i := range photos {
-			photos[i].Photo = (*updatePhotos.Photo)[i]
+	if updatePhotos.Photos == nil {
+		return photos
+	}
+
+	updatedPhotos := *updatePhotos.Photos
+
+	minLen := len(photos)
+	if len(updatedPhotos) < minLen {
+		minLen = len(updatedPhotos)
+	}
+	for i := 0; i < minLen; i++ {
+		photos[i].Photo = updatedPhotos[i]
+	}
+
+	if len(updatedPhotos) > len(photos) {
+		for i := len(photos); i < len(updatedPhotos); i++ {
+			photos = append(photos, core.Photo{
+				Photo: updatedPhotos[i],
+				PostID: photos[0].PostID,
+			})
 		}
+	}
+
+	if len(updatedPhotos) < len(photos) {
+		photos = photos[:len(updatedPhotos)]
 	}
 
 	return photos

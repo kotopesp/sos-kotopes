@@ -15,7 +15,6 @@ type (
 		GetPhotosPost(ctx context.Context, postID int) ([]Photo, error)
 		AddPhotoPost(ctx context.Context, photo Photo) (Photo, error)
 		AddPhotosPost(ctx context.Context, postID int, photos []Photo) ([]Photo, error)
-		UpdatePhotoPost(ctx context.Context, photo Photo) (Photo, error)
 		UpdatePhotosPost(ctx context.Context, photos []Photo) ([]Photo, error)
 	}
 )

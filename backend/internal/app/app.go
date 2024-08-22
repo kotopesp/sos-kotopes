@@ -85,6 +85,7 @@ func Run(cfg *config.Config) {
 		CaseSensitive:            true,
 		StrictRouting:            false,
 		EnableSplittingOnParsers: true,
+		BodyLimit:                cfg.HTTP.BodyLimit,
 	})
 	app.Use(recover.New())
 	app.Use(cors.New())

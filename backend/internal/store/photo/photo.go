@@ -2,11 +2,10 @@ package photostore
 
 import (
 	"context"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-	"gorm.io/gorm"
-	"errors"
 )
 
 type store struct {
@@ -54,43 +53,77 @@ func (s *store) AddPhotoPost(ctx context.Context, photo core.Photo) (core.Photo,
 	return createdPhoto, nil
 }
 
-func (s *store) UpdatePhotoPost(ctx context.Context, photo core.Photo) (core.Photo, error) {
-	panic("implement me")
+func (s *store) updatePhotoPost(ctx context.Context, photo core.Photo) (core.Photo, error) {
+	var updatedPhoto core.Photo
+
+	if err := s.DB.WithContext(ctx).
+		Where("id = ?", photo.ID).
+		Save(&photo).
+		First(&updatedPhoto, photo.ID).
+		Error; err != nil {
+			
+		logger.Log().Error(ctx, err.Error())
+		return core.Photo{}, err
+	}
+
+	return updatedPhoto, nil
 }
 
 func (s *store) UpdatePhotosPost(ctx context.Context, photos []core.Photo) ([]core.Photo, error) {
 	var updatedPhotos []core.Photo
 
-    err := s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-        for _, photo := range photos {
+	photosPost, err := s.GetPhotosPost(ctx, photos[0].PostID)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return nil, err
+	}
 
-			p := photo
+	existingCount := len(photosPost)
+	newCount := len(photos)
 
-            var updatedPhoto core.Photo
+	for i := 0; i < existingCount && i < newCount; i++ {
+		p := photos[i]
+		updatedPhoto, err := s.updatePhotoPost(ctx, p)
+		if err != nil {
+			logger.Log().Error(ctx, err.Error())
+			return nil, err
+		}
+		updatedPhotos = append(updatedPhotos, updatedPhoto)
+	}
 
-            if err := tx.
-                Where("id = ?", p.ID).
-                Save(&p).
-                First(&updatedPhoto, p.ID).
-                Error; err != nil {
+	if newCount > existingCount {
+		newPhotos := photos[existingCount:]
+		createdPhotos, err := s.AddPhotosPost(ctx, photos[0].PostID, newPhotos)
+		if err != nil {
+			logger.Log().Error(ctx, err.Error())
+			return nil, err
+		}
+		updatedPhotos = append(updatedPhotos, createdPhotos...)
+	}
 
-                if errors.Is(err, gorm.ErrRecordNotFound) {
-                    logger.Log().Error(ctx, core.ErrPhotoNotFound.Error())
-                    return core.ErrPhotoNotFound
-                }
+	if newCount < existingCount {
+		photosToDelete := photosPost[newCount:]
+		err := s.deletePhotosPost(ctx, photosToDelete)
+		if err != nil {
+			logger.Log().Error(ctx, err.Error())
+			return nil, err
+		}
+	}
 
-                logger.Log().Error(ctx, err.Error())
-                return err
-            }
+	return updatedPhotos, nil
+}
 
-            updatedPhotos = append(updatedPhotos, updatedPhoto)
-        }
-        return nil
-    })
+func (s *store) deletePhotosPost(ctx context.Context, photos []core.Photo) error {
+	var idsToDelete []int
 
-    if err != nil {
-        return nil, err
-    }
+	for _, photo := range photos {
+		idsToDelete = append(idsToDelete, photo.ID)
+	}
 
-    return updatedPhotos, nil
+	if err := s.DB.WithContext(ctx).Where("id IN (?)", idsToDelete).Delete(&core.Photo{}).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	return nil
 }

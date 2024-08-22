@@ -25,7 +25,7 @@ type (
 		Content        string    `form:"content" json:"content"`
 		AuthorUsername string    `form:"author_username" json:"author_username"`
 		CreatedAt      time.Time `form:"created_at " json:"created_at"`
-		Photo          [][]byte  `form:"photos" json:"photos"`
+		Photos          [][]byte  `form:"photos" json:"photos"`
 		AnimalType     string    `form:"animal_type" json:"animal_type"`
 		Age            int       `form:"age" json:"age"`
 		Color          string    `form:"color" json:"color"`
@@ -40,13 +40,13 @@ type (
 	UpdatePost struct {
 		Title   *string `form:"title" json:"title" validate:"max=200"`
 		Content *string `form:"content" json:"content" validate:"max=2000"`
-		Photo   *[]byte `form:"photos" json:"photos"`
+		Photos   *[]byte `form:"photos" json:"photos"`
 	}
 
 	UpdateRequestBodyPost struct {
 		Title       *string   `form:"title" json:"title" validate:"omitempty,max=200"`
 		Content     *string   `form:"content" json:"content" validate:"omitempty,max=2000"`
-		Photo       *[][]byte `form:"photos" json:"photos"`
+		Photos       *[][]byte `form:"photos" json:"photos"`
 		AnimalType  *string   `form:"animal_type" json:"animal_type" validate:"omitempty,oneof=dog cat"`
 		Age         *int      `form:"age" json:"age" validate:"omitempty,gte=0"`
 		Color       *string   `form:"color" json:"color"`

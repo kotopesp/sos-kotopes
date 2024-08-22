@@ -2,11 +2,13 @@ package http
 
 import (
 	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
+	
 )
 
 // getPosts handles the request to get all posts with optional filters
@@ -17,7 +19,7 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-    var getAllPostsParams postModel.GetAllPostsParams
+	var getAllPostsParams postModel.GetAllPostsParams
 
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
 	if fiberError != nil || parseOrValidationError != nil {
@@ -27,11 +29,11 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 
 	coreGetAllPostsParams := getAllPostsParams.ToCoreGetAllPostsParams()
 
-    postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), userID, coreGetAllPostsParams)
-    if err != nil {
-      logger.Log().Error(ctx.UserContext(), err.Error())
-      return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
-    }
+	postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), userID, coreGetAllPostsParams)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
 
 	pagination := paginate(total, getAllPostsParams.Limit, getAllPostsParams.Offset)
 
@@ -139,7 +141,7 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 
 	postRequest.Photos = *photoBytes
 
-	corePostDetails := postRequest.ToCorePostDetails(authorID) 
+	corePostDetails := postRequest.ToCorePostDetails(authorID)
 
 	postDetails, err := r.postService.CreatePost(ctx.UserContext(), corePostDetails)
 	if err != nil {
@@ -172,6 +174,24 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
+
+	photoBytes, err := openAndValidatePhotos(ctx)
+	if err != nil {
+		switch {
+		case errors.Is(err, model.ErrInvalidPhotoSize):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrInvalidExtension):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrPhotoNotFound):
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+
+	updateRequestPost.Photos = photoBytes
 
 	coreUpdateRequestPost, coreUpdateRequestPhoto := updateRequestPost.ToCorePostDetails()
 

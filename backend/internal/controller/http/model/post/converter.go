@@ -58,7 +58,7 @@ func (p *UpdateRequestBodyPost) ToCorePostDetails() (core.UpdateRequestPost, cor
 	}
 
 	UpdateRequestPhotos := core.UpdateRequestPhotos{
-		Photo: p.Photo,
+		Photos: p.Photos,
 	}
 
 	return UpdateRequestPost, UpdateRequestPhotos
@@ -97,7 +97,7 @@ func ToPostResponse(post core.PostDetails) PostResponse {
 		Gender:         post.Animal.Gender,
 		Description:    post.Animal.Description,
 		Status:         post.Animal.Status,
-		Photo:          photos,
+		Photos:          photos,
 		IsFavourite:    post.Post.IsFavourite,
 		Comments:       0,
 	}

@@ -3,11 +3,12 @@ package poststore
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
-	"time"
 )
 
 type store struct {
@@ -20,10 +21,10 @@ func New(pg *postgres.Postgres) core.PostStore {
 
 // GetAllPosts retrieves all posts from the database based on the GetAllPostsParams
 func (s *store) GetAllPosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.Post, int, error) {
-  var posts []core.Post
+	var posts []core.Post
 
-  query := s.DB.WithContext(ctx).Model(&core.Post{}).
-	  Joins("JOIN animals ON posts.animal_id = animals.id").
+	query := s.DB.WithContext(ctx).Model(&core.Post{}).
+		Joins("JOIN animals ON posts.animal_id = animals.id").
 		Where("posts.is_deleted = ?", false).
 		Select("posts.*, EXISTS(SELECT 1 FROM favourite_posts WHERE favourite_posts.post_id = posts.id AND favourite_posts.user_id = ?) AS is_favourite", userID)
 
@@ -53,21 +54,21 @@ func (s *store) GetAllPosts(ctx context.Context, userID int, params core.GetAllP
 	}
 
 	if params.SearchWord != nil && *params.SearchWord != "" {
-    searchWord := "%" + *params.SearchWord + "%"
-    query = query.Where("posts.title ILIKE ? OR posts.content ILIKE ?", searchWord, searchWord)
-  }
-
-  var total int64
-  if err := query.Count(&total).Error; err != nil {
-	  logger.Log().Error(ctx, err.Error())
-		return nil, 0, err
+		searchWord := "%" + *params.SearchWord + "%"
+		query = query.Where("posts.title ILIKE ? OR posts.content ILIKE ?", searchWord, searchWord)
 	}
-  
-  if err := query.Find(&posts).Error; err != nil {
+
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
-  }
-  
+	}
+
+	if err := query.Find(&posts).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return nil, 0, err
+	}
+
 	return posts, int(total), nil
 }
 
@@ -94,18 +95,18 @@ func (s *store) GetPostByID(ctx context.Context, postID, userID int) (core.Post,
 	var post core.Post
 
 	if err := s.DB.WithContext(ctx).
-        Model(&core.Post{}).
-        Select("posts.*, EXISTS(SELECT 1 FROM favourite_posts WHERE favourite_posts.post_id = posts.id AND favourite_posts.user_id = ?) AS is_favourite", userID).
-        Where("posts.id = ? AND posts.is_deleted = ?", postID, false).
-        First(&post).Error; err != nil {
-        
-        if errors.Is(err, core.ErrRecordNotFound) {
-            logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-            return core.Post{}, core.ErrPostNotFound
-        }
-        logger.Log().Error(ctx, err.Error())
-        return core.Post{}, err
-    }
+		Model(&core.Post{}).
+		Select("posts.*, EXISTS(SELECT 1 FROM favourite_posts WHERE favourite_posts.post_id = posts.id AND favourite_posts.user_id = ?) AS is_favourite", userID).
+		Where("posts.id = ? AND posts.is_deleted = ?", postID, false).
+		First(&post).Error; err != nil {
+
+		if errors.Is(err, core.ErrRecordNotFound) {
+			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+			return core.Post{}, core.ErrPostNotFound
+		}
+		logger.Log().Error(ctx, err.Error())
+		return core.Post{}, err
+	}
 
 	return post, nil
 }

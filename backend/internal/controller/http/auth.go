@@ -4,18 +4,20 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"io"
+	"mime/multipart"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"io"
-	"mime/multipart"
+
+	"strings"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"strings"
 )
 
 // authErrorHandler Error handler if user is not authorized
@@ -35,24 +37,24 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 
 func (r *Router) authorize() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
-	  tokenString := ctx.Get("Authorization")
-	  tokenString = strings.TrimSpace(strings.TrimPrefix(tokenString, "Bearer"))
-  
-	  token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-		  return nil, model.ErrFailedToParseToken
+		tokenString := ctx.Get("Authorization")
+		tokenString = strings.TrimSpace(strings.TrimPrefix(tokenString, "Bearer"))
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, model.ErrFailedToParseToken
+			}
+
+			return r.authService.GetJWTSecret(), nil
+		})
+
+		if err == nil {
+			ctx.Locals("user", token)
 		}
-  
-		return r.authService.GetJWTSecret(), nil
-	  })
-  
-	  if err == nil {
-		ctx.Locals("user", token)
-	  }
-  
-	  return ctx.Next()
+
+		return ctx.Next()
 	}
-  }
+}
 
 func (r *Router) refreshTokenMiddleware() fiber.Handler {
 	return jwtware.New(jwtware.Config{
