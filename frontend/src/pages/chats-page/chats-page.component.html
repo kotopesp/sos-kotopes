@@ -1,0 +1,86 @@
+<div class="chats__wrapper">
+  <div class="container">
+    <div class="container__sidebar__chats">
+      <div class="container__sidebar">
+        <div *ngFor="let button of buttons" class="sidebar__chats">
+          <app-chat-type-button
+            [label]="button.label"
+            [color]="button.color"
+            [counter]="button.counter || 0"
+            [icon]="button.iconName"/>
+        </div>
+      </div>
+
+      <div class="container__chats">
+        <div class="block__all-chats">
+          <div class="block__search__chats">
+            <div class="block__searchbar">
+              <form class="search__and__lens">
+                <img src="/assets/icons/lens-icon.svg" alt="icon">
+                <span><input class="search-input fw400 ft20" type="text" placeholder="Поиск"></span>
+              </form>
+              <div class="searchbar__add__new__chat">
+                <img src="/assets/icons/newchat-icon.svg" alt="icon">
+              </div>
+            </div>
+            <div class="all__chats">
+              <app-chat/>
+              <app-chat/>
+              <app-chat/>
+              <app-chat/>
+              <app-chat/>
+              <app-chat/>
+              <app-chat/>
+              <app-chat/>
+            </div>
+          </div>
+          <div class="block__current__chat">
+            <div *ngIf="currentChat" class="current__chat">
+              <div class="block__user__info">
+                <div>
+                  <img src="/assets/images/test-cat2.png" alt="avatar" class="message__user__avatar">
+                </div>
+                <div>
+                  <p>Родион Суворов</p>
+                  <p id="time__last__online">2 дня назад</p>
+                </div>
+              </div>
+              <div class="block__post__answer">
+                <app-post-answer/>
+              </div>
+              <div #scrollableContainer id="block__messages">
+                <div class="container__messages">
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="false"/>
+                </div>
+              </div>
+              <div class="block__current__message">
+                <div class="block__clip">
+                  <img src="/assets/icons/clip-icon.svg" alt="icon">
+                </div>
+                <textarea autofocus="yes" autocomplete="no" placeholder="Введите сообщение" id="textarea__message" rows="1"></textarea>
+                <div class="block__send__message">
+                  <img src="/assets/icons/send-message-icon.svg" alt="icon">
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!currentChat" class="current__chat__none">
+              <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
+              <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
+                class="start__new__chat">начните новый</span></p></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
