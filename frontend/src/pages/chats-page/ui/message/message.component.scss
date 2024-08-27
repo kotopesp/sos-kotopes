@@ -1,0 +1,36 @@
+.container__message {
+  width: 100%;
+
+  .block__message {
+    width: fit-content;
+    max-width: 547px;
+    height: fit-content;
+    line-height: 24px;
+    border-radius: 20px;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    background: var(--brown-orange-color);
+
+
+    .message__time {
+      display: flex;
+      width: 100%;
+      color: #FFFFFF80;
+      justify-content: end;
+      padding-right: 15px;
+      padding-bottom: 5px;
+    }
+  }
+
+  .answer {
+    justify-content: end;
+    background: var(--brown-message-color);
+    float: right;
+
+    .message__time {
+      color: var(--gray-message-color);
+    }
+  }
+}
