@@ -16,6 +16,8 @@
   --brown-ads-color: #2C2210;
   --brown-dark-light-color: #352303;
   --brown-filter-color: #1C150899;
+  --brown-message-color: #49310A;
+  --brown-orange-color: #B77300;
 
   // pink
   --pink-border-color: #EABAB3;
@@ -58,6 +60,7 @@
   --gray-text-tag: #5D5D5D;
   --gray-filter-color: #363636;
   --light-gray-color: #D8D8D8;
+  --gray-message-color: #8A8A8A;
 }
 
 
@@ -175,4 +178,15 @@ a, button {
   font-weight: 400;
   font-style: italic;
 }
+
+::-webkit-scrollbar {
+  background: none;
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5D5D5D;
+}
+
 
