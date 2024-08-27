@@ -8,6 +8,6 @@ import {Component, Input} from '@angular/core';
   styleUrl: './message.component.scss'
 })
 export class MessageComponent {
-  @Input() answer: boolean = false;
+  @Input() answer = false;
 
 }

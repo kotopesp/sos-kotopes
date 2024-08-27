@@ -1,7 +1,10 @@
 <div class="block__auth__overlay">
   <div class="auth__overlay">
     <div class="title__and__close">
-      <div class="close__cross" (click)="isAuthOverlay.set(false)">
+      <div class="close__cross" (click)="isAuthOverlay.set(false)" (keydown.escape)="isAuthOverlay.set(false)"
+           tabindex="0"
+           role="button"
+           aria-pressed="false">
         <img src="/assets/icons/exit-cross-icon.svg" alt="">
       </div>
       <div class="title__login">
@@ -31,7 +34,7 @@
             <input
               formControlName="password"
               [type]="isPasswordVisible() ? 'text' : 'password' " placeholder="Введите пароль"
-                   class="input__text ft20 fw400"/>
+              class="input__text ft20 fw400"/>
           </label>
           <button class="password__eye" (click)="isPasswordVisible.set(!isPasswordVisible())">
             <img src="/assets/icons/password-eye-icon.svg" alt="">
@@ -47,7 +50,10 @@
           </a>
         </div>
 
-        <p class="ft18 fw400">Нет аккаунта? <a class="registration__link" (click)="isRegisterOverlay.set(true)" tabIndex={0}>Зарегистрироваться</a>
+        <p class="ft18 fw400">Нет аккаунта? <a class="registration__link" (click)="isRegisterOverlay.set(true)"
+                                               (keydown.enter)="isRegisterOverlay.set(true)" tabindex="0"
+                                               role="button"
+                                               aria-pressed="false">Зарегистрироваться</a>
         </p>
       </div>
 

@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, ViewChild} from '@angular/core';
 import {AppChatTypeButtonComponent} from "../../entities/chat-type-button/app-chat-type-button.component";
 import {Button} from "../../model/button";
 import {NgForOf, NgIf} from "@angular/common";
@@ -20,8 +20,8 @@ import {PostAnswerComponent} from "./ui/post-answer/post-answer.component";
   templateUrl: './chats-page.component.html',
   styleUrl: './chats-page.component.scss'
 })
-export class ChatsPageComponent {
-  currentChat: boolean = false;
+export class ChatsPageComponent implements AfterViewChecked {
+  currentChat = false;
   @ViewChild('scrollableContainer', { static: false }) private scrollableContainer?: ElementRef;
 
   buttons: Button[] = [

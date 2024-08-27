@@ -1,7 +1,10 @@
 <div class="block__registration__overlay">
   <div class="registration__overlay">
     <div class="block__title__and__icon">
-      <div class="close__cross" (click)="isRegisterOverlay.set(false)" tabIndex={0}>
+      <div class="close__cross" (click)="isRegisterOverlay.set(false)" (keydown.escape)="isRegisterOverlay.set(false)"
+           tabindex="0"
+           role="button"
+           aria-pressed="false">
         <img src="/assets/icons/exit-cross-icon.svg" alt="">
       </div>
 

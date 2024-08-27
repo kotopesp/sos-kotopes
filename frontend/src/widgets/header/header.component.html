@@ -11,7 +11,11 @@
 
     <div *ngIf="!isAuth" class="header__button">
       <a class="header__link">
-        <div (click)="isAuthOverlay.set(true)">Войти</div>
+        <div (click)="isAuthOverlay.set(true)"
+             (keydown.enter)="isAuthOverlay.set(true)"
+             tabindex="0"
+             role="button"
+             aria-pressed="false">Войти</div>
       </a>
     </div>
 

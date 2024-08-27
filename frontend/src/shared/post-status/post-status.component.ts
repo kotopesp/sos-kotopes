@@ -11,6 +11,6 @@ import {NgClass} from "@angular/common";
   styleUrl: './post-status.component.scss'
 })
 export class PostStatusComponent {
-  className: string = "found";
-  text: string = "Найден";
+  className = "found";
+  text = "Найден";
 }
