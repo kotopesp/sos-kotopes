@@ -25,7 +25,7 @@ export class RegisterService {
   registration(payload: ɵTypedOrUntyped<{ password: FormControl<null>; username: FormControl<null> }, ɵFormGroupValue<{
     password: FormControl<null>;
     username: FormControl<null>
-  }>, string>): Observable<RegistrationResponse> {
+  }>, string>): Observable<Object> {
     return this.http.post(
       `${this.baseApiUrl}auth/signup`,
       payload
