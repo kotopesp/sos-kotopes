@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {FormControl, ɵFormGroupValue, ɵTypedOrUntyped} from "@angular/forms";
-import {Observable} from "rxjs";
+import {Observable, tap} from "rxjs";
 
 interface RegistrationResponse {
   token: string;
@@ -29,6 +29,8 @@ export class RegisterService {
     return this.http.post(
       `${this.baseApiUrl}auth/signup`,
       payload
+    ).pipe(
+      tap(res => console.log(res))
     );
   }
 }
