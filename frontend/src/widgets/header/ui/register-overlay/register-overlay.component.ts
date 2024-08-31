@@ -32,11 +32,11 @@ export class RegisterOverlayComponent {
 
   onSubmit() {
 
-    if (this.formRegister.valid) {
-
-
-      this.registerService.registration(this.formRegister.value)
-        .subscribe(res => console.log(res));
-    }
+    // if (this.formRegister.valid) {
+    //
+    //
+    //   this.registerService.registration(this.formRegister.value)
+    //     .subscribe(res => console.log(res));
+    // }
   }
 }
