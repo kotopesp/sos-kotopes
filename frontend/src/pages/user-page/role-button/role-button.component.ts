@@ -12,10 +12,10 @@ export class RoleButtonComponent implements OnInit {
   @Input() label = ''
   @Input() buttonColor = ''
   @Input() icon = ''
-  @Output() clicked = new EventEmitter<any>()
+  @Output() clicked = new EventEmitter<MouseEvent>()
 
-  @Input() active: boolean = true;
-  @Input() infoColor: string = '';
+  @Input() active = true;
+  @Input() infoColor = '';
 
 
   anotherIconUrl = 'url("/assets/icons/arrow-down.svg")'
@@ -23,7 +23,7 @@ export class RoleButtonComponent implements OnInit {
   ngOnInit() {
     this.iconUrl = `url("${this.icon}")`;
   }
-  onClickButton(event: any) {
+  onClickButton(event: MouseEvent) {
     this.clicked.emit(event)
   }
 }

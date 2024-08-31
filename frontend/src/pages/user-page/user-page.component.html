@@ -27,18 +27,30 @@
                            infoColor="rgba(183, 115, 0, 0.1)"
                            [active]="openInfo === 1 ? true : false"
                            (click)="onClickFirst()"
+                           (keydown.enter)="onClickFirst()"
+                           tabindex="0"
+                           role="button"
+                           aria-pressed="false"
                            />
           <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"
                            buttonColor="var(--role-purple-color)"
                            infoColor="rgba(65, 33, 107, 0.1)"
                            [active]="openInfo === 2 ? true : false"
                            (click)="onClickSecond()"
+                           (keydown.enter)="onClickSecond()"
+                           tabindex="0"
+                           role="button"
+                           aria-pressed="false"
                            />
           <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
                            buttonColor="var(--role-green-color)"
                            infoColor="rgba(47, 89, 85, 0.1)"
                            [active]="openInfo === 3 ? true : false"
                            (click)="onClickThird()"
+                           (keydown.enter)="onClickThird()"
+                           tabindex="0"
+                           role="button"
+                           aria-pressed="false"
                            />
           </div>
            }
@@ -50,12 +62,20 @@
           <textarea class="user__description ft20 fw400" rows="4" cols="7" [disabled]="!editTextArea"
                     [ngClass]="editTextArea ? 'active__textarea' : 'disabled__textarea'">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, harum sunt. Earum expedita minus repellat accusantium eaque ipsum maiores doloremque nihil, magni explicabo odio culpa numquam. Doloremque optio alias voluptatum recusandae iure, nam reprehenderit illo in dignissimos, atque voluptates. Suscipit deleniti, maiores error earum magni iste ipsum id rem ipsam!</textarea>
           <img *ngIf="!editTextArea && isOwnAccount" src="/assets/icons/pencil-icon.svg" alt="icon" id="icon__edit"
-               (click)="editTextArea = !editTextArea">
+               (click)="editTextArea = !editTextArea"
+               (keydown.enter)="editTextArea = !editTextArea"
+               tabindex="0"
+               role="button"
+               aria-pressed="false">
         </div>
 
         <div *ngIf="isOwnAccount" class="user__new__post">
           <button class="button__publish fw700 ft20">+ Разместить объявление</button>
-          <div *ngIf="editTextArea" class="textarea__editable" (click)="editTextArea = !editTextArea">
+          <div *ngIf="editTextArea" class="textarea__editable" (click)="editTextArea = !editTextArea"
+               (keydown.enter)="editTextArea = !editTextArea"
+               tabindex="0"
+               role="button"
+               aria-pressed="false">
             <div class="finish__edit">
               <div class="finish__button">
                 <img src="/assets/icons/pencil-icon.svg" alt="" width="20" height="20">
@@ -95,10 +115,18 @@
   </div>
 
   <div class="user__posts__header">
-    <div class="posts__header" (click)="pressedPost = true" [ngClass]="pressedPost ? 'post__active' : 'post__not__active'">
+    <div class="posts__header" (click)="pressedPost = true" [ngClass]="pressedPost ? 'post__active' : 'post__not__active'"
+         (keydown.enter)="pressedPost = true"
+         tabindex="0"
+         role="button"
+         aria-pressed="false">
       <span class="ft24 fw400">Объявления</span>
     </div>
-    <div *ngIf="isOwnAccount" class="likes__header" (click)="pressedPost = false" [ngClass]="pressedPost ? '' : 'likes__active'">
+    <div *ngIf="isOwnAccount" class="likes__header" (click)="pressedPost = false" [ngClass]="pressedPost ? '' : 'likes__active'"
+         (keydown.enter)="pressedPost = false"
+         tabindex="0"
+         role="button"
+         aria-pressed="false">
       <span class="ft24 fw400">Избранное</span>
     </div>
   </div>

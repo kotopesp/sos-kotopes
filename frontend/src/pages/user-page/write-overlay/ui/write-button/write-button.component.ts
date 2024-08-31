@@ -1,6 +1,13 @@
 import {Component, Input} from '@angular/core';
 import {NgStyle} from "@angular/common";
 
+
+interface WriteButton {
+  title: string,
+  icon: string,
+  buttonColor: string
+}
+
 @Component({
   selector: 'app-write-button',
   standalone: true,
@@ -11,5 +18,5 @@ import {NgStyle} from "@angular/common";
   styleUrl: './write-button.component.scss'
 })
 export class WriteButtonComponent {
-  @Input() WriteButton: any;
+  @Input() WriteButton!: WriteButton;
 }

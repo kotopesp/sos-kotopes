@@ -35,9 +35,9 @@ export class AuthServiceOverlayComponent {
 
   onSubmit() {
 
-    if (this.formAuth.valid) {
-
-      this.authService.login(this.formAuth.value)
-    }
+    // if (this.formAuth.valid) {
+    //
+    //   this.authService.login(this.formAuth.value)
+    // }
   }
 }
