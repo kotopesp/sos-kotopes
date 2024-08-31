@@ -1,1 +1,132 @@
-<p>user-page works!</p>
+<div class="user__wrapper">
+  <div class="user__main">
+    <div class="user__about">
+      <div class="user__pfp">
+        <img [src]="profilePhoto" alt="profile image">
+        <div *ngIf="isOwnAccount" class="user__new__avatar">
+          <p class="ft128 fw400">+</p>
+          <p class="ft24 fw400">Новое фото</p>
+        </div>
+        <div class="online__user"></div>
+      </div>
+      <div class="user__info">
+        <div class="user__header">
+                    <span class="user__first_second_name ft36 fw400 lh46">Егор Ракитин
+                      </span>
+          <span class="user__online_status ft20 fw400">В сети</span>
+        </div>
+        <div class="user__subheader">
+          <span class="user__username ft24 fw400">&#64;BigBabyTape</span>
+          <span class="user__posts_count ft20 fw400">3 объявления</span>
+        </div>
+        <div *ngIf="haveRoles" class="user__role_info">
+          @if (haveRoles) {
+          <div class="user__role__button">
+          <app-role-button icon="../../assets/icons/hand-icon.svg" label="Передержка"
+                           buttonColor="var(--brown-orange-color)"
+                           infoColor="rgba(183, 115, 0, 0.1)"
+                           [active]="openInfo === 1 ? true : false"
+                           (click)="onClickFirst()"
+                           />
+          <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"
+                           buttonColor="var(--role-purple-color)"
+                           infoColor="rgba(65, 33, 107, 0.1)"
+                           [active]="openInfo === 2 ? true : false"
+                           (click)="onClickSecond()"
+                           />
+          <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
+                           buttonColor="var(--role-green-color)"
+                           infoColor="rgba(47, 89, 85, 0.1)"
+                           [active]="openInfo === 3 ? true : false"
+                           (click)="onClickThird()"
+                           />
+          </div>
+           }
+          @if (!haveRoles && isOwnAccount) {
+            <div class="add__new__role"><p class="ft40">+</p></div>
+          }
+        </div>
+        <div class="textarea__description">
+          <textarea class="user__description ft20 fw400" rows="4" cols="7" [disabled]="!editTextArea"
+                    [ngClass]="editTextArea ? 'active__textarea' : 'disabled__textarea'">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, harum sunt. Earum expedita minus repellat accusantium eaque ipsum maiores doloremque nihil, magni explicabo odio culpa numquam. Doloremque optio alias voluptatum recusandae iure, nam reprehenderit illo in dignissimos, atque voluptates. Suscipit deleniti, maiores error earum magni iste ipsum id rem ipsam!</textarea>
+          <img *ngIf="!editTextArea && isOwnAccount" src="/assets/icons/pencil-icon.svg" alt="icon" id="icon__edit"
+               (click)="editTextArea = !editTextArea">
+        </div>
+
+        <div *ngIf="isOwnAccount" class="user__new__post">
+          <button class="button__publish fw700 ft20">+ Разместить объявление</button>
+          <div *ngIf="editTextArea" class="textarea__editable" (click)="editTextArea = !editTextArea">
+            <div class="finish__edit">
+              <div class="finish__button">
+                <img src="/assets/icons/pencil-icon.svg" alt="" width="20" height="20">
+                <span class="ft20 fw400">Завершить</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="!isOwnAccount" class="user__actions">
+          <div>
+            <button class="user__button" id="write__button" (click)="writeOverlay.set(true)">
+              <svg width="24" height="23" viewBox="0 0 24 23" fill="none" xmlns="http://www.w3.org/2000/svg"
+                   id="write__icon">
+                <path
+                  d="M7.29919 19.9643L6.85279 19.7673L6.37593 19.8706L1.63829 20.8972L2.8657 17.1486L3.07555 16.5076L2.73542 15.9253L2.71169 15.8847C2.71127 15.884 2.71085 15.8832 2.71042 15.8825C0.459632 11.995 1.44491 7.15314 5.21274 4.25885L5.46945 4.06713C9.58664 1.10168 15.4871 1.3555 19.2749 4.64367C23.0778 7.9475 23.5685 13.2686 20.4737 17.0919C17.517 20.7439 12.1063 22.0035 7.56848 20.0831L7.29919 19.9643Z"
+                  stroke="#21190B" stroke-width="3"/>
+              </svg>
+              Написать
+            </button>
+          </div>
+          <div>
+            <button class="user__button" [ngClass]="likeActive ? 'active__button__like' : 'like__button'"
+                    (click)="likeActiveButton()">
+              <svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                   id="like__icon">
+                <path
+                  d="M19.4545 1.5C17.1636 1.5 15.1455 2.66667 14 4.5C12.8545 2.66667 10.8364 1.5 8.54545 1.5C4.94545 1.5 2 4.5 2 8.16667C2 14.7778 14 21.5 14 21.5C14 21.5 26 14.8333 26 8.16667C26 4.5 23.0545 1.5 19.4545 1.5Z"
+                  stroke="#21190B" stroke-width="3"/>
+              </svg>
+              {{ likeActive ? "Уже в избранном" : 'В избранное'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="user__posts__header">
+    <div class="posts__header" (click)="pressedPost = true" [ngClass]="pressedPost ? 'post__active' : 'post__not__active'">
+      <span class="ft24 fw400">Объявления</span>
+    </div>
+    <div *ngIf="isOwnAccount" class="likes__header" (click)="pressedPost = false" [ngClass]="pressedPost ? '' : 'likes__active'">
+      <span class="ft24 fw400">Избранное</span>
+    </div>
+  </div>
+  @if (pressedPost) {
+  <div class="user__posts">
+    <app-post/>
+    <app-post/>
+    <app-post/>
+    <app-post/>
+    <app-post/>
+    <app-post/>
+  </div>
+  }
+  @if (!pressedPost) {
+  <div class="user__posts">
+    <app-post/>
+    <app-post/>
+    <app-post/>
+    <app-post/>
+    <app-post/>
+    <app-post/>
+  </div>
+  }
+
+  @if (writeOverlay()) {
+  <app-write-overlay
+  [writeOverlay] = "writeOverlay"
+  />
+  }
+</div>
+

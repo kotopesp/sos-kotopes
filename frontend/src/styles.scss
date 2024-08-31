@@ -6,6 +6,7 @@
   --white-color: #FFF;
   --black-color: #000;
 
+
   // browns
   --brown-main-color: #21190B;
   --brown-light-color: #4B432A;
@@ -17,15 +18,25 @@
   --brown-dark-light-color: #352303;
   --brown-filter-color: #1C150899;
   --brown-message-color: #49310A;
+  --role-orange-color: #502B00;
   --brown-orange-color: #B77300;
+  --brown-button-hover-color: #542D0A;
+  --rust-brown-color: #34231F;
+  --brown-overlay-color: #1C1508;
+  --brown-likes-user-color: #342A16;
+  --brown-sand-color: #4B3001;
+  --brown-header-likes-color: #34250A;
+
 
   // pink
   --pink-border-color: #EABAB3;
   --pink-color-bg: #F5D3B4;
+  --pink-light-color-bg: #FFC4B7;
 
   // purple
   --purple-color-bg: #E3CFFD;
   --purple-color-messages: #221630;
+  --role-purple-color: #41216B;
 
   // yellow
   --yellow-color-bg: #F6DE8A;
@@ -36,6 +47,7 @@
   --green-active-button-bg: #467430;
   --green-hover-border: #2A5814;
   --green-hover-bg: #3B7E1C1A;
+  --role-green-color: #2F5955;
 
   // blue
   --blue-color-bg: #79B0E3;
@@ -48,6 +60,7 @@
   --red-hover-bg: #9B341D1A;
   --red-brown-color: #2B1800;
   --red-color-favorites: #BA2C21;
+  --dark-red-color: #6D1604;
 
   // orange
   --orange-active-button-bg: #916943;
@@ -60,6 +73,7 @@
   --gray-text-tag: #5D5D5D;
   --gray-filter-color: #363636;
   --light-gray-color: #D8D8D8;
+  --very-light-gray-color: #D9D9D9;
   --gray-message-color: #8A8A8A;
 }
 
@@ -94,6 +108,9 @@ a, button {
   cursor: pointer;
 }
 
+.ft128 {
+  font-size: 128px;
+}
 
 .ft48 {
   font-size: 48px;
@@ -101,6 +118,10 @@ a, button {
 
 .ft40 {
   font-size: 40px;
+}
+
+.ft36 {
+  font-size: 36px;
 }
 
 .ft20 {
