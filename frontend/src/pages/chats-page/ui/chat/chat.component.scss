@@ -1,6 +1,8 @@
 .block__chat {
-  width: 307px;
+  width: 100%;
   height: 108px;
+  cursor: pointer;
+  background: inherit;
 
   .block__avatars__message {
 
@@ -9,10 +11,33 @@
     display: flex;
     align-items: center;
 
-    .user__avatar {
-      width: 84px;
-      height: 84px;
-      border-radius: 50%;
+    .block__avatar {
+      position: relative;
+
+      .user__avatar {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+      }
+
+      .user__second__avatar {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        bottom: 0;
+        right: 0;
+      }
+
+      .user__online {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 0;
+        right: -5px;
+        background: var(--green-active-button-bg);
+      }
     }
   }
 
@@ -22,14 +47,13 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    margin-left: 20px;
-    padding-right: 20px;
     gap: 15px;
     border-bottom: #FFFFFF1A 2px solid;
 
     .block__user__info {
       display: flex;
       justify-content: space-between;
+      padding-left: 20px;
 
       .block__username {
         overflow: hidden;
@@ -39,10 +63,13 @@
     }
 
     .block__time__message {
-      color: var(--gray-message-color)
+      color: var(--gray-message-color);
+      padding-right: 10px;
     }
 
     .block__message__info {
+      padding-left: 20px;
+      padding-right: 10px;
       display: flex;
       justify-content: space-between;
 
@@ -67,3 +94,4 @@
     }
   }
 }
+
