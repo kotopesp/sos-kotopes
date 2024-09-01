@@ -1,10 +1,12 @@
-import {AfterViewChecked, Component, ElementRef, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, signal, ViewChild} from '@angular/core';
 import {AppChatTypeButtonComponent} from "../../entities/chat-type-button/app-chat-type-button.component";
 import {Button} from "../../model/button";
-import {NgForOf, NgIf} from "@angular/common";
+import {NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase} from "@angular/common";
 import {ChatComponent} from "./ui/chat/chat.component";
 import {MessageComponent} from "./ui/message/message.component";
 import {PostAnswerComponent} from "./ui/post-answer/post-answer.component";
+import {AddToChatComponent} from "./ui/add-to-chat/add-to-chat.component";
+import {ToggleActiveDirective} from "./toggle-active.directive";
 
 @Component({
   selector: 'app-chats-page',
@@ -15,13 +17,22 @@ import {PostAnswerComponent} from "./ui/post-answer/post-answer.component";
     NgIf,
     ChatComponent,
     MessageComponent,
-    PostAnswerComponent
+    PostAnswerComponent,
+    AddToChatComponent,
+    NgSwitch,
+    NgSwitchCase,
+    NgStyle,
+    ToggleActiveDirective,
+    NgClass,
   ],
   templateUrl: './chats-page.component.html',
   styleUrl: './chats-page.component.scss'
 })
 export class ChatsPageComponent implements AfterViewChecked {
   currentChat = false;
+  createChat = false;
+
+  countInArray = signal<number>(0);
   @ViewChild('scrollableContainer', { static: false }) private scrollableContainer?: ElementRef;
 
   buttons: Button[] = [
@@ -32,10 +43,6 @@ export class ChatsPageComponent implements AfterViewChecked {
     {label: "Чаты с ветеринарами", color: "#182C2A", iconName: "vets.svg"},
     {label: "Другие чаты", color: "#21190B", iconName: "other.svg"},
   ]
-
-  constructor() {
-    this.currentChat = true;
-  }
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();

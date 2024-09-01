@@ -1,0 +1,20 @@
+<div class="container__add__to__chat">
+  <div class="container__user__info">
+    <div class="avatar__info">
+      <img src="/assets/images/test-cat.png" alt="avatar" id="user__avatar">
+      <div class="online__circle"></div>
+    </div>
+    <div class="user__info">
+      <span class="ft20 fw700">Тимофей Зайнулин</span>
+      <span>тут какие-то кнопочки</span>
+    </div>
+  </div>
+  <div class="container__add__to"
+       (click)="addToArray()"
+       (keydown.enter)="addToArray()"
+       tabindex="0"
+       role="button"
+       aria-pressed="false">
+    <span class="ft36">{{ isAdded === 1 ? "–" : "+" }}</span>
+  </div>
+</div>

@@ -201,13 +201,14 @@ a, button {
 }
 
 ::-webkit-scrollbar {
-  background: none;
-  width: 3px;
-  height: 3px;
+  background: #403B334D;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #5D5D5D;
+  background: #5C564D4D;
+  border-radius: 6px;
+  width: 6px;
 }
 
 

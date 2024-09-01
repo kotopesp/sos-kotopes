@@ -4,13 +4,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   height: 100px;
+  width: 100%;
 
   .header__buttons {
     display: grid;
     grid-gap: 50px;
+    padding-right: 30px;
     align-items: center;
     grid-template-columns: repeat(6, 1fr);
-    padding-right: 7vw;
 
     .header__auth__profile {
       display: grid;
@@ -44,6 +45,13 @@
       .message__block {
 
         height: 22px;
+        position: relative;
+
+        .message__popup {
+          position: absolute;
+          top: 25px;
+          right: 10%;
+        }
 
         &:hover {
 
@@ -63,6 +71,12 @@
 
         height: 24px;
 
+        .notification__popup {
+          position: absolute;
+          top: 43px;
+          right: 5%;
+        }
+
         &:hover {
 
           .header__notification__icon {
@@ -80,6 +94,12 @@
       .profile__block {
 
         height: 50px;
+
+        .profile__popup {
+          position: absolute;
+          top: 50px;
+          right: -15%;
+        }
 
         &:hover {
 

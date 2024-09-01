@@ -3,7 +3,9 @@
   min-height: 100vh;
   height: fit-content;
   padding-top: 20px;
-  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
 
   .container {
     height: 100%;
@@ -13,7 +15,7 @@
 
       .container__sidebar {
         position: absolute;
-        left: 20px;
+        left: 0;
 
         .sidebar__chats {
           display: grid;
@@ -21,7 +23,7 @@
           justify-content: center;
 
           app-chat-type-button {
-            width: 450px;
+            width: 420px;
             position: relative;
           }
         }
@@ -43,22 +45,25 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 674px;
+            width: 672px;
+            height: 100%;
 
             #time__last__online {
               color: var(--gray-message-color)
             }
 
             .current__chat__none {
+              height: 100%;
               line-height: 31px;
               display: flex;
+              flex-direction: column;
               align-items: center;
               justify-content: center;
 
+
               .text__new__chat {
-                background: red;
                 display: flex;
-                justify-self: center;
+                text-align: center;
               }
 
               .start__new__chat {
@@ -81,7 +86,7 @@
 
 
               #block__messages {
-                width: 674px;
+                width: 672px;
                 height: 596px;
                 overflow-y: auto;
                 padding: 20px 10px;
@@ -97,11 +102,10 @@
 
 
               .block__current__message {
-                width: 674px;
+                width: 672px;
                 height: 81px;
                 border-top: 2px solid #FFFFFF1A;
                 display: flex;
-
 
 
                 .block__clip {
@@ -170,11 +174,147 @@
             height: 100%;
             border-right: #FFFFFF1A 1px solid;
 
+            .create__new__chat {
+              z-index: 1;
+              display: flex;
+              flex-direction: column;
+              width: 415px;
+              height: 100%;
+              background: var(--brown-main-color);
+              position: absolute;
+              border-top-left-radius: 30px;
+              border-bottom-left-radius: 30px;
+              border-right: 2px solid #FFFFFF1A;
+
+              #exit__button {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                cursor: pointer;
+              }
+
+              .create__chat__header {
+                background: url('/assets/images/steps-profile.svg');
+                width: 100%;
+                height: 239px;
+                gap: 30px;
+                display: flex;
+                justify-content: space-around;
+                flex-direction: column;
+
+
+                .header__title {
+                  padding-top: 30px;
+                  gap: 10px;
+                  height: 50%;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  align-items: center;
+                }
+
+                .header__buttons {
+                  display: flex;
+                  justify-content: space-around;
+                  padding-bottom: 10px;
+                }
+              }
+
+              .create__chat__main {
+                width: 100%;
+                height: 100%;
+                background: var(--brown-ads-color);
+
+                .main__searchbar {
+                  width: 100%;
+                  height: 80px;
+                  display: flex;
+                  align-items: center;
+                  padding-left: 20px;
+
+                  .searchbar {
+                    width: 328px;
+                    height: 48px;
+                    display: flex;
+                    align-items: center;
+                    padding-left: 20px;
+                    border-radius: 30px;
+                    background: #FFFFFF1A;
+                  }
+
+                  .search-input {
+                    width: 270px;
+                    height: 40px;
+                    padding-left: 20px;
+                    background: none;
+                    border: none;
+                    font-style: italic;
+                    color: #FFFFFF80;
+                    outline: none;
+                  }
+                }
+
+                .main__add__new__person {
+                  width: 100%;
+                  height: 400px;
+                  direction: rtl;
+                  overflow-y: auto;
+
+                  & > * {
+                    direction: ltr;
+                  }
+
+                  .main__block__persons {
+                    display: flex;
+                    flex-direction: column;
+                  }
+                }
+              }
+
+              .create__chat__footer {
+                width: 100%;
+                height: 138px;
+
+                .footer__footer {
+                  height: 100%;
+                  padding: 0 20px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+
+                  #footer__create__chat {
+                    width: 153px;
+                    height: 38px;
+                    border: none;
+                    border-radius: 10px;
+                    background: var(--white-color);
+                    color: var(--brown-main-color);
+
+                    &:hover {
+                      border: 1px solid var(--white-color);
+                      color: var(--white-color);
+                      background: var(--brown-main-color);
+                    }
+                  }
+                }
+              }
+            }
+
             .all__chats {
               width: 100%;
               height: calc(100% - 100px);
               padding-bottom: 20px;
               overflow-y: auto;
+
+              .active {
+                background: var(--brown-orange-color);
+
+                .block__chat {
+                  .block__time__message {
+                    color: white;
+                  }
+                }
+              }
             }
 
             .block__searchbar {
@@ -220,5 +360,4 @@
       }
     }
   }
-
 }
