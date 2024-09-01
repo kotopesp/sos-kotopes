@@ -1,9 +1,13 @@
 import {Component, Input} from "@angular/core";
+import {ToggleActiveDirective} from "../../pages/chats-page/toggle-active.directive";
 
 @Component({
   selector: 'app-chat-type-button',
   standalone: true,
   templateUrl: "app-chat-type-button.component.html",
+  imports: [
+    ToggleActiveDirective
+  ],
   styles: `
     .chat-type-icon {
       margin-right: 20px;
