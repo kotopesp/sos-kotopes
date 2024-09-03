@@ -20,9 +20,9 @@ CREATE TYPE auth_providers AS ENUM ('vk');
 CREATE TABLE IF NOT EXISTS
     external_users
 (
-    id      SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users (id),
-    external_id INTEGER,
+    id            SERIAL PRIMARY KEY,
+    user_id       INTEGER REFERENCES users (id),
+    external_id   INTEGER,
     auth_provider auth_providers
 );
 
