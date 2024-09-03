@@ -19,8 +19,6 @@ services:
     image: postgres:16.3
     container_name: postgres
     restart: always
-    #ports: \\uncomment for a debug
-    #  - "15432:5432"
     env_file:
       - .env
     environment:
