@@ -20,6 +20,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/config"
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/migrate"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -46,6 +47,11 @@ func Run(cfg *config.Config) {
 		logger.Log().Fatal(ctx, "error with connection to database: %s", err.Error())
 	}
 	defer pg.Close(ctx)
+
+	// Migrate up
+	if err := migrate.Up(cfg.DB.URL); err != nil {
+		logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
+	}
 
 	// Stores
 	userStore := user.New(pg)
