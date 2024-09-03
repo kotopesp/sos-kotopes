@@ -9,7 +9,7 @@ BUILD_FLAGS=
 PG_URL=postgres://postgres:postgres@localhost:5432/kotopes
 
 run: ### run app
-	go run cmd/main.go -db_url '$(PG_URL)' -port localhost:8080 -log_level debug -vk_client_id 52010687 -vk_client_secret M6SWkM8KmIIJA60hTVx1
+	go run cmd/main.go -db_url '$(PG_URL)' -port localhost:8080 -log_level info
 
 build: ### build app
 	go build ${BUILD_FLAGS} -o ${SERVICE_NAME} cmd/main.go
@@ -34,3 +34,4 @@ migrate-up: ### apply all migrations
 
 migrate-down: ### migration down
 	migrate -path ./internal/data -database '$(PG_URL)?sslmode=disable' down
+

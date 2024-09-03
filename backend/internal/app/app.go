@@ -2,35 +2,19 @@ package app
 
 import (
 	"context"
+	v1 "gitflic.ru/spbu-se/sos-kotopes/internal/controller/http"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/service/name"
+	"gitflic.ru/spbu-se/sos-kotopes/internal/store/entity"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
-	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
-	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
-	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
-
-	baseValidator "github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/recover"
-
-	"github.com/kotopesp/sos-kotopes/config"
-	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/service/auth"
-	"github.com/kotopesp/sos-kotopes/internal/store/user"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-
-	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
-	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
-	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
-	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
-	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
-	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+	"gitflic.ru/spbu-se/sos-kotopes/config"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/logger"
+	"gitflic.ru/spbu-se/sos-kotopes/pkg/postgres"
 )
 
 // Run creates objects via constructors.
@@ -48,36 +32,10 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Stores
-	userStore := user.New(pg)
-	commentStore := commentstore.New(pg)
-	roleStore := rolesStore.New(pg)
-	favouriteUserStore := userFavouriteStore.New(pg)
-	postStore := poststore.New(pg)
-	postFavouriteStore := postfavouritestore.New(pg)
-	animalStore := animalstore.New(pg)
-
+	entityStore := entity.New(pg)
 	// Services
-	commentService := commentservice.New(
-		commentStore,
-		postStore,
-	)
-	roleService := rolesService.New(roleStore, userStore)
-	userService := usersService.New(userStore, favouriteUserStore)
-	authService := auth.New(
-		userStore,
-		core.AuthServiceConfig{
-			JWTSecret:            cfg.JWTSecret,
-			VKClientID:           cfg.VKClientID,
-			VKClientSecret:       cfg.VKClientSecret,
-			VKCallback:           cfg.VKCallback,
-			AccessTokenLifetime:  cfg.AccessTokenLifetime,
-			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
-		},
-	)
-	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	entityService := name.New(entityStore)
 
-	// Validator
-	formValidator := validator.New(ctx, baseValidator.New())
 	// HTTP Server
 	app := fiber.New(fiber.Config{
 		CaseSensitive:            true,
@@ -87,18 +45,10 @@ func Run(cfg *config.Config) {
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	v1.NewRouter(
-		app,
-		authService,
-		commentService,
-		postService,
-		userService,
-		roleService,
-		formValidator,
-	)
+	v1.NewRouter(app, entityService, nil)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
-	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
+	err = app.Listen(cfg.HTTP.Port)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())
 	}
