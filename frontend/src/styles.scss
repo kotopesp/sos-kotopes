@@ -1,0 +1,214 @@
+/* You can add global styles to this file, and also import other style files */
+@import "fonts";
+
+:root {
+  // usually
+  --white-color: #FFF;
+  --black-color: #000;
+
+
+  // browns
+  --brown-main-color: #21190B;
+  --brown-light-color: #4B432A;
+  --brown-button-color: #352B1A;
+  --text-brown-light-color: #443416;
+  --brown-bg-color: #312611;
+  --brown-hover-color: #503E00;
+  --brown-ads-color: #2C2210;
+  --brown-dark-light-color: #352303;
+  --brown-filter-color: #1C150899;
+  --brown-message-color: #49310A;
+  --role-orange-color: #502B00;
+  --brown-orange-color: #B77300;
+  --brown-button-hover-color: #542D0A;
+  --rust-brown-color: #34231F;
+  --brown-overlay-color: #1C1508;
+  --brown-likes-user-color: #342A16;
+  --brown-sand-color: #4B3001;
+  --brown-header-likes-color: #34250A;
+
+
+  // pink
+  --pink-border-color: #EABAB3;
+  --pink-color-bg: #F5D3B4;
+  --pink-light-color-bg: #FFC4B7;
+
+  // purple
+  --purple-color-bg: #E3CFFD;
+  --purple-color-messages: #221630;
+  --role-purple-color: #41216B;
+
+  // yellow
+  --yellow-color-bg: #F6DE8A;
+  --creamy-filter-color: #9F918499;
+
+  // green
+  --green-color-bg: #86C8C0;
+  --green-active-button-bg: #467430;
+  --green-hover-border: #2A5814;
+  --green-hover-bg: #3B7E1C1A;
+  --role-green-color: #2F5955;
+
+  // blue
+  --blue-color-bg: #79B0E3;
+  --cyan-color-messages: #182C2A;
+
+  // red
+  --red-hover-color: #5A2B00;
+  --red-active-button-bg: #8A3726;
+  --red-hover-border: #6D2415;
+  --red-hover-bg: #9B341D1A;
+  --red-brown-color: #2B1800;
+  --red-color-favorites: #BA2C21;
+  --dark-red-color: #6D1604;
+
+  // orange
+  --orange-active-button-bg: #916943;
+  --orange-hover-border: #79522E;
+  --orange-hover-bg: #AC75411A;
+  --russet-filter-color: #76553699;
+
+  // gray
+  --gray-color-button: #4E4E4E;
+  --gray-text-tag: #5D5D5D;
+  --gray-filter-color: #363636;
+  --light-gray-color: #D8D8D8;
+  --very-light-gray-color: #D9D9D9;
+  --gray-message-color: #8A8A8A;
+}
+
+
+*,
+*:before,
+*:after {
+  color: var(--white-color);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+}
+
+body {
+  opacity: 0;
+  animation: ani 2.5s forwards;
+
+  @keyframes ani {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  font-family: "PT Sans Caption Regular", sans-serif;
+}
+
+a, button {
+  cursor: pointer;
+}
+
+.ft128 {
+  font-size: 128px;
+}
+
+.ft48 {
+  font-size: 48px;
+}
+
+.ft40 {
+  font-size: 40px;
+}
+
+.ft36 {
+  font-size: 36px;
+}
+
+.ft20 {
+  font-size: 20px;
+}
+
+.ft24 {
+  font-size: 24px;
+}
+
+.ft18 {
+  font-size: 18px;
+}
+
+.ft16 {
+  font-size: 16px;
+}
+
+.roboto {
+  font-family: "Roboto Slab", sans-serif;
+}
+
+.ptbold {
+  font-family: "PT Sans Caption Bold", sans-serif;
+}
+
+.fw400 {
+  font-weight: 400;
+}
+
+.fw600 {
+  font-weight: 600;
+}
+
+.fw700 {
+  font-weight: 700;
+}
+
+.lh26 {
+  line-height: 26px;
+}
+
+.lh52 {
+  line-height: 52px;
+}
+
+.yellow-color {
+  background: var(--yellow-color-bg);
+  color: var(--yellow-color-bg)
+}
+
+.pink-color {
+  background: var(--pink-color-bg);
+  color: var(--pink-color-bg)
+}
+
+.purple-color {
+  background: var(--purple-color-bg);
+  color: var(--purple-color-bg)
+}
+
+.green-color {
+  background: var(--green-color-bg);
+  color: var(--green-color-bg)
+}
+
+.blue-color {
+  background: var(--blue-color-bg);
+  color: var(--blue-color-bg)
+}
+
+.user_tag {
+  color: var(--gray-text-tag);
+  font-size: 20px;
+  font-weight: 400;
+  font-style: italic;
+}
+
+::-webkit-scrollbar {
+  background: #403B334D;
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5C564D4D;
+  border-radius: 6px;
+  width: 6px;
+}
+
+

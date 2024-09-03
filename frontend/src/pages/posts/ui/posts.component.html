@@ -1,0 +1,33 @@
+<div class="main__container">
+  <app-filters-bar/>
+  <div class="container__page__posts">
+    <div class="container__upper__menu">
+
+      <div class="container__top-buttons">
+        <div class="posts__search__bar">
+          <img src="../../assets/icons/lens-icon.svg" alt="icon">
+          <span><input class="search-input fw400 ft20 ptitalic" type="text" placeholder="Поиск по объявлениям"></span>
+        </div>
+        <button class="button__publish fw700 ft20">+ Разместить объявление</button>
+      </div>
+
+      <div class="container__info__posts-displaying">
+        <div class="block__displaying-icons">
+          <img src="../../assets/icons/grid-white-icon.svg" alt="icon">
+          <img src="../../assets/icons/list-gray-icon.svg" alt="icon">
+        </div>
+        <p class="title__search-result fw700 ft24 ptbold">Результаты по запросу "Хвост"</p>
+      </div>
+   
+    </div>
+    <div class="container__posts">
+      <div class="posts">
+        <app-post/>
+        <app-post/>
+        <app-post/>
+        <app-post/>
+        <app-post/>
+      </div>
+    </div>
+  </div>
+</div>

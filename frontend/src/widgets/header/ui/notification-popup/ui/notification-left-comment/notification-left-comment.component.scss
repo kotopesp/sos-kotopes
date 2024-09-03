@@ -1,0 +1,37 @@
+@import "../notification-styles";
+
+.notification__left-comment {
+  height: 155px;
+  @include notification__block;
+
+  .block__notification__info {
+    display: flex;
+
+    .images__notification {
+      @include block__images;
+
+      .main__image {
+        @include main__image(2);
+      }
+
+      .second__image {
+        @include second__image;
+      }
+    }
+
+    .block__notification__text {
+
+      .text__notification {
+        @include notification__hidden__text(4);
+      }
+
+      .block__notification__date {
+        padding-top: 10px;
+        .notification__date {
+          @include notification__date;
+        }
+      }
+    }
+  }
+}
+
