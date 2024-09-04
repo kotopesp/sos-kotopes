@@ -22,22 +22,27 @@ export class AuthServiceOverlayComponent {
   isPasswordVisible: WritableSignal<boolean> = signal<boolean>(false);
 
   formAuth = new FormGroup({
-    username: new FormControl(null, Validators.required),
+    email_or_username: new FormControl(null, Validators.required),
     password: new FormControl(null, Validators.required)
   })
 
-  authService = inject(AuthService)
-
-  constructor() {
+  constructor(private auth: AuthService) {
     this.isAuthOverlay = signal<boolean>(false);
     this.isRegisterOverlay = signal<boolean>(false);
   }
 
   onSubmit() {
-
-    // if (this.formAuth.valid) {
-    //
-    //   this.authService.login(this.formAuth.value)
-    // }
+    this.formAuth.disable()
+    this.auth.login(this.formAuth.value).subscribe(
+      {
+        next: () => {
+          console.log("login success");
+        },
+        error: (error) => {
+          console.warn(error);
+          this.formAuth.enable()
+        }
+      }
+    )
   }
 }

@@ -1,6 +1,6 @@
 ARG NODE_VERSION=22.5
 ARG NGINX_VERSION=1.17.1
-ARG NODE_BASE_IMAGE=alpine 
+ARG NODE_BASE_IMAGE=alpine
 
 FROM node:${NODE_VERSION}-${NODE_BASE_IMAGE} as build
 
@@ -8,7 +8,7 @@ WORKDIR /usr/local/app
 
 COPY ./frontend /usr/local/app
 
-RUN npm install 
+RUN npm install
 
 RUN npm run build
 
