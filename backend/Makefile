@@ -34,3 +34,7 @@ migrate-up: ### apply all migrations
 
 migrate-down: ### migration down
 	migrate -path ./internal/data -database '$(PG_URL)?sslmode=disable' down
+
+swagger: ### generate swagger docs
+	swag fmt
+	swag init -g cmd/main.go

@@ -1,0 +1,1357 @@
+basePath: /api/v1
+definitions:
+  comment.Comment:
+    properties:
+      content:
+        example: Hello, world!
+        type: string
+      created_at:
+        example: "2021-09-01T12:00:00Z"
+        type: string
+      id:
+        example: 3
+        type: integer
+      is_deleted:
+        example: false
+        type: boolean
+      parent_id:
+        example: 1
+        type: integer
+      reply_id:
+        example: 3
+        type: integer
+      user:
+        $ref: '#/definitions/comment.User'
+    required:
+    - content
+    - created_at
+    - id
+    - is_deleted
+    - user
+    type: object
+  comment.Create:
+    properties:
+      content:
+        example: Hello, world!
+        type: string
+      parent_id:
+        example: 1
+        type: integer
+      reply_id:
+        example: 3
+        type: integer
+    required:
+    - content
+    type: object
+  comment.GetAllCommentsResponse:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/pagination.Pagination'
+      status:
+        $ref: '#/definitions/model.status'
+    type: object
+  comment.Update:
+    properties:
+      content:
+        example: Hello, world!
+        type: string
+    required:
+    - content
+    type: object
+  comment.User:
+    properties:
+      id:
+        example: 1
+        type: integer
+      username:
+        example: Jack_Vorobey123
+        type: string
+    type: object
+  model.Response:
+    properties:
+      data: {}
+      status:
+        $ref: '#/definitions/model.status'
+    type: object
+  model.status:
+    enum:
+    - success
+    - error
+    type: string
+    x-enum-varnames:
+    - success
+    - err
+  pagination.Pagination:
+    properties:
+      current_page:
+        example: 1
+        type: integer
+      per_page:
+        example: 1
+        type: integer
+      total:
+        example: 10
+        type: integer
+      total_pages:
+        example: 10
+        type: integer
+    type: object
+  post.PostResponse:
+    properties:
+      age:
+        type: integer
+      animal_type:
+        type: string
+      author_username:
+        type: string
+      color:
+        type: string
+      comments:
+        type: integer
+      content:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      gender:
+        type: string
+      is_favourite:
+        type: boolean
+      photo:
+        items:
+          type: integer
+        type: array
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+  post.Response:
+    properties:
+      meta:
+        $ref: '#/definitions/pagination.Pagination'
+      posts:
+        items:
+          $ref: '#/definitions/post.PostResponse'
+        type: array
+    type: object
+  role.DeleteRole:
+    properties:
+      name:
+        enum:
+        - keeper
+        - seeker
+        - vet
+        type: string
+    required:
+    - name
+    type: object
+  role.GivenRole:
+    properties:
+      description:
+        maxLength: 512
+        type: string
+      name:
+        enum:
+        - keeper
+        - seeker
+        - vet
+        type: string
+    required:
+    - name
+    type: object
+  role.Role:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  role.UpdateRole:
+    properties:
+      description:
+        maxLength: 512
+        type: string
+      name:
+        enum:
+        - keeper
+        - seeker
+        - vet
+        type: string
+    required:
+    - name
+    type: object
+  user.Login:
+    properties:
+      password:
+        example: Qwerty123
+        maxLength: 72
+        minLength: 8
+        type: string
+      username:
+        example: JackVorobey123
+        maxLength: 50
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  user.ResponseUser:
+    properties:
+      description:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: integer
+      lastname:
+        type: string
+      photo:
+        items:
+          type: integer
+        type: array
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is the API for the SOS Kotopes project. It provides endpoints
+    for managing the database of animals in need of help.
+  title: SOS Kotopes API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login through username and password
+      operationId: login-basic
+      parameters:
+      - description: User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/user.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Login through username and password
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Signup through username and password
+      operationId: signup
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Firstname
+        in: formData
+        name: firstname
+        type: string
+      - description: Lastname
+        in: formData
+        name: lastname
+        type: string
+      - description: Description
+        in: formData
+        name: description
+        type: string
+      - description: Photo
+        in: formData
+        name: photo
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Signup through username and password
+      tags:
+      - auth
+  /auth/token/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh token
+      operationId: refresh-token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthCookie: []
+      summary: Refresh token
+      tags:
+      - auth
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: Get all posts
+      operationId: get-all-posts
+      parameters:
+      - description: Limit
+        in: query
+        minimum: 1
+        name: limit
+        required: true
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 0
+        name: offset
+        required: true
+        type: integer
+      - description: Status
+        in: query
+        name: status
+        type: string
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Gender
+        in: query
+        name: gender
+        type: string
+      - description: Color
+        in: query
+        name: color
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/post.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get all posts
+      tags:
+      - post
+    post:
+      consumes:
+      - application/json
+      description: Create a post
+      operationId: create-post
+      parameters:
+      - description: Title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Content
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Animal type
+        in: formData
+        name: animal_type
+        required: true
+        type: string
+      - description: Photo
+        in: formData
+        name: photo
+        required: true
+        type: file
+      - description: Age
+        in: formData
+        name: age
+        required: true
+        type: integer
+      - description: Color
+        in: formData
+        name: color
+        required: true
+        type: string
+      - description: Gender
+        in: formData
+        name: gender
+        required: true
+        type: string
+      - description: Description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Status
+        in: formData
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/post.PostResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Create a post
+      tags:
+      - post
+  /posts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a post
+      operationId: delete-post
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete a post
+      tags:
+      - post
+    get:
+      consumes:
+      - application/json
+      description: Get post by ID
+      operationId: get-post-by-id
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/post.Response'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get post by ID
+      tags:
+      - post
+    patch:
+      consumes:
+      - application/json
+      description: Update a post
+      operationId: update-post
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      - description: Title
+        in: formData
+        name: title
+        type: string
+      - description: Content
+        in: formData
+        name: content
+        type: string
+      - description: Animal type
+        in: formData
+        name: animal_type
+        type: string
+      - description: Photo
+        in: formData
+        name: photo
+        type: file
+      - description: Age
+        in: formData
+        name: age
+        type: integer
+      - description: Color
+        in: formData
+        name: color
+        type: string
+      - description: Gender
+        in: formData
+        name: gender
+        type: string
+      - description: Description
+        in: formData
+        name: description
+        type: string
+      - description: Status
+        in: formData
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/post.PostResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Update a post
+      tags:
+      - post
+  /posts/{id}/favourites:
+    delete:
+      consumes:
+      - application/json
+      description: Delete post from favourites
+      operationId: delete-favourite-post
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete post from favourites
+      tags:
+      - post
+    post:
+      consumes:
+      - application/json
+      description: Add post to favourites
+      operationId: add-favourite-post
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Add post to favourites
+      tags:
+      - post
+  /posts/{post_id}/comments:
+    get:
+      consumes:
+      - application/json
+      description: Get all comments for a post
+      operationId: get-all-comments
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: post_id
+        required: true
+        type: integer
+      - description: Limit
+        in: query
+        minimum: 1
+        name: limit
+        required: true
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 0
+        name: offset
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/comment.GetAllCommentsResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/comment.Comment'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get all comments
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      description: Create a comment for a post
+      operationId: create-comment
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: post_id
+        required: true
+        type: integer
+      - description: Comment
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/comment.Create'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/comment.Comment'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Create a comment
+      tags:
+      - comments
+  /posts/{post_id}/comments/{comment_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a comment for a post
+      operationId: delete-comment
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: post_id
+        required: true
+        type: integer
+      - description: Comment ID
+        in: path
+        minimum: 1
+        name: comment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete a comment
+      tags:
+      - comments
+    patch:
+      consumes:
+      - application/json
+      description: Update a comment for a post
+      operationId: update-comment
+      parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: post_id
+        required: true
+        type: integer
+      - description: Comment ID
+        in: path
+        minimum: 1
+        name: comment_id
+        required: true
+        type: integer
+      - description: Comment
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/comment.Update'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/comment.Comment'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Update a comment
+      tags:
+      - comments
+  /posts/favourites:
+    get:
+      consumes:
+      - application/json
+      description: Get favourite posts of user by id
+      operationId: get-favourite-posts-user-by-id
+      parameters:
+      - description: Limit
+        in: query
+        minimum: 1
+        name: limit
+        required: true
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 0
+        name: offset
+        required: true
+        type: integer
+      - description: Status
+        in: query
+        name: status
+        type: string
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Gender
+        in: query
+        name: gender
+        type: string
+      - description: Color
+        in: query
+        name: color
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/post.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Get favourite posts of user by id
+      tags:
+      - post
+  /user/{id}/posts:
+    get:
+      consumes:
+      - application/json
+      description: Get posts by user ID
+      operationId: get-posts-user-by-id
+      parameters:
+      - description: User ID
+        in: path
+        minimum: 1
+        name: id
+        required: true
+        type: integer
+      - description: Limit
+        in: query
+        minimum: 1
+        name: limit
+        required: true
+        type: integer
+      - description: Offset
+        in: query
+        minimum: 0
+        name: offset
+        required: true
+        type: integer
+      - description: Status
+        in: query
+        name: status
+        type: string
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Gender
+        in: query
+        name: gender
+        type: string
+      - description: Color
+        in: query
+        name: color
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/post.Response'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get posts by user ID
+      tags:
+      - post
+  /users:
+    patch:
+      consumes:
+      - application/json
+      description: Update user
+      operationId: update-user
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        type: string
+      - description: First name
+        in: formData
+        name: firstname
+        type: string
+      - description: Last name
+        in: formData
+        name: lastname
+        type: string
+      - description: Description
+        in: formData
+        name: description
+        type: string
+      - description: Photo
+        in: formData
+        name: photo
+        type: file
+      - description: Password
+        in: formData
+        name: password
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.ResponseUser'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Update user
+      tags:
+      - user
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get user by id
+      operationId: get-user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.ResponseUser'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Get user by id
+      tags:
+      - user
+  /users/{id}/roles:
+    get:
+      consumes:
+      - application/json
+      description: Get user roles
+      operationId: get-user-roles
+      parameters:
+      - description: User ID
+        in: path
+        name: request
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/role.Role'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get user roles
+      tags:
+      - role
+  /users/roles:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user role
+      operationId: delete-user-role
+      parameters:
+      - description: Role
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/role.DeleteRole'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete user role
+      tags:
+      - role
+    patch:
+      consumes:
+      - application/json
+      description: Update user roles
+      operationId: update-user-roles
+      parameters:
+      - description: Role
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/role.UpdateRole'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/role.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Update user roles
+      tags:
+      - role
+    post:
+      consumes:
+      - application/json
+      description: Give role to user
+      operationId: give-role-to-user
+      parameters:
+      - description: Role
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/role.GivenRole'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/role.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Give role to user
+      tags:
+      - role
+securityDefinitions:
+  ApiKeyAuthBasic:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

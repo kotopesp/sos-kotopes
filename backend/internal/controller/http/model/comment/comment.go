@@ -1,24 +1,31 @@
 package comment
 
 import (
+	"time"
+
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
-	"time"
 )
 
 type Comment struct {
-	ID        int       `json:"id"`
-	ParentID  *int      `json:"parent_id" form:"parent_id"`
-	ReplyID   *int      `json:"reply_id" form:"reply_id"`
-	User      User      `json:"user"`
-	Content   string    `json:"content" form:"content" validate:"required"`
-	IsDeleted bool      `json:"is_deleted"`
-	CreatedAt time.Time `json:"updated_at"`
+	ID        int       `json:"id" example:"3" validate:"required"`
+	ParentID  *int      `json:"parent_id" form:"parent_id" example:"1"`
+	ReplyID   *int      `json:"reply_id" form:"reply_id" example:"3"`
+	User      User      `json:"user" validate:"required"`
+	Content   string    `json:"content" form:"content" validate:"required" example:"Hello, world!"`
+	IsDeleted bool      `json:"is_deleted" example:"false" validate:"required"`
+	CreatedAt time.Time `json:"created_at" example:"2021-09-01T12:00:00Z" validate:"required"`
+}
+
+type Create struct {
+	Content  string `json:"content" form:"content" validate:"required" example:"Hello, world!" minlength:"1"`
+	ParentID *int   `json:"parent_id" form:"parent_id" example:"1" min:"1"`
+	ReplyID  *int   `json:"reply_id" form:"reply_id" example:"3" min:"1"`
 }
 
 type User struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
+	ID       int    `json:"id" example:"1"`
+	Username string `json:"username" example:"Jack_Vorobey123"`
 }
 
 type GetAllCommentsResponse struct {
@@ -27,7 +34,7 @@ type GetAllCommentsResponse struct {
 }
 
 type Update struct {
-	Content string `json:"content" form:"content" validate:"required"`
+	Content string `json:"content" form:"content" validate:"required" minlength:"1" example:"Hello, world!"`
 }
 
 type GetAllCommentsParams struct {
