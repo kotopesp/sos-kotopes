@@ -15,7 +15,7 @@ import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+	userModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
@@ -49,7 +49,7 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 //	@Failure		500		{object}	model.Response
 //	@Router			/auth/login [post]
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
-	var user user.Login
+	var user userModel.Login
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &user)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
@@ -118,25 +118,25 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 //	@Failure		500			{object}	model.Response
 //	@Router			/auth/signup [post]
 func (r *Router) signup(ctx *fiber.Ctx) error {
-	var apiUser user.User
-	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
+	var user userModel.User
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &user)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
 
 	photo, err := ctx.FormFile("photo")
 	if err != nil {
-		apiUser.Photo = nil
+		user.Photo = nil
 	} else {
 		photoBytes, err := getPhotoBytes(photo)
 		if err != nil {
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
-		apiUser.Photo = photoBytes
+		user.Photo = photoBytes
 	}
 
-	coreUser := apiUser.ToCoreUser()
+	coreUser := user.ToCoreUser()
 
 	err = r.authService.SignupBasic(ctx.UserContext(), coreUser)
 	if err == nil {
