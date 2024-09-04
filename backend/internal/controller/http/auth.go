@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 
 	"github.com/golang-jwt/jwt/v5"
+	refreshsession "github.com/kotopesp/sos-kotopes/internal/controller/http/model/refresh_session"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 
@@ -33,17 +34,6 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 	})
 }
 
-func (r *Router) refreshTokenMiddleware() fiber.Handler {
-	return jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{
-			JWTAlg: jwtware.HS256,
-			Key:    r.authService.GetJWTSecret(),
-		},
-		ErrorHandler: authErrorHandler,
-		TokenLookup:  "cookie:refresh_token",
-	})
-}
-
 // loginBasic Login through username and password
 //
 //	@Summary		Login through username and password
@@ -59,15 +49,24 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 //	@Failure		500		{object}	model.Response
 //	@Router			/auth/login [post]
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
-	var apiUser user.Login
-	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
+	var user user.Login
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &user)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
 
-	coreUser := apiUser.ToCoreUser()
+	refreshSession := refreshsession.RefreshSession{Fingerprint: user.Fingerprint}
 
-	accessToken, refreshToken, err := r.authService.LoginBasic(ctx.Context(), coreUser)
+	coreRefreshSession := refreshSession.ToCoreRefreshSession(nil)
+
+	coreUser := user.ToCoreUser()
+
+	accessToken, refreshToken, err := r.authService.LoginBasic(
+		ctx.UserContext(),
+		coreUser,
+		coreRefreshSession,
+	)
+
 	if err != nil {
 		if errors.Is(err, core.ErrInvalidCredentials) {
 			logger.Log().Info(ctx.UserContext(), err.Error())
@@ -183,17 +182,26 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 //	@Security		ApiKeyAuthCookie
 //	@Router			/auth/token/refresh [post]
 func (r *Router) refresh(ctx *fiber.Ctx) error {
-	id, err := getIDFromToken(ctx)
-	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(model.ErrInvalidTokenID.Error()))
+	var refreshSession refreshsession.RefreshSession
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &refreshSession)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
 	}
 
-	accessToken, err := r.authService.Refresh(ctx.UserContext(), id)
+	oldRefreshToken := ctx.Cookies("refresh_token")
+
+	coreRefreshSession := refreshSession.ToCoreRefreshSession(&oldRefreshToken)
+
+	accessToken, freshRefreshToken, err := r.authService.Refresh(ctx.UserContext(), coreRefreshSession)
 	if err != nil {
+		if errors.Is(err, core.ErrUnauthorized) {
+			logger.Log().Info(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
+	setRefreshTokenCookie(ctx, *freshRefreshToken)
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(accessToken))
 }

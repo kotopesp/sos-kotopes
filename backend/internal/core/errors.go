@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -21,4 +22,7 @@ var (
 
 	// favourite errors
 	ErrPostAlreadyInFavourites = errors.New("post already added to favourites")
+
+	// auth errors
+	ErrUnauthorized = errors.New("unauthorized")
 )

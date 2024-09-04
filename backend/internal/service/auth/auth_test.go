@@ -4,12 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/core/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -46,9 +49,14 @@ func validateToken(tokenString string) (id int, username *string, err error) {
 
 func TestLoginBasic(t *testing.T) {
 	mockUserStore := mocks.NewUserStore(t)
+	mockRefreshSessionStore := mocks.NewRefreshSessionStore(t)
 	ctx := context.Background()
 
-	authService := New(mockUserStore, core.AuthServiceConfig{
+	var (
+		emptyRefreshSession = core.RefreshSession{}
+	)
+
+	authService := New(mockUserStore, mockRefreshSessionStore, core.AuthServiceConfig{
 		JWTSecret:            secret,
 		AccessTokenLifetime:  2,
 		RefreshTokenLifetime: 43800,
@@ -99,18 +107,17 @@ func TestLoginBasic(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockUserStore.On("GetUserByUsername", ctx, tt.argUser.Username).Return(tt.mockRetUser, tt.mockRetError)
+			mockUserStore.On("GetUserByUsername", ctx, tt.argUser.Username).Return(tt.mockRetUser, tt.mockRetError).Once()
+			if tt.wantErr == nil {
+				mockRefreshSessionStore.On("CreateRefreshSession", ctx, mock.Anything).Return(nil).Once()
+			}
 
-			accessToken, refreshToken, err := authService.LoginBasic(ctx, tt.argUser)
+			accessToken, _, err := authService.LoginBasic(ctx, tt.argUser, emptyRefreshSession)
 			assert.ErrorIs(t, err, tt.wantErr)
 			if err == nil {
 				id, username, err := validateToken(*accessToken)
 				assert.ErrorIs(t, err, nil)
 				assert.Equal(t, tt.mockRetUser.Username, *username)
-				assert.Equal(t, tt.mockRetUser.ID, id)
-
-				id, _, err = validateToken(*refreshToken)
-				assert.ErrorIs(t, err, nil)
 				assert.Equal(t, tt.mockRetUser.ID, id)
 			}
 		})
@@ -119,9 +126,10 @@ func TestLoginBasic(t *testing.T) {
 
 func TestSignupBasic(t *testing.T) {
 	mockUserStore := mocks.NewUserStore(t)
+	mockRefreshSessionStore := mocks.NewRefreshSessionStore(t)
 	ctx := context.Background()
 
-	authService := New(mockUserStore, core.AuthServiceConfig{
+	authService := New(mockUserStore, mockRefreshSessionStore, core.AuthServiceConfig{
 		JWTSecret:            secret,
 		AccessTokenLifetime:  2,
 		RefreshTokenLifetime: 43800,
@@ -163,11 +171,18 @@ func TestSignupBasic(t *testing.T) {
 	}
 }
 
+// TODO: provide more test cases
 func TestRefresh(t *testing.T) {
 	mockUserStore := mocks.NewUserStore(t)
+	mockRefreshSessionStore := mocks.NewRefreshSessionStore(t)
 	ctx := context.Background()
 
-	authService := New(mockUserStore, core.AuthServiceConfig{
+	var (
+		fingerprint        = "fingerprint"
+		fingerprintHash, _ = bcrypt.GenerateFromPassword([]byte(fingerprint), 12)
+	)
+
+	authService := New(mockUserStore, mockRefreshSessionStore, core.AuthServiceConfig{
 		JWTSecret:            secret,
 		AccessTokenLifetime:  2,
 		RefreshTokenLifetime: 43800,
@@ -177,25 +192,24 @@ func TestRefresh(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		id           int
+		userID       int
 		mockRetUser  core.User
 		mockRetError error
 		wantErr      error
 	}{
 		{
-			name: "success",
-			id:   1,
+			name:   "success",
+			userID: 1,
 			mockRetUser: core.User{
 				ID:           1,
 				Username:     "Rondrean",
 				PasswordHash: "$2a$12$u3U2peGqPmD4yk0bJ0h5VOU1woza0F9uauPfAgHcU5gI/NYflKvtm",
 			},
-			mockRetError: nil,
-			wantErr:      nil,
+			wantErr: nil,
 		},
 		{
 			name:         "invalid id",
-			id:           -1,
+			userID:       -1,
 			mockRetError: errInvalidID,
 			wantErr:      errInvalidID,
 		},
@@ -203,9 +217,20 @@ func TestRefresh(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockUserStore.On("GetUserByID", ctx, tt.id).Return(tt.mockRetUser, tt.mockRetError).Once()
+			mockUserStore.On("GetUserByID", ctx, tt.userID).Return(tt.mockRetUser, tt.mockRetError).Once()
+			mockRefreshSessionStore.On("GetRefreshSessionByToken", ctx, mock.Anything).Return(core.RefreshSession{
+				UserID:          tt.userID,
+				FingerprintHash: string(fingerprintHash),
+				ExpiresAt:       time.Now().Add(2 * time.Minute),
+			}, nil).Once()
+			if tt.wantErr == nil {
+				mockRefreshSessionStore.On("UpdateRefreshSession", ctx, mock.Anything, mock.Anything).Return(nil).Once()
+			}
 
-			accessToken, err := authService.Refresh(ctx, tt.id)
+			accessToken, _, err := authService.Refresh(ctx, core.RefreshSession{
+				UserID:          tt.userID,
+				FingerprintHash: fingerprint,
+			})
 			assert.ErrorIs(t, err, tt.wantErr)
 			if err == nil {
 				id, username, err := validateToken(*accessToken)

@@ -6,7 +6,7 @@ BUILD_FLAGS=
 .PHONY: run, build, lint, test, coverage, migrate-new, migrate-up, migrate-down
 
 # TODO define your envs, switch log_level to `debug` during developing
-PG_URL=postgres://postgres:postgres@localhost:5432/kotopes
+PG_URL=postgres://postgres:postgres@localhost:5432/kotopes1
 
 run: ### run app
 	go run cmd/main.go -db_url '$(PG_URL)' -port localhost:8080 -log_level debug -vk_client_id 52010687 -vk_client_secret M6SWkM8KmIIJA60hTVx1
@@ -24,7 +24,7 @@ coverage: ### generate coverage report
 	go test ${TEST_FLAGS} -coverprofile=coverage.out ./...
 	go tool cover -html="coverage.out"
 
-MIGRATION_NAME=initial
+MIGRATION_NAME=add_refresh_token_table
 
 migrate-new: ### create a new migration
 	migrate create -ext sql -dir ./internal/data -seq ${MIGRATION_NAME}
