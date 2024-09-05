@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"golang.org/x/oauth2"
+	"gorm.io/gorm"
 )
 
 type (
@@ -27,18 +28,24 @@ type (
 	}
 
 	RefreshSession struct {
-		ID              int       `gorm:"column:id"`
-		UserID          int       `gorm:"column:user_id"`
-		RefreshToken    string    `gorm:"column:refresh_token"`
-		FingerprintHash string    `gorm:"column:fingerprint_hash"`
-		ExpiresAt       time.Time `gorm:"column:expires_at"`
+		ID           int       `gorm:"column:id"`
+		UserID       int       `gorm:"column:user_id"`
+		RefreshToken string    `gorm:"column:refresh_token"`
+		Fingerprint  string    `gorm:"column:fingerprint"`
+		ExpiresAt    time.Time `gorm:"column:expires_at"`
 	}
 
 	RefreshSessionStore interface {
-		UpdateRefreshSession(ctx context.Context, oldSessionID int, rs RefreshSession) error
-		CreateRefreshSession(ctx context.Context, rs RefreshSession) error
+		UpdateRefreshSession(
+			ctx context.Context,
+			param UpdateRefreshSessionParam,
+			refreshSession RefreshSession,
+		) error
+		CountSessionsAndDelete(ctx context.Context, userID int) error
 		GetRefreshSessionByToken(ctx context.Context, token string) (data RefreshSession, err error)
 	}
+
+	UpdateRefreshSessionParam func(*gorm.DB) error
 )
 
 const (

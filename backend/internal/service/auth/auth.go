@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-
+	refreshsession "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,9 +16,11 @@ const (
 	bcryptCost     = 12
 )
 
-var authProvidersPasswordPlugs = map[string]string{
-	vkAuthProvider: "vk_password",
-}
+var (
+	authProvidersPasswordPlugs = map[string]string{
+		vkAuthProvider: "vk_password",
+	}
+)
 
 type service struct {
 	userStore           core.UserStore
@@ -44,10 +46,10 @@ func (s *service) GetJWTSecret() []byte {
 }
 
 func (s *service) getRefreshTokenExpiresAt() time.Time {
-	return time.Now().Add(time.Hour * time.Duration(s.authServiceConfig.RefreshTokenLifetime))
+	return time.Now().Add(time.Minute * time.Duration(s.authServiceConfig.RefreshTokenLifetime))
 }
 
-func setUserData(session *core.RefreshSession, token string, id int, expires time.Time) {
+func setRefreshSessionData(session *core.RefreshSession, token string, id int, expires time.Time) {
 	session.RefreshToken = token
 	session.UserID = id
 	session.ExpiresAt = expires
@@ -55,7 +57,7 @@ func setUserData(session *core.RefreshSession, token string, id int, expires tim
 
 // LoginBasic Login through username and password
 func (s *service) LoginBasic(ctx context.Context, user core.User, refreshSession core.RefreshSession) (accessToken, refreshToken *string, err error) {
-	dbUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
+	coreUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
 		if errors.Is(err, core.ErrNoSuchUser) {
 			return nil, nil, core.ErrInvalidCredentials
@@ -63,7 +65,7 @@ func (s *service) LoginBasic(ctx context.Context, user core.User, refreshSession
 		return nil, nil, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(dbUser.PasswordHash), []byte(user.PasswordHash))
+	err = bcrypt.CompareHashAndPassword([]byte(coreUser.PasswordHash), []byte(user.PasswordHash))
 	if err != nil {
 		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 			return nil, nil, core.ErrInvalidCredentials
@@ -71,20 +73,23 @@ func (s *service) LoginBasic(ctx context.Context, user core.User, refreshSession
 		return nil, nil, err
 	}
 
-	at, err := s.generateAccessToken(dbUser.ID, dbUser.Username)
+	at, err := s.generateAccessToken(coreUser.ID, coreUser.Username)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	setUserData(&refreshSession, s.generateRefreshToken(), dbUser.ID, s.getRefreshTokenExpiresAt())
+	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), coreUser.ID, s.getRefreshTokenExpiresAt())
 
-	fingerprintHash, err := bcrypt.GenerateFromPassword([]byte(refreshSession.FingerprintHash), bcryptCost)
+	err = s.refreshSessionStore.CountSessionsAndDelete(ctx, coreUser.ID)
 	if err != nil {
 		return nil, nil, err
 	}
-	refreshSession.FingerprintHash = string(fingerprintHash)
 
-	err = s.refreshSessionStore.CreateRefreshSession(ctx, refreshSession)
+	err = s.refreshSessionStore.UpdateRefreshSession(
+		ctx,
+		refreshsession.ByFingerprint(refreshSession.Fingerprint),
+		refreshSession,
+	)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -177,13 +182,12 @@ func (s *service) signupVK(ctx context.Context, user core.User, externalUserID i
 
 // Refresh Getting new accessToken, when another one expires; need to have refreshToken in cookie
 func (s *service) Refresh(ctx context.Context, rs core.RefreshSession) (accessToken, refreshToken *string, err error) {
-	// check if refresh token is valid
-	session, err := s.refreshSessionStore.GetRefreshSessionByToken(ctx, rs.RefreshToken)
+	dbSession, err := s.refreshSessionStore.GetRefreshSessionByToken(ctx, rs.RefreshToken)
 	if err != nil {
 		return nil, nil, core.ErrUnauthorized
 	}
 
-	user, err := s.userStore.GetUserByID(ctx, session.UserID)
+	user, err := s.userStore.GetUserByID(ctx, dbSession.UserID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -193,21 +197,17 @@ func (s *service) Refresh(ctx context.Context, rs core.RefreshSession) (accessTo
 		return nil, nil, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(session.FingerprintHash), []byte(rs.FingerprintHash))
-	if err != nil {
-		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
-			return nil, nil, core.ErrUnauthorized
-		}
-		return nil, nil, err
-	}
-
-	if session.ExpiresAt.Before(time.Now()) {
+	if rs.Fingerprint != dbSession.Fingerprint || dbSession.ExpiresAt.Before(time.Now()) {
 		return nil, nil, core.ErrUnauthorized
 	}
 
-	setUserData(&rs, rs.RefreshToken, rs.UserID, s.getRefreshTokenExpiresAt())
+	setRefreshSessionData(&rs, s.generateRefreshToken(), dbSession.UserID, s.getRefreshTokenExpiresAt())
 
-	err = s.refreshSessionStore.UpdateRefreshSession(ctx, session.ID, rs)
+	err = s.refreshSessionStore.UpdateRefreshSession(
+		ctx,
+		refreshsession.ByID(dbSession.ID),
+		rs,
+	)
 	if err != nil {
 		return nil, nil, err
 	}

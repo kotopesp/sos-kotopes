@@ -24,5 +24,6 @@ var (
 	ErrPostAlreadyInFavourites = errors.New("post already added to favourites")
 
 	// auth errors
-	ErrUnauthorized = errors.New("unauthorized")
+	ErrUnauthorized                      = errors.New("unauthorized")
+	ErrInvalidUpdateRefreshSessionParams = errors.New("invalid UpdateRefreshSession params")
 )

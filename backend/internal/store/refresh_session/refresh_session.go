@@ -11,24 +11,46 @@ type store struct {
 	*postgres.Postgres
 }
 
-// CreateRefreshSession implements core.RefreshSessionStore.
-func (s *store) CreateRefreshSession(ctx context.Context, rs core.RefreshSession) error {
-	if err := s.DB.WithContext(ctx).Create(&rs).Error; err != nil {
+const (
+	maxSessionsPerUser = 5
+)
+
+func (s *store) CountSessionsAndDelete(ctx context.Context, userID int) error {
+	tx := s.DB.WithContext(ctx).Begin()
+
+	var sessionsCounter int64
+	if err := tx.Model(&core.RefreshSession{}).Count(&sessionsCounter).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
 
-	return nil
+	if sessionsCounter < maxSessionsPerUser {
+		return tx.Commit().Error
+	}
+
+	if err := tx.Where("user_id=?", userID).Delete(&core.RefreshSession{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
-func (s *store) UpdateRefreshSession(ctx context.Context, oldSessionID int, rs core.RefreshSession) error {
+func (s *store) UpdateRefreshSession(
+	ctx context.Context,
+	param core.UpdateRefreshSessionParam,
+	rs core.RefreshSession,
+) error {
 	tx := s.DB.WithContext(ctx).Begin()
 
-	if err := tx.Model(&core.RefreshSession{}).Delete("id=?", oldSessionID).Error; err != nil {
-		return tx.Rollback().Error
+	err := param(tx)
+	if err != nil {
+		return err
 	}
 
 	if err := tx.Create(&rs).Error; err != nil {
-		return tx.Rollback().Error
+		tx.Rollback()
+		return err
 	}
 
 	return tx.Commit().Error

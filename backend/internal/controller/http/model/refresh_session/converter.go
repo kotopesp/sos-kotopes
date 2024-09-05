@@ -4,7 +4,7 @@ import "github.com/kotopesp/sos-kotopes/internal/core"
 
 func (rs *RefreshSession) ToCoreRefreshSession(refreshToken *string) core.RefreshSession {
 	var refreshSession core.RefreshSession
-	refreshSession.FingerprintHash = rs.Fingerprint
+	refreshSession.Fingerprint = rs.Fingerprint
 
 	if refreshToken == nil {
 		return refreshSession

@@ -55,18 +55,16 @@ func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	refreshSession := refreshsession.RefreshSession{Fingerprint: user.Fingerprint}
-
-	coreRefreshSession := refreshSession.ToCoreRefreshSession(nil)
-
 	coreUser := user.ToCoreUser()
+
+	refreshSession := refreshsession.RefreshSession{Fingerprint: user.Fingerprint}
+	coreRefreshSession := refreshSession.ToCoreRefreshSession(nil)
 
 	accessToken, refreshToken, err := r.authService.LoginBasic(
 		ctx.UserContext(),
 		coreUser,
 		coreRefreshSession,
 	)
-
 	if err != nil {
 		if errors.Is(err, core.ErrInvalidCredentials) {
 			logger.Log().Info(ctx.UserContext(), err.Error())
@@ -189,10 +187,9 @@ func (r *Router) refresh(ctx *fiber.Ctx) error {
 	}
 
 	oldRefreshToken := ctx.Cookies("refresh_token")
-
 	coreRefreshSession := refreshSession.ToCoreRefreshSession(&oldRefreshToken)
 
-	accessToken, freshRefreshToken, err := r.authService.Refresh(ctx.UserContext(), coreRefreshSession)
+	accessToken, refreshToken, err := r.authService.Refresh(ctx.UserContext(), coreRefreshSession)
 	if err != nil {
 		if errors.Is(err, core.ErrUnauthorized) {
 			logger.Log().Info(ctx.UserContext(), err.Error())
@@ -201,7 +198,7 @@ func (r *Router) refresh(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	setRefreshTokenCookie(ctx, *freshRefreshToken)
+	setRefreshTokenCookie(ctx, *refreshToken)
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(accessToken))
 }
