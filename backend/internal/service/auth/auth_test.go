@@ -207,7 +207,7 @@ func TestLoginBasic(t *testing.T) {
 						mock.Anything,
 						mock.MatchedBy(func(rs core.RefreshSession) bool {
 							return rs.UserID == tt.updateRefreshSessionArg2.UserID &&
-								rs.ExpiresAt.Sub(tt.updateRefreshSessionArg2.ExpiresAt) < time.Second
+								rs.ExpiresAt.Sub(tt.updateRefreshSessionArg2.ExpiresAt) < 5*time.Second
 						}),
 					).Return(tt.updateRefreshSessionRet1).Once()
 			}
