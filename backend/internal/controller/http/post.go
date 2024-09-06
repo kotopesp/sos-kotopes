@@ -218,6 +218,7 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 // @Failure		401			{object}	model.Response
 // @Failure		403			{object}	model.Response
 // @Failure		404			{object}	model.Response
+//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
 // @Failure		500			{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{id} [patch]
@@ -278,6 +279,7 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 // @Failure		400	{object}	model.Response
 // @Failure		401	{object}	model.Response
 // @Failure		403	{object}	model.Response
+//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
 // @Failure		500	{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{id} [delete]

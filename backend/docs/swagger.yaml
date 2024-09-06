@@ -554,6 +554,17 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -678,6 +689,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -717,6 +739,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -759,6 +792,17 @@ paths:
           description: Conflict
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -875,6 +919,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -922,6 +977,17 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -983,6 +1049,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1057,6 +1134,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1191,6 +1279,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
