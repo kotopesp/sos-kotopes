@@ -23,6 +23,9 @@ import (
 // @Success		200		{object}	comment.GetAllCommentsResponse{data=[]comment.Comment}
 // @Failure		400		{object}	model.Response
 // @Failure		404		{object}	model.Response
+//
+//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
+//
 // @Failure		500		{object}	model.Response
 // @Router			/posts/{post_id}/comments [get]
 func (r *Router) getComments(ctx *fiber.Ctx) error {

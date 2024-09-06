@@ -54,6 +54,7 @@ func (r *Router) refreshTokenMiddleware() fiber.Handler {
 //	@Produce		json
 //	@Param			request	body		user.Login	true	"User"
 //	@Success		200		{object}	model.Response
+//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
 //	@Failure		400		{object}	model.Response
 //	@Failure		401		{object}	model.Response
 //	@Failure		500		{object}	model.Response
@@ -115,7 +116,7 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 //	@Param			photo		formData	file	false	"Photo"
 //	@Success		201			{object}	any
 //	@Failure		400			{object}	model.Response
-//	@Failure		422			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=[]validator.ResponseError}
 //	@Failure		500			{object}	model.Response
 //	@Router			/auth/signup [post]
 func (r *Router) signup(ctx *fiber.Ctx) error {
@@ -173,14 +174,13 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 //
 //	@Summary		Refresh token
 //	@Tags			auth
-//	@Description	Refresh token
+//	@Description	Refresh token should be in cookies (login put it there)
 //	@ID				refresh-token
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.Response
 //	@Failure		401	{object}	model.Response
 //	@Failure		500	{object}	model.Response
-//	@Security		ApiKeyAuthCookie
 //	@Router			/auth/token/refresh [post]
 func (r *Router) refresh(ctx *fiber.Ctx) error {
 	id, err := getIDFromToken(ctx)
