@@ -1,0 +1,66 @@
+.container__post__answer {
+  display: flex;
+  height: 108px;
+  width: 672px;
+  align-items: center;
+  padding-left: 30px;
+  background: var(--brown-message-color);
+
+  .block__post__image {
+
+    #post__image {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+  }
+
+  .block__status__other {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-right: 20px;
+    padding-left: 20px;
+    gap: 10px;
+
+    .block__text__button {
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+
+      .block__post__text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 75%;
+      }
+
+      .block__post__button {
+        width: 105px;
+        height: 35px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--white-color);
+        cursor: pointer;
+
+        .post__button {
+          color: var(--brown-message-color);
+          font-size: 18px;
+          font-weight: 700;
+        }
+
+        &:hover {
+          border: 2px solid var(--white-color);
+          background: none;
+
+          .post__button {
+            color: var(--white-color);
+          }
+        }
+      }
+
+    }
+  }
+}

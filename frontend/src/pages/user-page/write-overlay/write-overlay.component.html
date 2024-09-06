@@ -1,0 +1,22 @@
+<div class="wrapper__overlay">
+  <div class="block__overlay">
+    <div class="block__avatar">
+      <img src="/assets/images/test-cat.png" alt="avatar" id="overlay__avatar">
+      <div class="online__circle"></div>
+    </div>
+    <div class="block__name__buttons">
+      <span class="ft36 fw400">Тимофей Зайнулин</span>
+      <div class="block__buttons">
+        <div *ngFor="let WriteButton of WriteButtons">
+        <app-write-button
+        [WriteButton]="WriteButton" />
+        </div>
+      </div>
+    </div>
+
+    <div class="block__exit__button">
+      <button id="exit__button" (click)="writeOverlay.set(false)">Закрыть</button>
+    </div>
+
+  </div>
+</div>
