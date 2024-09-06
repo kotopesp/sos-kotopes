@@ -191,20 +191,20 @@ func TestLoginBasic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.invokeGetUserByUsername {
 				mockUserStore.
-					On("GetUserByUsername", ctx, tt.getUserByUsernameArg2).
+					On("GetUserByUsername", mock.Anything, tt.getUserByUsernameArg2).
 					Return(tt.getUserByUsernameRet1, tt.getUserByUsernameRet2).Once()
 			}
 			if tt.invokeCountSessionsAndDelete {
 				mockRefreshSessionStore.
-					On("CountSessionsAndDelete", ctx, tt.countSessionsAndDeleteArg2).
+					On("CountSessionsAndDelete", mock.Anything, tt.countSessionsAndDeleteArg2).
 					Return(tt.countSessionsAndDeleteRet1).Once()
 			}
 			if tt.invokeUpdateRefreshSession {
 				mockRefreshSessionStore.
 					On(
 						"UpdateRefreshSession",
-						ctx,
-						mock.AnythingOfType("core.UpdateRefreshSessionParam"),
+						mock.Anything,
+						mock.Anything,
 						mock.MatchedBy(func(rs core.RefreshSession) bool {
 							return rs.UserID == tt.updateRefreshSessionArg2.UserID &&
 								rs.ExpiresAt.Sub(tt.updateRefreshSessionArg2.ExpiresAt) < time.Second
