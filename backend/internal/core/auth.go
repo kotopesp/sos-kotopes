@@ -20,9 +20,9 @@ type (
 
 	AuthService interface {
 		GetJWTSecret() []byte
-		LoginBasic(ctx context.Context, user User, refreshSession RefreshSession) (accessToken, refreshToken *string, err error)
+		LoginBasic(ctx context.Context, user User) (accessToken, refreshToken *string, err error)
 		SignupBasic(ctx context.Context, user User) error
-		Refresh(ctx context.Context, rs RefreshSession) (accessToken, refreshToken *string, err error)
+		Refresh(ctx context.Context, refreshSession RefreshSession) (accessToken, refreshToken *string, err error)
 		ConfigVK() *oauth2.Config
 		AuthorizeVK(ctx context.Context, token string) (accessToken, refreshToken *string, err error)
 	}
@@ -31,7 +31,6 @@ type (
 		ID           int       `gorm:"column:id"`
 		UserID       int       `gorm:"column:user_id"`
 		RefreshToken string    `gorm:"column:refresh_token"`
-		Fingerprint  string    `gorm:"column:fingerprint"`
 		ExpiresAt    time.Time `gorm:"column:expires_at"`
 	}
 

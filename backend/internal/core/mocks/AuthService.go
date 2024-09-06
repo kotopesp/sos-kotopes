@@ -95,9 +95,9 @@ func (_m *AuthService) GetJWTSecret() []byte {
 	return r0
 }
 
-// LoginBasic provides a mock function with given fields: ctx, user, refreshSession
-func (_m *AuthService) LoginBasic(ctx context.Context, user core.User, refreshSession core.RefreshSession) (*string, *string, error) {
-	ret := _m.Called(ctx, user, refreshSession)
+// LoginBasic provides a mock function with given fields: ctx, user
+func (_m *AuthService) LoginBasic(ctx context.Context, user core.User) (*string, *string, error) {
+	ret := _m.Called(ctx, user)
 
 	if len(ret) == 0 {
 		panic("no return value specified for LoginBasic")
@@ -106,27 +106,27 @@ func (_m *AuthService) LoginBasic(ctx context.Context, user core.User, refreshSe
 	var r0 *string
 	var r1 *string
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.User, core.RefreshSession) (*string, *string, error)); ok {
-		return rf(ctx, user, refreshSession)
+	if rf, ok := ret.Get(0).(func(context.Context, core.User) (*string, *string, error)); ok {
+		return rf(ctx, user)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.User, core.RefreshSession) *string); ok {
-		r0 = rf(ctx, user, refreshSession)
+	if rf, ok := ret.Get(0).(func(context.Context, core.User) *string); ok {
+		r0 = rf(ctx, user)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*string)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.User, core.RefreshSession) *string); ok {
-		r1 = rf(ctx, user, refreshSession)
+	if rf, ok := ret.Get(1).(func(context.Context, core.User) *string); ok {
+		r1 = rf(ctx, user)
 	} else {
 		if ret.Get(1) != nil {
 			r1 = ret.Get(1).(*string)
 		}
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, core.User, core.RefreshSession) error); ok {
-		r2 = rf(ctx, user, refreshSession)
+	if rf, ok := ret.Get(2).(func(context.Context, core.User) error); ok {
+		r2 = rf(ctx, user)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -134,9 +134,9 @@ func (_m *AuthService) LoginBasic(ctx context.Context, user core.User, refreshSe
 	return r0, r1, r2
 }
 
-// Refresh provides a mock function with given fields: ctx, rs
-func (_m *AuthService) Refresh(ctx context.Context, rs core.RefreshSession) (*string, *string, error) {
-	ret := _m.Called(ctx, rs)
+// Refresh provides a mock function with given fields: ctx, refreshSession
+func (_m *AuthService) Refresh(ctx context.Context, refreshSession core.RefreshSession) (*string, *string, error) {
+	ret := _m.Called(ctx, refreshSession)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Refresh")
@@ -146,10 +146,10 @@ func (_m *AuthService) Refresh(ctx context.Context, rs core.RefreshSession) (*st
 	var r1 *string
 	var r2 error
 	if rf, ok := ret.Get(0).(func(context.Context, core.RefreshSession) (*string, *string, error)); ok {
-		return rf(ctx, rs)
+		return rf(ctx, refreshSession)
 	}
 	if rf, ok := ret.Get(0).(func(context.Context, core.RefreshSession) *string); ok {
-		r0 = rf(ctx, rs)
+		r0 = rf(ctx, refreshSession)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*string)
@@ -157,7 +157,7 @@ func (_m *AuthService) Refresh(ctx context.Context, rs core.RefreshSession) (*st
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, core.RefreshSession) *string); ok {
-		r1 = rf(ctx, rs)
+		r1 = rf(ctx, refreshSession)
 	} else {
 		if ret.Get(1) != nil {
 			r1 = ret.Get(1).(*string)
@@ -165,7 +165,7 @@ func (_m *AuthService) Refresh(ctx context.Context, rs core.RefreshSession) (*st
 	}
 
 	if rf, ok := ret.Get(2).(func(context.Context, core.RefreshSession) error); ok {
-		r2 = rf(ctx, rs)
+		r2 = rf(ctx, refreshSession)
 	} else {
 		r2 = ret.Error(2)
 	}

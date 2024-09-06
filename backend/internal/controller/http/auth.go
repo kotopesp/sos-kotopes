@@ -8,7 +8,6 @@ import (
 	"mime/multipart"
 
 	"github.com/golang-jwt/jwt/v5"
-	refreshsession "github.com/kotopesp/sos-kotopes/internal/controller/http/model/refresh_session"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 
@@ -46,6 +45,7 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 //	@Success		200		{object}	model.Response
 //	@Failure		400		{object}	model.Response
 //	@Failure		401		{object}	model.Response
+//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
 //	@Failure		500		{object}	model.Response
 //	@Router			/auth/login [post]
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
@@ -54,16 +54,11 @@ func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
-
 	coreUser := user.ToCoreUser()
-
-	refreshSession := refreshsession.RefreshSession{Fingerprint: user.Fingerprint}
-	coreRefreshSession := refreshSession.ToCoreRefreshSession(nil)
 
 	accessToken, refreshToken, err := r.authService.LoginBasic(
 		ctx.UserContext(),
 		coreUser,
-		coreRefreshSession,
 	)
 	if err != nil {
 		if errors.Is(err, core.ErrInvalidCredentials) {
@@ -76,6 +71,7 @@ func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	}
 
 	setRefreshTokenCookie(ctx, *refreshToken)
+
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(accessToken))
 }
 
@@ -110,10 +106,10 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 //	@Param			lastname	formData	string	false	"Lastname"
 //	@Param			description	formData	string	false	"Description"
 //	@Param			photo		formData	file	false	"Photo"
-//	@Success		201			{object}	any
-//	@Failure		400			{object}	model.Response
-//	@Failure		422			{object}	model.Response
-//	@Failure		500			{object}	model.Response
+//	@Success		201
+//	@Failure		400	{object}	model.Response
+//	@Failure		422	{object}	model.Response{data=[]validator.ResponseError}
+//	@Failure		500	{object}	model.Response
 //	@Router			/auth/signup [post]
 func (r *Router) signup(ctx *fiber.Ctx) error {
 	var user userModel.User
@@ -143,9 +139,13 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 
 	if errors.Is(err, core.ErrNotUniqueUsername) {
 		logger.Log().Info(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": []validator.ResponseError{model.ErrNotUniqueUsername(coreUser.Username)},
-		}))
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(
+			model.ErrorResponse(
+				[]validator.ResponseError{
+					model.ErrNotUniqueUsername(coreUser.Username),
+				},
+			),
+		)
 	}
 
 	logger.Log().Error(ctx.UserContext(), err.Error())
@@ -170,26 +170,19 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 //
 //	@Summary		Refresh token
 //	@Tags			auth
-//	@Description	Refresh token
+//	@Description	Only works if refresh token is placed in cookies (login endpoint puts it there)
 //	@ID				refresh-token
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	model.Response
 //	@Failure		401	{object}	model.Response
 //	@Failure		500	{object}	model.Response
-//	@Security		ApiKeyAuthCookie
 //	@Router			/auth/token/refresh [post]
 func (r *Router) refresh(ctx *fiber.Ctx) error {
-	var refreshSession refreshsession.RefreshSession
-	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &refreshSession)
-	if fiberError != nil || parseOrValidationError != nil {
-		return fiberError
-	}
-
-	oldRefreshToken := ctx.Cookies("refresh_token")
-	coreRefreshSession := refreshSession.ToCoreRefreshSession(&oldRefreshToken)
-
-	accessToken, refreshToken, err := r.authService.Refresh(ctx.UserContext(), coreRefreshSession)
+	accessToken, refreshToken, err := r.authService.Refresh(
+		ctx.UserContext(),
+		core.RefreshSession{RefreshToken: ctx.Cookies("refresh_token")},
+	)
 	if err != nil {
 		if errors.Is(err, core.ErrUnauthorized) {
 			logger.Log().Info(ctx.UserContext(), err.Error())
@@ -264,7 +257,10 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrOAuthStateMismatch.Error())
 	}
 
-	accessToken, refreshToken, err := r.authService.AuthorizeVK(ctx.Context(), token.AccessToken)
+	accessToken, refreshToken, err := r.authService.AuthorizeVK(
+		ctx.Context(),
+		token.AccessToken,
+	)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))

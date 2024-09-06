@@ -16,11 +16,9 @@ const (
 	bcryptCost     = 12
 )
 
-var (
-	authProvidersPasswordPlugs = map[string]string{
-		vkAuthProvider: "vk_password",
-	}
-)
+var authProvidersPasswordPlugs = map[string]string{
+	vkAuthProvider: "vk_password",
+}
 
 type service struct {
 	userStore           core.UserStore
@@ -56,7 +54,7 @@ func setRefreshSessionData(session *core.RefreshSession, token string, id int, e
 }
 
 // LoginBasic Login through username and password
-func (s *service) LoginBasic(ctx context.Context, user core.User, refreshSession core.RefreshSession) (accessToken, refreshToken *string, err error) {
+func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, refreshToken *string, err error) {
 	coreUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
 		if errors.Is(err, core.ErrNoSuchUser) {
@@ -78,6 +76,7 @@ func (s *service) LoginBasic(ctx context.Context, user core.User, refreshSession
 		return nil, nil, err
 	}
 
+	var refreshSession core.RefreshSession
 	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), coreUser.ID, s.getRefreshTokenExpiresAt())
 
 	err = s.refreshSessionStore.CountSessionsAndDelete(ctx, coreUser.ID)
@@ -87,7 +86,7 @@ func (s *service) LoginBasic(ctx context.Context, user core.User, refreshSession
 
 	err = s.refreshSessionStore.UpdateRefreshSession(
 		ctx,
-		refreshsession.ByFingerprint(refreshSession.Fingerprint),
+		refreshsession.ByNothing(),
 		refreshSession,
 	)
 	if err != nil {
@@ -107,9 +106,6 @@ func (s *service) SignupBasic(ctx context.Context, user core.User) error {
 	user.PasswordHash = string(hashedPassword)
 
 	if _, err := s.userStore.AddUser(ctx, user); err != nil {
-		if errors.Is(err, core.ErrNotUniqueUsername) {
-			return core.ErrNotUniqueUsername
-		}
 		return err
 	}
 
@@ -162,7 +158,7 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 	return s.LoginBasic(ctx, core.User{
 		Username:     user.Username,
 		PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
-	}, core.RefreshSession{})
+	})
 }
 
 // signupVK Creating external user
@@ -181,8 +177,11 @@ func (s *service) signupVK(ctx context.Context, user core.User, externalUserID i
 }
 
 // Refresh Getting new accessToken, when another one expires; need to have refreshToken in cookie
-func (s *service) Refresh(ctx context.Context, rs core.RefreshSession) (accessToken, refreshToken *string, err error) {
-	dbSession, err := s.refreshSessionStore.GetRefreshSessionByToken(ctx, rs.RefreshToken)
+func (s *service) Refresh(
+	ctx context.Context,
+	refreshSession core.RefreshSession,
+) (accessToken, refreshToken *string, err error) {
+	dbSession, err := s.refreshSessionStore.GetRefreshSessionByToken(ctx, refreshSession.RefreshToken)
 	if err != nil {
 		return nil, nil, core.ErrUnauthorized
 	}
@@ -192,25 +191,25 @@ func (s *service) Refresh(ctx context.Context, rs core.RefreshSession) (accessTo
 		return nil, nil, err
 	}
 
-	accessToken, err = s.generateAccessToken(rs.UserID, user.Username)
+	accessToken, err = s.generateAccessToken(dbSession.UserID, user.Username)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	if rs.Fingerprint != dbSession.Fingerprint || dbSession.ExpiresAt.Before(time.Now()) {
+	if dbSession.ExpiresAt.Before(time.Now()) {
 		return nil, nil, core.ErrUnauthorized
 	}
 
-	setRefreshSessionData(&rs, s.generateRefreshToken(), dbSession.UserID, s.getRefreshTokenExpiresAt())
+	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), dbSession.UserID, s.getRefreshTokenExpiresAt())
 
 	err = s.refreshSessionStore.UpdateRefreshSession(
 		ctx,
 		refreshsession.ByID(dbSession.ID),
-		rs,
+		refreshSession,
 	)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return accessToken, &rs.RefreshToken, nil
+	return accessToken, &refreshSession.RefreshToken, nil
 }

@@ -19,14 +19,6 @@ func ByID(id int) core.UpdateRefreshSessionParam {
 	}
 }
 
-func ByFingerprint(fingerprint string) core.UpdateRefreshSessionParam {
-	return func(tx *gorm.DB) error {
-		if err := tx.
-			Where("fingerprint=?", fingerprint).
-			Delete(&core.RefreshSession{}).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-			tx.Rollback()
-			return err
-		}
-		return nil
-	}
+func ByNothing() core.UpdateRefreshSessionParam {
+	return func(*gorm.DB) error { return nil }
 }

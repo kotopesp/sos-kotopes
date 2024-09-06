@@ -223,6 +223,18 @@ definitions:
       username:
         type: string
     type: object
+  validator.ResponseError:
+    properties:
+      failed_field:
+        example: username
+        type: string
+      param:
+        type: string
+      tag:
+        example: required
+        type: string
+      value: {}
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -259,6 +271,17 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -304,8 +327,6 @@ paths:
       responses:
         "201":
           description: Created
-          schema:
-            type: object
         "400":
           description: Bad Request
           schema:
@@ -313,7 +334,14 @@ paths:
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/model.Response'
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -325,7 +353,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: Refresh token
+      description: Only works if refresh token is placed in cookies (login endpoint
+        puts it there)
       operationId: refresh-token
       produces:
       - application/json
@@ -342,8 +371,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.Response'
-      security:
-      - ApiKeyAuthCookie: []
       summary: Refresh token
       tags:
       - auth
@@ -404,6 +431,17 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -486,6 +524,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -525,6 +574,17 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -566,6 +626,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -649,6 +720,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -688,6 +770,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -730,6 +823,17 @@ paths:
           description: Conflict
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -786,6 +890,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -835,6 +950,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -882,6 +1008,17 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -943,6 +1080,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1017,6 +1165,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1093,6 +1252,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1151,6 +1321,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1258,6 +1439,17 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1299,6 +1491,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1340,6 +1543,17 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/validator.ResponseError'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1351,6 +1565,7 @@ paths:
       - role
 securityDefinitions:
   ApiKeyAuthBasic:
+    description: Put token in format "Bearer your_token"
     in: header
     name: Authorization
     type: apiKey

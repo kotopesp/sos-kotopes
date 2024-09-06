@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
@@ -18,210 +17,216 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+const (
+	correctUsername       = "JackVorobey"
+	correctPassword       = "VeryStrongPassword123"
+	invalidPassword       = "WrongPassword123"
+	emptyPassword         = ""
+	smallPassword         = "pa$$"
+	bigPassword           = "password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols"
+	omitDigitPassword     = "StrongPasswordButWithoutDigit"
+	omitUppercasePassword = "strong_but_omit_uppercase123"
+	emptyUsername         = ""
+	veryBigUsername       = "JackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobey"
+	withSpecialsUsername  = "Jack_Vorobey"
+)
+
+var (
+	firstname    = "Jack"
+	lastname     = "Vorobey"
+	description  = "Description"
+	accessToken  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphY2sgVm9yb2JleSJ9.-YQEVClcn8V-dwlqFGGV5NWSzHAYPytwfxQXy8sdz5M"
+	refreshToken = "629e239d-7351-4440-b6c0-185d73f58a65"
+)
+
 type TestAccessTokenSuccessResponse struct {
 	Data string `json:"data"`
 }
 
 type TestValidationErrorResponse struct {
-	Data struct {
-		ValidationErrors []validator.ResponseError `json:"validation_errors"`
-	} `json:"data"`
+	Data []validator.ResponseError `json:"data"`
 }
 
-func stringPtr(s string) *string {
-	return &s
-}
-
-// TODO: think about tests with fingerprint
 func TestLoginBasic(t *testing.T) {
 	app, dependencies := newTestApp(t)
 
-	const (
-		route       = "/api/v1/auth/login"
-		fingerprint = "fingerprint"
-	)
+	const route = "/api/v1/auth/login"
 
 	tests := []struct {
-		name                string
-		mockArgUser         user.User
-		mockRetAccessToken  string
-		mockRetRefreshToken string
-		mockRetError        error
-		wantErrs            []validator.ResponseError
-		wantCode            int
+		name               string
+		loginBasicArg2     user.User
+		loginBasicRet1     string
+		loginBasicRet2     string
+		loginBasicRet3     error
+		wantValidationErrs []validator.ResponseError
+		wantCode           int
 	}{
 		{
 			name: "success",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "VeryStrongPassword123",
+			loginBasicArg2: user.User{
+				Username: correctUsername,
+				Password: correctPassword,
 			},
-			mockRetAccessToken:  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphY2sgVm9yb2JleSJ9.-YQEVClcn8V-dwlqFGGV5NWSzHAYPytwfxQXy8sdz5M",
-			mockRetRefreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMzAzODkwMzg5MDMiLCJuYW1lIjoiSmFjayBWb3JvYmV5In0.5TH7KYwBR_zkFf9VUsB_51U4ThD81vQTW-wMCp-hnco",
-			wantCode:            http.StatusOK,
+			loginBasicRet1: accessToken,
+			loginBasicRet2: refreshToken,
+			wantCode:       http.StatusOK,
 		},
 		{
 			name: "empty password",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "",
+			loginBasicArg2: user.User{
+				Username: correctUsername,
+				Password: emptyPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "required",
-					Value:       "",
+					Value:       emptyPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "small password",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "pa$$",
+			loginBasicArg2: user.User{
+				Username: correctUsername,
+				Password: smallPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "min",
 					Param:       "8",
-					Value:       "pa$$",
+					Value:       smallPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "very big password",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols",
+			loginBasicArg2: user.User{
+				Username: correctUsername,
+				Password: bigPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "max",
 					Param:       "72",
-					Value:       "password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols",
+					Value:       bigPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "omit digit",
-			mockArgUser: user.User{
+			loginBasicArg2: user.User{
 				Username: "JackVorobey",
-				Password: "StrongPasswordButWithoutDigit",
+				Password: omitDigitPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "contains_digit",
-					Value:       "StrongPasswordButWithoutDigit",
+					Value:       omitDigitPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "omit uppercase",
-			mockArgUser: user.User{
+			loginBasicArg2: user.User{
 				Username: "JackVorobey",
-				Password: "strong_but_omit_uppercase123",
+				Password: omitUppercasePassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "contains_uppercase",
-					Value:       "strong_but_omit_uppercase123",
+					Value:       omitUppercasePassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "empty username",
-			mockArgUser: user.User{
-				Username: "",
-				Password: "VeryStrongPassword123",
+			loginBasicArg2: user.User{
+				Username: emptyUsername,
+				Password: correctPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Username",
 					Tag:         "required",
-					Value:       "",
+					Value:       emptyUsername,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "very big username",
-			mockArgUser: user.User{
-				Username: "JackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobey",
-				Password: "VeryStrongPassword123",
+			loginBasicArg2: user.User{
+				Username: veryBigUsername,
+				Password: correctPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Username",
 					Tag:         "max",
 					Param:       "50",
-					Value:       "JackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobey",
+					Value:       veryBigUsername,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "username with specials",
-			mockArgUser: user.User{
-				Username: "Jack_Vorobey",
-				Password: "VeryStrongPassword123",
+			loginBasicArg2: user.User{
+				Username: withSpecialsUsername,
+				Password: correctPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Username",
 					Tag:         "no_specials",
-					Value:       "Jack_Vorobey",
+					Value:       withSpecialsUsername,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "invalid credentials",
-			mockArgUser: user.User{
-				Username: "JackVorobeyWrongCredentials",
-				Password: "WrongPassword123",
+			loginBasicArg2: user.User{
+				Username: correctPassword,
+				Password: invalidPassword,
 			},
-			mockRetError: core.ErrInvalidCredentials,
-			wantCode:     http.StatusUnauthorized,
+			loginBasicRet3: core.ErrInvalidCredentials,
+			wantCode:       http.StatusUnauthorized,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.wantErrs == nil {
-				at := tt.mockRetAccessToken
-				rt := tt.mockRetRefreshToken
-				dependencies.authService.On("LoginBasic",
+			if tt.wantValidationErrs == nil {
+				at := tt.loginBasicRet1
+				rt := tt.loginBasicRet2
+				dependencies.authService.On(
+					"LoginBasic",
 					mock.Anything,
-					tt.mockArgUser.ToCoreUser(),
-					core.RefreshSession{FingerprintHash: fingerprint}).Return(&at, &rt, tt.mockRetError).Once()
+					tt.loginBasicArg2.ToCoreUser(),
+				).Return(&at, &rt, tt.loginBasicRet3).Once()
 			}
 
-			// request body (multipart)
 			reqBody := new(bytes.Buffer)
 			mp := multipart.NewWriter(reqBody)
-			_ = mp.WriteField("username", tt.mockArgUser.Username)
-			_ = mp.WriteField("password", tt.mockArgUser.Password)
-			_ = mp.WriteField("fingerprint", fingerprint)
+			_ = mp.WriteField("username", tt.loginBasicArg2.Username)
+			_ = mp.WriteField("password", tt.loginBasicArg2.Password)
 
-			err := mp.Close()
-			if err != nil {
-				t.Fatal(err)
-			}
+			mp.Close()
 
-			// request
 			req := httptest.NewRequest(http.MethodPost, route, reqBody)
 			req.Header["Content-Type"] = []string{mp.FormDataContentType()}
 
-			// doing request
 			resp, _ := app.Test(req, -1)
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
@@ -232,14 +237,14 @@ func TestLoginBasic(t *testing.T) {
 				var testTokenSuccessResponse TestAccessTokenSuccessResponse
 				_ = json.Unmarshal(body, &testTokenSuccessResponse)
 
-				assert.Equal(t, tt.mockRetAccessToken, testTokenSuccessResponse.Data)
+				assert.Equal(t, tt.loginBasicRet1, testTokenSuccessResponse.Data)
 
 				cookies := resp.Cookies()
 				hasToken := false
 				for _, cookie := range cookies {
 					if cookie.Name == "refresh_token" {
 						hasToken = true
-						assert.Equal(t, tt.mockRetRefreshToken, cookie.Value)
+						assert.Equal(t, tt.loginBasicRet2, cookie.Value)
 						break
 					}
 				}
@@ -248,7 +253,7 @@ func TestLoginBasic(t *testing.T) {
 				var testValidationErrorResponse TestValidationErrorResponse
 				_ = json.Unmarshal(body, &testValidationErrorResponse)
 
-				assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
+				assert.Equal(t, tt.wantValidationErrs, testValidationErrorResponse.Data)
 			}
 		})
 	}
@@ -259,211 +264,207 @@ func TestSignup(t *testing.T) {
 
 	const route = "/api/v1/auth/signup"
 
-	var (
-		FirstName   = "Jack"
-		LastName    = "Jackson"
-		Description = "Elephants are the largest land animals on Earth."
-	)
-
 	tests := []struct {
-		name         string
-		mockArgUser  user.User
-		mockRetError error
-		wantErrs     []validator.ResponseError
-		wantCode     int
+		name               string
+		signupBasicArg2    user.User
+		signupBasicRet1    error
+		invokeSignupBasic  bool
+		wantValidationErrs []validator.ResponseError
+		wantCode           int
 	}{
 		{
 			name: "success",
-			mockArgUser: user.User{
-				Username:    "JackVorobey",
-				Password:    "VeryStrongPassword123",
-				Firstname:   &FirstName,
-				Lastname:    &LastName,
-				Description: &Description,
+			signupBasicArg2: user.User{
+				Username:    correctUsername,
+				Password:    correctPassword,
+				Firstname:   &firstname,
+				Lastname:    &lastname,
+				Description: &description,
 			},
-			wantCode: http.StatusCreated,
+			invokeSignupBasic: true,
+			wantCode:          http.StatusCreated,
 		},
 		{
 			name: "empty password",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "",
+			signupBasicArg2: user.User{
+				Username: correctUsername,
+				Password: emptyPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "required",
-					Value:       "",
+					Value:       emptyPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "small password",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "pa$$",
+			signupBasicArg2: user.User{
+				Username: correctUsername,
+				Password: smallPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "min",
 					Param:       "8",
-					Value:       "pa$$",
+					Value:       smallPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "very big password",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols",
+			signupBasicArg2: user.User{
+				Username: correctUsername,
+				Password: bigPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "max",
 					Param:       "72",
-					Value:       "password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols",
+					Value:       bigPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "omit digit",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "StrongPasswordButWithoutDigit",
+			signupBasicArg2: user.User{
+				Username: correctUsername,
+				Password: omitDigitPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "contains_digit",
-					Value:       "StrongPasswordButWithoutDigit",
+					Value:       omitDigitPassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "omit uppercase",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "strong_but_omit_uppercase123",
+			signupBasicArg2: user.User{
+				Username: correctUsername,
+				Password: omitUppercasePassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Password",
 					Tag:         "contains_uppercase",
-					Value:       "strong_but_omit_uppercase123",
+					Value:       omitUppercasePassword,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "empty username",
-			mockArgUser: user.User{
-				Username: "",
-				Password: "VeryStrongPassword123",
+			signupBasicArg2: user.User{
+				Username: emptyUsername,
+				Password: correctPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Username",
 					Tag:         "required",
-					Value:       "",
+					Value:       emptyUsername,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "very big username",
-			mockArgUser: user.User{
-				Username: "JackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobey",
-				Password: "VeryStrongPassword123",
+			signupBasicArg2: user.User{
+				Username: veryBigUsername,
+				Password: correctPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Username",
 					Tag:         "max",
 					Param:       "50",
-					Value:       "JackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobey",
+					Value:       veryBigUsername,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "username with specials",
-			mockArgUser: user.User{
-				Username: "Jack_Vorobey",
-				Password: "VeryStrongPassword123",
+			signupBasicArg2: user.User{
+				Username: withSpecialsUsername,
+				Password: correctPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Username",
 					Tag:         "no_specials",
-					Value:       "Jack_Vorobey",
+					Value:       withSpecialsUsername,
 				},
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
 		{
 			name: "not unique username",
-			mockArgUser: user.User{
-				Username: "JackVorobeyNotUnique",
-				Password: "VeryStrongPassword123",
+			signupBasicArg2: user.User{
+				Username: correctUsername,
+				Password: correctPassword,
 			},
-			wantErrs: []validator.ResponseError{
+			invokeSignupBasic: true,
+			wantValidationErrs: []validator.ResponseError{
 				{
 					FailedField: "Username",
 					Tag:         "unique",
-					Value:       "JackVorobeyNotUnique",
+					Value:       correctUsername,
 				},
 			},
-			mockRetError: core.ErrNotUniqueUsername,
-			wantCode:     http.StatusUnprocessableEntity,
+			signupBasicRet1: core.ErrNotUniqueUsername,
+			wantCode:        http.StatusUnprocessableEntity,
 		},
 		{
 			name: "internal server error",
-			mockArgUser: user.User{
-				Username: "JackVorobey",
-				Password: "VeryStrongPassword123",
+			signupBasicArg2: user.User{
+				Username: correctUsername,
+				Password: correctPassword,
 			},
-			mockRetError: errors.New("internal server error"),
-			wantCode:     http.StatusInternalServerError,
+			invokeSignupBasic: true,
+			signupBasicRet1:   errors.New("internal server error"),
+			wantCode:          http.StatusInternalServerError,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.wantErrs == nil || errors.Is(tt.mockRetError, core.ErrNotUniqueUsername) {
-				dependencies.authService.On("SignupBasic", mock.Anything, tt.mockArgUser.ToCoreUser()).Return(tt.mockRetError).Once()
+			if tt.invokeSignupBasic {
+				dependencies.authService.On(
+					"SignupBasic",
+					mock.Anything,
+					tt.signupBasicArg2.ToCoreUser(),
+				).Return(tt.signupBasicRet1).Once()
 			}
 
-			// request body (multipart)
 			reqBody := new(bytes.Buffer)
 			mp := multipart.NewWriter(reqBody)
-			_ = mp.WriteField("username", tt.mockArgUser.Username)
-			_ = mp.WriteField("password", tt.mockArgUser.Password)
-			if tt.mockArgUser.Firstname != nil {
-				_ = mp.WriteField("firstname", *tt.mockArgUser.Firstname)
+			_ = mp.WriteField("username", tt.signupBasicArg2.Username)
+			_ = mp.WriteField("password", tt.signupBasicArg2.Password)
+			if tt.signupBasicArg2.Firstname != nil {
+				_ = mp.WriteField("firstname", *tt.signupBasicArg2.Firstname)
 			}
-			if tt.mockArgUser.Lastname != nil {
-				_ = mp.WriteField("lastname", *tt.mockArgUser.Lastname)
+			if tt.signupBasicArg2.Lastname != nil {
+				_ = mp.WriteField("lastname", *tt.signupBasicArg2.Lastname)
 			}
-			if tt.mockArgUser.Description != nil {
-				_ = mp.WriteField("description", *tt.mockArgUser.Description)
-			}
-
-			err := mp.Close()
-			if err != nil {
-				t.Fatal(err.Error())
+			if tt.signupBasicArg2.Description != nil {
+				_ = mp.WriteField("description", *tt.signupBasicArg2.Description)
 			}
 
-			// request
+			_ = mp.Close()
+
 			req := httptest.NewRequest(http.MethodPost, route, reqBody)
 			req.Header["Content-Type"] = []string{mp.FormDataContentType()}
 
-			// doing request
 			resp, _ := app.Test(req, -1)
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
@@ -472,89 +473,71 @@ func TestSignup(t *testing.T) {
 
 			var testValidationErrorResponse TestValidationErrorResponse
 			_ = json.Unmarshal(body, &testValidationErrorResponse)
-			assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
+			assert.Equal(t, tt.wantValidationErrs, testValidationErrorResponse.Data)
 		})
 	}
 }
 
-// TODO: write some more tests
 func TestRefresh(t *testing.T) {
 	app, dependencies := newTestApp(t)
 
 	const route = "/api/v1/auth/token/refresh"
 
-	var (
-		fingerprint  = "fingerprint"
-		refreshToken = "refresh_token"
-	)
-
 	tests := []struct {
 		name               string
-		cookieRefreshToken *string
-		mockRetAccessToken string
-		mockRetError       error
+		cookieRefreshToken string
+		refreshRet1        *string
+		refreshRet2        *string
+		refreshRet3        error
 		wantCode           int
 	}{
 		{
 			name:               "success",
-			cookieRefreshToken: stringPtr("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MX0.tjVEMiS5O2yNzclwLdaZ-FuzrhyqOT7UwM9Hfc0ZQ8Q"),
-			mockRetAccessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAifQ.Tn0GaHKhAZZB9Y3fZwP4QDG-yvjUXMx3dzAbLKjCX9M",
+			cookieRefreshToken: refreshToken,
+			refreshRet1:        &accessToken,
+			refreshRet2:        &refreshToken,
 			wantCode:           http.StatusOK,
 		},
-		// {
-		// 	name:               "invalid refresh token",
-		// 	cookieRefreshToken: stringPtr("invalid token"),
-		// 	wantCode:           http.StatusUnauthorized,
-		// },
-		// {
-		// 	name:               "internal server error",
-		// 	cookieRefreshToken: stringPtr("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mn0.-ScBrpAXat0bA0Q-kJnL7xnst1-dd_SsIzseTUPT2wE"),
-		// 	mockRetError:       errors.New("internal server error"),
-		// 	wantCode:           http.StatusInternalServerError,
-		// },
-		// {
-		// 	name:               "invalid refresh token (invalid id but correct sign)",
-		// 	cookieRefreshToken: stringPtr("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwMH0.sgK75UAPVpqB8iQG3wNw2zlevle3OiOkpqWJLcHAllA"),
-		// 	wantCode:           http.StatusInternalServerError,
-		// },
+		{
+			name:               "invalid token",
+			cookieRefreshToken: refreshToken,
+			refreshRet3:        core.ErrUnauthorized,
+			wantCode:           http.StatusUnauthorized,
+		},
+		{
+			name:               "internal server error",
+			cookieRefreshToken: refreshToken,
+			refreshRet3:        errors.New("internal server error"),
+			wantCode:           http.StatusInternalServerError,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			at := tt.mockRetAccessToken
-			dependencies.authService.On("Refresh", mock.Anything, core.RefreshSession{
-				FingerprintHash: fingerprint,
-				RefreshToken:    *tt.cookieRefreshToken,
-				ExpiresAt:       time.Time{},
-			}).Return(&at, &refreshToken, tt.mockRetError).Once()
+			dependencies.authService.On(
+				"Refresh",
+				mock.Anything,
+				core.RefreshSession{
+					RefreshToken: tt.cookieRefreshToken,
+				},
+			).Return(tt.refreshRet1, tt.refreshRet2, tt.refreshRet3).Once()
 
-			reqBody := new(bytes.Buffer)
-			mp := multipart.NewWriter(reqBody)
-			_ = mp.WriteField("fingerprint", fingerprint)
-			err := mp.Close()
-			if err != nil {
-				t.Fatal(err.Error())
-			}
-
-			req := httptest.NewRequest(http.MethodPost, route, reqBody)
-			req.Header["Content-Type"] = []string{mp.FormDataContentType()}
-			if tt.cookieRefreshToken != nil {
-				req.AddCookie(&http.Cookie{
-					Name:  "refresh_token",
-					Value: *tt.cookieRefreshToken,
-				})
-			}
+			req := httptest.NewRequest(http.MethodPost, route, http.NoBody)
+			req.AddCookie(&http.Cookie{
+				Name:  "refresh_token",
+				Value: tt.cookieRefreshToken,
+			})
 
 			resp, _ := app.Test(req, -1)
-			body, _ := io.ReadAll(resp.Body)
 			defer resp.Body.Close()
+			body, _ := io.ReadAll(resp.Body)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
 			var testAccessTokenSuccessResponse TestAccessTokenSuccessResponse
 			_ = json.Unmarshal(body, &testAccessTokenSuccessResponse)
 			if tt.wantCode == http.StatusOK {
-				assert.Equal(t, tt.mockRetAccessToken, testAccessTokenSuccessResponse.Data)
+				assert.Equal(t, *tt.refreshRet1, testAccessTokenSuccessResponse.Data)
 			}
 		})
 	}

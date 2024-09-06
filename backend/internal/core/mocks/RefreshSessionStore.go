@@ -14,17 +14,17 @@ type RefreshSessionStore struct {
 	mock.Mock
 }
 
-// CreateRefreshSession provides a mock function with given fields: ctx, rs
-func (_m *RefreshSessionStore) CreateRefreshSession(ctx context.Context, rs core.RefreshSession) error {
-	ret := _m.Called(ctx, rs)
+// CountSessionsAndDelete provides a mock function with given fields: ctx, userID
+func (_m *RefreshSessionStore) CountSessionsAndDelete(ctx context.Context, userID int) error {
+	ret := _m.Called(ctx, userID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for CreateRefreshSession")
+		panic("no return value specified for CountSessionsAndDelete")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.RefreshSession) error); ok {
-		r0 = rf(ctx, rs)
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, userID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -60,17 +60,17 @@ func (_m *RefreshSessionStore) GetRefreshSessionByToken(ctx context.Context, tok
 	return r0, r1
 }
 
-// UpdateRefreshSession provides a mock function with given fields: ctx, oldSessionID, rs
-func (_m *RefreshSessionStore) UpdateRefreshSession(ctx context.Context, oldSessionID int, rs core.RefreshSession) error {
-	ret := _m.Called(ctx, oldSessionID, rs)
+// UpdateRefreshSession provides a mock function with given fields: ctx, param, refreshSession
+func (_m *RefreshSessionStore) UpdateRefreshSession(ctx context.Context, param core.UpdateRefreshSessionParam, refreshSession core.RefreshSession) error {
+	ret := _m.Called(ctx, param, refreshSession)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateRefreshSession")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, core.RefreshSession) error); ok {
-		r0 = rf(ctx, oldSessionID, rs)
+	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateRefreshSessionParam, core.RefreshSession) error); ok {
+		r0 = rf(ctx, param, refreshSession)
 	} else {
 		r0 = ret.Error(0)
 	}
