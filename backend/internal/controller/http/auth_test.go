@@ -22,9 +22,7 @@ type TestAccessTokenSuccessResponse struct {
 }
 
 type TestValidationErrorResponse struct {
-	Data struct {
-		ValidationErrors []validator.ResponseError `json:"validation_errors"`
-	} `json:"data"`
+	Data []validator.ResponseError `json:"data"`
 }
 
 func stringPtr(s string) *string {
@@ -239,7 +237,7 @@ func TestLoginBasic(t *testing.T) {
 				var testValidationErrorResponse TestValidationErrorResponse
 				_ = json.Unmarshal(body, &testValidationErrorResponse)
 
-				assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
+				assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data)
 			}
 		})
 	}
@@ -463,7 +461,7 @@ func TestSignup(t *testing.T) {
 
 			var testValidationErrorResponse TestValidationErrorResponse
 			_ = json.Unmarshal(body, &testValidationErrorResponse)
-			assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
+			assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data)
 		})
 	}
 }
