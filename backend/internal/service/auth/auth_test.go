@@ -28,15 +28,15 @@ const (
 	accessTokenLifetime      = 2
 	refreshTokenLifetime     = 10
 	longRefreshTokenLifetime = 200
-	username                 = "JackVorobey"
-	password                 = "0sLGcJAm96L6b01AeGbJ"
-	passwordHash             = "$2a$12$u3U2peGqPmD4yk0bJ0h5VOU1woza0F9uauPfAgHcU5gI/NYflKvtm"
-	invalidPassword          = "invalid"
-	refreshToken1            = "b49b5443-f9d3-44b5-829c-7b524fdc92d4"
-	refreshToken2            = "c0c9723c-3723-4fdb-9f67-b6365839e526"
+	username                 = "JackVorobey"                                                  //nolint:all
+	password                 = "0sLGcJAm96L6b01AeGbJ"                                         //nolint:all
+	passwordHash             = "$2a$12$u3U2peGqPmD4yk0bJ0h5VOU1woza0F9uauPfAgHcU5gI/NYflKvtm" //nolint:all
+	invalidPassword          = "invalid"                                                      //nolint:all
+	refreshToken1            = "b49b5443-f9d3-44b5-829c-7b524fdc92d4"                         //nolint:all
+	refreshToken2            = "c0c9723c-3723-4fdb-9f67-b6365839e526"                         //nolint:all
 )
 
-func validateToken(tokenString string) (id int, username *string, err error) {
+func validateToken(tokenString string) (id int, err error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -45,21 +45,19 @@ func validateToken(tokenString string) (id int, username *string, err error) {
 		return secret, nil
 	})
 	if err != nil {
-		return 0, nil, err
+		return 0, err
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
 		id, ok := claims["id"].(float64)
 		if !ok {
-			return 0, nil, errInvalidToken
+			return 0, errInvalidToken
 		}
 
-		username, _ := claims["username"].(string)
-
-		return int(id), &username, nil
+		return int(id), nil
 	}
 
-	return 0, nil, errInvalidToken
+	return 0, errInvalidToken
 }
 
 func TestLoginBasic(t *testing.T) {
@@ -217,7 +215,7 @@ func TestLoginBasic(t *testing.T) {
 			accessToken, _, err := authService.LoginBasic(ctx, tt.loginBasicArg2)
 			assert.ErrorIs(t, err, tt.wantErr)
 			if tt.wantErr == nil {
-				id, _, err := validateToken(*accessToken)
+				id, err := validateToken(*accessToken)
 				assert.NoError(t, err)
 				assert.Equal(t, tt.getUserByUsernameRet1.ID, id)
 			}
@@ -444,7 +442,7 @@ func TestRefresh(t *testing.T) {
 			accessToken, _, err := authService.Refresh(ctx, tt.refreshArg2)
 			assert.ErrorIs(t, err, tt.wantErr)
 			if tt.wantErr == nil {
-				id, _, err := validateToken(*accessToken)
+				id, err := validateToken(*accessToken)
 				assert.ErrorIs(t, err, nil)
 				assert.Equal(t, tt.getUserByIDRet1.ID, id)
 			}

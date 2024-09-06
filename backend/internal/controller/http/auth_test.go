@@ -18,25 +18,25 @@ import (
 )
 
 const (
-	correctUsername       = "JackVorobey"
-	correctPassword       = "VeryStrongPassword123"
-	invalidPassword       = "WrongPassword123"
-	emptyPassword         = ""
-	smallPassword         = "pa$$"
-	bigPassword           = "password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols"
-	omitDigitPassword     = "StrongPasswordButWithoutDigit"
-	omitUppercasePassword = "strong_but_omit_uppercase123"
-	emptyUsername         = ""
-	veryBigUsername       = "JackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobey"
-	withSpecialsUsername  = "Jack_Vorobey"
+	correctUsername       = "JackVorobey"                                                                                                                                                     // nolint:all
+	correctPassword       = "VeryStrongPassword123"                                                                                                                                           // nolint:all
+	invalidPassword       = "WrongPassword123"                                                                                                                                                // nolint:all
+	emptyPassword         = ""                                                                                                                                                                // nolint:all
+	smallPassword         = "pa$$"                                                                                                                                                            // nolint:all
+	bigPassword           = "password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols,password_that_have_more_than_72_symbols" // nolint:all
+	omitDigitPassword     = "StrongPasswordButWithoutDigit"                                                                                                                                   // nolint:all
+	omitUppercasePassword = "strong_but_omit_uppercase123"                                                                                                                                    // nolint:all
+	emptyUsername         = ""                                                                                                                                                                // nolint:all
+	veryBigUsername       = "JackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobeyJackVorobey"                                                                                              // nolint:all
+	withSpecialsUsername  = "Jack_Vorobey"                                                                                                                                                    // nolint:all
 )
 
 var (
-	firstname    = "Jack"
-	lastname     = "Vorobey"
-	description  = "Description"
-	accessToken  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphY2sgVm9yb2JleSJ9.-YQEVClcn8V-dwlqFGGV5NWSzHAYPytwfxQXy8sdz5M"
-	refreshToken = "629e239d-7351-4440-b6c0-185d73f58a65"
+	firstname    = "Jack"                                                                                                                                      // nolint:all
+	lastname     = "Vorobey"                                                                                                                                   // nolint:all
+	description  = "Description"                                                                                                                               // nolint:all
+	accessToken  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphY2sgVm9yb2JleSJ9.-YQEVClcn8V-dwlqFGGV5NWSzHAYPytwfxQXy8sdz5M" // nolint:all
+	refreshToken = "629e239d-7351-4440-b6c0-185d73f58a65"                                                                                                      // nolint:all
 )
 
 type TestAccessTokenSuccessResponse struct {
@@ -222,7 +222,7 @@ func TestLoginBasic(t *testing.T) {
 			_ = mp.WriteField("username", tt.loginBasicArg2.Username)
 			_ = mp.WriteField("password", tt.loginBasicArg2.Password)
 
-			mp.Close()
+			_ = mp.Close()
 
 			req := httptest.NewRequest(http.MethodPost, route, reqBody)
 			req.Header["Content-Type"] = []string{mp.FormDataContentType()}
