@@ -16,6 +16,7 @@ type (
 
 	HTTP struct {
 		Port string
+		BodyLimit int
 	}
 
 	Log struct {
@@ -44,6 +45,7 @@ type (
 // NewConfig returns app config.
 func NewConfig() (*Config, error) {
 	port := flag.String("port", "localhost:8080", "port")
+	bodyLimit := flag.Int("body_limit", 55*1024*1024, "max body size in bytes")
 	logLevel := flag.String("log_level", string(logger.InfoLevel), "logger level")
 	dbURL := flag.String("db_url", "", "url for connection to database")
 	tlsCert := flag.String("tls_cert", "./tls/cert.pem", "path to tls certificate")
@@ -60,6 +62,7 @@ func NewConfig() (*Config, error) {
 	cfg := &Config{
 		HTTP: HTTP{
 			Port: *port,
+			BodyLimit: *bodyLimit,
 		},
 		Log: Log{
 			Level: *logLevel,

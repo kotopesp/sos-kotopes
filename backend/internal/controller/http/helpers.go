@@ -20,15 +20,13 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
-const MaxFileSize = 1 * 1024 * 1024
+const MaxFileSize = 20 * 1024 * 1024
 
 var AllowedExtensions = []string{".jpg", ".jpeg", ".png"}
 
 // token helpers: getting info from token
 func getIDFromToken(ctx *fiber.Ctx) (id int, err error) {
 	idItem := getPayloadItem(ctx, "id")
-
-	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("idItem: %v", idItem))
 
 	idFloat, ok := idItem.(float64)
 	if !ok {
@@ -195,7 +193,52 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 			}
 			bytesTmp := buffer.Bytes()
 			photoBytes = &bytesTmp
+		} else {
+			logger.Log().Debug(ctx.UserContext(), model.ErrPhotoNotFound.Error())
+			return nil, nil
 		}
+	} else {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return nil, err
+	} 
+	return photoBytes, nil
+}
+
+func openAndValidatePhotos(ctx *fiber.Ctx) (photoBytes *[][]byte, err error) {
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return nil, err
 	}
+
+	if files := form.File["photos"]; len(files) > 0 {
+		photos := make([][]byte, 0, len(files))
+		for _, file := range files {
+			// Read file content
+			fileContent, err := file.Open()
+			if err != nil {
+				return nil, err
+			}
+
+			buffer := bytes.NewBuffer(nil)
+			if _, err = io.Copy(buffer, fileContent); err != nil {
+				return nil, err
+			}
+			// Validate photo
+			if err := validatePhoto(ctx.UserContext(), file); err != nil {
+				return nil, err
+			}
+			photos = append(photos, buffer.Bytes())
+
+			if err := fileContent.Close(); err != nil {
+				return nil, err
+			}
+		}
+		photoBytes = &photos
+	} else {
+		logger.Log().Debug(ctx.UserContext(), model.ErrPhotoNotFound.Error())
+		return nil, model.ErrPhotoNotFound
+	}
+	
 	return photoBytes, nil
 }

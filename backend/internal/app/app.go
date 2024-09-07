@@ -26,12 +26,13 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
-	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
-	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+	photostore "github.com/kotopesp/sos-kotopes/internal/store/photo"
 )
 
 // Run creates objects via constructors.
@@ -61,6 +62,7 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
+	photoStore := photostore.New(pg)
 
 	// Services
 	commentService := commentservice.New(
@@ -80,7 +82,7 @@ func Run(cfg *config.Config) {
 			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
-	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore, photoStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -89,6 +91,7 @@ func Run(cfg *config.Config) {
 		CaseSensitive:            true,
 		StrictRouting:            false,
 		EnableSplittingOnParsers: true,
+		BodyLimit:                cfg.HTTP.BodyLimit,
 	})
 	app.Use(recover.New())
 	app.Use(cors.New())

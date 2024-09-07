@@ -19,13 +19,13 @@ type (
 		UpdatedAt   time.Time `gorm:"column:updated_at"`    // Timestamp when the record was last updated
 	}
 
-	UpdateRequestBodyAnimal struct {
-		AnimalType  string `gorm:"column:animal_type"`
-		Age         int    `gorm:"column:age"`
-		Color       string `gorm:"column:color"`
-		Gender      string `gorm:"column:gender"`
-		Description string `gorm:"column:description"`
-		Status      string `gorm:"column:status"`
+	UpdateRequestAnimal struct {
+		AnimalType  string    `gorm:"column:animal_type"`
+		Age         int       `gorm:"column:age"`
+		Color       string    `gorm:"column:color"`
+		Gender      string    `gorm:"column:gender"`
+		Description string    `gorm:"column:description"`
+		Status      string    `gorm:"column:status"`
 	}
 
 	AnimalStore interface {
