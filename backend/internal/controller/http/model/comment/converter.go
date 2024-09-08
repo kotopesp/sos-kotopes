@@ -20,6 +20,14 @@ func (c *Update) ToCoreComment() core.Comment {
 	}
 }
 
+func (c *Create) ToCoreComment() core.Comment {
+	return core.Comment{
+		Content:  c.Content,
+		ParentID: c.ParentID,
+		ReplyID:  c.ReplyID,
+	}
+}
+
 func ToModelComment(c core.Comment) Comment {
 	if c.IsDeleted {
 		c.Content = ""

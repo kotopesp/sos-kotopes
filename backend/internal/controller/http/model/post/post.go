@@ -1,8 +1,9 @@
 package post
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"time"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
 type (

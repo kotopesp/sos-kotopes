@@ -4,28 +4,25 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 type TestAccessTokenSuccessResponse struct {
-	Data struct {
-		AccessToken string `json:"access_token"`
-	} `json:"data"`
+	Data string `json:"data"`
 }
 
 type TestValidationErrorResponse struct {
-	Data struct {
-		ValidationErrors []validator.ResponseError `json:"validation_errors"`
-	} `json:"data"`
+	Data []validator.ResponseError `json:"data"`
 }
 
 func stringPtr(s string) *string {
@@ -224,7 +221,7 @@ func TestLoginBasic(t *testing.T) {
 				var testTokenSuccessResponse TestAccessTokenSuccessResponse
 				_ = json.Unmarshal(body, &testTokenSuccessResponse)
 
-				assert.Equal(t, tt.mockRetAccessToken, testTokenSuccessResponse.Data.AccessToken)
+				assert.Equal(t, tt.mockRetAccessToken, testTokenSuccessResponse.Data)
 
 				cookies := resp.Cookies()
 				hasToken := false
@@ -240,7 +237,7 @@ func TestLoginBasic(t *testing.T) {
 				var testValidationErrorResponse TestValidationErrorResponse
 				_ = json.Unmarshal(body, &testValidationErrorResponse)
 
-				assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
+				assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data)
 			}
 		})
 	}
@@ -464,7 +461,7 @@ func TestSignup(t *testing.T) {
 
 			var testValidationErrorResponse TestValidationErrorResponse
 			_ = json.Unmarshal(body, &testValidationErrorResponse)
-			assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
+			assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data)
 		})
 	}
 }
@@ -536,7 +533,9 @@ func TestRefresh(t *testing.T) {
 
 			var testAccessTokenSuccessResponse TestAccessTokenSuccessResponse
 			_ = json.Unmarshal(body, &testAccessTokenSuccessResponse)
-			assert.Equal(t, tt.mockRetAccessToken, testAccessTokenSuccessResponse.Data.AccessToken)
+			if tt.wantCode == http.StatusOK {
+				assert.Equal(t, tt.mockRetAccessToken, testAccessTokenSuccessResponse.Data)
+			}
 		})
 	}
 }

@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
@@ -9,7 +10,27 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-// getFavouritePostsUserByID handles the request to get all favourite posts of the user
+//	@Summary		Get favourite posts of user by id
+//	@Tags			post
+//	@Description	Get favourite posts of user by id
+//	@ID				get-favourite-posts-user-by-id
+//	@Accept			json
+//	@Produce		json
+//	@Param			limit		query		int		true	"Limit"		minimum(1)
+//	@Param			offset		query		int		true	"Offset"	minimum(0)
+//	@Param			status		query		string	false	"Status"
+//	@Param			animal_type	query		string	false	"Animal type"
+//	@Param			gender		query		string	false	"Gender"
+//	@Param			color		query		string	false	"Color"
+//	@Param			location	query		string	false	"Location"
+//	@Success		200			{object}	model.Response{data=[]post.Response}
+//	@Failure		400			{object}	model.Response
+//	@Failure		401			{object}	model.Response
+//	@Failure		404			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=[]validator.ResponseError}
+//	@Failure		500			{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/posts/favourites [get]
 func (r *Router) getFavouritePostsUserByID(ctx *fiber.Ctx) error {
 	var getAllPostsParams postModel.GetAllPostsParams
 
@@ -42,7 +63,22 @@ func (r *Router) getFavouritePostsUserByID(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
-// addFavouritePost handles the request to add a post to the favourites posts
+//	@Summary		Add post to favourites
+//	@Tags			post
+//	@Description	Add post to favourites
+//	@ID				add-favourite-post
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Post ID"	minimum(1)
+//	@Success		200
+//	@Failure		400	{object}	model.Response
+//	@Failure		401	{object}	model.Response
+//	@Failure		404	{object}	model.Response
+//	@Failure		409	{object}	model.Response
+//	@Failure		422	{object}	model.Response{data=[]validator.ResponseError}
+//	@Failure		500	{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/posts/{id}/favourites [post]
 func (r *Router) addFavouritePost(ctx *fiber.Ctx) error {
 	var pathParams postModel.PathParams
 
@@ -76,7 +112,21 @@ func (r *Router) addFavouritePost(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusOK)
 }
 
-// deleteFavouritePostByID handles the request to delete a post from the favourites posts by its ID
+//	@Summary		Delete post from favourites
+//	@Tags			post
+//	@Description	Delete post from favourites
+//	@ID				delete-favourite-post
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Post ID"	minimum(1)
+//	@Success		204
+//	@Failure		400	{object}	model.Response
+//	@Failure		401	{object}	model.Response
+//	@Failure		404	{object}	model.Response
+//	@Failure		422	{object}	model.Response{data=[]validator.ResponseError}
+//	@Failure		500	{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/posts/{id}/favourites [delete]
 func (r *Router) deleteFavouritePostByID(ctx *fiber.Ctx) error {
 	var pathParams postModel.PathParams
 

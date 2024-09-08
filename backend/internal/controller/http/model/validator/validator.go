@@ -8,10 +8,10 @@ import (
 
 type (
 	ResponseError struct {
-		FailedField string
-		Tag         string
-		Param       string
-		Value       interface{}
+		FailedField string      `json:"failed_field" example:"username"`
+		Tag         string      `json:"tag" example:"required"`
+		Param       string      `json:"param" example:""`
+		Value       interface{} `json:"value"`
 	}
 
 	formValidator struct {
