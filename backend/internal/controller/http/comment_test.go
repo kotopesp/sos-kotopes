@@ -279,6 +279,101 @@ func TestCreateComment(t *testing.T) {
 			mockBehaviour: func(comment comment.Create) {},
 			wantCode:      http.StatusUnauthorized,
 		},
+		{
+			name:   "parent comment not found",
+			postID: 1,
+			token:  token,
+			comment: comment.Create{
+				Content:  gofakeit.Sentence(10),
+				ParentID: &[]int{1000}[0],
+				ReplyID:  &[]int{gofakeit.Number(1, 10)}[0],
+			},
+			mockBehaviour: func(comment comment.Create) {
+				coreComment := comment.ToCoreComment()
+				coreComment.AuthorID = authorID
+				coreComment.PostID = 1
+				dependencies.commentService.EXPECT().
+					CreateComment(mock.Anything, coreComment).
+					Return(core.Comment{}, core.ErrParentCommentNotFound).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:   "reply comment not found",
+			postID: 1,
+			token:  token,
+			comment: comment.Create{
+				Content:  gofakeit.Sentence(10),
+				ParentID: &[]int{gofakeit.Number(1, 10)}[0],
+				ReplyID:  &[]int{1000}[0],
+			},
+			mockBehaviour: func(comment comment.Create) {
+				coreComment := comment.ToCoreComment()
+				coreComment.AuthorID = authorID
+				coreComment.PostID = 1
+				dependencies.commentService.EXPECT().
+					CreateComment(mock.Anything, coreComment).
+					Return(core.Comment{}, core.ErrReplyCommentNotFound).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:   "reply to comment of another post",
+			postID: 1,
+			token:  token,
+			comment: comment.Create{
+				Content:  gofakeit.Sentence(10),
+				ParentID: &[]int{gofakeit.Number(1, 10)}[0],
+				ReplyID:  &[]int{gofakeit.Number(1, 10)}[0],
+			},
+			mockBehaviour: func(comment comment.Create) {
+				coreComment := comment.ToCoreComment()
+				coreComment.AuthorID = authorID
+				coreComment.PostID = 1
+				dependencies.commentService.EXPECT().
+					CreateComment(mock.Anything, coreComment).
+					Return(core.Comment{}, core.ErrReplyToCommentOfAnotherPost).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:   "invalid reply comment",
+			postID: 1,
+			token:  token,
+			comment: comment.Create{
+				Content:  gofakeit.Sentence(10),
+				ParentID: &[]int{gofakeit.Number(1, 10)}[0],
+				ReplyID:  &[]int{gofakeit.Number(1, 10)}[0],
+			},
+			mockBehaviour: func(comment comment.Create) {
+				coreComment := comment.ToCoreComment()
+				coreComment.AuthorID = authorID
+				coreComment.PostID = 1
+				dependencies.commentService.EXPECT().
+					CreateComment(mock.Anything, coreComment).
+					Return(core.Comment{}, core.ErrInvalidReplyComment).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:   "invalid parent comment",
+			postID: 1,
+			token:  token,
+			comment: comment.Create{
+				Content:  gofakeit.Sentence(10),
+				ParentID: &[]int{gofakeit.Number(1, 10)}[0],
+				ReplyID:  &[]int{gofakeit.Number(1, 10)}[0],
+			},
+			mockBehaviour: func(comment comment.Create) {
+				coreComment := comment.ToCoreComment()
+				coreComment.AuthorID = authorID
+				coreComment.PostID = 1
+				dependencies.commentService.EXPECT().
+					CreateComment(mock.Anything, coreComment).
+					Return(core.Comment{}, core.ErrInvalidParentComment).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
 	}
 
 	for _, tt := range tests {

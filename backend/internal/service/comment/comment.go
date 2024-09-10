@@ -9,7 +9,6 @@ import (
 type service struct {
 	commentStore core.CommentStore
 	postStore    core.PostStore
-	userStore    core.UserStore
 }
 
 func New(
@@ -33,6 +32,36 @@ func (s *service) GetAllComments(ctx context.Context, params core.GetAllComments
 func (s *service) CreateComment(ctx context.Context, comment core.Comment) (data core.Comment, err error) {
 	if _, err := s.postStore.GetPostByID(ctx, comment.PostID); err != nil {
 		return comment, err
+	}
+
+	if comment.ParentID != nil {
+		dbComment, err := s.commentStore.GetCommentByID(ctx, *comment.ParentID)
+		if err != nil {
+			return comment, core.ErrParentCommentNotFound
+		}
+
+		if dbComment.PostID != comment.PostID {
+			return comment, core.ErrReplyToCommentOfAnotherPost
+		}
+
+		if dbComment.ParentID != nil {
+			return comment, core.ErrInvalidParentComment
+		}
+	}
+
+	if comment.ReplyID != nil {
+		dbComment, err := s.commentStore.GetCommentByID(ctx, *comment.ReplyID)
+		if err != nil {
+			return comment, core.ErrReplyCommentNotFound
+		}
+
+		if dbComment.PostID != comment.PostID {
+			return comment, core.ErrReplyToCommentOfAnotherPost
+		}
+
+		if dbComment.ParentID == nil || *dbComment.ParentID != *comment.ParentID {
+			return comment, core.ErrInvalidReplyComment
+		}
 	}
 
 	return s.commentStore.CreateComment(ctx, comment)

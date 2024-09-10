@@ -221,7 +221,13 @@ func TestCreateComment(t *testing.T) {
 	postStore := mocks.NewMockPostStore(t)
 
 	var (
-		comment      = generateTestComments()[0]
+		comment = core.Comment{
+			Content:  "This is a test comment",
+			AuthorID: 1,
+			PostID:   1,
+			ParentID: &[]int{2}[0],
+			ReplyID:  &[]int{3}[0],
+		}
 		emptyComment = core.Comment{}
 		post         = generateTestPost()
 		emptyPost    = core.Post{}
@@ -243,6 +249,7 @@ func TestCreateComment(t *testing.T) {
 		retPostError        error
 		invokeCreateComment bool
 		invokeGetPostByID   bool
+		mockBehaviour       func()
 		wantError           error
 		wantComment         core.Comment
 	}{
@@ -252,7 +259,25 @@ func TestCreateComment(t *testing.T) {
 			retPost:             post,
 			invokeCreateComment: true,
 			invokeGetPostByID:   true,
-			wantComment:         comment,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ReplyID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: comment.ParentID,
+						ReplyID:  nil,
+					}, nil).Once()
+
+			},
+			wantComment: comment,
 		},
 		{
 			name:                "post store fail",
@@ -260,6 +285,7 @@ func TestCreateComment(t *testing.T) {
 			retPostError:        postError,
 			invokeCreateComment: false,
 			invokeGetPostByID:   true,
+			mockBehaviour:       func() {},
 			wantError:           postError,
 		},
 		{
@@ -267,15 +293,162 @@ func TestCreateComment(t *testing.T) {
 			retPost:             post,
 			invokeCreateComment: true,
 			invokeGetPostByID:   true,
-			retComment:          emptyComment,
-			retCommentError:     commentError,
-			wantError:           commentError,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ReplyID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: comment.ParentID,
+						ReplyID:  nil,
+					}, nil).Once()
+			},
+			retComment:      emptyComment,
+			retCommentError: commentError,
+			wantError:       commentError,
+		},
+		{
+			name:              "parent comment have another parent",
+			retPost:           post,
+			invokeGetPostByID: true,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: comment.ParentID,
+						ReplyID:  nil,
+					}, nil).Once()
+			},
+			wantError: core.ErrInvalidParentComment,
+		},
+		{
+			name:              "parent comment is the comment of another post",
+			retPost:           post,
+			invokeGetPostByID: true,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID + 1,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+			},
+			wantError: core.ErrReplyToCommentOfAnotherPost,
+		},
+		{
+			name:              "parent comment not found",
+			retPost:           post,
+			invokeGetPostByID: true,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{}, core.ErrNoSuchComment).Once()
+			},
+			wantError: core.ErrParentCommentNotFound,
+		},
+		{
+			name:              "reply comment not found",
+			retPost:           post,
+			invokeGetPostByID: true,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ReplyID).
+					Return(core.Comment{}, core.ErrNoSuchComment).Once()
+			},
+			wantError: core.ErrReplyCommentNotFound,
+		},
+		{
+			name:              "reply comment have another parent",
+			retPost:           post,
+			invokeGetPostByID: true,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ReplyID).
+					Return(core.Comment{
+						PostID:   comment.PostID + 1,
+						ParentID: comment.ParentID,
+						ReplyID:  nil,
+					}, nil).Once()
+			},
+			wantError: core.ErrReplyToCommentOfAnotherPost,
+		},
+		{
+			name:              "reply comment is not a child of the parent comment 1",
+			retPost:           post,
+			invokeGetPostByID: true,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ReplyID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+			},
+			wantError: core.ErrInvalidReplyComment,
+		},
+		{
+			name:              "reply comment is not a child of the parent comment 2",
+			retPost:           post,
+			invokeGetPostByID: true,
+			mockBehaviour: func() {
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ParentID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: nil,
+						ReplyID:  nil,
+					}, nil).Once()
+
+				commentStore.EXPECT().
+					GetCommentByID(mock.Anything, *comment.ReplyID).
+					Return(core.Comment{
+						PostID:   comment.PostID,
+						ParentID: &[]int{1000}[0],
+						ReplyID:  nil,
+					}, nil).Once()
+			},
+			wantError: core.ErrInvalidReplyComment,
 		},
 	}
 
 	for _, tt := range tests {
-
 		t.Run(tt.name, func(t *testing.T) {
+			tt.mockBehaviour()
+
 			if tt.invokeCreateComment {
 				commentStore.On(
 					"CreateComment",

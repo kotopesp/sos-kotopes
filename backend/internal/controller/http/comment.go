@@ -103,13 +103,18 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 
 	createdComment, err := r.commentService.CreateComment(ctx.UserContext(), coreComment)
 	if err != nil {
-		if errors.Is(err, core.ErrPostNotFound) {
+		switch {
+		case errors.Is(err, core.ErrPostNotFound):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		case oneOfCreateCommentErrors(err):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(
@@ -117,7 +122,18 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 	)
 }
 
-func oneOfCommentErrors(err error) bool {
+func oneOfCreateCommentErrors(err error) bool {
+	return oneOfErrors(
+		err,
+		core.ErrParentCommentNotFound,
+		core.ErrReplyCommentNotFound,
+		core.ErrReplyToCommentOfAnotherPost,
+		core.ErrInvalidParentComment,
+		core.ErrInvalidReplyComment,
+	)
+}
+
+func oneOfUpdateDeleteErrors(err error) bool {
 	return oneOfErrors(
 		err,
 		core.ErrCommentPostIDMismatch,
@@ -173,7 +189,7 @@ func (r *Router) updateComment(ctx *fiber.Ctx) error {
 	case errors.Is(err, core.ErrCommentAuthorIDMismatch):
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusForbidden).JSON(model.ErrorResponse(err.Error()))
-	case oneOfCommentErrors(err):
+	case oneOfUpdateDeleteErrors(err):
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 	case err != nil:
@@ -223,7 +239,7 @@ func (r *Router) deleteComment(ctx *fiber.Ctx) error {
 	if errors.Is(err, core.ErrCommentAuthorIDMismatch) {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusForbidden).JSON(model.ErrorResponse(err.Error()))
-	} else if err != nil && !oneOfCommentErrors(err) {
+	} else if err != nil && !oneOfUpdateDeleteErrors(err) {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(err.Error())
 	}
