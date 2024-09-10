@@ -39,23 +39,27 @@ func (s *store) GetAllComments(ctx context.Context, params core.GetAllCommentsPa
 		Model(&core.Comment{}).
 		Where("posts_id=?", params.PostID)
 
-	sorted := query.Order(
+	query = query.Order(
 		"COALESCE(parent_id, id), (parent_id IS NULL)::int DESC, id",
 	) // sorting by comment and replies to it
 
 	if params.Limit != nil {
-		sorted = sorted.Limit(*params.Limit)
+		query = query.Limit(*params.Limit)
 	}
 
 	if params.Offset != nil {
-		sorted = sorted.Offset(*params.Offset)
+		query = query.Offset(*params.Offset)
 	}
 
-	if err := sorted.
+	if err := query.
 		Preload("Author").
 		Find(&comments).Error; err != nil {
 		return nil, 0, err
 	}
+
+	query = s.DB.WithContext(ctx).
+		Model(&core.Comment{}).
+		Where("posts_id=?", params.PostID)
 
 	var totalInt64 int64
 	if err := query.Count(&totalInt64).Error; err != nil {
