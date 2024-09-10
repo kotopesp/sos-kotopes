@@ -45,11 +45,12 @@ definitions:
     type: object
   comment.GetAllCommentsResponse:
     properties:
-      data: {}
+      comments:
+        items:
+          $ref: '#/definitions/comment.Comment'
+        type: array
       meta:
         $ref: '#/definitions/pagination.Pagination'
-      status:
-        $ref: '#/definitions/model.status'
     type: object
   comment.Update:
     properties:
@@ -844,12 +845,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/comment.GetAllCommentsResponse'
+            - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/comment.Comment'
-                  type: array
+                  $ref: '#/definitions/comment.GetAllCommentsResponse'
               type: object
         "400":
           description: Bad Request

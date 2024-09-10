@@ -2,7 +2,6 @@ package http
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
@@ -11,21 +10,21 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-//	@Summary		Get all comments
-//	@Tags			comments
-//	@Description	Get all comments for a post
-//	@ID				get-all-comments
-//	@Accept			json
-//	@Produce		json
-//	@Param			post_id	path		int	true	"Post ID"	minimum(1)
-//	@Param			limit	query		int	true	"Limit"		minimum(1)
-//	@Param			offset	query		int	true	"Offset"	minimum(0)
-//	@Success		200		{object}	comment.GetAllCommentsResponse{data=[]comment.Comment}
-//	@Failure		400		{object}	model.Response
-//	@Failure		404		{object}	model.Response
-//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
-//	@Failure		500		{object}	model.Response
-//	@Router			/posts/{post_id}/comments [get]
+// @Summary		Get all comments
+// @Tags			comments
+// @Description	Get all comments for a post
+// @ID				get-all-comments
+// @Accept			json
+// @Produce		json
+// @Param			post_id	path		int	true	"Post ID"	minimum(1)
+// @Param			limit	query		int	true	"Limit"		minimum(1)
+// @Param			offset	query		int	true	"Offset"	minimum(0)
+// @Success		200		{object}	model.Response{data=comment.GetAllCommentsResponse}
+// @Failure		400		{object}	model.Response
+// @Failure		404		{object}	model.Response
+// @Failure		422		{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		500		{object}	model.Response
+// @Router			/posts/{post_id}/comments [get]
 func (r *Router) getComments(ctx *fiber.Ctx) error {
 	var getAllCommentsParams comment.GetAllCommentsParams
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllCommentsParams)
@@ -53,32 +52,32 @@ func (r *Router) getComments(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("%v", coreComments[0].Author))
-
 	modelComments := comment.ToModelCommentsSlice(coreComments)
 
-	return ctx.Status(fiber.StatusOK).JSON(comment.ToGetAllCommentsResponse(
+	response := comment.ToGetAllCommentsResponse(
 		modelComments,
 		paginate(total, getAllCommentsParams.Limit, getAllCommentsParams.Offset),
-	))
+	)
+
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
-//	@Summary		Create a comment
-//	@Tags			comments
-//	@Description	Create a comment for a post
-//	@ID				create-comment
-//	@Accept			json
-//	@Produce		json
-//	@Param			post_id	path		int				true	"Post ID"	minimum(1)
-//	@Param			request	body		comment.Create	true	"Comment"
-//	@Success		201		{object}	model.Response{data=comment.Comment}
-//	@Failure		400		{object}	model.Response
-//	@Failure		401		{object}	model.Response
-//	@Failure		404		{object}	model.Response
-//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
-//	@Failure		500		{object}	model.Response
-//	@Security		ApiKeyAuthBasic
-//	@Router			/posts/{post_id}/comments [post]
+// @Summary		Create a comment
+// @Tags			comments
+// @Description	Create a comment for a post
+// @ID				create-comment
+// @Accept			json
+// @Produce		json
+// @Param			post_id	path		int				true	"Post ID"	minimum(1)
+// @Param			request	body		comment.Create	true	"Comment"
+// @Success		201		{object}	model.Response{data=comment.Comment}
+// @Failure		400		{object}	model.Response
+// @Failure		401		{object}	model.Response
+// @Failure		404		{object}	model.Response
+// @Failure		422		{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		500		{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/posts/{post_id}/comments [post]
 func (r *Router) createComment(ctx *fiber.Ctx) error {
 	var comm comment.Create
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &comm)
@@ -127,24 +126,24 @@ func oneOfCommentErrors(err error) bool {
 	)
 }
 
-//	@Summary		Update a comment
-//	@Tags			comments
-//	@Description	Update a comment for a post
-//	@ID				update-comment
-//	@Accept			json
-//	@Produce		json
-//	@Param			post_id		path		int				true	"Post ID"		minimum(1)
-//	@Param			comment_id	path		int				true	"Comment ID"	minimum(1)
-//	@Param			request		body		comment.Update	true	"Comment"
-//	@Success		200			{object}	model.Response{data=comment.Comment}
-//	@Failure		400			{object}	model.Response
-//	@Failure		401			{object}	model.Response
-//	@Failure		403			{object}	model.Response
-//	@Failure		404			{object}	model.Response
-//	@Failure		422			{object}	model.Response{data=[]validator.ResponseError}
-//	@Failure		500			{object}	model.Response
-//	@Security		ApiKeyAuthBasic
-//	@Router			/posts/{post_id}/comments/{comment_id} [patch]
+// @Summary		Update a comment
+// @Tags			comments
+// @Description	Update a comment for a post
+// @ID				update-comment
+// @Accept			json
+// @Produce		json
+// @Param			post_id		path		int				true	"Post ID"		minimum(1)
+// @Param			comment_id	path		int				true	"Comment ID"	minimum(1)
+// @Param			request		body		comment.Update	true	"Comment"
+// @Success		200			{object}	model.Response{data=comment.Comment}
+// @Failure		400			{object}	model.Response
+// @Failure		401			{object}	model.Response
+// @Failure		403			{object}	model.Response
+// @Failure		404			{object}	model.Response
+// @Failure		422			{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		500			{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/posts/{post_id}/comments/{comment_id} [patch]
 func (r *Router) updateComment(ctx *fiber.Ctx) error {
 	var pathParams comment.PathParams
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
@@ -187,22 +186,22 @@ func (r *Router) updateComment(ctx *fiber.Ctx) error {
 	)
 }
 
-//	@Summary		Delete a comment
-//	@Tags			comments
-//	@Description	Delete a comment for a post
-//	@ID				delete-comment
-//	@Accept			json
-//	@Produce		json
-//	@Param			post_id		path		int	true	"Post ID"		minimum(1)
-//	@Param			comment_id	path		int	true	"Comment ID"	minimum(1)
-//	@Success		204			{object}	model.Response
-//	@Failure		400			{object}	model.Response
-//	@Failure		401			{object}	model.Response
-//	@Failure		403			{object}	model.Response
-//	@Failure		422			{object}	model.Response{data=[]validator.ResponseError}
-//	@Failure		500			{object}	model.Response
-//	@Security		ApiKeyAuthBasic
-//	@Router			/posts/{post_id}/comments/{comment_id} [delete]
+// @Summary		Delete a comment
+// @Tags			comments
+// @Description	Delete a comment for a post
+// @ID				delete-comment
+// @Accept			json
+// @Produce		json
+// @Param			post_id		path		int	true	"Post ID"		minimum(1)
+// @Param			comment_id	path		int	true	"Comment ID"	minimum(1)
+// @Success		204			{object}	model.Response
+// @Failure		400			{object}	model.Response
+// @Failure		401			{object}	model.Response
+// @Failure		403			{object}	model.Response
+// @Failure		422			{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		500			{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/posts/{post_id}/comments/{comment_id} [delete]
 func (r *Router) deleteComment(ctx *fiber.Ctx) error {
 	var pathParams comment.PathParams
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)

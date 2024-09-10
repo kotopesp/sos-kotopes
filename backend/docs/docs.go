@@ -1095,16 +1095,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/comment.GetAllCommentsResponse"
+                                    "$ref": "#/definitions/model.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/comment.Comment"
-                                            }
+                                            "$ref": "#/definitions/comment.GetAllCommentsResponse"
                                         }
                                     }
                                 }
@@ -2131,12 +2128,14 @@ const docTemplate = `{
         "comment.GetAllCommentsResponse": {
             "type": "object",
             "properties": {
-                "data": {},
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/comment.Comment"
+                    }
+                },
                 "meta": {
                     "$ref": "#/definitions/pagination.Pagination"
-                },
-                "status": {
-                    "$ref": "#/definitions/model.status"
                 }
             }
         },

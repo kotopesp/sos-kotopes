@@ -3,7 +3,6 @@ package comment
 import (
 	"time"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
@@ -29,7 +28,7 @@ type User struct {
 }
 
 type GetAllCommentsResponse struct {
-	model.Response
+	Data []Comment             `json:"comments"`
 	Meta pagination.Pagination `json:"meta"`
 }
 
