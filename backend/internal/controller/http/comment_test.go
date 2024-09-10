@@ -21,7 +21,7 @@ import (
 
 const (
 	amountOfComments = 10
-	token            = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MX0.tjVEMiS5O2yNzclwLdaZ-FuzrhyqOT7UwM9Hfc0ZQ8Q"
+	token            = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MX0.tjVEMiS5O2yNzclwLdaZ-FuzrhyqOT7UwM9Hfc0ZQ8Q" // nolint
 	authorID         = 1
 )
 
@@ -30,11 +30,11 @@ func generateComments(t *testing.T) []core.Comment {
 
 	comments := make([]core.Comment, 0, amountOfComments)
 	for range amountOfComments {
-		var comment core.Comment
-		err := gofakeit.Struct(&comment)
+		var comm core.Comment
+		err := gofakeit.Struct(&comm)
 		require.NoError(t, err)
 
-		comments = append(comments, comment)
+		comments = append(comments, comm)
 	}
 
 	return comments
@@ -152,19 +152,20 @@ func TestGetComments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockBehaviour()
 
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf(route, tt.postID, tt.limit, tt.offset), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf(route, tt.postID, tt.limit, tt.offset), http.NoBody)
 
 			resp, err := app.Test(req, -1)
 			require.NoError(t, err)
 
-			bytes, err := io.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			require.NoError(t, err)
-			resp.Body.Close()
+			err = resp.Body.Close()
+			require.NoError(t, err)
 
 			if tt.wantCode == http.StatusOK {
 				var data GetCommentsResponse
 
-				err = json.Unmarshal(bytes, &data)
+				err = json.Unmarshal(body, &data)
 				require.NoError(t, err)
 
 				assert.Equal(t, tt.wantData.Data.Meta, data.Data.Meta)
@@ -295,14 +296,15 @@ func TestCreateComment(t *testing.T) {
 			resp, err := app.Test(req, -1)
 			require.NoError(t, err)
 
-			bytes, err := io.ReadAll(resp.Body)
+			body, err = io.ReadAll(resp.Body)
 			require.NoError(t, err)
-			resp.Body.Close()
+			err = resp.Body.Close()
+			require.NoError(t, err)
 
 			if tt.wantCode == http.StatusOK {
 				var data comment.Comment
 
-				err = json.Unmarshal(bytes, &data)
+				err = json.Unmarshal(body, &data)
 				require.NoError(t, err)
 
 				assert.Equal(t, tt.comment, data)
@@ -471,14 +473,15 @@ func TestUpdateComment(t *testing.T) {
 			resp, err := app.Test(req, -1)
 			require.NoError(t, err)
 
-			bytes, err := io.ReadAll(resp.Body)
+			body, err = io.ReadAll(resp.Body)
 			require.NoError(t, err)
-			resp.Body.Close()
+			err = resp.Body.Close()
+			require.NoError(t, err)
 
 			if tt.wantCode == http.StatusOK {
 				var data UpdateCommentResponse
 
-				err = json.Unmarshal(bytes, &data)
+				err = json.Unmarshal(body, &data)
 				require.NoError(t, err)
 
 				assert.Equal(t, comment.ToModelComment(coreComment), data.Data)
@@ -613,11 +616,13 @@ func TestDeleteComment(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockBehaviour()
 
-			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf(route, tt.postID, tt.commentID), nil)
+			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf(route, tt.postID, tt.commentID), http.NoBody)
 
 			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tt.token))
 
 			resp, err := app.Test(req, -1)
+			require.NoError(t, err)
+			err = resp.Body.Close()
 			require.NoError(t, err)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
