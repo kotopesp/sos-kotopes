@@ -32,7 +32,7 @@ func (r *Router) getComments(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	var commentPathParams comment.PathParams
+	var commentPathParams comment.PostIDPathParams
 	fiberError, parseOrValidationError = parseParamsAndValidate(ctx, r.formValidator, &commentPathParams)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
@@ -85,7 +85,7 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	var pathParams comment.PathParams
+	var pathParams comment.PostIDPathParams
 	fiberError, parseOrValidationError = parseParamsAndValidate(ctx, r.formValidator, &pathParams)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError

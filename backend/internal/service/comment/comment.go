@@ -2,10 +2,8 @@ package commentservice
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type service struct {
@@ -45,9 +43,6 @@ func (s *service) UpdateComment(ctx context.Context, comment core.Comment) (data
 	if err != nil {
 		return comment, err
 	}
-
-	logger.Log().Debug(ctx, fmt.Sprintf("%v", dbComment))
-	logger.Log().Debug(ctx, fmt.Sprintf("%v", comment))
 
 	if dbComment.AuthorID != comment.AuthorID {
 		return comment, core.ErrCommentAuthorIDMismatch

@@ -30,6 +30,7 @@ func stringPtr(s string) *string {
 }
 
 func TestLoginBasic(t *testing.T) {
+	t.Parallel()
 	app, dependencies := newTestApp(t)
 
 	const route = "/api/v1/auth/login"
@@ -244,6 +245,7 @@ func TestLoginBasic(t *testing.T) {
 }
 
 func TestSignup(t *testing.T) {
+	t.Parallel()
 	app, dependencies := newTestApp(t)
 
 	const route = "/api/v1/auth/signup"
@@ -467,6 +469,7 @@ func TestSignup(t *testing.T) {
 }
 
 func TestRefresh(t *testing.T) {
+	t.Parallel()
 	app, dependencies := newTestApp(t)
 
 	const route = "/api/v1/auth/token/refresh"

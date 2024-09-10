@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/core/mocks"
+	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -122,10 +122,11 @@ func generateTestGetAllCommentsParams() core.GetAllCommentsParams {
 }
 
 func TestGetAllComments(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 
-	commentStore := mocks.NewCommentStore(t)
-	postStore := mocks.NewPostStore(t)
+	commentStore := mocks.NewMockCommentStore(t)
+	postStore := mocks.NewMockPostStore(t)
 
 	var (
 		comments     = generateTestComments()
@@ -213,10 +214,11 @@ func TestGetAllComments(t *testing.T) {
 }
 
 func TestCreateComment(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 
-	commentStore := mocks.NewCommentStore(t)
-	postStore := mocks.NewPostStore(t)
+	commentStore := mocks.NewMockCommentStore(t)
+	postStore := mocks.NewMockPostStore(t)
 
 	var (
 		comment      = generateTestComments()[0]
@@ -301,10 +303,11 @@ func TestCreateComment(t *testing.T) {
 }
 
 func TestUpdateComment(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 
-	commentStore := mocks.NewCommentStore(t)
-	postStore := mocks.NewPostStore(t)
+	commentStore := mocks.NewMockCommentStore(t)
+	postStore := mocks.NewMockPostStore(t)
 
 	var (
 		comment                 = generateTestComments()[0]
@@ -421,10 +424,11 @@ func TestUpdateComment(t *testing.T) {
 }
 
 func TestDeleteComment(t *testing.T) {
+	t.Parallel()
 	ctx := context.Background()
 
-	commentStore := mocks.NewCommentStore(t)
-	postStore := mocks.NewPostStore(t)
+	commentStore := mocks.NewMockCommentStore(t)
+	postStore := mocks.NewMockPostStore(t)
 
 	var (
 		comment                 = generateTestComments()[0]

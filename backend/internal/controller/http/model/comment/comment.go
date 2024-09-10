@@ -42,6 +42,10 @@ type GetAllCommentsParams struct {
 }
 
 type PathParams struct {
-	PostID    int `params:"post_id" validate:"omitempty,gt=0"`
-	CommentID int `params:"comment_id" validate:"omitempty,gt=0"`
+	PostID    int `params:"post_id" validate:"gt=0"`
+	CommentID int `params:"comment_id" validate:"gt=0"`
+}
+
+type PostIDPathParams struct {
+	PostID int `params:"post_id" validate:"gt=0"`
 }

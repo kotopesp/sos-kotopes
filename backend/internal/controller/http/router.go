@@ -52,7 +52,7 @@ func (r *Router) initRoutes() {
 	r.app.Get("/swagger/*", swagger.HandlerDefault) // default
 
 	v1 := r.app.Group("/api/v1")
-	// comment_service
+	// comment
 	v1.Get("/posts/:post_id/comments", r.getComments)
 	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
 	v1.Patch("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
