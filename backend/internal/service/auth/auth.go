@@ -79,6 +79,9 @@ func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, 
 	var refreshSession core.RefreshSession
 	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), coreUser.ID, s.getRefreshTokenExpiresAt())
 
+	rt := refreshSession.RefreshToken
+	refreshSession.RefreshToken = s.generateHash(refreshSession.RefreshToken)
+
 	err = s.refreshSessionStore.CountSessionsAndDelete(ctx, coreUser.ID)
 	if err != nil {
 		return nil, nil, err
@@ -93,7 +96,7 @@ func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, 
 		return nil, nil, err
 	}
 
-	return at, &refreshSession.RefreshToken, nil
+	return at, &rt, nil
 }
 
 // SignupBasic Signup through username and password (can be additional fields)
@@ -181,7 +184,8 @@ func (s *service) Refresh(
 	ctx context.Context,
 	refreshSession core.RefreshSession,
 ) (accessToken, refreshToken *string, err error) {
-	dbSession, err := s.refreshSessionStore.GetRefreshSessionByToken(ctx, refreshSession.RefreshToken)
+	hashedToken := s.generateHash(refreshSession.RefreshToken)
+	dbSession, err := s.refreshSessionStore.GetRefreshSessionByToken(ctx, hashedToken)
 	if err != nil {
 		return nil, nil, core.ErrUnauthorized
 	}
@@ -202,6 +206,9 @@ func (s *service) Refresh(
 
 	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), dbSession.UserID, s.getRefreshTokenExpiresAt())
 
+	rt := s.generateHash(refreshSession.RefreshToken)
+	refreshSession.RefreshToken = s.generateHash(refreshSession.RefreshToken)
+
 	err = s.refreshSessionStore.UpdateRefreshSession(
 		ctx,
 		refreshsession.ByID(dbSession.ID),
@@ -211,5 +218,5 @@ func (s *service) Refresh(
 		return nil, nil, err
 	}
 
-	return accessToken, &refreshSession.RefreshToken, nil
+	return accessToken, &rt, nil
 }

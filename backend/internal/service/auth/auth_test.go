@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"testing"
@@ -421,10 +422,12 @@ func TestRefresh(t *testing.T) {
 				).Return(tt.getUserByIDRet1, tt.getUserByIDRet2).Once()
 			}
 			if tt.invokeGetRefreshSessionByToken {
+				hashedToken := sha256.Sum256([]byte(tt.getRefreshSessionByTokenArg2))
+
 				mockRefreshSessionStore.On(
 					"GetRefreshSessionByToken",
 					ctx,
-					tt.getRefreshSessionByTokenArg2,
+					hashedToken,
 				).Return(tt.getRefreshSessionByTokenRet1, tt.getRefreshSessionByTokenRet2).Once()
 			}
 			if tt.invokeUpdateRefreshSession {

@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -29,6 +31,11 @@ func (s *service) generateAccessToken(id int, username string) (*string, error) 
 	}
 
 	return &at, nil
+}
+
+func (s *service) generateHash(str string) string {
+	hashedToken := sha256.Sum256([]byte(str))
+	return hex.EncodeToString(hashedToken[:])
 }
 
 // generateRefreshToken Generating refresh token
