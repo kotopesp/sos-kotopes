@@ -3,6 +3,7 @@ module github.com/kotopesp/sos-kotopes
 go 1.22.5
 
 require (
+	github.com/brianvoe/gofakeit/v7 v7.0.4
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/gofiber/contrib/jwt v1.0.10
 	github.com/gofiber/fiber/v2 v2.52.5

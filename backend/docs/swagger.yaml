@@ -45,11 +45,12 @@ definitions:
     type: object
   comment.GetAllCommentsResponse:
     properties:
-      data: {}
+      comments:
+        items:
+          $ref: '#/definitions/comment.Comment'
+        type: array
       meta:
         $ref: '#/definitions/pagination.Pagination'
-      status:
-        $ref: '#/definitions/model.status'
     type: object
   comment.Update:
     properties:
@@ -223,6 +224,15 @@ definitions:
       username:
         type: string
     type: object
+  validator.Response:
+    properties:
+      message:
+        type: string
+      validation_errors:
+        items:
+          $ref: '#/definitions/validator.ResponseError'
+        type: array
+    type: object
   validator.ResponseError:
     properties:
       failed_field:
@@ -279,9 +289,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -341,9 +349,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -425,9 +431,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/post.Response'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "400":
           description: Bad Request
@@ -561,9 +565,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -696,9 +698,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -746,9 +746,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -799,9 +797,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -844,12 +840,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/comment.GetAllCommentsResponse'
+            - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/comment.Comment'
-                  type: array
+                  $ref: '#/definitions/comment.GetAllCommentsResponse'
               type: object
         "400":
           description: Bad Request
@@ -866,9 +860,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -926,9 +918,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -984,9 +974,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -1056,9 +1044,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -1141,9 +1127,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -1209,9 +1193,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/post.Response'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "400":
           description: Bad Request
@@ -1286,9 +1268,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -1404,9 +1384,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -1456,9 +1434,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error
@@ -1508,9 +1484,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/validator.ResponseError'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "500":
           description: Internal Server Error

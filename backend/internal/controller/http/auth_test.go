@@ -22,7 +22,7 @@ type TestAccessTokenSuccessResponse struct {
 }
 
 type TestValidationErrorResponse struct {
-	Data []validator.ResponseError `json:"data"`
+	Data validator.Response `json:"data"`
 }
 
 func stringPtr(s string) *string {
@@ -30,6 +30,7 @@ func stringPtr(s string) *string {
 }
 
 func TestLoginBasic(t *testing.T) {
+	t.Parallel()
 	app, dependencies := newTestApp(t)
 
 	const route = "/api/v1/auth/login"
@@ -237,13 +238,14 @@ func TestLoginBasic(t *testing.T) {
 				var testValidationErrorResponse TestValidationErrorResponse
 				_ = json.Unmarshal(body, &testValidationErrorResponse)
 
-				assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data)
+				assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
 			}
 		})
 	}
 }
 
 func TestSignup(t *testing.T) {
+	t.Parallel()
 	app, dependencies := newTestApp(t)
 
 	const route = "/api/v1/auth/signup"
@@ -461,12 +463,13 @@ func TestSignup(t *testing.T) {
 
 			var testValidationErrorResponse TestValidationErrorResponse
 			_ = json.Unmarshal(body, &testValidationErrorResponse)
-			assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data)
+			assert.Equal(t, tt.wantErrs, testValidationErrorResponse.Data.ValidationErrors)
 		})
 	}
 }
 
 func TestRefresh(t *testing.T) {
+	t.Parallel()
 	app, dependencies := newTestApp(t)
 
 	const route = "/api/v1/auth/token/refresh"
