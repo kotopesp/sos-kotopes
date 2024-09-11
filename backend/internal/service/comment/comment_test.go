@@ -243,6 +243,7 @@ func TestCreateComment(t *testing.T) {
 
 	tests := []struct {
 		name                string
+		comment             *core.Comment
 		retComment          core.Comment
 		retCommentError     error
 		retPost             core.Post
@@ -327,7 +328,7 @@ func TestCreateComment(t *testing.T) {
 						ReplyID:  nil,
 					}, nil).Once()
 			},
-			wantError: core.ErrInvalidParentComment,
+			wantError: core.ErrInvalidCommentParentID,
 		},
 		{
 			name:              "parent comment is the comment of another post",
@@ -418,7 +419,7 @@ func TestCreateComment(t *testing.T) {
 						ReplyID:  nil,
 					}, nil).Once()
 			},
-			wantError: core.ErrInvalidReplyComment,
+			wantError: core.ErrInvalidCommentReplyID,
 		},
 		{
 			name:              "reply comment is not a child of the parent comment 2",
@@ -441,7 +442,21 @@ func TestCreateComment(t *testing.T) {
 						ReplyID:  nil,
 					}, nil).Once()
 			},
-			wantError: core.ErrInvalidReplyComment,
+			wantError: core.ErrInvalidCommentReplyID,
+		},
+		{
+			name:              "null parent comment id and not null reply comment id",
+			retPost:           post,
+			invokeGetPostByID: true,
+			comment: &core.Comment{
+				Content:  "This is a test comment",
+				AuthorID: 1,
+				PostID:   1,
+				ParentID: nil,
+				ReplyID:  &[]int{3}[0],
+			},
+			mockBehaviour: func() {},
+			wantError:     core.ErrNullCommentParentID,
 		},
 	}
 
@@ -465,7 +480,10 @@ func TestCreateComment(t *testing.T) {
 				).Return(tt.retPost, tt.retPostError).Once()
 			}
 
-			res, err := commentService.CreateComment(ctx, comment)
+			if tt.comment == nil {
+				tt.comment = &comment
+			}
+			res, err := commentService.CreateComment(ctx, *tt.comment)
 
 			assert.ErrorIs(t, err, tt.wantError, "errors should match")
 			if err == nil {

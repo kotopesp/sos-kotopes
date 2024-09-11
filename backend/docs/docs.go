@@ -70,10 +70,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -167,10 +164,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -296,10 +290,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/post.Response"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -567,10 +558,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -710,10 +698,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -864,10 +849,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -951,10 +933,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1030,10 +1009,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1131,10 +1107,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1234,10 +1207,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1326,10 +1296,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1443,10 +1410,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1544,10 +1508,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/post.Response"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1669,10 +1630,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1760,10 +1718,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1828,10 +1783,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1917,10 +1869,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -2388,6 +2337,20 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "validator.Response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "validation_errors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/validator.ResponseError"
+                    }
                 }
             }
         },

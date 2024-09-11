@@ -351,7 +351,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
 					CreateComment(mock.Anything, coreComment).
-					Return(core.Comment{}, core.ErrInvalidReplyComment).Once()
+					Return(core.Comment{}, core.ErrInvalidCommentReplyID).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},
@@ -370,7 +370,26 @@ func TestCreateComment(t *testing.T) {
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
 					CreateComment(mock.Anything, coreComment).
-					Return(core.Comment{}, core.ErrInvalidParentComment).Once()
+					Return(core.Comment{}, core.ErrInvalidCommentParentID).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:   "null parent comment id",
+			postID: 1,
+			token:  token,
+			comment: comment.Create{
+				Content:  gofakeit.Sentence(10),
+				ParentID: nil,
+				ReplyID:  &[]int{gofakeit.Number(1, 10)}[0],
+			},
+			mockBehaviour: func(comment comment.Create) {
+				coreComment := comment.ToCoreComment()
+				coreComment.AuthorID = authorID
+				coreComment.PostID = 1
+				dependencies.commentService.EXPECT().
+					CreateComment(mock.Anything, coreComment).
+					Return(core.Comment{}, core.ErrNullCommentParentID).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,
 		},

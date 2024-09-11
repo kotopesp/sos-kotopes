@@ -1,0 +1,7 @@
+dir: "{{.InterfaceDir}}/mocks"
+packages:
+  github.com/kotopesp/sos-kotopes/internal/core:
+    config:
+      all: True
+      with-expecter: True
+      recursive: True

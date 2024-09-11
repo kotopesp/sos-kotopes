@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/comment"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
@@ -22,7 +23,7 @@ import (
 // @Success		200		{object}	model.Response{data=comment.GetAllCommentsResponse}
 // @Failure		400		{object}	model.Response
 // @Failure		404		{object}	model.Response
-// @Failure		422		{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		422		{object}	model.Response{data=validator.Response}
 // @Failure		500		{object}	model.Response
 // @Router			/posts/{post_id}/comments [get]
 func (r *Router) getComments(ctx *fiber.Ctx) error {
@@ -74,7 +75,7 @@ func (r *Router) getComments(ctx *fiber.Ctx) error {
 // @Failure		400		{object}	model.Response
 // @Failure		401		{object}	model.Response
 // @Failure		404		{object}	model.Response
-// @Failure		422		{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		422		{object}	model.Response{data=validator.Response}
 // @Failure		500		{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{post_id}/comments [post]
@@ -109,7 +110,15 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		case oneOfCreateCommentErrors(err):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
-			return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(err.Error()))
+			errMsg := err.Error()
+			return ctx.Status(fiber.StatusUnprocessableEntity).JSON(
+				model.ErrorResponse(
+					validator.NewResponse(
+						nil,
+						&errMsg,
+					),
+				),
+			)
 		default:
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -128,8 +137,9 @@ func oneOfCreateCommentErrors(err error) bool {
 		core.ErrParentCommentNotFound,
 		core.ErrReplyCommentNotFound,
 		core.ErrReplyToCommentOfAnotherPost,
-		core.ErrInvalidParentComment,
-		core.ErrInvalidReplyComment,
+		core.ErrInvalidCommentParentID,
+		core.ErrInvalidCommentReplyID,
+		core.ErrNullCommentParentID,
 	)
 }
 
@@ -156,7 +166,7 @@ func oneOfUpdateDeleteErrors(err error) bool {
 // @Failure		401			{object}	model.Response
 // @Failure		403			{object}	model.Response
 // @Failure		404			{object}	model.Response
-// @Failure		422			{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		422			{object}	model.Response{data=validator.Response}
 // @Failure		500			{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{post_id}/comments/{comment_id} [patch]
@@ -214,7 +224,7 @@ func (r *Router) updateComment(ctx *fiber.Ctx) error {
 // @Failure		400			{object}	model.Response
 // @Failure		401			{object}	model.Response
 // @Failure		403			{object}	model.Response
-// @Failure		422			{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		422			{object}	model.Response{data=validator.Response}
 // @Failure		500			{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{post_id}/comments/{comment_id} [delete]

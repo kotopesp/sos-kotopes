@@ -25,7 +25,7 @@ import (
 // @Param			gender		query		string	false	"Gender"
 // @Param			color		query		string	false	"Color"
 // @Param			location	query		string	false	"Location"
-// @Success		200			{object}	model.Response{data=[]post.Response}
+// @Success		200			{object}	model.Response{data=validator.Response}
 // @Failure		400			{object}	model.Response
 // @Failure		500			{object}	model.Response
 // @Router			/posts [get]
@@ -67,7 +67,7 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 // @Param			gender		query		string	false	"Gender"
 // @Param			color		query		string	false	"Color"
 // @Param			location	query		string	false	"Location"
-// @Success		200			{object}	model.Response{data=[]post.Response}
+// @Success		200			{object}	model.Response{data=validator.Response}
 // @Failure		400			{object}	model.Response
 // @Failure		404			{object}	model.Response
 // @Failure		500			{object}	model.Response
@@ -218,7 +218,7 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 // @Failure		401			{object}	model.Response
 // @Failure		403			{object}	model.Response
 // @Failure		404			{object}	model.Response
-//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		422		{object}	model.Response{data=validator.Response}
 // @Failure		500			{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{id} [patch]
@@ -279,7 +279,7 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 // @Failure		400	{object}	model.Response
 // @Failure		401	{object}	model.Response
 // @Failure		403	{object}	model.Response
-//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		422		{object}	model.Response{data=validator.Response}
 // @Failure		500	{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{id} [delete]

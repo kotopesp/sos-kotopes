@@ -45,11 +45,15 @@ func (s *service) CreateComment(ctx context.Context, comment core.Comment) (data
 		}
 
 		if dbComment.ParentID != nil {
-			return comment, core.ErrInvalidParentComment
+			return comment, core.ErrInvalidCommentParentID
 		}
 	}
 
 	if comment.ReplyID != nil {
+		if comment.ParentID == nil {
+			return comment, core.ErrNullCommentParentID
+		}
+
 		dbComment, err := s.commentStore.GetCommentByID(ctx, *comment.ReplyID)
 		if err != nil {
 			return comment, core.ErrReplyCommentNotFound
@@ -60,7 +64,7 @@ func (s *service) CreateComment(ctx context.Context, comment core.Comment) (data
 		}
 
 		if dbComment.ParentID == nil || *dbComment.ParentID != *comment.ParentID {
-			return comment, core.ErrInvalidReplyComment
+			return comment, core.ErrInvalidCommentReplyID
 		}
 	}
 
