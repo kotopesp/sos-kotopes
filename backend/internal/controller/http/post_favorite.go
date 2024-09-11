@@ -23,7 +23,7 @@ import (
 // @Param			gender		query		string	false	"Gender"
 // @Param			color		query		string	false	"Color"
 // @Param			location	query		string	false	"Location"
-// @Success		200			{object}	model.Response{data=[]post.Response}
+// @Success		200			{object}	model.Response{data=post.Response}
 // @Failure		400			{object}	model.Response
 // @Failure		401			{object}	model.Response
 // @Failure		404			{object}	model.Response

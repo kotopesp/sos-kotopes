@@ -431,12 +431,21 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/validator.Response'
+                  $ref: '#/definitions/post.Response'
               type: object
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -519,6 +528,15 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -598,7 +616,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/post.Response'
+                  $ref: '#/definitions/post.PostResponse'
               type: object
         "400":
           description: Bad Request
@@ -608,6 +626,15 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1104,9 +1131,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/post.Response'
-                  type: array
+                  $ref: '#/definitions/post.Response'
               type: object
         "400":
           description: Bad Request
@@ -1193,7 +1218,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/validator.Response'
+                  $ref: '#/definitions/post.Response'
               type: object
         "400":
           description: Bad Request
@@ -1203,6 +1228,15 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1309,6 +1343,15 @@ paths:
           description: Not Found
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
         "500":
           description: Internal Server Error
           schema:
@@ -1348,6 +1391,15 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/model.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
         "500":
           description: Internal Server Error
           schema:

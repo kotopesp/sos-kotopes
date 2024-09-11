@@ -79,7 +79,7 @@ func (r *Router) initRoutes() {
 	// auth
 	v1.Post("/auth/login", r.loginBasic)
 	v1.Post("/auth/signup", r.signup)
-	v1.Post("/auth/token/refresh", r.refreshTokenMiddleware(), r.refresh)
+	v1.Post("/auth/token/refresh", r.refresh)
 
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)

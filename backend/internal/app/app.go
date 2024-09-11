@@ -32,6 +32,7 @@ import (
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 )
 
 // Run creates objects via constructors.
@@ -61,6 +62,7 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
+	refreshSessionStore := refreshsessionstore.New(pg)
 
 	// Services
 	commentService := commentservice.New(
@@ -71,6 +73,7 @@ func Run(cfg *config.Config) {
 	userService := usersService.New(userStore, favouriteUserStore)
 	authService := auth.New(
 		userStore,
+		refreshSessionStore,
 		core.AuthServiceConfig{
 			JWTSecret:            cfg.JWTSecret,
 			VKClientID:           cfg.VKClientID,

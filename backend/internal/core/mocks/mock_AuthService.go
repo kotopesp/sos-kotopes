@@ -254,34 +254,43 @@ func (_c *MockAuthService_LoginBasic_Call) RunAndReturn(run func(context.Context
 	return _c
 }
 
-// Refresh provides a mock function with given fields: ctx, id
-func (_m *MockAuthService) Refresh(ctx context.Context, id int) (*string, error) {
-	ret := _m.Called(ctx, id)
+// Refresh provides a mock function with given fields: ctx, refreshSession
+func (_m *MockAuthService) Refresh(ctx context.Context, refreshSession core.RefreshSession) (*string, *string, error) {
+	ret := _m.Called(ctx, refreshSession)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Refresh")
 	}
 
 	var r0 *string
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (*string, error)); ok {
-		return rf(ctx, id)
+	var r1 *string
+	var r2 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.RefreshSession) (*string, *string, error)); ok {
+		return rf(ctx, refreshSession)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) *string); ok {
-		r0 = rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, core.RefreshSession) *string); ok {
+		r0 = rf(ctx, refreshSession)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*string)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = rf(ctx, id)
+	if rf, ok := ret.Get(1).(func(context.Context, core.RefreshSession) *string); ok {
+		r1 = rf(ctx, refreshSession)
 	} else {
-		r1 = ret.Error(1)
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(*string)
+		}
 	}
 
-	return r0, r1
+	if rf, ok := ret.Get(2).(func(context.Context, core.RefreshSession) error); ok {
+		r2 = rf(ctx, refreshSession)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // MockAuthService_Refresh_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Refresh'
@@ -291,24 +300,24 @@ type MockAuthService_Refresh_Call struct {
 
 // Refresh is a helper method to define mock.On call
 //   - ctx context.Context
-//   - id int
-func (_e *MockAuthService_Expecter) Refresh(ctx interface{}, id interface{}) *MockAuthService_Refresh_Call {
-	return &MockAuthService_Refresh_Call{Call: _e.mock.On("Refresh", ctx, id)}
+//   - refreshSession core.RefreshSession
+func (_e *MockAuthService_Expecter) Refresh(ctx interface{}, refreshSession interface{}) *MockAuthService_Refresh_Call {
+	return &MockAuthService_Refresh_Call{Call: _e.mock.On("Refresh", ctx, refreshSession)}
 }
 
-func (_c *MockAuthService_Refresh_Call) Run(run func(ctx context.Context, id int)) *MockAuthService_Refresh_Call {
+func (_c *MockAuthService_Refresh_Call) Run(run func(ctx context.Context, refreshSession core.RefreshSession)) *MockAuthService_Refresh_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(core.RefreshSession))
 	})
 	return _c
 }
 
-func (_c *MockAuthService_Refresh_Call) Return(accessToken *string, err error) *MockAuthService_Refresh_Call {
-	_c.Call.Return(accessToken, err)
+func (_c *MockAuthService_Refresh_Call) Return(accessToken *string, refreshToken *string, err error) *MockAuthService_Refresh_Call {
+	_c.Call.Return(accessToken, refreshToken, err)
 	return _c
 }
 
-func (_c *MockAuthService_Refresh_Call) RunAndReturn(run func(context.Context, int) (*string, error)) *MockAuthService_Refresh_Call {
+func (_c *MockAuthService_Refresh_Call) RunAndReturn(run func(context.Context, core.RefreshSession) (*string, *string, error)) *MockAuthService_Refresh_Call {
 	_c.Call.Return(run)
 	return _c
 }

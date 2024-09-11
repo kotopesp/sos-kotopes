@@ -3,12 +3,14 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
+	"time"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type store struct {
@@ -25,6 +27,8 @@ func (s *store) GetUser(ctx context.Context, id int) (user core.User, err error)
 		Where("id = ?", id).
 		First(&user).Error
 
+	logger.Log().Info(ctx, fmt.Sprintf("%+v", user))
+
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			logger.Log().Debug(ctx, err.Error())
@@ -33,6 +37,7 @@ func (s *store) GetUser(ctx context.Context, id int) (user core.User, err error)
 		logger.Log().Error(ctx, err.Error())
 		return core.User{}, err
 	}
+
 	return user, nil
 }
 

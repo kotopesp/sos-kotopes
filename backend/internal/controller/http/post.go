@@ -12,23 +12,24 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-// @Summary		Get all posts
-// @Tags			post
-// @Description	Get all posts
-// @ID				get-all-posts
-// @Accept			json
-// @Produce		json
-// @Param			limit		query		int		true	"Limit"		minimum(1)
-// @Param			offset		query		int		true	"Offset"	minimum(0)
-// @Param			status		query		string	false	"Status"
-// @Param			animal_type	query		string	false	"Animal type"
-// @Param			gender		query		string	false	"Gender"
-// @Param			color		query		string	false	"Color"
-// @Param			location	query		string	false	"Location"
-// @Success		200			{object}	model.Response{data=validator.Response}
-// @Failure		400			{object}	model.Response
-// @Failure		500			{object}	model.Response
-// @Router			/posts [get]
+//	@Summary		Get all posts
+//	@Tags			post
+//	@Description	Get all posts
+//	@ID				get-all-posts
+//	@Accept			json
+//	@Produce		json
+//	@Param			limit		query		int		true	"Limit"		minimum(1)
+//	@Param			offset		query		int		true	"Offset"	minimum(0)
+//	@Param			status		query		string	false	"Status"
+//	@Param			animal_type	query		string	false	"Animal type"
+//	@Param			gender		query		string	false	"Gender"
+//	@Param			color		query		string	false	"Color"
+//	@Param			location	query		string	false	"Location"
+//	@Success		200			{object}	model.Response{data=post.Response}
+//	@Failure		400			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=validator.Response}
+//	@Failure		500			{object}	model.Response
+//	@Router			/posts [get]
 func (r *Router) getPosts(ctx *fiber.Ctx) error {
 	var getAllPostsParams postModel.GetAllPostsParams
 
@@ -53,25 +54,26 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
-// @Summary		Get posts by user ID
-// @Tags			post
-// @Description	Get posts by user ID
-// @ID				get-posts-user-by-id
-// @Accept			json
-// @Produce		json
-// @Param			id			path		int		true	"User ID"	minimum(1)
-// @Param			limit		query		int		true	"Limit"		minimum(1)
-// @Param			offset		query		int		true	"Offset"	minimum(0)
-// @Param			status		query		string	false	"Status"
-// @Param			animal_type	query		string	false	"Animal type"
-// @Param			gender		query		string	false	"Gender"
-// @Param			color		query		string	false	"Color"
-// @Param			location	query		string	false	"Location"
-// @Success		200			{object}	model.Response{data=validator.Response}
-// @Failure		400			{object}	model.Response
-// @Failure		404			{object}	model.Response
-// @Failure		500			{object}	model.Response
-// @Router			/user/{id}/posts [get]
+//	@Summary		Get posts by user ID
+//	@Tags			post
+//	@Description	Get posts by user ID
+//	@ID				get-posts-user-by-id
+//	@Accept			json
+//	@Produce		json
+//	@Param			id			path		int		true	"User ID"	minimum(1)
+//	@Param			limit		query		int		true	"Limit"		minimum(1)
+//	@Param			offset		query		int		true	"Offset"	minimum(0)
+//	@Param			status		query		string	false	"Status"
+//	@Param			animal_type	query		string	false	"Animal type"
+//	@Param			gender		query		string	false	"Gender"
+//	@Param			color		query		string	false	"Color"
+//	@Param			location	query		string	false	"Location"
+//	@Success		200			{object}	model.Response{data=post.Response}
+//	@Failure		400			{object}	model.Response
+//	@Failure		404			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=validator.Response}
+//	@Failure		500			{object}	model.Response
+//	@Router			/user/{id}/posts [get]
 func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
@@ -103,18 +105,19 @@ func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(response)
 }
 
-// @Summary		Get post by ID
-// @Tags			post
-// @Description	Get post by ID
-// @ID				get-post-by-id
-// @Accept			json
-// @Produce		json
-// @Param			id	path		int	true	"Post ID"	minimum(1)
-// @Success		200	{object}	model.Response{data=post.Response}
-// @Failure		400	{object}	model.Response
-// @Failure		404	{object}	model.Response
-// @Failure		500	{object}	model.Response
-// @Router			/posts/{id} [get]
+//	@Summary		Get post by ID
+//	@Tags			post
+//	@Description	Get post by ID
+//	@ID				get-post-by-id
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"Post ID"	minimum(1)
+//	@Success		200	{object}	model.Response{data=post.PostResponse}
+//	@Failure		400	{object}	model.Response
+//	@Failure		404	{object}	model.Response
+//	@Failure		422	{object}	model.Response{data=validator.Response}
+//	@Failure		500	{object}	model.Response
+//	@Router			/posts/{id} [get]
 func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 	var pathParams postModel.PathParams
 
@@ -138,28 +141,29 @@ func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(postResponse))
 }
 
-// @Summary		Create a post
-// @Tags			post
-// @Description	Create a post
-// @ID				create-post
-// @Accept			json
-// @Produce		json
-// @Param			title		formData	string	true	"Title"
-// @Param			content		formData	string	true	"Content"
-// @Param			animal_type	formData	string	true	"Animal type"
-// @Param			photo		formData	file	true	"Photo"
-// @Param			age			formData	int		true	"Age"
-// @Param			color		formData	string	true	"Color"
-// @Param			gender		formData	string	true	"Gender"
-// @Param			description	formData	string	true	"Description"
-// @Param			status		formData	string	true	"Status"
-// @Success		201			{object}	model.Response{data=post.PostResponse}
-// @Failure		400			{object}	model.Response
-// @Failure		401			{object}	model.Response
-// @Failure		404			{object}	model.Response
-// @Failure		500			{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/posts [post]
+//	@Summary		Create a post
+//	@Tags			post
+//	@Description	Create a post
+//	@ID				create-post
+//	@Accept			json
+//	@Produce		json
+//	@Param			title		formData	string	true	"Title"
+//	@Param			content		formData	string	true	"Content"
+//	@Param			animal_type	formData	string	true	"Animal type"
+//	@Param			photo		formData	file	true	"Photo"
+//	@Param			age			formData	int		true	"Age"
+//	@Param			color		formData	string	true	"Color"
+//	@Param			gender		formData	string	true	"Gender"
+//	@Param			description	formData	string	true	"Description"
+//	@Param			status		formData	string	true	"Status"
+//	@Success		201			{object}	model.Response{data=post.PostResponse}
+//	@Failure		400			{object}	model.Response
+//	@Failure		401			{object}	model.Response
+//	@Failure		404			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=validator.Response}
+//	@Failure		500			{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/posts [post]
 func (r *Router) createPost(ctx *fiber.Ctx) error {
 	var postRequest postModel.CreateRequestBodyPost
 
@@ -197,31 +201,31 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(postResponse))
 }
 
-// @Summary		Update a post
-// @Tags			post
-// @Description	Update a post
-// @ID				update-post
-// @Accept			json
-// @Produce		json
-// @Param			id			path		int		true	"Post ID"	minimum(1)
-// @Param			title		formData	string	false	"Title"
-// @Param			content		formData	string	false	"Content"
-// @Param			animal_type	formData	string	false	"Animal type"
-// @Param			photo		formData	file	false	"Photo"
-// @Param			age			formData	int		false	"Age"
-// @Param			color		formData	string	false	"Color"
-// @Param			gender		formData	string	false	"Gender"
-// @Param			description	formData	string	false	"Description"
-// @Param			status		formData	string	false	"Status"
-// @Success		200			{object}	model.Response{data=post.PostResponse}
-// @Failure		400			{object}	model.Response
-// @Failure		401			{object}	model.Response
-// @Failure		403			{object}	model.Response
-// @Failure		404			{object}	model.Response
-// @Failure		422		{object}	model.Response{data=validator.Response}
-// @Failure		500			{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/posts/{id} [patch]
+//	@Summary		Update a post
+//	@Tags			post
+//	@Description	Update a post
+//	@ID				update-post
+//	@Accept			json
+//	@Produce		json
+//	@Param			id			path		int		true	"Post ID"	minimum(1)
+//	@Param			title		formData	string	false	"Title"
+//	@Param			content		formData	string	false	"Content"
+//	@Param			animal_type	formData	string	false	"Animal type"
+//	@Param			photo		formData	file	false	"Photo"
+//	@Param			age			formData	int		false	"Age"
+//	@Param			color		formData	string	false	"Color"
+//	@Param			gender		formData	string	false	"Gender"
+//	@Param			description	formData	string	false	"Description"
+//	@Param			status		formData	string	false	"Status"
+//	@Success		200			{object}	model.Response{data=post.PostResponse}
+//	@Failure		400			{object}	model.Response
+//	@Failure		401			{object}	model.Response
+//	@Failure		403			{object}	model.Response
+//	@Failure		404			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=validator.Response}
+//	@Failure		500			{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/posts/{id} [patch]
 func (r *Router) updatePost(ctx *fiber.Ctx) error {
 	var pathParams postModel.PathParams
 
@@ -268,21 +272,21 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(postResponse))
 }
 
-// @Summary		Delete a post
-// @Tags			post
-// @Description	Delete a post
-// @ID				delete-post
-// @Accept			json
-// @Produce		json
-// @Param			id	path	int	true	"Post ID"	minimum(1)
-// @Success		204
-// @Failure		400	{object}	model.Response
-// @Failure		401	{object}	model.Response
-// @Failure		403	{object}	model.Response
-// @Failure		422		{object}	model.Response{data=validator.Response}
-// @Failure		500	{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/posts/{id} [delete]
+//	@Summary		Delete a post
+//	@Tags			post
+//	@Description	Delete a post
+//	@ID				delete-post
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"Post ID"	minimum(1)
+//	@Success		204
+//	@Failure		400	{object}	model.Response
+//	@Failure		401	{object}	model.Response
+//	@Failure		403	{object}	model.Response
+//	@Failure		422	{object}	model.Response{data=validator.Response}
+//	@Failure		500	{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/posts/{id} [delete]
 func (r *Router) deletePost(ctx *fiber.Ctx) error {
 	var pathParams postModel.PathParams
 
