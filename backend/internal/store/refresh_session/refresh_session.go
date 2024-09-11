@@ -19,7 +19,9 @@ func (s *store) CountSessionsAndDelete(ctx context.Context, userID int) error {
 	tx := s.DB.WithContext(ctx).Begin()
 
 	var sessionsCounter int64
-	if err := tx.Model(&core.RefreshSession{}).Count(&sessionsCounter).Error; err != nil {
+	if err := tx.Model(&core.RefreshSession{}).
+		Where("user_id=?", userID).
+		Count(&sessionsCounter).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
