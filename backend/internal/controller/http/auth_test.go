@@ -258,7 +258,7 @@ func TestLoginBasic(t *testing.T) {
 				var testValidationErrorResponse TestValidationErrorResponse
 				_ = json.Unmarshal(body, &testValidationErrorResponse)
 
-				assert.Equal(t, tt.wantValidationErrs, testValidationErrorResponse.Data)
+				assert.Equal(t, tt.wantValidationErrs, testValidationErrorResponse.Data.ValidationErrors)
 			}
 		})
 	}
@@ -479,7 +479,7 @@ func TestSignup(t *testing.T) {
 
 			var testValidationErrorResponse TestValidationErrorResponse
 			_ = json.Unmarshal(body, &testValidationErrorResponse)
-			assert.Equal(t, tt.wantValidationErrs, testValidationErrorResponse.Data)
+			assert.Equal(t, tt.wantValidationErrs, testValidationErrorResponse.Data.ValidationErrors)
 		})
 	}
 }

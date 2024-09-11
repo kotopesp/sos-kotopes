@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"testing"
@@ -298,6 +299,9 @@ func TestRefresh(t *testing.T) {
 	mockRefreshSessionStore := mocks.NewMockRefreshSessionStore(t)
 	ctx := context.Background()
 
+	var hashedRefreshToken1Bytes = sha256.Sum256([]byte(refreshToken1))
+	var hashedRefreshToken1 = hex.EncodeToString(hashedRefreshToken1Bytes[:])
+
 	authService := New(mockUserStore, mockRefreshSessionStore, core.AuthServiceConfig{
 		JWTSecret:            secret,
 		AccessTokenLifetime:  accessTokenLifetime,
@@ -321,11 +325,11 @@ func TestRefresh(t *testing.T) {
 	}{
 		{
 			name:                         "success",
-			getRefreshSessionByTokenArg2: refreshToken1,
+			getRefreshSessionByTokenArg2: hashedRefreshToken1,
 			getRefreshSessionByTokenRet1: core.RefreshSession{
 				ID:           1,
 				UserID:       1,
-				RefreshToken: refreshToken2,
+				RefreshToken: hashedRefreshToken1,
 				ExpiresAt:    time.Now().Add(time.Minute * time.Duration(longRefreshTokenLifetime)),
 			},
 			invokeGetRefreshSessionByToken: true,
@@ -344,7 +348,7 @@ func TestRefresh(t *testing.T) {
 		},
 		{
 			name:                           "token does not exists",
-			getRefreshSessionByTokenArg2:   refreshToken1,
+			getRefreshSessionByTokenArg2:   hashedRefreshToken1,
 			getRefreshSessionByTokenRet2:   errors.New("token not found"),
 			invokeGetRefreshSessionByToken: true,
 			refreshArg2: core.RefreshSession{
@@ -354,11 +358,11 @@ func TestRefresh(t *testing.T) {
 		},
 		{
 			name:                         "get user by id error",
-			getRefreshSessionByTokenArg2: refreshToken1,
+			getRefreshSessionByTokenArg2: hashedRefreshToken1,
 			getRefreshSessionByTokenRet1: core.RefreshSession{
 				ID:           1,
 				UserID:       1,
-				RefreshToken: refreshToken2,
+				RefreshToken: hashedRefreshToken1,
 				ExpiresAt:    time.Now().Add(time.Minute * time.Duration(longRefreshTokenLifetime)),
 			},
 			invokeGetRefreshSessionByToken: true,
@@ -371,11 +375,11 @@ func TestRefresh(t *testing.T) {
 		},
 		{
 			name:                         "expired token",
-			getRefreshSessionByTokenArg2: refreshToken1,
+			getRefreshSessionByTokenArg2: hashedRefreshToken1,
 			getRefreshSessionByTokenRet1: core.RefreshSession{
 				ID:           1,
 				UserID:       1,
-				RefreshToken: refreshToken2,
+				RefreshToken: hashedRefreshToken1,
 				ExpiresAt:    time.Now().Add(-time.Minute),
 			},
 			invokeGetRefreshSessionByToken: true,
@@ -387,11 +391,11 @@ func TestRefresh(t *testing.T) {
 		},
 		{
 			name:                         "update refresh session error",
-			getRefreshSessionByTokenArg2: refreshToken1,
+			getRefreshSessionByTokenArg2: hashedRefreshToken1,
 			getRefreshSessionByTokenRet1: core.RefreshSession{
 				ID:           1,
 				UserID:       1,
-				RefreshToken: refreshToken2,
+				RefreshToken: hashedRefreshToken1,
 				ExpiresAt:    time.Now().Add(time.Minute * time.Duration(longRefreshTokenLifetime)),
 			},
 			invokeGetRefreshSessionByToken: true,
@@ -422,12 +426,10 @@ func TestRefresh(t *testing.T) {
 				).Return(tt.getUserByIDRet1, tt.getUserByIDRet2).Once()
 			}
 			if tt.invokeGetRefreshSessionByToken {
-				hashedToken := sha256.Sum256([]byte(tt.getRefreshSessionByTokenArg2))
-
 				mockRefreshSessionStore.On(
 					"GetRefreshSessionByToken",
 					ctx,
-					hashedToken,
+					tt.getRefreshSessionByTokenArg2,
 				).Return(tt.getRefreshSessionByTokenRet1, tt.getRefreshSessionByTokenRet2).Once()
 			}
 			if tt.invokeUpdateRefreshSession {

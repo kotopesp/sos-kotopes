@@ -206,7 +206,7 @@ func (s *service) Refresh(
 
 	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), dbSession.UserID, s.getRefreshTokenExpiresAt())
 
-	rt := s.generateHash(refreshSession.RefreshToken)
+	rt := refreshSession.RefreshToken
 	refreshSession.RefreshToken = s.generateHash(refreshSession.RefreshToken)
 
 	err = s.refreshSessionStore.UpdateRefreshSession(

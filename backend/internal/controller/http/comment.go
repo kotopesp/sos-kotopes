@@ -110,12 +110,7 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			errMsg := err.Error()
 			return ctx.Status(fiber.StatusUnprocessableEntity).JSON(
-				model.ErrorResponse(
-					validator.NewResponse(
-						nil,
-						&errMsg,
-					),
-				),
+				model.ErrorResponse(validator.NewResponse(nil, &errMsg)),
 			)
 		default:
 			logger.Log().Error(ctx.UserContext(), err.Error())
