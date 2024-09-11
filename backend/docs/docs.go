@@ -70,14 +70,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/definitions/validator.ResponseError"
                                             }
-=======
-                                            "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -149,7 +145,10 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created"
+                        "description": "Created",
+                        "schema": {
+                            "type": "object"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -168,14 +167,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -193,11 +185,7 @@ const docTemplate = `{
         },
         "/auth/token/refresh": {
             "post": {
-<<<<<<< HEAD
-                "description": "Only works if refresh token is placed in cookies (login endpoint puts it there)",
-=======
                 "description": "Refresh token should be in cookies (login put it there)",
->>>>>>> master
                 "consumes": [
                     "application/json"
                 ],
@@ -316,27 +304,6 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     },
                     "500": {
@@ -615,14 +582,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -783,14 +743,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -941,14 +894,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -1032,14 +978,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -1115,14 +1054,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -1184,13 +1116,16 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/model.Response"
+                                    "$ref": "#/definitions/comment.GetAllCommentsResponse"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/comment.GetAllCommentsResponse"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/comment.Comment"
+                                            }
                                         }
                                     }
                                 }
@@ -1207,31 +1142,6 @@ const docTemplate = `{
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
-                                            "$ref": "#/definitions/validator.Response"
->>>>>>> master
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     },
                     "500": {
@@ -1316,31 +1226,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Response"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
-                                            "$ref": "#/definitions/validator.Response"
->>>>>>> master
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -1410,31 +1295,6 @@ const docTemplate = `{
                         "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
-                                            "$ref": "#/definitions/validator.Response"
->>>>>>> master
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     },
                     "500": {
@@ -1531,31 +1391,6 @@ const docTemplate = `{
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
-                                            "$ref": "#/definitions/validator.Response"
->>>>>>> master
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     },
                     "500": {
@@ -1668,27 +1503,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Response"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -1792,14 +1606,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -1887,14 +1694,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -1959,14 +1759,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -2052,14 +1845,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-<<<<<<< HEAD
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
-=======
                                             "$ref": "#/definitions/validator.Response"
->>>>>>> master
                                         }
                                     }
                                 }
@@ -2530,8 +2316,6 @@ const docTemplate = `{
                 }
             }
         },
-<<<<<<< HEAD
-=======
         "validator.Response": {
             "type": "object",
             "properties": {
@@ -2546,7 +2330,6 @@ const docTemplate = `{
                 }
             }
         },
->>>>>>> master
         "validator.ResponseError": {
             "type": "object",
             "properties": {
@@ -2555,12 +2338,8 @@ const docTemplate = `{
                     "example": "username"
                 },
                 "param": {
-<<<<<<< HEAD
-                    "type": "string"
-=======
                     "type": "string",
                     "example": ""
->>>>>>> master
                 },
                 "tag": {
                     "type": "string",
@@ -2572,11 +2351,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "ApiKeyAuthBasic": {
-<<<<<<< HEAD
-            "description": "Put token in format \"Bearer your_token\"",
-=======
             "description": "Authorization token in the format \"Bearer your_token\"",
->>>>>>> master
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

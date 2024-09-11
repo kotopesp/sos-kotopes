@@ -20,9 +20,10 @@ import (
 // @Param			post_id	path		int	true	"Post ID"	minimum(1)
 // @Param			limit	query		int	true	"Limit"		minimum(1)
 // @Param			offset	query		int	true	"Offset"	minimum(0)
-// @Success		200		{object}	comment.GetAllCommentsResponse{data=[]comment.Comment}
+// @Success		200		{object}	model.Response{data=comment.GetAllCommentsResponse}
 // @Failure		400		{object}	model.Response
 // @Failure		404		{object}	model.Response
+// @Failure		422		{object}	model.Response{data=validator.Response}
 // @Failure		500		{object}	model.Response
 // @Router			/posts/{post_id}/comments [get]
 func (r *Router) getComments(ctx *fiber.Ctx) error {
@@ -74,6 +75,7 @@ func (r *Router) getComments(ctx *fiber.Ctx) error {
 // @Failure		400		{object}	model.Response
 // @Failure		401		{object}	model.Response
 // @Failure		404		{object}	model.Response
+// @Failure		422		{object}	model.Response{data=validator.Response}
 // @Failure		500		{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{post_id}/comments [post]
@@ -159,6 +161,7 @@ func oneOfUpdateDeleteErrors(err error) bool {
 // @Failure		401			{object}	model.Response
 // @Failure		403			{object}	model.Response
 // @Failure		404			{object}	model.Response
+// @Failure		422			{object}	model.Response{data=validator.Response}
 // @Failure		500			{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{post_id}/comments/{comment_id} [patch]
@@ -216,6 +219,7 @@ func (r *Router) updateComment(ctx *fiber.Ctx) error {
 // @Failure		400			{object}	model.Response
 // @Failure		401			{object}	model.Response
 // @Failure		403			{object}	model.Response
+// @Failure		422			{object}	model.Response{data=validator.Response}
 // @Failure		500			{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/posts/{post_id}/comments/{comment_id} [delete]

@@ -35,20 +35,20 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 
 // loginBasic Login through username and password
 //
-//	@Summary		Login through username and password
-//	@Tags			auth
-//	@Description	Login through username and password
-//	@ID				login-basic
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		user.Login	true	"User"
-//	@Success		200		{object}	model.Response
-//	@Failure		422		{object}	model.Response{data=validator.Response}
-//	@Failure		400		{object}	model.Response
-//	@Failure		401		{object}	model.Response
-//	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
-//	@Failure		500		{object}	model.Response
-//	@Router			/auth/login [post]
+//		@Summary		Login through username and password
+//		@Tags			auth
+//		@Description	Login through username and password
+//		@ID				login-basic
+//		@Accept			json
+//		@Produce		json
+//		@Param			request	body		user.Login	true	"User"
+//		@Success		200		{object}	model.Response
+//		@Failure		422		{object}	model.Response{data=validator.Response}
+//		@Failure		400		{object}	model.Response
+//		@Failure		401		{object}	model.Response
+//	 @Failure		422			{object}	model.Response{data=validator.Response}
+//		@Failure		500		{object}	model.Response
+//		@Router			/auth/login [post]
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	var user userModel.Login
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &user)

@@ -70,6 +70,7 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 // @Success		200			{object}	model.Response{data=validator.Response}
 // @Failure		400			{object}	model.Response
 // @Failure		404			{object}	model.Response
+// @Failure		422			{object}	model.Response{data=validator.Response}
 // @Failure		500			{object}	model.Response
 // @Router			/user/{id}/posts [get]
 func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
@@ -113,7 +114,7 @@ func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 // @Success		200	{object}	model.Response{data=post.Response}
 // @Failure		400	{object}	model.Response
 // @Failure		404	{object}	model.Response
-// @Failure		422	{object}	model.Response{data=[]validator.ResponseError}
+// @Failure		422			{object}	model.Response{data=validator.Response}
 // @Failure		500	{object}	model.Response
 // @Router			/posts/{id} [get]
 func (r *Router) getPostByID(ctx *fiber.Ctx) error {
