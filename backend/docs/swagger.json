@@ -64,10 +64,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -287,7 +284,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/validator.Response"
+                                            "$ref": "#/definitions/post.Response"
                                         }
                                     }
                                 }
@@ -298,6 +295,24 @@
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -439,10 +454,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -537,10 +549,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/post.Response"
-                                            }
+                                            "$ref": "#/definitions/post.Response"
                                         }
                                     }
                                 }
@@ -628,7 +637,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/post.Response"
+                                            "$ref": "#/definitions/post.PostResponse"
                                         }
                                     }
                                 }
@@ -658,10 +667,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/validator.ResponseError"
-                                            }
+                                            "$ref": "#/definitions/validator.Response"
                                         }
                                     }
                                 }
@@ -1110,16 +1116,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/comment.GetAllCommentsResponse"
+                                    "$ref": "#/definitions/model.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/comment.Comment"
-                                            }
+                                            "$ref": "#/definitions/comment.GetAllCommentsResponse"
                                         }
                                     }
                                 }
@@ -1136,6 +1139,24 @@
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -1220,6 +1241,24 @@
                             "$ref": "#/definitions/model.Response"
                         }
                     },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -1289,6 +1328,24 @@
                         "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -1387,6 +1444,24 @@
                             "$ref": "#/definitions/model.Response"
                         }
                     },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -1478,7 +1553,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/validator.Response"
+                                            "$ref": "#/definitions/post.Response"
                                         }
                                     }
                                 }
@@ -1495,6 +1570,24 @@
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
@@ -1914,6 +2007,24 @@
                             "$ref": "#/definitions/model.Response"
                         }
                     },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -1972,6 +2083,24 @@
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {

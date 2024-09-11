@@ -62,6 +62,7 @@ func (r *Router) giveRoleToUser(ctx *fiber.Ctx) error {
 // @Param			request	path		int	true	"User ID"
 // @Success		200		{object}	model.Response{data=[]role.Role}
 // @Failure		400		{object}	model.Response
+// @Failure		422		{object}	model.Response{data=validator.Response}
 // @Failure		500		{object}	model.Response
 // @Router			/users/{id}/roles [get]
 func (r *Router) getUserRoles(ctx *fiber.Ctx) error {
