@@ -149,9 +149,12 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 		logger.Log().Info(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(
 			model.ErrorResponse(
-				[]validator.ResponseError{
-					model.ErrNotUniqueUsername(coreUser.Username),
-				},
+				validator.NewResponse(
+					[]validator.ResponseError{
+						model.ErrNotUniqueUsername(coreUser.Username),
+					},
+					nil,
+				),
 			),
 		)
 	}
