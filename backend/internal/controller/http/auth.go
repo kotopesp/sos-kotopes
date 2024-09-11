@@ -43,6 +43,7 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 //	@Produce		json
 //	@Param			request	body		user.Login	true	"User"
 //	@Success		200		{object}	model.Response
+//	@Failure		422		{object}	model.Response{data=validator.Response}
 //	@Failure		400		{object}	model.Response
 //	@Failure		401		{object}	model.Response
 //	@Failure		422		{object}	model.Response{data=[]validator.ResponseError}
@@ -106,10 +107,10 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 //	@Param			lastname	formData	string	false	"Lastname"
 //	@Param			description	formData	string	false	"Description"
 //	@Param			photo		formData	file	false	"Photo"
-//	@Success		201
-//	@Failure		400	{object}	model.Response
-//	@Failure		422	{object}	model.Response{data=[]validator.ResponseError}
-//	@Failure		500	{object}	model.Response
+//	@Success		201			{object}	any
+//	@Failure		400			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=validator.Response}
+//	@Failure		500			{object}	model.Response
 //	@Router			/auth/signup [post]
 func (r *Router) signup(ctx *fiber.Ctx) error {
 	var user userModel.User
@@ -141,9 +142,12 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 		logger.Log().Info(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(
 			model.ErrorResponse(
-				[]validator.ResponseError{
-					model.ErrNotUniqueUsername(coreUser.Username),
-				},
+				validator.NewResponse(
+					[]validator.ResponseError{
+						model.ErrNotUniqueUsername(coreUser.Username),
+					},
+					nil,
+				),
 			),
 		)
 	}
@@ -170,7 +174,7 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 //
 //	@Summary		Refresh token
 //	@Tags			auth
-//	@Description	Only works if refresh token is placed in cookies (login endpoint puts it there)
+//	@Description	Refresh token should be in cookies (login put it there)
 //	@ID				refresh-token
 //	@Accept			json
 //	@Produce		json

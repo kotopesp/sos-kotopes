@@ -26,4 +26,16 @@ var (
 	// auth errors
 	ErrUnauthorized                      = errors.New("unauthorized")
 	ErrInvalidUpdateRefreshSessionParams = errors.New("invalid UpdateRefreshSession params")
+
+	// comment errors
+	ErrCommentAuthorIDMismatch     = errors.New("your user_id and db author_id mismatch")
+	ErrCommentPostIDMismatch       = errors.New("your posts_id and db posts_id mismatch")
+	ErrNoSuchComment               = errors.New("no such comment")
+	ErrCommentIsDeleted            = errors.New("comment is deleted")
+	ErrInvalidCommentParentID      = errors.New("invalid comment parent_id")
+	ErrReplyToCommentOfAnotherPost = errors.New("reply to comment of another post")
+	ErrParentCommentNotFound       = errors.New("parent comment not found")
+	ErrReplyCommentNotFound        = errors.New("reply comment not found")
+	ErrInvalidCommentReplyID       = errors.New("invalid comment reply_id")
+	ErrNullCommentParentID         = errors.New("comment parent id is null")
 )

@@ -1,0 +1,11 @@
+<div class="question__text ft24 fw400" [class]="hideAnswer ? active : notActive" (click)="hideAnswer = !hideAnswer"
+     (keydown.enter)="hideAnswer = !hideAnswer"
+     tabindex="0"
+     role="button"
+     aria-pressed="false">
+  <p>{{ questionItem.question }}</p>
+  <div class="question__arrow"></div>
+  <div class="class__answer">
+    {{ questionItem.answer }}
+  </div>
+</div>

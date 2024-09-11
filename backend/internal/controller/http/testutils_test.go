@@ -7,13 +7,14 @@ import (
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	"github.com/kotopesp/sos-kotopes/internal/core/mocks"
+	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 )
 
 type (
 	appDependencies struct {
-		authService *mocks.AuthService
-		postService *mocks.PostService
+		authService    *mocks.MockAuthService
+		postService    *mocks.MockPostService
+		commentService *mocks.MockCommentService
 	}
 )
 
@@ -25,11 +26,11 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	app := fiber.New()
 	ctx := context.Background()
 
-	mockAuthService := mocks.NewAuthService(t)
-	mockPostService := mocks.NewPostService(t)
-	mockCommentService := mocks.NewCommentService(t)
-	mockRoleService := mocks.NewRoleService(t)
-	mockUserService := mocks.NewUserService(t)
+	mockAuthService := mocks.NewMockAuthService(t)
+	mockPostService := mocks.NewMockPostService(t)
+	mockCommentService := mocks.NewMockCommentService(t)
+	mockRoleService := mocks.NewMockRoleService(t)
+	mockUserService := mocks.NewMockUserService(t)
 	formValidatorService := validator.New(ctx, baseValidator.New())
 
 	mockAuthService.On("GetJWTSecret").Return(secret)
@@ -46,7 +47,8 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	)
 
 	return app, appDependencies{
-		authService: mockAuthService,
-		postService: mockPostService,
+		authService:    mockAuthService,
+		postService:    mockPostService,
+		commentService: mockCommentService,
 	}
 }

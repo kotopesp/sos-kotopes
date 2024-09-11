@@ -1,0 +1,7 @@
+interface Schema {
+    project?: string;
+    setParserOptionsProject?: boolean;
+}
+declare const _default: (generatorOptions: Schema) => (tree: any, context: any) => Promise<any>;
+export default _default;
+//# sourceMappingURL=index.d.ts.map

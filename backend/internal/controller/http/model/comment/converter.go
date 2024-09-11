@@ -1,7 +1,6 @@
 package comment
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
@@ -63,9 +62,9 @@ func (params *GetAllCommentsParams) ToCoreGetAllCommentsParams(postID int) core.
 	}
 }
 
-func ToGetAllCommentsResponse(data any, meta pagination.Pagination) GetAllCommentsResponse {
+func ToGetAllCommentsResponse(data []Comment, meta pagination.Pagination) GetAllCommentsResponse {
 	return GetAllCommentsResponse{
-		Response: model.OKResponse(data),
-		Meta:     meta,
+		Data: data,
+		Meta: meta,
 	}
 }

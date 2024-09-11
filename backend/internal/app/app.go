@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/migrate"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
 	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
 	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
@@ -25,10 +26,10 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
-	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
-	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
@@ -47,6 +48,11 @@ func Run(cfg *config.Config) {
 		logger.Log().Fatal(ctx, "error with connection to database: %s", err.Error())
 	}
 	defer pg.Close(ctx)
+
+	// Migrate up
+	if err := migrate.Up(cfg.DB.URL); err != nil {
+		logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
+	}
 
 	// Stores
 	userStore := user.New(pg)

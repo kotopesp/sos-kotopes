@@ -10,7 +10,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/core/mocks"
+	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"golang.org/x/crypto/bcrypt"
@@ -62,9 +62,9 @@ func validateToken(tokenString string) (id int, err error) {
 }
 
 func TestLoginBasic(t *testing.T) {
-	mockUserStore := mocks.NewUserStore(t)
-	mockRefreshSessionStore := mocks.NewRefreshSessionStore(t)
-
+	t.Parallel()
+	mockUserStore := mocks.NewMockUserStore(t)
+	mockRefreshSessionStore := mocks.NewMockRefreshSessionStore(t)
 	ctx := context.Background()
 
 	authService := New(mockUserStore, mockRefreshSessionStore, core.AuthServiceConfig{
@@ -225,9 +225,9 @@ func TestLoginBasic(t *testing.T) {
 }
 
 func TestSignupBasic(t *testing.T) {
-	mockUserStore := mocks.NewUserStore(t)
-	mockRefreshSessionStore := mocks.NewRefreshSessionStore(t)
-
+	t.Parallel()
+	mockUserStore := mocks.NewMockUserStore(t)
+	mockRefreshSessionStore := mocks.NewMockRefreshSessionStore(t)
 	ctx := context.Background()
 
 	authService := New(mockUserStore, mockRefreshSessionStore, core.AuthServiceConfig{
@@ -293,9 +293,9 @@ func TestSignupBasic(t *testing.T) {
 }
 
 func TestRefresh(t *testing.T) {
-	mockUserStore := mocks.NewUserStore(t)
-	mockRefreshSessionStore := mocks.NewRefreshSessionStore(t)
-
+	t.Parallel()
+	mockUserStore := mocks.NewMockUserStore(t)
+	mockRefreshSessionStore := mocks.NewMockRefreshSessionStore(t)
 	ctx := context.Background()
 
 	authService := New(mockUserStore, mockRefreshSessionStore, core.AuthServiceConfig{
@@ -451,4 +451,9 @@ func TestRefresh(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestAuthorizeVK(t *testing.T) {
+	t.Parallel()
+	t.Log("Need to think how to test...")
 }

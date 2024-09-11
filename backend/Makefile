@@ -38,3 +38,6 @@ migrate-down: ### migration down
 swagger: ### generate swagger docs
 	swag fmt
 	swag init -g cmd/main.go
+
+mock: ### generate mocks
+	mockery

@@ -1,0 +1,37 @@
+<div class="container__button" [ngStyle]="active ? {height: '50vh'} : {height: 'fit-content'}">
+  <div class="block__button">
+    <button [ngStyle]="{ 'background-color': buttonColor }" class="user__role_button" (click)="onClickButton($event)">
+      <div class="user__role_button_icon"
+           [ngStyle]="{ 'background-image': iconUrl, 'background-repeat': 'no-repeat', 'background-position': 'center', 'background-size': 'contain' }">
+      </div>
+      <span class="user__role_button_label ptbold ft20 fw700">{{ label }}</span>
+      <div class="user__role_button_show"
+           [ngStyle]="{ 'background-image': anotherIconUrl, 'background-repeat': 'no-repeat', 'background-position': 'center', 'background-size': 'contain' }">
+      </div>
+    </button>
+    <div>
+      <div class="wrapper__block" [ngStyle]="active ? {display: 'flex', height: '100%', 'border-color': buttonColor, 'background-color': infoColor} : {display: 'none', height: '0'}">
+        <div class="block__role__info">
+          <div>
+            <span>Частное лицо</span>
+            <span>Есть опыт</span>
+            <span>+7 (952) 812</span>
+          </div>
+          <div>Может взять любого питомца</div>
+          <div>Берёт бездомных</div>
+          <div>На несколько недель</div>
+          <div>Квартира, загородный дом</div>
+          <div>
+            <span>Есть маленькая клетка</span>
+            <span>Даёт в аренду по ситуации</span>
+          </div>
+          <div>Всё на безвозмездной основе</div>
+          <div class="block__roles__textarea">
+            <span>Дополнительно</span>
+            <textarea id="roles__textarea" rows="2">Здесь я пишу дополнительные условия, на которых я предоставляю передержку</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

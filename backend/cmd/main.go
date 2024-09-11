@@ -17,7 +17,7 @@ import (
 //	@securityDefinitions.apiKey	ApiKeyAuthBasic
 //	@in							header
 //	@name						Authorization
-//	@description				Put token in format "Bearer your_token"
+//	@description				Authorization token in the format "Bearer your_token"
 
 func main() {
 	// Configuration

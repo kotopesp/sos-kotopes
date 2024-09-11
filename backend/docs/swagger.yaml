@@ -45,11 +45,12 @@ definitions:
     type: object
   comment.GetAllCommentsResponse:
     properties:
-      data: {}
+      comments:
+        items:
+          $ref: '#/definitions/comment.Comment'
+        type: array
       meta:
         $ref: '#/definitions/pagination.Pagination'
-      status:
-        $ref: '#/definitions/model.status'
     type: object
   comment.Update:
     properties:
@@ -223,12 +224,28 @@ definitions:
       username:
         type: string
     type: object
+<<<<<<< HEAD
+=======
+  validator.Response:
+    properties:
+      message:
+        type: string
+      validation_errors:
+        items:
+          $ref: '#/definitions/validator.ResponseError'
+        type: array
+    type: object
+>>>>>>> master
   validator.ResponseError:
     properties:
       failed_field:
         example: username
         type: string
       param:
+<<<<<<< HEAD
+=======
+        example: ""
+>>>>>>> master
         type: string
       tag:
         example: required
@@ -278,9 +295,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -338,9 +359,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -353,8 +378,12 @@ paths:
     post:
       consumes:
       - application/json
+<<<<<<< HEAD
       description: Only works if refresh token is placed in cookies (login endpoint
         puts it there)
+=======
+      description: Refresh token should be in cookies (login put it there)
+>>>>>>> master
       operationId: refresh-token
       produces:
       - application/json
@@ -423,9 +452,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/post.Response'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "400":
           description: Bad Request
@@ -581,9 +608,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -727,9 +758,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -777,9 +812,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -830,9 +869,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -875,12 +918,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/comment.GetAllCommentsResponse'
+            - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/comment.Comment'
-                  type: array
+                  $ref: '#/definitions/comment.GetAllCommentsResponse'
               type: object
         "400":
           description: Bad Request
@@ -897,9 +938,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -957,9 +1002,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1015,9 +1064,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1087,9 +1140,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1172,9 +1229,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1240,9 +1301,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/post.Response'
-                  type: array
+                  $ref: '#/definitions/validator.Response'
               type: object
         "400":
           description: Bad Request
@@ -1328,9 +1387,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1446,9 +1509,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1498,9 +1565,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1550,9 +1621,13 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
+<<<<<<< HEAD
                   items:
                     $ref: '#/definitions/validator.ResponseError'
                   type: array
+=======
+                  $ref: '#/definitions/validator.Response'
+>>>>>>> master
               type: object
         "500":
           description: Internal Server Error
@@ -1565,7 +1640,11 @@ paths:
       - role
 securityDefinitions:
   ApiKeyAuthBasic:
+<<<<<<< HEAD
     description: Put token in format "Bearer your_token"
+=======
+    description: Authorization token in the format "Bearer your_token"
+>>>>>>> master
     in: header
     name: Authorization
     type: apiKey

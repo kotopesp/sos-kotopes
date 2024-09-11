@@ -3,7 +3,6 @@ package comment
 import (
 	"time"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
@@ -29,7 +28,7 @@ type User struct {
 }
 
 type GetAllCommentsResponse struct {
-	model.Response
+	Data []Comment             `json:"comments"`
 	Meta pagination.Pagination `json:"meta"`
 }
 
@@ -43,6 +42,10 @@ type GetAllCommentsParams struct {
 }
 
 type PathParams struct {
-	PostID    int `params:"post_id" validate:"omitempty,gt=0"`
-	CommentID int `params:"comment_id" validate:"omitempty,gt=0"`
+	PostID    int `params:"post_id" validate:"gt=0"`
+	CommentID int `params:"comment_id" validate:"gt=0"`
+}
+
+type PostIDPathParams struct {
+	PostID int `params:"post_id" validate:"gt=0"`
 }

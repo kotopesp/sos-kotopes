@@ -84,7 +84,12 @@ func validate(ctx *fiber.Ctx, formValidator validator.FormValidatorService, data
 	if len(errs) > 0 {
 		logger.Log().Info(ctx.UserContext(), fmt.Sprintf("%v", errs))
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(
-			model.ErrorResponse(errs),
+			model.ErrorResponse(
+				validator.NewResponse(
+					errs,
+					nil,
+				),
+			),
 		), model.ErrValidationFailed
 	}
 	return nil, nil
