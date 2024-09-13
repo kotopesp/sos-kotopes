@@ -1,8 +1,11 @@
 package http
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/websocket/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
@@ -53,10 +56,56 @@ func NewRouter(
 	router.initResponseMiddlewares()
 }
 
+// Store all active WebSocket connections
+var clients = make(map[*websocket.Conn]bool)
+
+// Broadcast channel for sending messages
+var broadcast = make(chan string)
+
 func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
+
+	r.app.Get("/chats/ws", websocket.New(func(c *websocket.Conn) {
+		defer func() {
+			delete(clients, c)
+			c.Close()
+		}()
+
+		// Add new client
+		clients[c] = true
+
+		// Listen for incoming messages
+		for {
+			var msg string
+			// Read in a new message from the client
+			err := c.ReadJSON(&msg)
+			if err != nil {
+				log.Println("Error reading message:", err)
+				break
+			}
+			// Send the message to the broadcast channel
+			broadcast <- msg
+		}
+	}))
+
+	// Goroutine to broadcast messages to all clients
+	go func() {
+		for {
+			// Grab the next message from the broadcast channel
+			msg := <-broadcast
+			// Send it to every client that is currently connected
+			for client := range clients {
+				if err := client.WriteJSON(msg); err != nil {
+					log.Println("Error writing message:", err)
+					client.Close()
+					delete(clients, client)
+				}
+			}
+		}
+	}()
+
 	// comment_service
 	v1.Get("/posts/:post_id/comments", r.getComments)
 	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
