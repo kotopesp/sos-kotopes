@@ -9,6 +9,8 @@ import {AddToChatComponent} from "./ui/add-to-chat/add-to-chat.component";
 import {ToggleActiveDirective} from "./toggle-active.directive";
 import { WebsocketService } from '../../services/websocket-service/websocket.service';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { User } from '../../model/user.interface';
 
 @Component({
   selector: 'app-chats-page',
@@ -48,10 +50,8 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   ]
 
   sendMsgForm : FormGroup = new FormGroup({
-    "msgText": new FormControl("", [
-                Validators.required,
-    ]) 
-});
+    "msgText": new FormControl("", [Validators.required,]) 
+  });
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
@@ -64,35 +64,49 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     }
   }
 
-  public messages: string[] = [];
+  public messages: { content: string, isUserMessage: boolean, time: string }[] = [];
   public messageText: string = '';
+  public userId: string = '1'; // id пользователя
+  // public user$!: Observable<User>;
 
-  constructor(private websocketService: WebsocketService) {}
+  constructor(private websocketService: WebsocketService) {
+    // this.user$.subscribe((user: User) => {
+    //   if (user && user.id) {
+    //     this.userId = user.id.toString();  // Сохраняем id пользователя как строку
+    //   }
+    // });
+  }
 
   ngOnInit(): void {
     // Subscribe to incoming messages from WebSocket
     this.websocketService.getMessages().subscribe((msg: string) => {
-      this.messages.push(msg);
+      const parsedMsg = this.parseMessage(msg);
+      this.messages.push(parsedMsg);
     });
   }
-
-  // onMessageInput(event: Event): void {
-  //   const target = event.target as HTMLTextAreaElement;
-  //   this.messageText = target.value;  // Обновляем текст сообщения
-  // }
-
+  
   // Method to send a message to the WebSocket server
   onSubmit() {
     this.messageText = this.sendMsgForm.controls['msgText'].value;
     this.sendMsgForm.reset();
     if (this.messageText.trim()) {
-      this.websocketService.sendMessage(this.messageText);
+      const timeNow = Date.now();
+      this.websocketService.sendMessage(JSON.stringify([
+        { content: this.messageText, userId: this.userId, createdAt: timeNow, updatedAt: timeNow }, // Message form
+      ]));
       this.messageText = '';
     }
   }
 
-  isUserMessage(message: { content: string, userId: string }): boolean {
-    return true; //message.userId === this.currentUserId;  // сравниваем userId сообщения с текущим пользователем
+  private parseMessage(msg: string): { content: string, isUserMessage: boolean, time: string } {
+    const msgJson = JSON.parse(msg);
+    console.log("msg id: ", msgJson[0].userId, "cur usr id: ", this.userId, "eqls: ", msgJson[0].userId === this.userId);
+    var msgDate = new Date(msgJson[0].updatedAt);
+    var timeString = `${msgDate.getHours()}:${msgDate.getMinutes()}`
+    return {
+      content: msgJson[0].content,
+      isUserMessage: msgJson[0].userId === this.userId,
+      time: timeString,
+    };
   }
-
 }

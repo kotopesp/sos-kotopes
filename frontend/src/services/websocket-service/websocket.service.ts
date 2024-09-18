@@ -22,7 +22,7 @@ export class WebsocketService {
   // Method to send messages to the server
   public sendMessage(msg: string): void {
     this.socket$.next(msg);
-    console.log("send message", msg);
+    console.log("send message", msg); // TODO: delete
   }
 
   // Method to receive messages from the server

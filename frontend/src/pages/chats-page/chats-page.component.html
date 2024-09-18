@@ -103,21 +103,10 @@
               <div #scrollableContainer id="block__messages">
                 <div class="container__messages">
                   <div *ngFor="let message of messages">
-                    <div class="message" [ngClass]="{'message--user': true}">
-                      {{ message }}
+                    <div class="message">
+                      <app-message [answer]="message.isUserMessage" [messageContent]="message.content" [messageTime]="message.time"/>
                     </div>
                   </div>
-                  <!-- <app-message [answer]="false"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="false"/>
-                  <app-message [answer]="false"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="false"/>
-                  <app-message [answer]="false"/> -->
                 </div>
               </div>
               <form action="" [formGroup]="sendMsgForm" (ngSubmit)="onSubmit()">

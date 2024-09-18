@@ -1,13 +1,10 @@
 <div class="container__message">
-  <div class="block__message" [class]="answer ? '' : 'answer'">
-  <span class="message">
-    Здравствуйте очень милый кот Том!
-    Здравствуйте очень милый кот Том!
-    Здравствуйте очень милый кот Том!
-    Здравствуйте очень милый кот Том!
-  </span>
+  <div class="block__message" [class]="answer ? 'answer' : ''">
+    <span class="message" id="message__content">
+      {{ messageContent }}
+    </span>
     <div class="message__time">
-      20:41
+      {{ messageTime }}
     </div>
   </div>
 </div>
