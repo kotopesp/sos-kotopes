@@ -14,6 +14,29 @@ type PostService struct {
 	mock.Mock
 }
 
+// AddPhotosPost provides a mock function with given fields: ctx, postID, photos
+func (_m *PostService) AddPhotosPost(ctx context.Context, postID int, photos []core.Photo) ([]core.Photo, error) {
+	ret := _m.Called(ctx, postID, photos)
+
+	var r0 []core.Photo
+	if rf, ok := ret.Get(0).(func(context.Context, int, []core.Photo) []core.Photo); ok {
+		r0 = rf(ctx, postID, photos)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Photo)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int, []core.Photo) error); ok {
+		r1 = rf(ctx, postID, photos)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // AddToFavourites provides a mock function with given fields: ctx, postFavourite
 func (_m *PostService) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) (core.PostDetails, error) {
 	ret := _m.Called(ctx, postFavourite)
@@ -142,6 +165,50 @@ func (_m *PostService) GetFavouritePosts(ctx context.Context, userID int, params
 	}
 
 	return r0, r1, r2
+}
+
+// GetPhotosPost provides a mock function with given fields: ctx, postID
+func (_m *PostService) GetPhotosPost(ctx context.Context, postID int) ([]core.Photo, error) {
+	ret := _m.Called(ctx, postID)
+
+	var r0 []core.Photo
+	if rf, ok := ret.Get(0).(func(context.Context, int) []core.Photo); ok {
+		r0 = rf(ctx, postID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Photo)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
+		r1 = rf(ctx, postID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetPhotosPostByPhotoID provides a mock function with given fields: ctx, postID, photoID
+func (_m *PostService) GetPhotosPostByPhotoID(ctx context.Context, postID int, photoID int) (core.Photo, error) {
+	ret := _m.Called(ctx, postID, photoID)
+
+	var r0 core.Photo
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) core.Photo); ok {
+		r0 = rf(ctx, postID, photoID)
+	} else {
+		r0 = ret.Get(0).(core.Photo)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+		r1 = rf(ctx, postID, photoID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetPostByID provides a mock function with given fields: ctx, postID, userID

@@ -59,12 +59,12 @@ func (s *store) GetAllPosts(ctx context.Context, userID int, params core.GetAllP
 	}
 
 	var total int64
-	if err := query.Count(&total).Error; err != nil {
+	if err := query.Model(&core.Post{}).Count(&total).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
 	}
 
-	if err := query.Find(&posts).Error; err != nil {
+	if err := query.Model(&core.Post{}).Find(&posts).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
 	}

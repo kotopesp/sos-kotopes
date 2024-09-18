@@ -2,13 +2,13 @@ package http
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	
 )
 
 // getPosts handles the request to get all posts with optional filters
@@ -121,7 +121,7 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
 
-	photoBytes, err := openAndValidatePhotos(ctx)
+	photoBytes, exts, err := openAndValidatePhotos(ctx)
 	if err != nil {
 		switch {
 		case errors.Is(err, model.ErrInvalidPhotoSize):
@@ -141,7 +141,9 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 
 	postRequest.Photos = *photoBytes
 
-	corePostDetails := postRequest.ToCorePostDetails(authorID)
+	fmt.Printf("len(postRequest.Photos): %v\n", len(postRequest.Photos))
+
+	corePostDetails := postRequest.ToCorePostDetails(authorID, exts)
 
 	postDetails, err := r.postService.CreatePost(ctx.UserContext(), corePostDetails)
 	if err != nil {
@@ -175,7 +177,7 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	photoBytes, err := openAndValidatePhotos(ctx)
+	photoBytes, _, err := openAndValidatePhotos(ctx)
 	if err != nil {
 		switch {
 		case errors.Is(err, model.ErrInvalidPhotoSize):

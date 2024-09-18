@@ -129,15 +129,15 @@ func GetPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 	return &photoBytes, nil
 }
 
-func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedExtensions []string) (err error) {
+func IsValidExtension(ctx context.Context, file *multipart.FileHeader, allowedExtensions []string) (string, error) {
 	ext := filepath.Ext(file.Filename)
 	for _, allowedExt := range allowedExtensions {
 		if strings.EqualFold(ext, allowedExt) {
-			return nil
+			return ext, nil
 		}
 	}
 	logger.Log().Debug(ctx, model.ErrInvalidExtension.Error())
-	return model.ErrInvalidExtension
+	return "", model.ErrInvalidExtension
 }
 
 func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err error) {
@@ -150,24 +150,26 @@ func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err erro
 	return nil
 }
 
-func validatePhoto(ctx context.Context, file *multipart.FileHeader) (err error) {
+func validatePhoto(ctx context.Context, file *multipart.FileHeader) (string, error) {
+	fmt.Print("вход в validatePhoto\n")
+
 	// Check file size
-	err = IsValidPhotoSize(ctx, file)
+	err := IsValidPhotoSize(ctx, file)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
-		return err
+		return "", err
 	}
 
 	// Check file extension
-	err = IsValidExtension(ctx, file, AllowedExtensions)
+	ext, err := IsValidExtension(ctx, file, AllowedExtensions)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
-		return err
+		return "", err
 	}
 
 	// Add additional photo validation checks here
-
-	return nil
+	fmt.Print("выход из validatePhoto\n")
+	return ext, nil
 }
 
 // Works only for requests with one file
@@ -188,7 +190,7 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 				return nil, err
 			}
 			// Validate photo
-			if err := validatePhoto(ctx.UserContext(), file); err != nil {
+			if _, err := validatePhoto(ctx.UserContext(), file); err != nil {
 				return nil, err
 			}
 			bytesTmp := buffer.Bytes()
@@ -204,11 +206,13 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 	return photoBytes, nil
 }
 
-func openAndValidatePhotos(ctx *fiber.Ctx) (photoBytes *[][]byte, err error) {
+func openAndValidatePhotos(ctx *fiber.Ctx) (photoBytes *[][]byte, exts []string, err error) {
+	fmt.Print("вход в openAndValidatePhotos\n")
+
 	form, err := ctx.MultipartForm()
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		return nil, err
+		return nil, nil, err
 	}
 
 	if files := form.File["photos"]; len(files) > 0 {
@@ -217,28 +221,33 @@ func openAndValidatePhotos(ctx *fiber.Ctx) (photoBytes *[][]byte, err error) {
 			// Read file content
 			fileContent, err := file.Open()
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 
 			buffer := bytes.NewBuffer(nil)
 			if _, err = io.Copy(buffer, fileContent); err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			// Validate photo
-			if err := validatePhoto(ctx.UserContext(), file); err != nil {
-				return nil, err
+			ext, err := validatePhoto(ctx.UserContext(), file)
+			if err != nil {
+				return nil, nil, err
 			}
+
+			exts = append(exts, ext)
 			photos = append(photos, buffer.Bytes())
 
 			if err := fileContent.Close(); err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 		}
 		photoBytes = &photos
 	} else {
 		logger.Log().Debug(ctx.UserContext(), model.ErrPhotoNotFound.Error())
-		return nil, model.ErrPhotoNotFound
+		return nil, nil, model.ErrPhotoNotFound
 	}
+
+	fmt.Print("выход из openAndValidatePhotos\n")
 	
-	return photoBytes, nil
+	return photoBytes, exts, nil
 }

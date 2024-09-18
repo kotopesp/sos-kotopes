@@ -82,6 +82,8 @@ type (
 		DeletePost(ctx context.Context, post Post) error
 
 		PostFavouriteService
+
+		PostPhotoService
 	}
 )
 

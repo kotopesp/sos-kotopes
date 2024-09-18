@@ -27,6 +27,17 @@ func (s *store) GetPhotosPost(ctx context.Context, postID int) ([]core.Photo, er
 	return photos, nil
 }
 
+func (s *store) GetPhotosPostByPhotoID(ctx context.Context, postID, photoID int) (core.Photo, error) {
+	var photo core.Photo
+
+	if err := s.DB.WithContext(ctx).Where("post_id = ? AND id = ?", postID, photoID).First(&photo).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.Photo{}, err
+	}
+
+	return photo, nil
+}
+
 func (s *store) AddPhotosPost(ctx context.Context, postID int, photos []core.Photo) ([]core.Photo, error) {
 	var createdPhotos []core.Photo
 

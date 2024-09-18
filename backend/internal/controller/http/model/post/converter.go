@@ -3,10 +3,17 @@ package post
 import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"mime/multipart"
+	"path/filepath"
+	"fmt"
 )
 
+func GetExtensionFile(file *multipart.FileHeader) string {
+	return filepath.Ext(file.Filename)
+}
+
 // ToCorePostDetails converts CreateRequestBodyPost from model to core.PostDetails
-func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails {
+func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int, exts []string) core.PostDetails {
 	if p == nil {
 		return core.PostDetails{}
 	}
@@ -28,10 +35,12 @@ func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails
 	}
 
 	photos := []core.Photo{}
-	for _, photo := range p.Photos {
+	for i, photo := range p.Photos {
 		photos = append(photos, core.Photo{
-			Photo: photo,
+			Photo: 			 photo,
+			FileExtension:   exts[i],
 		})
+		fmt.Printf("exts[i]: %v: %v\n", i, exts[i])
 	}	
 
 	return core.PostDetails{
@@ -80,10 +89,10 @@ func ToResponse(meta pagination.Pagination, posts []core.PostDetails) Response {
 
 // ToPostResponse converts core.PostDetails to PostResponse
 func ToPostResponse(post core.PostDetails) PostResponse {
-	var photos [][]byte
+	var urlsPhotos []string
 
 	for _, photo := range post.Photos {
-		photos = append(photos, photo.Photo)
+		urlsPhotos = append(urlsPhotos, photo.URL)
 	}
 
 	return PostResponse{
@@ -97,7 +106,7 @@ func ToPostResponse(post core.PostDetails) PostResponse {
 		Gender:         post.Animal.Gender,
 		Description:    post.Animal.Description,
 		Status:         post.Animal.Status,
-		Photos:          photos,
+		URLsPhotos:     urlsPhotos,
 		IsFavourite:    post.Post.IsFavourite,
 		Comments:       0,
 	}

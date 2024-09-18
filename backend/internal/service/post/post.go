@@ -87,7 +87,7 @@ func (s *service) CreatePost(ctx context.Context, postDetails core.PostDetails) 
 		return core.PostDetails{}, err
 	}
 
-	photos, err := s.photoStore.AddPhotosPost(ctx, post.ID, postDetails.Photos)
+	photos, err := s.AddPhotosPost(ctx, post.ID, postDetails.Photos)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
