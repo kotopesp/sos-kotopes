@@ -71,7 +71,7 @@ func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 	pagination := paginate(total, getAllPostsParams.Limit, getAllPostsParams.Offset)
 	response := postModel.ToResponse(pagination, postsDetails)
 
-	return ctx.Status(fiber.StatusOK).JSON(response)
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
 // getPostByID handles the request to get a single post by its ID
