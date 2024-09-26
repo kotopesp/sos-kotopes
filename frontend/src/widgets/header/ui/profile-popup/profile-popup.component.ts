@@ -1,7 +1,6 @@
-import {Component, inject, Input, signal, WritableSignal} from '@angular/core';
+import {Component, Input, signal, WritableSignal} from '@angular/core';
 import {NgForOf} from "@angular/common";
 import {AuthService} from "../../../../services/auth-service/auth.service";
-import {UserService} from "../../../../services/user-service/user.service";
 
 @Component({
   selector: 'app-profile-popup',
@@ -15,7 +14,7 @@ import {UserService} from "../../../../services/user-service/user.service";
 export class ProfilePopupComponent {
   @Input() isAuth: WritableSignal<boolean>;
 
-  constructor(private authService: AuthService, private userService: UserService) {
+  constructor(private authService: AuthService) {
     this.isAuth = signal<boolean>(false);
   }
 

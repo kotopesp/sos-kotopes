@@ -3,7 +3,6 @@ import {NgIf} from "@angular/common";
 import {RegisterOverlayComponent} from "../register-overlay/register-overlay.component";
 import {AuthService} from "../../../../services/auth-service/auth.service";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-auth-service-overlay',

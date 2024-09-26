@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, OnInit, signal, WritableSignal} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
 import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
@@ -7,8 +7,6 @@ import {MessagePopupComponent} from "./ui/message-popup/message-popup.component"
 import {AuthServiceOverlayComponent} from "./ui/auth-overlay/auth-service-overlay.component";
 import {RegisterOverlayComponent} from "./ui/register-overlay/register-overlay.component";
 import {AuthService} from "../../services/auth-service/auth.service";
-import {UserService} from "../../services/user-service/user.service";
-import {StartPageComponent} from "../../pages/start-page/ui/start-page.component";
 
 @Component({
   selector: 'app-header',
@@ -32,7 +30,7 @@ export class HeaderComponent implements OnInit {
   isAuthOverlay: WritableSignal<boolean>;
   isRegisterOverlay: WritableSignal<boolean>;
 
-  constructor(private authService: AuthService, private userService: UserService) {
+  constructor(private authService: AuthService) {
     this.isAuth = signal<boolean>(false);
     this.isAuthOverlay = signal<boolean>(false);
     this.isRegisterOverlay = signal<boolean>(false);
