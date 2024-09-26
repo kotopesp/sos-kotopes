@@ -8,7 +8,7 @@
       <a class="block__control__link">
         <div class="block__control__line">
           <img src="/assets/icons/{{ controlItem.icon }}" alt="icon">
-          <p class="ft20 fw400">{{ controlItem.title }}</p>
+          <p class="ft20 fw400" (click)="controlItem.title === 'Выйти' ? logout() : ''">{{ controlItem.title }}</p>
         </div>
       </a>
     </div>

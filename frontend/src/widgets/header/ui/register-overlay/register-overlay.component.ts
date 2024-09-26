@@ -38,15 +38,12 @@ export class RegisterOverlayComponent {
     this.register.registration(this.formRegister.value).subscribe(
       {
         next: () => {
-          console.log("Хз чё это, наверн выполнилось");
+          this.isRegisterOverlay.set(false);
         },
         error: (error) => {
           console.warn(error);
         },
-        complete: () => {
-          console.log("Или вот это значит что выполнилось хз");
-        }
-      }
+     }
     )
   }
 }

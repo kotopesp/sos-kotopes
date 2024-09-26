@@ -1,35 +1,79 @@
-import {inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {FormControl, ɵFormGroupValue, ɵTypedOrUntyped} from "@angular/forms";
-import {Observable, tap} from "rxjs";
+import {catchError, Observable, tap, throwError} from "rxjs";
+import {CookieService} from "ngx-cookie-service";
+import {Router} from "@angular/router";
+
+
+export interface LoginResponse {
+  status: string,
+  data: {
+    access_token: string
+  }
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private token = null;
+  token: string | null;
+  baseApiUrl: string;
 
-  http = inject(HttpClient);
-  baseApiUrl: string = environment.apiUrl;
+  constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) {
+    this.token = null;
+    this.baseApiUrl = environment.apiUrl;
+  }
 
-  login(payload: {email_or_login: string, password: string}):
-    Observable<{token: string}>{
-    return this.http.post<{token: string}>(
+  get isAuth() {
+    if (!this.token) {
+      this.token = this.cookieService.get('token')
+    }
+    return !!this.token;
+  }
+
+  login(payload: {
+    password: string,
+    username: string,
+  }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
       `${this.baseApiUrl}auth/login`,
       payload
     ).pipe(
-      tap(
-        ({token}) => {
-          localStorage.setItem('auth-token', token)
-          this.setToken(token);
+      tap((res: LoginResponse) => {
+          this.saveTokens(res)
         }
       )
     );
   }
 
+  refreshAuthToken() {
+    return this.http.post(
+      `${this.baseApiUrl}auth/v1/auth/token/refresh`,
+      ''
+    ).pipe(catchError(
+        error => {
+          this.logout()
+
+          return throwError(error);
+        }
+      )
+    )
+  }
+
+  logout() {
+    this.cookieService.deleteAll()
+    this.token = null;
+    this.router.navigate([''])
+  }
+
   setToken(token: string) {
     this.token = token;
+  }
+
+  saveTokens(res: LoginResponse) {
+    this.setToken(res.data.access_token);
+    this.cookieService.set('token', res.data.access_token)
   }
 }
