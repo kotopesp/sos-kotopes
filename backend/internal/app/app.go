@@ -104,7 +104,7 @@ func Run(cfg *config.Config) {
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
-	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
+	err = app.Listen(cfg.HTTP.Port)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())
 	}
