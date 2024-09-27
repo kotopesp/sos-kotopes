@@ -25,6 +25,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	webSocketManager "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	chatservice "github.com/kotopesp/sos-kotopes/internal/service/chat"
 	chatmemberservice "github.com/kotopesp/sos-kotopes/internal/service/chat_member"
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
@@ -69,6 +70,7 @@ func Run(cfg *config.Config) {
 	chatStore := chatstore.New(pg)
 	messageStore := messagestore.New(pg)
 	chatMemberStore := chatmemberstore.New(pg)
+	webSocketManager := webSocketManager.NewWebSocketManager()
 
 	// Services
 	commentService := commentservice.New(
@@ -115,6 +117,7 @@ func Run(cfg *config.Config) {
 		messageService,
 		chatMemberService,
 		formValidator,
+		*webSocketManager,
 	)
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	//err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)

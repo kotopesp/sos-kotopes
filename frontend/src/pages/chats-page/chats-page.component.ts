@@ -92,7 +92,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
       switchMap((chatId: number) => this.chatService.getById(chatId))
     );
 
-    // Получаем входящие сообщения
+    // // Получаем входящие сообщения
     this.websocketService.getMessages().subscribe((msg: string) => {
       this.messages.push(JSON.parse(msg)[0]);
     });
@@ -113,16 +113,13 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
       const chatId = +params['id']; // Получаем ID чата из маршрута
       if (chatId) {
         this.loadChatData(chatId); // Загружаем данные чата
+        this.websocketService.connect(chatId);
       }
     });
   }
 
-   parseMessage(msg: string): Message {
-    const msgJson = <Message>JSON.parse(msg)[0];
-    var msgDate = new Date(msgJson.UpdatedAt);
-    msgJson.time = msgDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    msgJson.isUserMessage = msgJson.UserID === this.userId;
-    return msgJson;
+  ngOnDestroy(): void {
+    this.websocketService.closeConnection();
   }
   
   // Отправляем сообщение через вебсокет
@@ -134,6 +131,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     this.sendMsgForm.reset();
     if (this.messageText && this.messageText.trim()) {
       const timeNow = Date.now();
+      // this.websocketService.sendMessage(this.messageText);
       this.websocketService.sendMessage(JSON.stringify([
         <Message>{ 
           Content: this.messageText,
@@ -143,7 +141,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
           ChatID: this.activeChatId,
           isUserMessage: true,
           time: (new Date(timeNow)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),}, // Message form
-      ]), this.activeChatId);
+      ]));
       this.messageText = '';
     }
   }
@@ -183,6 +181,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
       this.chatService.createChat(this.selectedUserIds).subscribe(
         (response) => {
           if (response.Id) {
+            this.websocketService.closeConnection();
             this.router.navigateByUrl(`/chats/${response.Id}`).then(() => {
               window.location.reload();
             });
@@ -196,6 +195,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   }
 
   loadChatData(chatId: number): void {
+    this.websocketService.closeConnection();
     this.chatService.getChatById(chatId).subscribe({
       next: (chat: Chat) => {
         this.selectChat({Id: chat.ID, Chattype: chat.ChatType, Title: this.chatService.getTitle(chat.Users)});

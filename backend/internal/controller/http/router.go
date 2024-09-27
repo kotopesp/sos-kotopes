@@ -1,8 +1,6 @@
 package http
 
 import (
-	"log"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/websocket/v2"
@@ -22,6 +20,7 @@ type Router struct {
 	chatService          core.ChatService
 	messageService       core.MessageService
 	chatMemberService    core.ChatMemberService
+	webSocketManager     WebSocketManager
 }
 
 func NewRouter(
@@ -35,6 +34,7 @@ func NewRouter(
 	messageService core.MessageService,
 	chatMemberService core.ChatMemberService,
 	formValidator validator.FormValidatorService,
+	webSocketManager WebSocketManager,
 ) {
 	router := &Router{
 		app:               app,
@@ -47,6 +47,7 @@ func NewRouter(
 		chatService:       chatService,
 		messageService:    messageService,
 		chatMemberService: chatMemberService,
+		webSocketManager:  webSocketManager,
 	}
 
 	router.initRequestMiddlewares()
@@ -56,55 +57,59 @@ func NewRouter(
 	router.initResponseMiddlewares()
 }
 
-// Store all active WebSocket connections
-var clients = make(map[*websocket.Conn]bool)
+// // Store all active WebSocket connections
+// var clients = make(map[*websocket.Conn]bool)
 
-// Broadcast channel for sending messages
-var broadcast = make(chan string)
+// // Broadcast channel for sending messages
+// var broadcast = make(chan string)
 
 func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
 	v1 := r.app.Group("/api/v1")
 
-	r.app.Get("/chats/ws", websocket.New(func(c *websocket.Conn) {
-		defer func() {
-			delete(clients, c)
-			c.Close()
-		}()
+	v1.Use("/ws/:chatID", r.webSocketManager.HandleWebSocket)
+	v1.Get("/ws/:chatID", websocket.New(r.webSocketManager.WebSocketEndpoint))
 
-		// Add new client
-		clients[c] = true
+	// r.app.Get("/chats/ws", websocket.New(func(c *websocket.Conn) {
+	// 	defer func() {
+	// 		delete(clients, c)
+	// 		c.Close()
+	// 	}()
 
-		// Listen for incoming messages
-		for {
-			var msg string
-			// Read in a new message from the client
-			err := c.ReadJSON(&msg)
-			if err != nil {
-				log.Println("Error reading message:", err)
-				break
-			}
-			// Send the message to the broadcast channel
-			broadcast <- msg
-		}
-	}))
+	// 	// Add new client
+	// 	clients[c] = true
 
-	// Goroutine to broadcast messages to all clients
-	go func() {
-		for {
-			// Grab the next message from the broadcast channel
-			msg := <-broadcast
-			// Send it to every client that is currently connected
-			for client := range clients {
-				if err := client.WriteJSON(msg); err != nil {
-					log.Println("Error writing message:", err)
-					client.Close()
-					delete(clients, client)
-				}
-			}
-		}
-	}()
+	// 	// Listen for incoming messages
+	// 	for {
+	// 		var msg string
+	// 		// Read in a new message from the client
+	// 		err := c.ReadJSON(&msg)
+	// 		fmt.Println(msg)
+	// 		if err != nil {
+	// 			log.Println("Error reading message:", err)
+	// 			break
+	// 		}
+	// 		// Send the message to the broadcast channel
+	// 		broadcast <- msg
+	// 	}
+	// }))
+
+	// // Goroutine to broadcast messages to all clients
+	// go func() {
+	// 	for {
+	// 		// Grab the next message from the broadcast channel
+	// 		msg := <-broadcast
+	// 		// Send it to every client that is currently connected
+	// 		for client := range clients {
+	// 			if err := client.WriteJSON(msg); err != nil {
+	// 				log.Println("Error writing message:", err)
+	// 				client.Close()
+	// 				delete(clients, client)
+	// 			}
+	// 		}
+	// 	}
+	// }()
 
 	// comment_service
 	v1.Get("/posts/:post_id/comments", r.getComments)
