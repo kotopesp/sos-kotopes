@@ -11,9 +11,9 @@ export const routes: Routes = [
   {
     path: 'posts', component: PostsComponent
   },
-  // {
-  //   path: 'chats', component: ChatsPageComponent
-  // },
+  {
+    path: 'chats', component: ChatsPageComponent
+  },
   {
     path: 'chats/:id', component: ChatsPageComponent
   },

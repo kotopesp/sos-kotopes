@@ -112,12 +112,18 @@
                 <div class="container__messages">
                   <div *ngFor="let message of messages">
                     <div class="message">
-                      <app-message [answer]="message.isUserMessage" [messageContent]="message.content" [messageTime]="message.time"/>
+                      <app-message 
+                      [answer]="message.isUserMessage" 
+                      [messageContent]="message.Content" 
+                      [messageTime]="message.time"/>
                     </div>
                   </div>
                 </div>
               </div>
-              <form action="" [formGroup]="sendMsgForm" (ngSubmit)="onSubmit()">
+              <form action="" 
+              [formGroup]="sendMsgForm" 
+              (ngSubmit)="onSubmit()"
+              (keydown.enter)="onSubmit($event)">
               <div class="block__current__message">
                 <div class="block__clip">
                   <img src="/assets/icons/clip-icon.svg" alt="icon">

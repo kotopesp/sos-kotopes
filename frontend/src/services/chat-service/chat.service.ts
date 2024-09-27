@@ -6,6 +6,7 @@ import { Chatinfo } from '../../model/chatinfo.interface'
 import { Chat, ResponseUser } from '../../model/chat.interface'
 import { environment } from '../../environments/environment'
 import { User } from '../../model/user.interface';
+import { Message } from '../../model/message.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +76,17 @@ export class ChatService {
         Users: responce.data.Users,
       })
     );
+  }
+
+  getMessagesByChatId(chatId: number, userId: number): Observable<Message[]> {
+    return this.http.get< {data: {message: Message[]}}>(`${this.apiUrl}chats/${chatId}/messages`).pipe(
+      map(response => response.data.message.map(
+        message => {
+          message.isUserMessage = message.UserID === userId;
+          message.time = (new Date(message.UpdatedAt)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+          return message;
+        })
+      ));
   }
 
   getAllChats(): Observable<Chatinfo[]> {

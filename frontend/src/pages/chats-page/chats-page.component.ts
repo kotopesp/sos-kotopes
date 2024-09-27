@@ -16,6 +16,7 @@ import {ChatService} from '../../services/chat-service/chat.service';
 import { HttpClient } from '@angular/common/http';
 import { Chat } from '../../model/chat.interface';
 import { Chatinfo } from '../../model/chatinfo.interface';
+import { Message } from '../../model/message.interface';
 
 @Component({
   selector: 'app-chats-page',
@@ -70,9 +71,9 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     }
   }
 
-  public messages: { content: string, isUserMessage: boolean, time: string }[] = [];
+  public messages: Message[] = [];
   public messageText: string = '';
-  public userId: string = '1'; // id пользователя
+  public userId: number = 1; // id пользователя
   public user$!: Observable<User>;
   public favusers: { id: number, username: string}[] = [];
   public chatList: Chatinfo[] = [];
@@ -93,8 +94,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
 
     // Получаем входящие сообщения
     this.websocketService.getMessages().subscribe((msg: string) => {
-      const parsedMsg = this.parseMessage(msg);
-      this.messages.push(parsedMsg);
+      this.messages.push(JSON.parse(msg)[0]);
     });
 
     this.chatService.getFavUsers().subscribe(
@@ -116,30 +116,36 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
       }
     });
   }
+
+   parseMessage(msg: string): Message {
+    const msgJson = <Message>JSON.parse(msg)[0];
+    var msgDate = new Date(msgJson.UpdatedAt);
+    msgJson.time = msgDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    msgJson.isUserMessage = msgJson.UserID === this.userId;
+    return msgJson;
+  }
   
   // Отправляем сообщение через вебсокет
-  onSubmit() {
+  onSubmit(event?: Event) {
+    if (event) {
+      event.preventDefault(); // Предотвращает добавление символа "Enter"
+    }
     this.messageText = this.sendMsgForm.controls['msgText'].value;
     this.sendMsgForm.reset();
-    if (this.messageText.trim()) {
+    if (this.messageText && this.messageText.trim()) {
       const timeNow = Date.now();
       this.websocketService.sendMessage(JSON.stringify([
-        { content: this.messageText, userId: this.userId, createdAt: timeNow, updatedAt: timeNow }, // Message form
-      ]));
+        <Message>{ 
+          Content: this.messageText,
+          UserID: this.userId,
+          CreatedAt: new Date(timeNow), 
+          UpdatedAt: new Date(timeNow), 
+          ChatID: this.activeChatId,
+          isUserMessage: true,
+          time: (new Date(timeNow)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),}, // Message form
+      ]), this.activeChatId);
       this.messageText = '';
     }
-  }
-
-  private parseMessage(msg: string): { content: string, isUserMessage: boolean, time: string } {
-    const msgJson = JSON.parse(msg);
-    // console.log("msg id: ", msgJson[0].userId, "cur usr id: ", this.userId, "eqls: ", msgJson[0].userId === this.userId);
-    var msgDate = new Date(msgJson[0].updatedAt);
-    var timeString = `${msgDate.getHours()}:${msgDate.getMinutes()}`
-    return {
-      content: msgJson[0].content,
-      isUserMessage: msgJson[0].userId === this.userId,
-      time: timeString,
-    };
   }
 
   selectedUserIds: number[] = [];
@@ -164,11 +170,11 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   selectChat(chat: Chatinfo) {
     this.currentChat = chat;
     this.activeChatId = chat.Id;
+    this.router.navigateByUrl(`/chats/${chat.Id}`);
     this.notCreatingChat();
   }
 
   isActiveChat(chat: Chatinfo): boolean {
-    // console.log(this.activeChatId, "cur chat:", chat.Id)
     return this.activeChatId === chat.Id;
   }
 
@@ -177,7 +183,6 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
       this.chatService.createChat(this.selectedUserIds).subscribe(
         (response) => {
           if (response.Id) {
-            // console.log("перенаправляем на", response);
             this.router.navigateByUrl(`/chats/${response.Id}`).then(() => {
               window.location.reload();
             });
@@ -191,12 +196,11 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   }
 
   loadChatData(chatId: number): void {
-    // Получение информации о чате через сервис чатов
     this.chatService.getChatById(chatId).subscribe({
       next: (chat: Chat) => {
         this.selectChat({Id: chat.ID, Chattype: chat.ChatType, Title: this.chatService.getTitle(chat.Users)});
 
-        // this.loadMessages(chatId);
+        this.loadMessages(chatId);
       },
       error: (err) => {
         console.error('Ошибка при загрузке данных чата:', err);
@@ -204,16 +208,16 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     });
   }
   
-  // loadMessages(chatId: number): void {
-  //   this.chatService.getMessagesByChatId(chatId).subscribe({
-  //     next: (messages: Message[]) => {
-  //       this.messages = messages;
+  loadMessages(chatId: number): void {
+    this.chatService.getMessagesByChatId(chatId, this.userId).subscribe({
+      next: (messages: Message[]) => {
+        this.messages = messages;
 
-  //       this.scrollToBottom();
-  //     },
-  //     error: (err) => {
-  //       console.error('Ошибка при загрузке сообщений:', err);
-  //     }
-  //   });
-  // }
+        this.scrollToBottom();
+      },
+      error: (err) => {
+        console.error('Ошибка при загрузке сообщений:', err);
+      }
+    });
+  }
 }
