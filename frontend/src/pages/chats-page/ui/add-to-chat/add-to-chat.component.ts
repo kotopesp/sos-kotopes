@@ -1,4 +1,4 @@
-import {Component, Input, WritableSignal} from '@angular/core';
+import {Component, EventEmitter, Input, Output, signal, WritableSignal} from '@angular/core';
 
 @Component({
   selector: 'app-add-to-chat',
@@ -8,16 +8,22 @@ import {Component, Input, WritableSignal} from '@angular/core';
   styleUrl: './add-to-chat.component.scss'
 })
 export class AddToChatComponent {
-  @Input() countInArray!: WritableSignal<number>;
-  isAdded = 0
+  @Input() countInArray: WritableSignal<number> = signal(0);
+  isAdded = 0;
+  @Input() username!: string;  
+  @Input() userId!: number;
+
+  @Output() userSelectionChanged = new EventEmitter<number>(); // для передачи изменений в родителя
 
   addToArray() {
     if (this.isAdded === 0) {
       this.isAdded = 1;
       this.countInArray.update(num => num + 1);
+      this.userSelectionChanged.emit(this.userId);
     } else {
       this.isAdded = 0;
       this.countInArray.update(num => num - 1);
+      this.userSelectionChanged.emit(-this.userId);
     }
   }
 }

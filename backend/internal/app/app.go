@@ -89,7 +89,7 @@ func Run(cfg *config.Config) {
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
-	chatService := chatservice.New(chatStore)
+	chatService := chatservice.New(chatStore, userStore)
 	messageService := messageservice.New(messageStore)
 	chatMemberService := chatmemberservice.New(chatMemberStore)
 

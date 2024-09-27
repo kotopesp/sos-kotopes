@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {NgClass} from "@angular/common";
 import {ToggleActiveDirective} from "../../toggle-active.directive";
 
@@ -13,4 +13,5 @@ import {ToggleActiveDirective} from "../../toggle-active.directive";
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent {
+  @Input() username!: string;  
 }

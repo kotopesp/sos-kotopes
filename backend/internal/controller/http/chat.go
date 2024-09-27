@@ -32,7 +32,7 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 
 	response := struct {
 		Total int         `json:"total"`
-		Chats []core.Chat `json:"chat"`
+		Chats []core.Chat `json:"chats"`
 	}{
 		Total: total,
 		Chats: chats,
@@ -41,12 +41,12 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
-func (r *Router) getChatByID(ctx *fiber.Ctx) error {
+func (r *Router) getChatWithUsersByID(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	chat, err := r.chatService.GetChatByID(ctx.UserContext(), id)
+	chat, err := r.chatService.GetChatWithUsersByID(ctx.UserContext(), id)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -55,16 +55,36 @@ func (r *Router) getChatByID(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) createChat(ctx *fiber.Ctx) error {
-	var chat core.Chat
-	if err := ctx.BodyParser(&chat); err != nil {
+	chatType := ctx.Query("type", "")
+	var users struct {
+		UserIds []int `json:"userIds"`
+	}
+	if err := ctx.BodyParser(&users); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
 	}
-	createdChat, err := r.chatService.CreateChat(ctx.UserContext(), chat)
+	if len(users.UserIds) == 0 {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("No users selected"))
+	}
+
+	existingChat, err := r.chatService.FindChatByUsers(ctx.UserContext(), users.UserIds)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse(createdChat))
+	if existingChat.ID != -1 {
+		return ctx.Status(fiber.StatusConflict).JSON(model.OKResponse(existingChat))
+	}
+
+	chat := core.Chat{
+		ChatType: chatType,
+	}
+
+	createdChat, err := r.chatService.CreateChat(ctx.UserContext(), chat, users.UserIds)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(createdChat))
 }
 
 func (r *Router) deleteChat(ctx *fiber.Ctx) error {

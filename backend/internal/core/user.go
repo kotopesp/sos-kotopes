@@ -8,7 +8,7 @@ import (
 
 type (
 	User struct {
-		ID           int        `gorm:"column:id"`
+		ID           int        `gorm:"column:id;primaryKey"`
 		Username     string     `gorm:"column:username"`
 		Firstname    *string    `gorm:"column:firstname"`
 		Lastname     *string    `gorm:"column:lastname"`

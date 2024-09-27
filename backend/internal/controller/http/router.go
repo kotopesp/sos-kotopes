@@ -113,7 +113,7 @@ func (r *Router) initRoutes() {
 	v1.Delete("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.deleteComment)
 
 	// favourites users todo
-	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
+	v1.Get("/users/favourites", r.GetFavouriteUsers)
 	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
 	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
 
@@ -154,7 +154,7 @@ func (r *Router) initRoutes() {
 
 	// chats
 	v1.Get("/chats", r.getAllChats)
-	v1.Get("/chats/:chat_id", r.getChatByID)
+	v1.Get("/chats/:chat_id", r.getChatWithUsersByID)
 	v1.Post("/chats", r.createChat)
 	v1.Delete("/chats/:chat_id", r.deleteChat)
 
@@ -166,7 +166,7 @@ func (r *Router) initRoutes() {
 
 	// chat members
 	v1.Get("/chats/:chat_id/members", r.getAllMembers)
-	v1.Post("/chats/:chat_id/members", r.addMemberToChat)
+	v1.Post("/chats/:chat_id/members/:user_id", r.addMemberToChat)
 	v1.Patch("/chats/:chat_id/members/:user_id", r.updateMemberInfo)
 	v1.Delete("/chats/:chat_id/members/:user_id", r.deleteMemberFromChat)
 }

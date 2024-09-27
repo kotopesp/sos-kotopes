@@ -32,11 +32,17 @@ func (r *Router) addMemberToChat(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	var member core.ChatMember
-	if err := ctx.BodyParser(&member); err != nil {
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
+	userID, err := ctx.ParamsInt("user_id")
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	member.ChatID = chatID
+	member := core.ChatMember{
+		ChatID: chatID,
+		UserID: userID,
+	}
+	// if err := ctx.BodyParser(&member); err != nil {
+	// 	return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
+	// }
 	// TODO: получать user_id
 	createdMember, err := r.chatMemberService.AddMemberToChat(ctx.UserContext(), member)
 	if err != nil {

@@ -11,4 +11,9 @@ type (
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 	}
+
+	CreateChatRequest struct {
+		ChatType string `json:"chat_type"`
+		UserIDs  []int  `json:"users"`
+	}
 )

@@ -3,12 +3,13 @@ package user
 import (
 	"context"
 	"errors"
+	"strings"
+	"time"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
-	"strings"
-	"time"
 )
 
 type store struct {
