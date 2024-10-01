@@ -1,0 +1,1 @@
+ALTER TYPE auth_providers ADD VALUE 'telegram';

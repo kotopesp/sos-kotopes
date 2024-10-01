@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 
@@ -249,8 +250,8 @@ func setRefreshTokenCookie(ctx *fiber.Ctx, refreshToken string) {
 }
 
 // callback is invoked when the user login through VK
-func (r *Router) callback(ctx *fiber.Ctx) error {
-	token, err := r.authService.ConfigVK().Exchange(ctx.Context(), ctx.FormValue("code"))
+func (r *Router) callbackVK(ctx *fiber.Ctx) error {
+	token, err := r.authService.ConfigVK().Exchange(ctx.UserContext(), ctx.FormValue("code"))
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -265,6 +266,25 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 		ctx.Context(),
 		token.AccessToken,
 	)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	setRefreshTokenCookie(ctx, *refreshToken)
+
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(accessToken))
+}
+
+func (r *Router) callbackTelegram(ctx *fiber.Ctx) error {
+	var telegramUser user.TelegramUser
+	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &telegramUser)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+
+	coreUser := telegramUser.ToCoreUser()
+	accessToken, refreshToken, err := r.authService.AuthorizeTelegram(ctx.UserContext(), coreUser, telegramUser.ID)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))

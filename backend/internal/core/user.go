@@ -35,7 +35,7 @@ type (
 		GetUserByUsername(ctx context.Context, username string) (data User, err error)
 		GetUserByExternalID(ctx context.Context, externalID int) (data ExternalUser, err error)
 		AddUser(ctx context.Context, user User) (userID int, err error)
-		AddExternalUser(ctx context.Context, user User, externalUserID int, authProvider string) (userID int, err error)
+		AddExternalUser(ctx context.Context, user User, externalUserID int, authProvider AuthProvider) (userID int, err error)
 	}
 	UserService interface {
 		UpdateUser(ctx context.Context, id int, update UpdateUser) (updatedUser User, err error)

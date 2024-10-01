@@ -147,7 +147,7 @@ func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (data c
 	return user, err
 }
 
-func (s *store) AddExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
+func (s *store) AddExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider core.AuthProvider) (userID int, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 
 	defer func() {
@@ -164,7 +164,7 @@ func (s *store) AddExternalUser(ctx context.Context, user core.User, externalUse
 	err = tx.Create(&core.ExternalUser{
 		ExternalID:   externalUserID,
 		UserID:       user.ID,
-		AuthProvider: authProvider,
+		AuthProvider: string(authProvider),
 	}).Error
 	if err != nil {
 		return 0, err

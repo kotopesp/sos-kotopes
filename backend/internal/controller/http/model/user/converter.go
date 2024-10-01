@@ -46,3 +46,11 @@ func ToResponseUser(user *core.User) ResponseUser {
 		Description: user.Description,
 	}
 }
+
+func (tu *TelegramUser) ToCoreUser() core.User {
+	return core.User{
+		Username:  tu.Username,
+		Firstname: &tu.Firstname,
+		Lastname:  &tu.Lastname,
+	}
+}

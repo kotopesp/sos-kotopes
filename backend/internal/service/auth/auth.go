@@ -12,13 +12,8 @@ import (
 )
 
 const (
-	vkAuthProvider = "vk"
-	bcryptCost     = 12
+	passwordPlug = "password"
 )
-
-var authProvidersPasswordPlugs = map[string]string{
-	vkAuthProvider: "vk_password",
-}
 
 type service struct {
 	userStore           core.UserStore
@@ -101,7 +96,7 @@ func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, 
 
 // SignupBasic Signup through username and password (can be additional fields)
 func (s *service) SignupBasic(ctx context.Context, user core.User) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcryptCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
@@ -122,7 +117,12 @@ func (s *service) AuthorizeVK(ctx context.Context, token string) (accessToken, r
 		return nil, nil, err
 	}
 
-	accessToken, refreshToken, err = s.loginVK(ctx, vkUserID)
+	user := core.User{
+		Username:     uuid.New().String(),
+		PasswordHash: passwordPlug,
+	}
+
+	accessToken, refreshToken, err = s.loginOAuth(ctx, user, vkUserID, core.AuthProviderVK)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -131,17 +131,14 @@ func (s *service) AuthorizeVK(ctx context.Context, token string) (accessToken, r
 }
 
 // loginVK Signup if user not exists, then login
-func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken, refreshToken *string, err error) {
+func (s *service) loginOAuth(ctx context.Context, user core.User, externalUserID int, authProvider core.AuthProvider) (accessToken, refreshToken *string, err error) {
 	externalUser, err := s.userStore.GetUserByExternalID(ctx, externalUserID)
 
 	var userID int
 
 	if err != nil {
 		if errors.Is(err, core.ErrNoSuchUser) {
-			userID, err = s.signupVK(ctx, core.User{
-				Username:     uuid.New().String(),
-				PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
-			}, externalUserID, vkAuthProvider)
+			userID, err = s.signupOAuth(ctx, user, externalUserID, authProvider)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -152,21 +149,33 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 		userID = externalUser.UserID
 	}
 
-	user, err := s.userStore.GetUserByID(ctx, userID)
-
+	dbUser, err := s.userStore.GetUserByID(ctx, userID)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	return s.LoginBasic(ctx, core.User{
-		Username:     user.Username,
-		PasswordHash: authProvidersPasswordPlugs[vkAuthProvider],
+		Username:     dbUser.Username,
+		PasswordHash: passwordPlug,
 	})
 }
 
+// AuthorizeTelegram Authorization through Telegram
+func (s *service) AuthorizeTelegram(ctx context.Context, user core.User, externalUserID int) (accessToken *string, refreshToken *string, err error) {
+	user.Username = uuid.New().String()
+	user.PasswordHash = passwordPlug
+
+	accessToken, refreshToken, err = s.loginOAuth(ctx, user, externalUserID, core.AuthProviderTelegram)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return accessToken, refreshToken, err
+}
+
 // signupVK Creating external user
-func (s *service) signupVK(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcryptCost)
+func (s *service) signupOAuth(ctx context.Context, user core.User, externalUserID int, authProvider core.AuthProvider) (userID int, err error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcrypt.DefaultCost)
 	if err != nil {
 		return 0, err
 	}
@@ -176,6 +185,7 @@ func (s *service) signupVK(ctx context.Context, user core.User, externalUserID i
 	if err != nil {
 		return 0, err
 	}
+
 	return userID, nil
 }
 
