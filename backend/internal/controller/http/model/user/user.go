@@ -44,6 +44,6 @@ type (
 		Username  string `query:"username"`
 		Firstname string `query:"first_name"`
 		Lastname  string `query:"last_name"`
-		PhotoURL  string `query:"photo_url"` // TODO
+		PhotoURL  string `query:"photo_url"` // TODO: insert photo from telegram to database
 	}
 )

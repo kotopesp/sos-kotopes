@@ -8,7 +8,6 @@ import (
 	"mime/multipart"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 
@@ -277,7 +276,7 @@ func (r *Router) callbackVK(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) callbackTelegram(ctx *fiber.Ctx) error {
-	var telegramUser user.TelegramUser
+	var telegramUser userModel.TelegramUser
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &telegramUser)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError

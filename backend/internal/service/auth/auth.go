@@ -161,7 +161,7 @@ func (s *service) loginOAuth(ctx context.Context, user core.User, externalUserID
 }
 
 // AuthorizeTelegram Authorization through Telegram
-func (s *service) AuthorizeTelegram(ctx context.Context, user core.User, externalUserID int) (accessToken *string, refreshToken *string, err error) {
+func (s *service) AuthorizeTelegram(ctx context.Context, user core.User, externalUserID int) (accessToken, refreshToken *string, err error) {
 	user.Username = uuid.New().String()
 	user.PasswordHash = passwordPlug
 
