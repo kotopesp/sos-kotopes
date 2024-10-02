@@ -10,12 +10,10 @@ import {ToggleActiveDirective} from "./toggle-active.directive";
 import { WebsocketService } from '../../services/websocket-service/websocket.service';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
 import { map, Observable, switchMap } from 'rxjs';
-import { User } from '../../model/user.interface';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import {ChatService} from '../../services/chat-service/chat.service';
 import { HttpClient } from '@angular/common/http';
 import { Chat } from '../../model/chat.interface';
-import { Chatinfo } from '../../model/chatinfo.interface';
 import { Message } from '../../model/message.interface';
 
 @Component({
@@ -40,8 +38,7 @@ import { Message } from '../../model/message.interface';
   styleUrl: './chats-page.component.scss'
 })
 export class ChatsPageComponent implements AfterViewChecked, OnInit {
-  currentChat: Chatinfo = { Id: -1, Title: '', Chattype: '' };
-  activeChatId: number = -1;
+  currentChat: Chat = { id: -1, title: '', chat_type: '', unread_count: 0 , users: []};
   createChat = false;
 
   countInArray = signal<number>(0);
@@ -74,45 +71,40 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   public messages: Message[] = [];
   public messageText: string = '';
   public userId: number = 1; // id пользователя
-  public user$!: Observable<User>;
   public favusers: { id: number, username: string}[] = [];
-  public chatList: Chatinfo[] = [];
+  public chatList: Chat[] = [];
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private chatService: ChatService, private websocketService: WebsocketService, private http: HttpClient) {
-    // this.user$.subscribe((user: User) => {
-    //   if (user && user.id) {
-    //     this.userId = user.id.toString();  // Сохраняем id пользователя как строку
-    //   }
-    // });
-  }
+  constructor(private router: Router, private activatedRoute: ActivatedRoute, private chatService: ChatService, private websocketService: WebsocketService, private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.user$ = this.activatedRoute.params.pipe(
+    this.activatedRoute.params.pipe(
       map((params: Params) => parseInt(params['id'], 10)),
       switchMap((chatId: number) => this.chatService.getById(chatId))
     );
 
-    // // Получаем входящие сообщения
     this.websocketService.getMessages().subscribe((msg: string) => {
-      this.messages.push(JSON.parse(msg)[0]);
+      const message = <Message>JSON.parse(msg)[0];
+      this.chatService.updateChat(message, this.userId);
+      this.messages.push(message);
     });
 
     this.chatService.getFavUsers().subscribe(
       (users) => {
-        this.favusers = users; // Заполняем массив пользователей
+        this.favusers = users;
       }
     );
-
-    this.chatService.getAllChats().subscribe(
-      (chats) => {
-        this.chatList = chats;
-      }
-    );
+    
+    this.chatService.getAllChats(this.userId);
+    
+    this.chatService.chats$.subscribe(chats => {
+      this.chatList = chats; // Обновляем список чатов при изменении
+    });
 
     this.activatedRoute.params.subscribe(params => {
-      const chatId = +params['id']; // Получаем ID чата из маршрута
+      const chatId = +params['id'];
       if (chatId) {
-        this.loadChatData(chatId); // Загружаем данные чата
+        this.chatService.readMessages(chatId);
+        this.loadChatData(chatId);
         this.websocketService.connect(chatId);
       }
     });
@@ -131,17 +123,14 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     this.sendMsgForm.reset();
     if (this.messageText && this.messageText.trim()) {
       const timeNow = Date.now();
-      // this.websocketService.sendMessage(this.messageText);
-      this.websocketService.sendMessage(JSON.stringify([
-        <Message>{ 
-          Content: this.messageText,
-          UserID: this.userId,
-          CreatedAt: new Date(timeNow), 
-          UpdatedAt: new Date(timeNow), 
-          ChatID: this.activeChatId,
-          isUserMessage: true,
-          time: (new Date(timeNow)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),}, // Message form
-      ]));
+      var msgToSend = <Message>{ 
+        message_content: this.messageText,
+        user_id: this.userId,
+        chat_id: this.currentChat.id,
+        is_user_message: true,
+        time: (new Date(timeNow)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        };
+      this.websocketService.sendMessage(JSON.stringify([msgToSend]));
       this.messageText = '';
     }
   }
@@ -165,24 +154,23 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     this.countInArray.update(_ => 0);
   }
 
-  selectChat(chat: Chatinfo) {
+  selectChat(chat: Chat) {
     this.currentChat = chat;
-    this.activeChatId = chat.Id;
-    this.router.navigateByUrl(`/chats/${chat.Id}`);
+    this.router.navigateByUrl(`/chats/${chat.id}`);
     this.notCreatingChat();
   }
 
-  isActiveChat(chat: Chatinfo): boolean {
-    return this.activeChatId === chat.Id;
+  isActiveChat(chat: Chat): boolean {
+    return this.currentChat.id === chat.id;
   }
 
   onCreateChat() {
     if (this.selectedUserIds.length > 0) {
-      this.chatService.createChat(this.selectedUserIds).subscribe(
+      this.chatService.createChat(this.selectedUserIds, this.userId).subscribe(
         (response) => {
-          if (response.Id) {
+          if (response.id) {
             this.websocketService.closeConnection();
-            this.router.navigateByUrl(`/chats/${response.Id}`).then(() => {
+            this.router.navigateByUrl(`/chats/${response.id}`).then(() => {
               window.location.reload();
             });
           }
@@ -198,9 +186,13 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     this.websocketService.closeConnection();
     this.chatService.getChatById(chatId).subscribe({
       next: (chat: Chat) => {
-        this.selectChat({Id: chat.ID, Chattype: chat.ChatType, Title: this.chatService.getTitle(chat.Users)});
-
+        this.selectChat({
+          ...chat, 
+          title: this.chatService.getTitle(chat.users, this.userId),
+          });
         this.loadMessages(chatId);
+        const chatIndex = this.chatList.findIndex(c => c.id === chat.id);
+        this.chatService.readMessages(chatIndex);
       },
       error: (err) => {
         console.error('Ошибка при загрузке данных чата:', err);

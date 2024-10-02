@@ -57,12 +57,6 @@ func NewRouter(
 	router.initResponseMiddlewares()
 }
 
-// // Store all active WebSocket connections
-// var clients = make(map[*websocket.Conn]bool)
-
-// // Broadcast channel for sending messages
-// var broadcast = make(chan string)
-
 func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
@@ -70,46 +64,6 @@ func (r *Router) initRoutes() {
 
 	v1.Use("/ws/:chatID", r.webSocketManager.HandleWebSocket)
 	v1.Get("/ws/:chatID", websocket.New(r.webSocketManager.WebSocketEndpoint))
-
-	// r.app.Get("/chats/ws", websocket.New(func(c *websocket.Conn) {
-	// 	defer func() {
-	// 		delete(clients, c)
-	// 		c.Close()
-	// 	}()
-
-	// 	// Add new client
-	// 	clients[c] = true
-
-	// 	// Listen for incoming messages
-	// 	for {
-	// 		var msg string
-	// 		// Read in a new message from the client
-	// 		err := c.ReadJSON(&msg)
-	// 		fmt.Println(msg)
-	// 		if err != nil {
-	// 			log.Println("Error reading message:", err)
-	// 			break
-	// 		}
-	// 		// Send the message to the broadcast channel
-	// 		broadcast <- msg
-	// 	}
-	// }))
-
-	// // Goroutine to broadcast messages to all clients
-	// go func() {
-	// 	for {
-	// 		// Grab the next message from the broadcast channel
-	// 		msg := <-broadcast
-	// 		// Send it to every client that is currently connected
-	// 		for client := range clients {
-	// 			if err := client.WriteJSON(msg); err != nil {
-	// 				log.Println("Error writing message:", err)
-	// 				client.Close()
-	// 				delete(clients, client)
-	// 			}
-	// 		}
-	// 	}
-	// }()
 
 	// comment_service
 	v1.Get("/posts/:post_id/comments", r.getComments)
@@ -164,6 +118,8 @@ func (r *Router) initRoutes() {
 	v1.Delete("/chats/:chat_id", r.deleteChat)
 
 	// messages
+	v1.Patch("/chats/:chat_id/unread", r.markMessagesAsRead)
+	v1.Get("/chats/:chat_id/unread", r.getUnreadMessageCount)
 	v1.Get("/chats/:chat_id/messages", r.getAllMessages)
 	v1.Post("/chats/:chat_id/messages", r.createMessage)
 	v1.Patch("/chats/:chat_id/messages/:message_id", r.updateMessage)

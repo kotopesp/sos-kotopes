@@ -3,6 +3,7 @@ package message
 import (
 	"context"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
@@ -18,7 +19,7 @@ func New(store core.MessageStore) core.MessageService {
 	}
 }
 
-func (s *service) GetAllMessages(ctx context.Context, chatID int, sortType, searchText string) (messages []core.Message, total int, err error) {
+func (s *service) GetAllMessages(ctx context.Context, chatID int, sortType, searchText string) (messages []chat.Message, total int, err error) {
 	messages, err = s.MessageStore.GetAllMessages(ctx, chatID, sortType, searchText)
 	if err != nil {
 		return
@@ -27,7 +28,15 @@ func (s *service) GetAllMessages(ctx context.Context, chatID int, sortType, sear
 	return
 }
 
-func (s *service) CreateMessage(ctx context.Context, data core.Message) (core.Message, error) {
+func (s *service) MarkMessagesAsRead(ctx context.Context, chatID, userID int) error {
+	return s.MessageStore.MarkMessagesAsRead(ctx, chatID, userID)
+}
+
+func (s *service) GetUnreadMessageCount(ctx context.Context, chatID, userID int) (int64, error) {
+	return s.MessageStore.GetUnreadMessageCount(ctx, chatID, userID)
+}
+
+func (s *service) CreateMessage(ctx context.Context, data chat.Message) (chat.Message, error) {
 	return s.MessageStore.CreateMessage(ctx, data)
 }
 

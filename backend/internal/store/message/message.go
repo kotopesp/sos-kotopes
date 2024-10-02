@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/store/errors"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
@@ -41,7 +42,68 @@ func ifMessageExists(s *store, ctx context.Context, messageID int) error {
 	return nil
 }
 
-func (s *store) GetAllMessages(ctx context.Context, id int, sortType, searchText string) ([]core.Message, error) {
+// func (s *store) MarkMessagesAsRead(ctx context.Context, chatID, userID int) error {
+// 	err := s.DB.WithContext(ctx).Model(&core.Message{}).
+// 		Where("chat_id = ? AND user_id != ? AND is_read = ?", chatID, userID, false).
+// 		Update("is_read", true).Error
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+func (s *store) MarkMessagesAsRead(ctx context.Context, chatID, userID int) error {
+	var unreadMessages []core.Message
+
+	err := s.DB.WithContext(ctx).
+		Model(core.Message{}).
+		Joins("LEFT JOIN message_read mr ON messages.id = mr.message_id AND mr.user_id = ?", userID).
+		Where("messages.chat_id = ? AND mr.id IS NULL", chatID).
+		Select("messages.id").
+		Find(&unreadMessages).Error
+
+	if err != nil {
+		return err
+	}
+
+	if len(unreadMessages) == 0 {
+		return nil
+	}
+
+	var reads []core.MessageRead
+	for _, message := range unreadMessages {
+		reads = append(reads, core.MessageRead{
+			MessageID: message.ID,
+			UserID:    userID,
+			ReadAt:    time.Now(),
+		})
+	}
+
+	err = s.DB.Create(&reads).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *store) GetUnreadMessageCount(ctx context.Context, chatID, userID int) (int64, error) {
+	var count int64
+
+	err := s.DB.WithContext(ctx).
+		Model(&core.Message{}).
+		Joins("LEFT JOIN message_read mr ON messages.id = mr.message_id AND mr.user_id = ?", userID).
+		Where("messages.chat_id = ? AND mr.id IS NULL", chatID).
+		Count(&count).Error
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+func (s *store) GetAllMessages(ctx context.Context, id int, sortType, searchText string) ([]chat.Message, error) {
 	if err := ifChatExists(s, ctx, id); err != nil {
 		return nil, err
 	}
@@ -50,15 +112,46 @@ func (s *store) GetAllMessages(ctx context.Context, id int, sortType, searchText
 	if err := query.Find(&messages).Error; err != nil {
 		return nil, err
 	}
-	return messages, nil
+	var messagesResponse []chat.Message
+	for _, mes := range messages {
+		messagesResponse = append(messagesResponse, chat.Message{
+			UserID:     mes.UserID,
+			ChatID:     mes.ChatID,
+			Content:    mes.Content,
+			CreatedAt:  mes.CreatedAt,
+			SenderName: mes.SenderName,
+			// IsRead:    mes.IsRead,
+		})
+	}
+	return messagesResponse, nil
 }
 
-func (s *store) CreateMessage(ctx context.Context, data core.Message) (core.Message, error) {
-	if err := ifChatExists(s, ctx, data.ChatID); err != nil {
-		return core.Message{}, err
+func (s *store) CreateMessage(ctx context.Context, data chat.Message) (chat.Message, error) {
+	var user core.User
+	if err := s.DB.WithContext(ctx).Table("users").Where("id = ?", data.UserID).First(&user).Error; err != nil {
+		return chat.Message{}, err
 	}
-	if err := s.DB.WithContext(ctx).Create(&data).Error; err != nil {
+
+	dataToInsert := core.Message{
+		UserID:     data.UserID,
+		ChatID:     data.ChatID,
+		Content:    data.Content,
+		CreatedAt:  data.CreatedAt,
+		SenderName: user.Username,
+	}
+	if err := ifChatExists(s, ctx, data.ChatID); err != nil {
+		return chat.Message{}, err
+	}
+	if err := s.DB.WithContext(ctx).Create(&dataToInsert).Error; err != nil {
 		return data, err
+	}
+	readMessage := core.MessageRead{
+		MessageID: dataToInsert.ID,
+		UserID:    dataToInsert.UserID,
+		ReadAt:    time.Now(),
+	}
+	if err := s.DB.WithContext(ctx).Create(&readMessage).Error; err != nil {
+		return chat.Message{}, err
 	}
 	return data, nil
 }

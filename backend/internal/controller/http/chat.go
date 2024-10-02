@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
@@ -12,6 +12,7 @@ func IsValidType(sortType string) bool {
 	case
 		"seeker",
 		"keeper",
+		"vet",
 		"":
 		return true
 	}
@@ -24,7 +25,13 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat type"))
 	}
 
-	chats, total, err := r.chatService.GetAllChats(ctx.UserContext(), sortType)
+	// userID, err := getIDFromToken(ctx)
+	// if err != nil {
+	// 	return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	// }
+	userID := 3
+
+	chats, total, err := r.chatService.GetAllChats(ctx.UserContext(), sortType, userID)
 	if err != nil {
 		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
@@ -32,7 +39,7 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 
 	response := struct {
 		Total int         `json:"total"`
-		Chats []core.Chat `json:"chats"`
+		Chats []chat.Chat `json:"chats"`
 	}{
 		Total: total,
 		Chats: chats,
@@ -55,6 +62,11 @@ func (r *Router) getChatWithUsersByID(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) createChat(ctx *fiber.Ctx) error {
+	userID := 3
+	// userID, err := getIDFromToken(ctx)
+	// if err != nil {
+	// 	return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	// }
 	chatType := ctx.Query("type", "")
 	var users struct {
 		UserIds []int `json:"userIds"`
@@ -66,6 +78,16 @@ func (r *Router) createChat(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("No users selected"))
 	}
 
+	isChosen := false
+	for _, user := range users.UserIds {
+		if user == userID {
+			isChosen = true
+		}
+	}
+	if !isChosen {
+		users.UserIds = append(users.UserIds, userID)
+	}
+
 	existingChat, err := r.chatService.FindChatByUsers(ctx.UserContext(), users.UserIds)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
@@ -75,7 +97,7 @@ func (r *Router) createChat(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusConflict).JSON(model.OKResponse(existingChat))
 	}
 
-	chat := core.Chat{
+	chat := chat.Chat{
 		ChatType: chatType,
 	}
 

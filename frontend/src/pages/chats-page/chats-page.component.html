@@ -50,11 +50,6 @@
                       [countInArray]="countInArray"
                       (userSelectionChanged)="onUserSelectionChanged($event)">
                     </app-add-to-chat>
-                    <!-- <div *ngFor="let user of favusers">
-                      <div class="main__block__persons">
-                        <app-add-to-chat [countInArray]="countInArray" [username]="user.username"/>
-                      </div>
-                    </div> -->
                   </div>
                 </div>
                 <div *ngIf="favusers.length === 0">
@@ -88,19 +83,19 @@
             <div class="all__chats">
               <app-chat *ngFor="let chat of chatList"
               appToggleActive 
-              [username]="chat.Title"
+              [chat]="chat"
               [ngClass]="{ 'active': isActiveChat(chat) }"
               (click)="selectChat(chat)"/>
             </div>
           </div>
           <div class="block__current__chat">
-            <div *ngIf="currentChat.Id != -1" class="current__chat">
+            <div *ngIf="currentChat.id != -1" class="current__chat">
               <div class="block__user__info">
                 <div>
                   <img src="/assets/images/test-cat2.png" alt="avatar" class="message__user__avatar">
                 </div>
                 <div>
-                  <p>{{ currentChat.Title }}</p> 
+                  <p>{{ currentChat.title }}</p> 
                   <!-- TODO: сюда выводить онлайн и аватарку -->
                   <p id="time__last__online">2 дня назад</p>
                 </div>
@@ -113,8 +108,9 @@
                   <div *ngFor="let message of messages">
                     <div class="message">
                       <app-message 
-                      [answer]="message.isUserMessage" 
-                      [messageContent]="message.Content" 
+                      [name]="!message.is_user_message ? message.sender_name : ''"
+                      [answer]="message.is_user_message" 
+                      [messageContent]="message.message_content" 
                       [messageTime]="message.time"/>
                     </div>
                   </div>
@@ -141,16 +137,16 @@
                 </div>
               </div>
             </form>
-            <div *ngIf="currentChat.Id == -1" class="current__chat__none">
-              <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
-              <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
-                class="start__new__chat"
-                (click)="createChat = true"
-                (keydown.enter)="createChat = true"
-                tabindex="0"
-                role="button"
-                aria-pressed="false">начните новый</span></p></span></div>
-            </div>
+          </div>
+          <div *ngIf="currentChat.id == -1" class="current__chat__none">
+            <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
+            <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
+              class="start__new__chat"
+              (click)="createChat = true"
+              (keydown.enter)="createChat = true"
+              tabindex="0"
+              role="button"
+              aria-pressed="false">начните новый</span></p></span></div>
           </div>
         </div>
       </div>

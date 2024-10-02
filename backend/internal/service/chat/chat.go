@@ -3,6 +3,7 @@ package chat
 import (
 	"context"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
@@ -20,8 +21,8 @@ func New(chatStore core.ChatStore, userStore core.UserStore) core.ChatService {
 	}
 }
 
-func (s *service) GetAllChats(ctx context.Context, sortType string) (chats []core.Chat, total int, err error) {
-	chats, err = s.ChatStore.GetAllChats(ctx, sortType)
+func (s *service) GetAllChats(ctx context.Context, sortType string, userID int) (chats []chat.Chat, total int, err error) {
+	chats, err = s.ChatStore.GetAllChats(ctx, sortType, userID)
 	if err != nil {
 		return
 	}
@@ -29,40 +30,40 @@ func (s *service) GetAllChats(ctx context.Context, sortType string) (chats []cor
 	return
 }
 
-func (s *service) GetChatWithUsersByID(ctx context.Context, id int) (chat core.Chat, err error) {
+func (s *service) GetChatWithUsersByID(ctx context.Context, id int) (chat chat.Chat, err error) { //TODO []int
 	chat, err = s.ChatStore.GetChatWithUsersByID(ctx, id)
 	return
 }
 
-func (s *service) CreateChat(ctx context.Context, data core.Chat, userIds []int) (chat core.Chat, err error) {
-	chat, err = s.ChatStore.CreateChat(ctx, data)
+func (s *service) CreateChat(ctx context.Context, data chat.Chat, userIds []int) (chat.Chat, error) {
+	createdChat, err := s.ChatStore.CreateChat(ctx, data)
 	if err != nil {
-		return core.Chat{}, err
+		return chat.Chat{}, err
 	}
 
 	for _, userID := range userIds {
 		chatMember := core.ChatMember{
-			ChatID: chat.ID,
+			ChatID: createdChat.ID,
 			UserID: userID,
 		}
 		if _, err := s.ChatStore.AddMemberToChat(ctx, chatMember); err != nil {
-			return core.Chat{}, err
+			return chat.Chat{}, err
 		}
 		u, err := s.UserStore.GetUser(ctx, userID)
 		if err != nil {
-			return core.Chat{}, err
+			return chat.Chat{}, err
 		}
-		chat.Users = append(chat.Users, u)
+		createdChat.Users = append(createdChat.Users, u)
 	}
-	return chat, nil
+	return createdChat, nil
 }
 
-func (s *service) FindChatByUsers(ctx context.Context, userIds []int) (core.Chat, error) {
-	chat, err := s.ChatStore.FindChatByUsers(ctx, userIds)
+func (s *service) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, error) {
+	foundChat, err := s.ChatStore.FindChatByUsers(ctx, userIds)
 	if err != nil {
-		return core.Chat{ID: -1}, err
+		return chat.Chat{ID: -1}, err
 	}
-	return chat, nil
+	return foundChat, nil
 }
 
 func (s *service) DeleteChat(ctx context.Context, id int) (err error) {

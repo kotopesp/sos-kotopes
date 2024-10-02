@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
@@ -24,7 +24,7 @@ func (r *Router) getAllMessages(ctx *fiber.Ctx) error {
 	}
 	response := struct {
 		Total    int            `json:"total"`
-		Messages []core.Message `json:"message"`
+		Messages []chat.Message `json:"message"`
 	}{
 		Total:    total,
 		Messages: messages,
@@ -32,12 +32,53 @@ func (r *Router) getAllMessages(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
+func (r *Router) markMessagesAsRead(ctx *fiber.Ctx) error {
+	chatID, err := ctx.ParamsInt("chat_id")
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
+	}
+
+	// userID := c.Locals("userID").(int) // Получаем ID пользователя из контекста (например, через JWT)
+	userID := 3
+	// userID, err := getIDFromToken(ctx)
+	// if err != nil {
+	// 	return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	// }
+	err = r.messageService.MarkMessagesAsRead(ctx.UserContext(), chatID, userID)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	return ctx.JSON(model.OKResponse("Messages marked as read"))
+}
+
+func (r *Router) getUnreadMessageCount(ctx *fiber.Ctx) error {
+	chatID, err := ctx.ParamsInt("chat_id")
+	if err != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
+	}
+
+	// userID := c.Locals("userID").(int) // Получаем ID пользователя из контекста (например, через JWT)
+	// userID, err := getIDFromToken(ctx)
+	// fmt.Println(userID, err)
+	userID := 3
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	count, err := r.messageService.GetUnreadMessageCount(ctx.UserContext(), chatID, userID)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	return ctx.JSON(model.OKResponse(count))
+}
+
 func (r *Router) createMessage(ctx *fiber.Ctx) error {
 	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	var message core.Message
+	var message chat.Message
 	if err := ctx.BodyParser(&message); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
 	}
@@ -60,7 +101,7 @@ func (r *Router) updateMessage(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid message ID"))
 	}
 	type UpdateMessageRequest struct {
-		Content string `json:"content"`
+		Content string `json:"message_content"`
 	}
 	var request UpdateMessageRequest
 	if err := ctx.BodyParser(&request); err != nil {

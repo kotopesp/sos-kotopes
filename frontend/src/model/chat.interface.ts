@@ -1,10 +1,20 @@
 import { User } from "./user.interface";
 
 export interface Chat {
-    ID: number,
-    ChatType?: string,
-    // isdeleted?: boolean,
-    Users: User[],
+    id: number,
+    chat_type?: string,
+    // Title: string,
+    users: User[],
+    title?: string,
+    last_message?: {
+        message_content: string,
+        created_at: Date,
+        time?: string,
+        user_id: number,
+        is_read: boolean,
+        sender_name: string,
+      };
+    unread_count: number;
 }
 
 export interface ResponseUser {
