@@ -1,7 +1,7 @@
-ALTER TABLE IF EXISTS chat_member
-    DROP CONSTRAINT IF EXISTS chat_member_pkey;
+ALTER TABLE IF EXISTS chat_members
+    DROP CONSTRAINT IF EXISTS chat_members_pkey;
 
-ALTER TABLE IF EXISTS chat_member
+ALTER TABLE IF EXISTS chat_members
     ADD COLUMN id SERIAL PRIMARY KEY;
 
 ALTER TYPE chat_types
