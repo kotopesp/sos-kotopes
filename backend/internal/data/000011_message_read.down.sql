@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS message_read CASCADE;
+
+ALTER TABLE IF EXISTS messages
+    DROP COLUMN IF EXISTS sender_name;
