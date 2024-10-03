@@ -24,7 +24,7 @@ coverage: ### generate coverage report
 	go test ${TEST_FLAGS} -coverprofile=coverage.out ./...
 	go tool cover -html="coverage.out"
 
-MIGRATION_NAME=initial
+MIGRATION_NAME=add_refresh_token_table
 
 migrate-new: ### create a new migration
 	migrate create -ext sql -dir ./internal/data -seq ${MIGRATION_NAME}
@@ -34,3 +34,10 @@ migrate-up: ### apply all migrations
 
 migrate-down: ### migration down
 	migrate -path ./internal/data -database '$(PG_URL)?sslmode=disable' down
+
+swagger: ### generate swagger docs
+	swag fmt
+	swag init -g cmd/main.go
+
+mock: ### generate mocks
+	mockery

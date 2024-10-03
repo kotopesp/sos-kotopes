@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
@@ -29,7 +28,14 @@ func (u *UpdateUser) ToCoreUpdateUser() core.UpdateUser {
 	}
 }
 
-func ToResponseUser(user *chat.User) ResponseUser {
+func (u *Login) ToCoreUser() core.User {
+	return core.User{
+		Username:     u.Username,
+		PasswordHash: u.Password,
+	}
+}
+
+func ToResponseUser(user *core.User) ResponseUser {
 	if user == nil {
 		return ResponseUser{}
 	}

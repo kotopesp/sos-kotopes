@@ -28,16 +28,21 @@ import (
 	webSocketManager "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	chatservice "github.com/kotopesp/sos-kotopes/internal/service/chat"
 	chatmemberservice "github.com/kotopesp/sos-kotopes/internal/service/chat_member"
-	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
+
+	// commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
 	messageservice "github.com/kotopesp/sos-kotopes/internal/service/message"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	chatstore "github.com/kotopesp/sos-kotopes/internal/store/chat"
 	chatmemberstore "github.com/kotopesp/sos-kotopes/internal/store/chat_member"
-	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
+
+	// commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
 	messagestore "github.com/kotopesp/sos-kotopes/internal/store/message"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 )
 
 // Run creates objects via constructors.
@@ -71,6 +76,7 @@ func Run(cfg *config.Config) {
 	messageStore := messagestore.New(pg)
 	chatMemberStore := chatmemberstore.New(pg)
 	webSocketManager := webSocketManager.NewWebSocketManager()
+	refreshSessionStore := refreshsessionstore.New(pg)
 
 	// Services
 	commentService := commentservice.New(
@@ -81,6 +87,7 @@ func Run(cfg *config.Config) {
 	userService := usersService.New(userStore, favouriteUserStore)
 	authService := auth.New(
 		userStore,
+		refreshSessionStore,
 		core.AuthServiceConfig{
 			JWTSecret:            cfg.JWTSecret,
 			VKClientID:           cfg.VKClientID,

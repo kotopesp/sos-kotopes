@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
+	"fmt"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
@@ -21,39 +22,35 @@ func New(pg *postgres.Postgres) core.UserStore {
 	return &store{pg}
 }
 
-func convertToModelUser(user core.User) (userResponse chat.User) {
-	userResponse.ID = user.ID
-	userResponse.Username = user.Username
-	return
-}
-
-func (s *store) GetUser(ctx context.Context, id int) (chat.User, error) {
+func (s *store) GetUser(ctx context.Context, id int) (core.User, error) {
 	var user core.User
 	err := s.DB.WithContext(ctx).
 		Table("users").
 		Where("id = ?", id).
 		First(&user).Error
 
+	logger.Log().Info(ctx, fmt.Sprintf("%+v", user))
+
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			logger.Log().Debug(ctx, err.Error())
-			return chat.User{}, core.ErrNoSuchUser
+			return core.User{}, core.ErrNoSuchUser
 		}
 		logger.Log().Error(ctx, err.Error())
-		return chat.User{}, err
+		return core.User{}, err
 	}
 
-	return convertToModelUser(user), nil
+	return user, nil
 }
 
-func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) (user chat.User, err error) {
+func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) (user core.User, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 
 	if tx.Error != nil {
 		err = tx.Error
 		logger.Log().Error(ctx, err.Error())
 		tx.Rollback()
-		return chat.User{}, err
+		return core.User{}, err
 	}
 
 	defer func() {
@@ -86,7 +83,7 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 
 	if len(updates) == 0 {
 		logger.Log().Error(ctx, core.ErrEmptyUpdateRequest.Error())
-		return chat.User{}, core.ErrEmptyUpdateRequest
+		return core.User{}, core.ErrEmptyUpdateRequest
 	} else {
 		updates["updated_at"] = time.Now()
 	}
@@ -95,10 +92,10 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			logger.Log().Debug(ctx, err.Error())
-			return chat.User{}, core.ErrNoSuchUser
+			return core.User{}, core.ErrNoSuchUser
 		}
 		logger.Log().Error(ctx, err.Error())
-		return chat.User{}, err
+		return core.User{}, err
 	}
 
 	err = tx.WithContext(ctx).Table("users").Where("id = ?", id).First(&user).Error
@@ -106,10 +103,10 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			logger.Log().Debug(ctx, err.Error())
-			return chat.User{}, core.ErrNoSuchUser
+			return core.User{}, core.ErrNoSuchUser
 		}
 		logger.Log().Error(ctx, err.Error())
-		return chat.User{}, err
+		return core.User{}, err
 	}
 
 	return user, tx.Commit().Error

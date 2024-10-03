@@ -3,16 +3,17 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
-
+	refreshsession "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 	"golang.org/x/crypto/bcrypt"
 )
 
 const (
 	vkAuthProvider = "vk"
+	bcryptCost     = 12
 )
 
 var authProvidersPasswordPlugs = map[string]string{
@@ -20,17 +21,20 @@ var authProvidersPasswordPlugs = map[string]string{
 }
 
 type service struct {
-	userStore         core.UserStore
-	authServiceConfig core.AuthServiceConfig
+	userStore           core.UserStore
+	refreshSessionStore core.RefreshSessionStore
+	authServiceConfig   core.AuthServiceConfig
 }
 
 func New(
 	userStore core.UserStore,
+	refreshSessionStore core.RefreshSessionStore,
 	authServiceConfig core.AuthServiceConfig,
 ) core.AuthService {
 	return &service{
-		userStore:         userStore,
-		authServiceConfig: authServiceConfig,
+		userStore:           userStore,
+		refreshSessionStore: refreshSessionStore,
+		authServiceConfig:   authServiceConfig,
 	}
 }
 
@@ -39,9 +43,19 @@ func (s *service) GetJWTSecret() []byte {
 	return s.authServiceConfig.JWTSecret
 }
 
+func (s *service) getRefreshTokenExpiresAt() time.Time {
+	return time.Now().Add(time.Minute * time.Duration(s.authServiceConfig.RefreshTokenLifetime))
+}
+
+func setRefreshSessionData(session *core.RefreshSession, token string, id int, expires time.Time) {
+	session.RefreshToken = token
+	session.UserID = id
+	session.ExpiresAt = expires
+}
+
 // LoginBasic Login through username and password
 func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, refreshToken *string, err error) {
-	dbUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
+	coreUser, err := s.userStore.GetUserByUsername(ctx, user.Username)
 	if err != nil {
 		if errors.Is(err, core.ErrNoSuchUser) {
 			return nil, nil, core.ErrInvalidCredentials
@@ -49,7 +63,7 @@ func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, 
 		return nil, nil, err
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(dbUser.PasswordHash), []byte(user.PasswordHash))
+	err = bcrypt.CompareHashAndPassword([]byte(coreUser.PasswordHash), []byte(user.PasswordHash))
 	if err != nil {
 		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 			return nil, nil, core.ErrInvalidCredentials
@@ -57,22 +71,37 @@ func (s *service) LoginBasic(ctx context.Context, user core.User) (accessToken, 
 		return nil, nil, err
 	}
 
-	at, err := s.generateAccessToken(dbUser.ID, dbUser.Username)
+	at, err := s.generateAccessToken(coreUser.ID, coreUser.Username)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	rt, err := s.generateRefreshToken(dbUser.ID)
+	var refreshSession core.RefreshSession
+	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), coreUser.ID, s.getRefreshTokenExpiresAt())
+
+	rt := refreshSession.RefreshToken
+	refreshSession.RefreshToken = s.generateHash(refreshSession.RefreshToken)
+
+	err = s.refreshSessionStore.CountSessionsAndDelete(ctx, coreUser.ID)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return at, rt, nil
+	err = s.refreshSessionStore.UpdateRefreshSession(
+		ctx,
+		refreshsession.ByNothing(),
+		refreshSession,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return at, &rt, nil
 }
 
 // SignupBasic Signup through username and password (can be additional fields)
 func (s *service) SignupBasic(ctx context.Context, user core.User) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), 12)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcryptCost)
 	if err != nil {
 		return err
 	}
@@ -80,9 +109,6 @@ func (s *service) SignupBasic(ctx context.Context, user core.User) error {
 	user.PasswordHash = string(hashedPassword)
 
 	if _, err := s.userStore.AddUser(ctx, user); err != nil {
-		if errors.Is(err, core.ErrNotUniqueUsername) {
-			return core.ErrNotUniqueUsername
-		}
 		return err
 	}
 
@@ -128,8 +154,6 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 
 	user, err := s.userStore.GetUserByID(ctx, userID)
 
-	logger.Log().Debug(ctx, fmt.Sprint(err))
-
 	if err != nil {
 		return nil, nil, err
 	}
@@ -142,7 +166,7 @@ func (s *service) loginVK(ctx context.Context, externalUserID int) (accessToken,
 
 // signupVK Creating external user
 func (s *service) signupVK(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), 12)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.PasswordHash), bcryptCost)
 	if err != nil {
 		return 0, err
 	}
@@ -156,16 +180,43 @@ func (s *service) signupVK(ctx context.Context, user core.User, externalUserID i
 }
 
 // Refresh Getting new accessToken, when another one expires; need to have refreshToken in cookie
-func (s *service) Refresh(ctx context.Context, id int) (accessToken *string, err error) {
-	user, err := s.userStore.GetUserByID(ctx, id)
+func (s *service) Refresh(
+	ctx context.Context,
+	refreshSession core.RefreshSession,
+) (accessToken, refreshToken *string, err error) {
+	hashedToken := s.generateHash(refreshSession.RefreshToken)
+	dbSession, err := s.refreshSessionStore.GetRefreshSessionByToken(ctx, hashedToken)
 	if err != nil {
-		return nil, err
+		return nil, nil, core.ErrUnauthorized
 	}
 
-	accessToken, err = s.generateAccessToken(id, user.Username)
+	user, err := s.userStore.GetUserByID(ctx, dbSession.UserID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return accessToken, nil
+	accessToken, err = s.generateAccessToken(dbSession.UserID, user.Username)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if dbSession.ExpiresAt.Before(time.Now()) {
+		return nil, nil, core.ErrUnauthorized
+	}
+
+	setRefreshSessionData(&refreshSession, s.generateRefreshToken(), dbSession.UserID, s.getRefreshTokenExpiresAt())
+
+	rt := refreshSession.RefreshToken
+	refreshSession.RefreshToken = s.generateHash(refreshSession.RefreshToken)
+
+	err = s.refreshSessionStore.UpdateRefreshSession(
+		ctx,
+		refreshsession.ByID(dbSession.ID),
+		refreshSession,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return accessToken, &rt, nil
 }

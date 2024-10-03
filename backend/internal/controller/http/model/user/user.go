@@ -1,6 +1,11 @@
 package user
 
 type (
+	Login struct {
+		Username string `form:"username" validate:"required,max=50,no_specials" example:"JackVorobey123"`
+		Password string `form:"password" validate:"required,min=8,max=72,contains_digit,contains_uppercase" example:"Qwerty123"`
+	}
+
 	User struct {
 		Username    string  `form:"username" validate:"required,max=50,no_specials"`
 		Password    string  `form:"password" validate:"required,min=8,max=72,contains_digit,contains_uppercase"`

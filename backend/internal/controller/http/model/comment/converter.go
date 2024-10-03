@@ -1,7 +1,6 @@
 package comment
 
 import (
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
@@ -17,6 +16,14 @@ func (c *Comment) ToCoreComment() core.Comment {
 func (c *Update) ToCoreComment() core.Comment {
 	return core.Comment{
 		Content: c.Content,
+	}
+}
+
+func (c *Create) ToCoreComment() core.Comment {
+	return core.Comment{
+		Content:  c.Content,
+		ParentID: c.ParentID,
+		ReplyID:  c.ReplyID,
 	}
 }
 
@@ -55,9 +62,9 @@ func (params *GetAllCommentsParams) ToCoreGetAllCommentsParams(postID int) core.
 	}
 }
 
-func ToGetAllCommentsResponse(data any, meta pagination.Pagination) GetAllCommentsResponse {
+func ToGetAllCommentsResponse(data []Comment, meta pagination.Pagination) GetAllCommentsResponse {
 	return GetAllCommentsResponse{
-		Response: model.OKResponse(data),
-		Meta:     meta,
+		Data: data,
+		Meta: meta,
 	}
 }

@@ -3,7 +3,9 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger"
 	"github.com/gofiber/websocket/v2"
+	_ "github.com/kotopesp/sos-kotopes/docs"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
@@ -60,8 +62,10 @@ func NewRouter(
 func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
-	v1 := r.app.Group("/api/v1")
+	r.app.Get("/swagger/*", swagger.HandlerDefault) // default
 
+	v1 := r.app.Group("/api/v1")
+	// websocket service
 	v1.Use("/ws/:chatID", r.webSocketManager.HandleWebSocket)
 	v1.Get("/ws/:chatID", websocket.New(r.webSocketManager.WebSocketEndpoint))
 
@@ -92,7 +96,7 @@ func (r *Router) initRoutes() {
 	// auth
 	v1.Post("/auth/login", r.loginBasic)
 	v1.Post("/auth/signup", r.signup)
-	v1.Post("/auth/token/refresh", r.refreshTokenMiddleware(), r.refresh)
+	v1.Post("/auth/token/refresh", r.refresh)
 
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)

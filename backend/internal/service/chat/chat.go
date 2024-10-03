@@ -14,6 +14,12 @@ type (
 	}
 )
 
+func convertToModelUser(user core.User) (userResponse chat.User) {
+	userResponse.ID = user.ID
+	userResponse.Username = user.Username
+	return
+}
+
 func New(chatStore core.ChatStore, userStore core.UserStore) core.ChatService {
 	return &service{
 		ChatStore: chatStore,
@@ -53,7 +59,7 @@ func (s *service) CreateChat(ctx context.Context, data chat.Chat, userIds []int)
 		if err != nil {
 			return chat.Chat{}, err
 		}
-		createdChat.Users = append(createdChat.Users, u)
+		createdChat.Users = append(createdChat.Users, convertToModelUser(u))
 	}
 	return createdChat, nil
 }

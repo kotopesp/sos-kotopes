@@ -4,16 +4,17 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"io"
+	"mime/multipart"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"io"
-	"mime/multipart"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
+	userModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
@@ -32,28 +33,34 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 	})
 }
 
-func (r *Router) refreshTokenMiddleware() fiber.Handler {
-	return jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{
-			JWTAlg: jwtware.HS256,
-			Key:    r.authService.GetJWTSecret(),
-		},
-		ErrorHandler: authErrorHandler,
-		TokenLookup:  "cookie:refresh_token",
-	})
-}
-
 // loginBasic Login through username and password
+//
+//	@Summary		Login through username and password
+//	@Tags			auth
+//	@Description	Login through username and password
+//	@ID				login-basic
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		user.Login	true	"User"
+//	@Success		200		{object}	model.Response
+//	@Failure		422		{object}	model.Response{data=validator.Response}
+//	@Failure		400		{object}	model.Response
+//	@Failure		401		{object}	model.Response
+//	@Failure		422		{object}	model.Response{data=validator.Response}
+//	@Failure		500		{object}	model.Response
+//	@Router			/auth/login [post]
 func (r *Router) loginBasic(ctx *fiber.Ctx) error {
-	var apiUser user.User
-	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
+	var user userModel.Login
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &user)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
+	coreUser := user.ToCoreUser()
 
-	coreUser := apiUser.ToCoreUser()
-
-	accessToken, refreshToken, err := r.authService.LoginBasic(ctx.Context(), coreUser)
+	accessToken, refreshToken, err := r.authService.LoginBasic(
+		ctx.UserContext(),
+		coreUser,
+	)
 	if err != nil {
 		if errors.Is(err, core.ErrInvalidCredentials) {
 			logger.Log().Info(ctx.UserContext(), err.Error())
@@ -65,9 +72,8 @@ func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 	}
 
 	setRefreshTokenCookie(ctx, *refreshToken)
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
-		"access_token": accessToken,
-	}))
+
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(accessToken))
 }
 
 // getPhotoBytes Getting photo from request body
@@ -88,26 +94,44 @@ func getPhotoBytes(photo *multipart.FileHeader) (*[]byte, error) {
 }
 
 // signup Signup through username and password (user can have additional field like photo description)
+//
+//	@Summary		Signup through username and password
+//	@Tags			auth
+//	@Description	Signup through username and password
+//	@ID				signup
+//	@Accept			json
+//	@Produce		json
+//	@Param			username	formData	string	true	"Username"
+//	@Param			password	formData	string	true	"Password"
+//	@Param			firstname	formData	string	false	"Firstname"
+//	@Param			lastname	formData	string	false	"Lastname"
+//	@Param			description	formData	string	false	"Description"
+//	@Param			photo		formData	file	false	"Photo"
+//	@Success		201			{object}	any
+//	@Failure		400			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=validator.Response}
+//	@Failure		500			{object}	model.Response
+//	@Router			/auth/signup [post]
 func (r *Router) signup(ctx *fiber.Ctx) error {
-	var apiUser user.User
-	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &apiUser)
+	var user userModel.User
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &user)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
 
 	photo, err := ctx.FormFile("photo")
 	if err != nil {
-		apiUser.Photo = nil
+		user.Photo = nil
 	} else {
 		photoBytes, err := getPhotoBytes(photo)
 		if err != nil {
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
-		apiUser.Photo = photoBytes
+		user.Photo = photoBytes
 	}
 
-	coreUser := apiUser.ToCoreUser()
+	coreUser := user.ToCoreUser()
 
 	err = r.authService.SignupBasic(ctx.UserContext(), coreUser)
 	if err == nil {
@@ -116,9 +140,16 @@ func (r *Router) signup(ctx *fiber.Ctx) error {
 
 	if errors.Is(err, core.ErrNotUniqueUsername) {
 		logger.Log().Info(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse(fiber.Map{
-			"validation_errors": []validator.ResponseError{model.ErrNotUniqueUsername(coreUser.Username)},
-		}))
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(
+			model.ErrorResponse(
+				validator.NewResponse(
+					[]validator.ResponseError{
+						model.ErrNotUniqueUsername(coreUser.Username),
+					},
+					nil,
+				),
+			),
+		)
 	}
 
 	logger.Log().Error(ctx.UserContext(), err.Error())
@@ -140,22 +171,33 @@ func getPayloadItem(ctx *fiber.Ctx, key string) any {
 }
 
 // refresh Refreshing token if one expires
+//
+//	@Summary		Refresh token
+//	@Tags			auth
+//	@Description	Refresh token should be in cookies (login put it there)
+//	@ID				refresh-token
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	model.Response
+//	@Failure		401	{object}	model.Response
+//	@Failure		500	{object}	model.Response
+//	@Router			/auth/token/refresh [post]
 func (r *Router) refresh(ctx *fiber.Ctx) error {
-	id, err := getIDFromToken(ctx)
+	accessToken, refreshToken, err := r.authService.Refresh(
+		ctx.UserContext(),
+		core.RefreshSession{RefreshToken: ctx.Cookies("refresh_token")},
+	)
 	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(model.ErrInvalidTokenID.Error()))
-	}
-
-	accessToken, err := r.authService.Refresh(ctx.UserContext(), id)
-	if err != nil {
+		if errors.Is(err, core.ErrUnauthorized) {
+			logger.Log().Info(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		}
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
+	setRefreshTokenCookie(ctx, *refreshToken)
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
-		"access_token": accessToken,
-	}))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(accessToken))
 }
 
 // generateState State generator to protect from CSRF
@@ -219,7 +261,10 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrOAuthStateMismatch.Error())
 	}
 
-	accessToken, refreshToken, err := r.authService.AuthorizeVK(ctx.Context(), token.AccessToken)
+	accessToken, refreshToken, err := r.authService.AuthorizeVK(
+		ctx.Context(),
+		token.AccessToken,
+	)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -227,7 +272,5 @@ func (r *Router) callback(ctx *fiber.Ctx) error {
 
 	setRefreshTokenCookie(ctx, *refreshToken)
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(fiber.Map{
-		"access_token": accessToken,
-	}))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(accessToken))
 }

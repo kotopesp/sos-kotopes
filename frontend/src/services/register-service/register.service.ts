@@ -1,16 +1,8 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {FormControl, ɵFormGroupValue, ɵTypedOrUntyped} from "@angular/forms";
-
-// interface RegistrationResponse {
-//   token: string;
-//   user: {
-//     id: number;
-//     name: string;
-//     email: string;
-//   };
-// }
+import {Observable} from "rxjs";
+import {User} from "../../model/user.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -21,16 +13,16 @@ export class RegisterService {
   http = inject(HttpClient);
   baseApiUrl: string = environment.apiUrl;
 
-  registration(payload: ɵTypedOrUntyped<{ password: FormControl<null>; username: FormControl<null> }, ɵFormGroupValue<{
-    password: FormControl<null>;
-    username: FormControl<null>
-  }>, string>): void {
-    console.log(payload)
-    // return this.http.post(
-    //   `${this.baseApiUrl}auth/signup`,
-    //   payload
-    // ).pipe(
-    //   tap(res => console.log(res))
-    // );
+  registration(payload: {
+    email: string,
+    name: string,
+    lastname: string,
+    username: string,
+    password: string
+  }): Observable<User> {
+    return this.http.post(
+      `${this.baseApiUrl}auth/signup`,
+      payload
+    )
   }
 }
