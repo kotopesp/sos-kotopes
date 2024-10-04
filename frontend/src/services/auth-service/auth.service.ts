@@ -99,4 +99,13 @@ export class AuthService {
     // Преобразуем декодированную строку в объект JSON
     return JSON.parse(decodedPayload);
   }
+
+  decodeToken(token: string): any {
+    // JWT состоит из трех частей, разделенных точками. Получаем полезную нагрузку (payload).
+    const payload = token.split('.')[1];
+    // Декодируем строку Base64
+    const decodedPayload = atob(payload);
+    // Преобразуем декодированную строку в объект JSON
+    return JSON.parse(decodedPayload);
+  }
 }
