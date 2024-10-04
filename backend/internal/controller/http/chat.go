@@ -1,6 +1,8 @@
 package http
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
@@ -25,11 +27,13 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat type"))
 	}
 
-	// userID, err := getIDFromToken(ctx)
-	// if err != nil {
-	// 	return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
-	// }
-	userID := 3
+	userID, err := getIDFromToken(ctx)
+	fmt.Println("\n", userID, err, "\n\n\n")
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	// userID := 1
 
 	chats, total, err := r.chatService.GetAllChats(ctx.UserContext(), sortType, userID)
 	if err != nil {
@@ -62,11 +66,12 @@ func (r *Router) getChatWithUsersByID(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) createChat(ctx *fiber.Ctx) error {
-	userID := 3
-	// userID, err := getIDFromToken(ctx)
-	// if err != nil {
-	// 	return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
-	// }
+	// userID := 1
+	userID, err := getIDFromToken(ctx)
+	fmt.Println("\n", userID, "\n\n\n")
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
 	chatType := ctx.Query("type", "")
 	var users struct {
 		UserIds []int `json:"userIds"`

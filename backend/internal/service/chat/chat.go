@@ -36,7 +36,7 @@ func (s *service) GetAllChats(ctx context.Context, sortType string, userID int) 
 	return
 }
 
-func (s *service) GetChatWithUsersByID(ctx context.Context, id int) (chat chat.Chat, err error) { //TODO []int
+func (s *service) GetChatWithUsersByID(ctx context.Context, id int) (chat chat.Chat, err error) {
 	chat, err = s.ChatStore.GetChatWithUsersByID(ctx, id)
 	return
 }

@@ -15,7 +15,7 @@ type (
 		DeletedAt time.Time `gorm:"column:deleted_at"`
 		CreatedAt time.Time `gorm:"column:created_at"`
 		UpdatedAt time.Time `gorm:"column:updated_at"`
-		Users     []User    `gorm:"many2many:chat_member;joinForeignKey:ChatID;joinReferences:UserID"`
+		Users     []User    `gorm:"many2many:chat_members;joinForeignKey:ChatID;joinReferences:UserID"`
 		// Title     string    `gorm:"column:title"`
 
 		// LastMessage Message
@@ -107,4 +107,8 @@ func (Chat) TableName() string {
 
 func (Message) TableName() string {
 	return "messages"
+}
+
+func (ChatMember) TableName() string {
+	return "chat_members"
 }

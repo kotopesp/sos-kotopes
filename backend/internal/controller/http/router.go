@@ -116,14 +116,14 @@ func (r *Router) initRoutes() {
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
 
 	// chats
-	v1.Get("/chats", r.getAllChats)
-	v1.Get("/chats/:chat_id", r.getChatWithUsersByID)
+	v1.Get("/chats", r.protectedMiddleware(), r.getAllChats)
+	v1.Get("/chats/:chat_id", r.protectedMiddleware(), r.getChatWithUsersByID)
 	v1.Post("/chats", r.createChat)
 	v1.Delete("/chats/:chat_id", r.deleteChat)
 
 	// messages
-	v1.Patch("/chats/:chat_id/unread", r.markMessagesAsRead)
-	v1.Get("/chats/:chat_id/unread", r.getUnreadMessageCount)
+	v1.Patch("/chats/:chat_id/unread", r.protectedMiddleware(), r.markMessagesAsRead)
+	v1.Get("/chats/:chat_id/unread", r.protectedMiddleware(), r.getUnreadMessageCount)
 	v1.Get("/chats/:chat_id/messages", r.getAllMessages)
 	v1.Post("/chats/:chat_id/messages", r.createMessage)
 	v1.Patch("/chats/:chat_id/messages/:message_id", r.updateMessage)

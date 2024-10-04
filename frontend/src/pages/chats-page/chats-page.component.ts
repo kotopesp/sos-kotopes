@@ -15,6 +15,9 @@ import {ChatService} from '../../services/chat-service/chat.service';
 import { HttpClient } from '@angular/common/http';
 import { Chat } from '../../model/chat.interface';
 import { Message } from '../../model/message.interface';
+import {CookieService} from "ngx-cookie-service";
+import jwt_decode, { jwtDecode } from 'jwt-decode';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
   selector: 'app-chats-page',
@@ -70,24 +73,25 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
 
   public messages: Message[] = [];
   public messageText: string = '';
-  public userId: number = 1; // id пользователя
   public favusers: { id: number, username: string}[] = [];
   public chatList: Chat[] = [];
-
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private chatService: ChatService, private websocketService: WebsocketService, private http: HttpClient) {}
-
+  public userId: number = -1;
+  
+  constructor(private router: Router, private authService: AuthService, private activatedRoute: ActivatedRoute, private chatService: ChatService, private websocketService: WebsocketService, private http: HttpClient) {}
+  
   ngOnInit(): void {
     this.activatedRoute.params.pipe(
       map((params: Params) => parseInt(params['id'], 10)),
       switchMap((chatId: number) => this.chatService.getById(chatId))
     );
-
+    
     this.websocketService.getMessages().subscribe((msg: string) => {
       const message = <Message>JSON.parse(msg)[0];
       this.chatService.updateChat(message, this.userId);
       this.messages.push(message);
     });
-
+    
+    this.userId = this.authService.getIdFromToken; // id пользователя
     this.chatService.getFavUsers().subscribe(
       (users) => {
         this.favusers = users;
@@ -108,6 +112,13 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
         this.websocketService.connect(chatId);
       }
     });
+    // var token = this.cookieService.get('token');
+    // console.log(token)
+    // if (token) {
+    //   const decoded: any = jwtDecode(token); // Декодируем токен
+    //   this.userId = decoded.id; // Предполагается, что ID пользователя хранится под ключом "id"
+    //   console.log("DECODED", this.userId);
+    // }
   }
 
   ngOnDestroy(): void {

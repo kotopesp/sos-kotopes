@@ -83,7 +83,7 @@ export class ChatService {
 
   getTitle(users: User[], currentUser: number) : string {
     var sortusers = users.sort().filter(u => u.id != currentUser) // todo подправить отображение заголовка в чате
-    return sortusers.map(user => user.username).join(', ');
+    return sortusers.length != 0 ? sortusers.map(user => user.username).join(', ') : "Избранное";
   }
 
   getChatById(chatId: number): Observable<Chat> {

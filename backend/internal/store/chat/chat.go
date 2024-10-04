@@ -101,9 +101,9 @@ func (s *store) GetAllChats(ctx context.Context, sortType string, userID int) ([
 
 	query := s.DB.WithContext(ctx).
 		Model(&core.Chat{IsDeleted: false}).
-		Joins("JOIN chat_member ON chat_member.chat_id = chats.id").
-		Where("chat_member.user_id = ?", userID).
-		Where("chat_member.is_deleted = false")
+		Joins("JOIN chat_members ON chat_members.chat_id = chats.id").
+		Where("chat_members.user_id = ?", userID).
+		Where("chat_members.is_deleted = false")
 
 	var chats []core.Chat
 	if sortType != "" {
@@ -148,7 +148,7 @@ func (s *store) GetChatWithUsersByID(ctx context.Context, id int) (chat.Chat, er
 	var foundChat = core.Chat{ID: id, IsDeleted: false}
 	err := s.DB.WithContext(ctx).
 		Table("chats").
-		Joins("JOIN chat_member cm ON cm.chat_id = chats.id").
+		Joins("JOIN chat_members cm ON cm.chat_id = chats.id").
 		Joins("JOIN users u ON u.id = cm.user_id").
 		Where("chats.id = ? AND cm.is_deleted = false", id).
 		Preload("Users").
@@ -180,17 +180,17 @@ func (s *store) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, 
 
 	err := s.DB.WithContext(ctx).
 		Table("chats").
-		Joins("JOIN chat_member cm ON cm.chat_id = chats.id").
+		Joins("JOIN chat_members cm ON cm.chat_id = chats.id").
 		Where("cm.user_id IN ?", userIds).
 		Where("chats.is_deleted = false").
 		Group("chats.id, cm.chat_id").
 		Having("COUNT(DISTINCT cm.user_id) = ?", len(userIds)).
-		Having("COUNT(DISTINCT cm.user_id) = (SELECT COUNT(*) FROM chat_member WHERE chat_member.chat_id = cm.chat_id)").
+		Having("COUNT(DISTINCT cm.user_id) = (SELECT COUNT(*) FROM chat_members WHERE chat_members.chat_id = cm.chat_id)").
 		First(&foundChat).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return chat.Chat{ID: -1}, nil // Чат с такими пользователями не найден
+			return chat.Chat{ID: -1}, nil
 		}
 		return chat.Chat{ID: -1}, err
 	}

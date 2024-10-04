@@ -30,7 +30,27 @@ export class AuthService {
     if (!this.token) {
       this.token = this.cookieService.get('token')
     }
+    // console.log(this.token);
     return !!this.token;
+  }
+
+  get getIdFromToken() : number {
+    if (!this.token) {
+      this.token = this.cookieService.get('token')
+    }
+    console.log(this.token);
+    var res = -1
+    try {
+      const payload = this.token.split('.')[1];
+      const decoded = atob(payload);
+      const decObject = JSON.parse(decoded);
+      res = decObject.id;
+    }
+    finally {
+      res = -1;
+    }
+    console.log(res);
+    return res;
   }
 
   login(payload: {
@@ -42,7 +62,8 @@ export class AuthService {
       payload
     ).pipe(
       tap((res: LoginResponse) => {
-          this.saveTokens(res)
+          this.saveTokens(res);
+          console.log("это токен после нажатия на log in:", this.token);
         }
       )
     );
