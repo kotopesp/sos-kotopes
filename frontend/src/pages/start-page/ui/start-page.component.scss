@@ -20,51 +20,6 @@
       row-gap: 30px;
       grid-template-columns: 270px 270px;
       column-gap: 40px;
-
-      .animals__button {
-        display: flex;
-        color: var(--text-brown-light-color);
-        border-radius: 16px;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-      }
-
-      .animals__button__hide {
-        background: var(--yellow-color-bg);
-        height: 59px;
-        width: 271px;
-
-        &:hover {
-          background: var(--brown-hover-color);
-          color: var(--yellow-color-bg);
-          transition: 0.3s ease;
-        }
-      }
-
-      .animals__button__find {
-        background: var(--pink-color-bg);
-        width: 251px;
-        height: 59px;
-
-        &:hover {
-          background: var(--red-hover-color);
-          color: var(--pink-color-bg);
-          transition: 0.3s ease;
-        }
-      }
-
-      .animals__button__looking-for-home {
-        width: 277px;
-        height: 59px;
-        color: var(--white-color);
-        border: 1px solid var(--pink-border-color);
-        &:hover {
-          background: var(--red-hover-color);
-          color: var(--pink-color-bg);
-          transition: 0.3s ease;
-        }
-      }
     }
   }
 

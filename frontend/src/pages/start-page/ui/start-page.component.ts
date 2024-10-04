@@ -6,11 +6,16 @@ import {QuestionComponent} from "./question/question.component";
 import {HeaderComponent} from "../../../widgets/header/header.component";
 import {Question} from "../../../model/question.interface";
 import {Sticker} from "../../../model/sticker.interface";
+import {ButtonFindPetComponent} from "../../../shared/buttons/button-find-pet/button-find-pet.component";
+import {ButtonLostPetComponent} from "../../../shared/buttons/button-lost-pet/button-lost-pet.component";
+import {
+  ButtonLookingForHomeComponent
+} from "../../../shared/buttons/button-looking-for-home/button-looking-for-home.component";
 
 @Component({
   selector: 'app-start-page',
   standalone: true,
-  imports: [RouterOutlet, NgForOf, NgIf, StickerComponent, QuestionComponent, HeaderComponent],
+  imports: [RouterOutlet, NgForOf, NgIf, StickerComponent, QuestionComponent, HeaderComponent, ButtonFindPetComponent, ButtonLostPetComponent, ButtonLookingForHomeComponent],
   templateUrl: './start-page.component.html',
   styleUrl: './start-page.component.scss'
 })
