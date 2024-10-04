@@ -26,6 +26,16 @@ export class AuthService {
     this.baseApiUrl = environment.apiUrl;
   }
 
+  get userID() {
+    const decodedData = this.decodeToken(this.cookieService.get('token'));
+     // Извлекаем id пользователя
+    return decodedData.id
+  }
+
+  get Token() {
+    return this.cookieService.get('token')
+  }
+
   get isAuth() {
     if (!this.token) {
       this.token = this.cookieService.get('token')
@@ -48,22 +58,8 @@ export class AuthService {
     );
   }
 
-  refreshAuthToken() {
-    return this.http.post(
-      `${this.baseApiUrl}auth/v1/auth/token/refresh`,
-      ''
-    ).pipe(catchError(
-        error => {
-          this.logout()
-
-          return throwError(error);
-        }
-      )
-    )
-  }
-
   logout() {
-    this.cookieService.deleteAll()
+    this.cookieService.deleteAll();
     this.token = null;
     this.router.navigate([''])
   }
@@ -75,5 +71,14 @@ export class AuthService {
   saveTokens(res: LoginResponse) {
     this.setToken(res.data.access_token);
     this.cookieService.set('token', res.data.access_token)
+  }
+
+  decodeToken(token: string): any {
+    // JWT состоит из трех частей, разделенных точками. Получаем полезную нагрузку (payload).
+    const payload = token.split('.')[1];
+    // Декодируем строку Base64
+    const decodedPayload = atob(payload);
+    // Преобразуем декодированную строку в объект JSON
+    return JSON.parse(decodedPayload);
   }
 }
