@@ -1,0 +1,20 @@
+<section class="confirm__overlay__section">
+  <div class="confirm__overlay__wrapper">
+    <div class="confirm__overlay">
+      <div class="confirm__overlay__title roboto fw600 ft48">
+        Вы уверены?
+      </div>
+      <div class="confirm__overlay__subtitle ft24 fw700">
+        {{
+          target == 'photo' ?
+            'Наличие фотографии в объявлении увеличит шансы на нахождение питомца' :
+            ''
+        }}
+      </div>
+      <div class="confirm__overlay__buttons">
+        <app-add-photo-button class="basic__button" *ngIf="target == 'photo'" [photosOverlay]="photosOverlay"/>
+        <button class="basic__button skip__this__step fw700 ft20">Пропустить этот шаг</button>
+      </div>
+    </div>
+  </div>
+</section>

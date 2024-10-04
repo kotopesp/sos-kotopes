@@ -1,0 +1,20 @@
+.animals__button {
+  display: flex;
+  color: var(--text-brown-light-color);
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.animals__button__hide {
+  background: var(--yellow-color-bg);
+  height: 59px;
+  width: 271px;
+
+  &:hover {
+    background: var(--brown-hover-color);
+    color: var(--yellow-color-bg);
+    transition: 0.3s ease;
+  }
+}

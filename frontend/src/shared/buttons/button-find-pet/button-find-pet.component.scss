@@ -1,0 +1,20 @@
+.animals__button {
+  display: flex;
+  color: var(--text-brown-light-color);
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.animals__button__find {
+  background: var(--pink-color-bg);
+  width: 251px;
+  height: 59px;
+
+  &:hover {
+    background: var(--red-hover-color);
+    color: var(--pink-color-bg);
+    transition: 0.3s ease;
+  }
+}

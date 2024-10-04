@@ -1,0 +1,33 @@
+<div class="calendar__container">
+  <div class="calendar__header">
+    <button class="arrow" (click)="previousMonth()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.1836 4.175L6.35859 8L10.1836 11.825L9.00026 13L4.00026 8L9.00026 3L10.1836 4.175Z" fill="#B5BEC6"/>
+      </svg>
+    </button>
+    <span>{{ displayMonth }} {{ currentYear }}</span>
+    <button class="arrow" (click)="nextMonth()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 11.825L8.825 8L5 4.175L6.18333 3L11.1833 8L6.18333 13L5 11.825Z" fill="#B5BEC6"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="calendar__day__name">
+    <div class="day__name" *ngFor="let dayName of dayNames">
+      <p class="ft10 fw700" [style.color]="'#B5BEC6'">{{ dayName }}</p>
+    </div>
+  </div>
+
+  <div class="calendar__grid">
+    <div *ngFor="let empty of [].constructor(firstDayOffset)" class="day empty"></div>
+    <div class="day" *ngFor="let day of daysInMonth" (click)="selectDate(day); sendData()">
+      <div appClickToSelect>
+        <div class="selected__day__paw">
+          <img src="/assets/icons/paw-calendar-icon.svg" alt="paw">
+        </div>
+        <p class="ft16 fw700">{{ day }}</p>
+      </div>
+    </div>
+  </div>
+</div>

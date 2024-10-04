@@ -26,6 +26,8 @@
   --brown-likes-user-color: #342A16;
   --brown-sand-color: #4B3001;
   --brown-header-likes-color: #34250A;
+  --brown-color-calendar: #403A27;
+  --brown-confirm-color: #211A0C;
 
 
   // pink
@@ -61,6 +63,7 @@
   --red-brown-color: #2B1800;
   --red-color-favorites: #BA2C21;
   --dark-red-color: #6D1604;
+  --red-confirm-button: #602C1C;
 
   // orange
   --orange-active-button-bg: #916943;
@@ -106,6 +109,7 @@ body {
 
 a, button {
   cursor: pointer;
+  border: none;
 }
 
 .ft128 {
@@ -209,6 +213,20 @@ a, button {
   background: #5C564D4D;
   border-radius: 6px;
   width: 6px;
+}
+
+.simple__button {
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 208px;
+  height: 54px;
+  font-weight: 700;
+  font-size: 20px;
+  border-radius: 16px;
+  color: var(--brown-main-color);
 }
 
 
