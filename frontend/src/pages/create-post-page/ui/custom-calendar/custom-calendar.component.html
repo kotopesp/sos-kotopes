@@ -21,8 +21,8 @@
 
   <div class="calendar__grid">
     <div *ngFor="let empty of [].constructor(firstDayOffset)" class="day empty"></div>
-    <div class="day" *ngFor="let day of daysInMonth; let i = index" (click)="selectDate(day); sendData()">
-      <div appClickToSelect="selectedDay" [buttonIndex]="i">
+    <div class="day" *ngFor="let day of daysInMonth" (click)="selectDate(day); sendData()">
+      <div appClickToSelect>
         <div class="selected__day__paw">
           <img src="/assets/icons/paw-calendar-icon.svg" alt="paw">
         </div>

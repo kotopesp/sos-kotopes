@@ -28,7 +28,6 @@
   --brown-header-likes-color: #34250A;
   --brown-color-calendar: #403A27;
   --brown-confirm-color: #211A0C;
-  --brown-brick-color: #946C66;
 
 
   // pink
@@ -230,12 +229,4 @@ a, button {
   color: var(--brown-main-color);
 }
 
-.animals__button {
-  display: flex;
-  color: var(--text-brown-light-color);
-  border-radius: 16px;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
 

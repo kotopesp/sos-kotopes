@@ -11,29 +11,23 @@ export class AddPhotoButtonComponent {
   @Input() selectedFiles!: { name: string, preview: string }[];
   @Input() photosOverlay!: WritableSignal<boolean>
 
-  // Обработка выбора файлов через input
   onFileSelected(event: any): void {
+    this.photosOverlay.set(false);
     const files = event.target.files;
+
     if (files) {
-      this.handleFiles(files);
-      this.photosOverlay.set(false);
+      for (let file of files) {
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+          this.selectedFiles.push({
+            name: file.name,
+            preview: e.target.result
+          });
+        };
+
+        reader.readAsDataURL(file);  // Чтение файла как Data URL для предварительного просмотра
+      }
     }
-  }
-
-  // Обработка выбранных файлов
-  handleFiles(files: FileList): void {
-
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-
-      reader.onload = (e: any) => {
-        this.selectedFiles.push({
-          name: file.name,
-          preview: e.target.result
-        });
-      };
-
-      reader.readAsDataURL(file);  // Преобразование в Data URL для предварительного просмотра
-    });
   }
 }

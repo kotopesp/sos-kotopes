@@ -13,12 +13,12 @@ export const routes: Routes = [
     path: 'posts', component: PostsComponent
   },
   {
-    path: 'posts/create', component: CreatePostPageComponent
-  },
-  {
     path: 'chats', component: ChatsPageComponent
   },
   {
     path: 'users/:id', component: UserPageComponent
   },
+  {
+    path: 'create/post', component: CreatePostPageComponent
+  }
 ];

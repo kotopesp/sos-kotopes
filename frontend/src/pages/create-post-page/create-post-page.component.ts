@@ -1,21 +1,17 @@
-import {Component, ElementRef, QueryList, signal, ViewChild, ViewChildren, WritableSignal} from '@angular/core';
+import {Component, ElementRef, signal, ViewChild, WritableSignal} from '@angular/core';
 import {ButtonLostPetComponent} from "../../shared/buttons/button-lost-pet/button-lost-pet.component";
 import {ButtonFindPetComponent} from "../../shared/buttons/button-find-pet/button-find-pet.component";
 import {
   ButtonLookingForHomeComponent
 } from "../../shared/buttons/button-looking-for-home/button-looking-for-home.component";
 import { RouterLink} from "@angular/router";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {CustomCalendarComponent} from "./ui/custom-calendar/custom-calendar.component";
 import {RanWarningComponent} from "../../shared/ran-warning/ran-warning.component";
-import {ClickToSelectDirective} from "../../directives/click-to-select/click-to-select.directive";
+import {ClickToSelectDirective} from "./ui/click-to-select.directive";
 import {AddPhotoButtonComponent} from "../../shared/buttons/add-photo-button/add-photo-button.component";
 import {ConfirmOverlayComponent} from "../../shared/confirm-overlay/confirm-overlay.component";
 import {AuthService} from "../../services/auth-service/auth.service";
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ChooseOneDirective} from "../../directives/choose-one/choose-one.directive";
-import {PostsService} from "../../services/posts-services/posts.service";
-import {ButtonStateService} from "../../services/button-state/button-state.service";
 
 interface TitleObject {
   [key: number]: string
@@ -30,6 +26,7 @@ interface TitleObject {
     ButtonLookingForHomeComponent,
     RouterLink,
     NgIf,
+    NgStyle,
     NgForOf,
     CustomCalendarComponent,
     RanWarningComponent,
@@ -37,44 +34,26 @@ interface TitleObject {
     ClickToSelectDirective,
     AddPhotoButtonComponent,
     ConfirmOverlayComponent,
-    FormsModule,
-    ChooseOneDirective,
-    ReactiveFormsModule,
   ],
   templateUrl: './create-post-page.component.html',
   styleUrl: './create-post-page.component.scss'
 })
 export class CreatePostPageComponent {
   @ViewChild('fileInput') fileInput: ElementRef | undefined;
-  // ViewChild для доступа к элементу div
-  @ViewChildren('myDiv') myDivs: QueryList<ElementRef> | undefined;
   titleObject: TitleObject;
+  numberOfSlide: number;
+  selectedFiles: { name: string, preview: string }[] = [];
   isDragging = false;
-  districts: Array<{ text: string }>;
+  selectedDate!: Date;
+  chooseColors: string[] = [];
   buttonActive: boolean;
   countOfSlides: number;
-  isDisabled: boolean = true;
 
-  reason: string;
-  species: string;
-  gender: string;
-  selectedFiles: { name: string, preview: string }[] = [];
-  chooseColors: Array<string>;
-  selectedDate!: Date;
-  selectedDistrict: string;
-
-  formCreatePost: FormGroup;
-  textValue: string;
-  numberOfSlide: WritableSignal<number>;
   photosOverlay: WritableSignal<boolean>;
-  descriptionOverlay: WritableSignal<boolean>;
 
-  constructor(private authService: AuthService, private postsService: PostsService, private buttonState: ButtonStateService) {
-    this.reason = '';
-    this.gender = '';
-    this.species = ''
+  constructor(authService: AuthService) {
     this.buttonActive = false;
-    this.numberOfSlide = signal<number>(1);
+    this.numberOfSlide = 1;
     this.titleObject = {
       1: "Что случилось?",
       2: "Кто пропал?",
@@ -84,29 +63,8 @@ export class CreatePostPageComponent {
       6: "Описание",
       7: "Дайте описание о вас"
     }
-
-    this.districts = [
-      { text: 'м. Комендантский Проспект' },
-      { text: 'р-н. Колпинский' },
-    ];
-
     this.chooseColors = ['Чёрный', 'Белый', 'Чёрно-белый ("маркиз")', 'Полосатый', 'Рыжий', 'Серый', 'Трёхцветный']
     this.photosOverlay = signal<boolean>(false)
-    this.descriptionOverlay = signal<boolean>(false)
-    this.textValue = '';
-    this.selectedDistrict = '';
-
-    this.formCreatePost = new FormGroup({
-      title: new FormControl(null),
-      content: new FormControl(null),
-      animal_type: new FormControl(null),
-      photo: new FormControl(null),
-      age: new FormControl(this.selectedDate),
-      color: new FormControl(null),
-      gender: new FormControl(null),
-      description: new FormControl(this.textValue),
-      status: new FormControl(null),
-    })
 
     if (authService.Token) {
       this.countOfSlides = 6;
@@ -160,44 +118,10 @@ export class CreatePostPageComponent {
   }
 
   buttonNextClick() {
-    if (this.numberOfSlide() === 3 && !this.selectedFiles.length) {
+    if (this.numberOfSlide === 3 && !this.selectedFiles.length) {
       this.photosOverlay.set(true);
     } else {
-      this.numberOfSlide.set(this.numberOfSlide() + 1);
-    }
-
-    console.log(this.buttonActive);
-    console.log(this.selectedDistrict);
-    console.log(this.textValue);
-  }
-
-  createPost() {
-    if (!this.textValue) {
-      this.descriptionOverlay.set(true);
-    }
-    const form = new FormGroup({
-      title: new FormControl('abc'),
-      content: new FormControl('abc'),
-      animal_type: new FormControl('abc'),
-      photo: new FormControl('abc'),
-      age: new FormControl(12),
-      color: new FormControl('abc'),
-      gender: new FormControl('abc'),
-      description: new FormControl('abc'),
-      status: new FormControl('abc'),
-    })
-
-    let formObj = form.getRawValue(); // {name: '', description: ''}
-
-    let serializedForm = JSON.stringify(formObj);
-    this.postsService.createPost(serializedForm)
-  }
-
-  // Метод для записи значения из определенного div
-  saveDivValue(index: number) {
-    if (this.myDivs) {
-      const divArray = this.myDivs.toArray();
-      this.selectedDistrict = divArray[index].nativeElement.innerText; // записываем текст из нужного div
+      this.numberOfSlide += 1;
     }
   }
 }
