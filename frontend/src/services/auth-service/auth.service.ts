@@ -1,16 +1,14 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {catchError, Observable, tap, throwError} from "rxjs";
+import {Observable, tap} from "rxjs";
 import {CookieService} from "ngx-cookie-service";
 import {Router} from "@angular/router";
 
 
 export interface LoginResponse {
   status: string,
-  data: {
-    access_token: string
-  }
+  data: string
 }
 
 @Injectable({
@@ -48,20 +46,6 @@ export class AuthService {
     );
   }
 
-  refreshAuthToken() {
-    return this.http.post(
-      `${this.baseApiUrl}auth/v1/auth/token/refresh`,
-      ''
-    ).pipe(catchError(
-        error => {
-          this.logout()
-
-          return throwError(error);
-        }
-      )
-    )
-  }
-
   logout() {
     this.cookieService.deleteAll()
     this.token = null;
@@ -73,7 +57,7 @@ export class AuthService {
   }
 
   saveTokens(res: LoginResponse) {
-    this.setToken(res.data.access_token);
-    this.cookieService.set('token', res.data.access_token)
+    this.setToken(res.data);
+    this.cookieService.set('token', res.data)
   }
 }
