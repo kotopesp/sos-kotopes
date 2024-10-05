@@ -159,8 +159,8 @@
 
           .text__title__warning {
             position: absolute;
-            right: 26%;
-            bottom: 64%;
+            right: 25%;
+            bottom: 65%;
             display: none;
           }
         }
@@ -280,6 +280,10 @@
   }
 }
 
-.selected {
+.selectedPlace {
+  background: var(--yellow-color-bg);
+}
+
+.selectedColor {
   background: var(--yellow-color-bg);
 }

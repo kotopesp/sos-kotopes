@@ -1,23 +1,23 @@
 <section class="create__post__section">
   <div class="create__post__wrapper">
     <img [routerLink]="" src="/assets/icons/exit-cross-icon.svg" alt="exit-cross" class="exit__cross">
-    <div class="create__post__title ft48 roboto fw600">{{ titleObject[numberOfSlide] }}</div>
+    <div class="create__post__title ft48 roboto fw600">{{ titleObject[numberOfSlide()] }}</div>
     <div class="create__post__progressbar">
-      <div *ngIf="numberOfSlide > 1" class="create__post__progressbar__ready"
-           [style.width.%]="100 / countOfSlides * numberOfSlide"></div>
+      <div *ngIf="numberOfSlide() > 1" class="create__post__progressbar__ready"
+           [style.width.%]="100 / countOfSlides * numberOfSlide()"></div>
     </div>
-    <div *ngIf="numberOfSlide > 1" class="create__post__back__arrow"
-         (click)="numberOfSlide = numberOfSlide - 1">
+    <div *ngIf="numberOfSlide() > 1" class="create__post__back__arrow"
+         (click)="numberOfSlide.set(numberOfSlide() - 1)">
       <img src="/assets/icons/back-arrow-logo.svg" alt="arrow">
     </div>
 
-    <div *ngIf="numberOfSlide == 1" class="create__post__main create__post__main__first">
+    <div *ngIf="numberOfSlide() == 1" class="create__post__main create__post__main__first">
       <app-button-lost-pet/>
       <app-button-find-pet/>
       <app-button-looking-for-home/>
     </div>
 
-    <div *ngIf="numberOfSlide == 2" class="create__post__main create__post__main__second">
+    <div *ngIf="numberOfSlide() == 2" class="create__post__main create__post__main__second">
       <p class="ft20 fw700">Вид</p>
       <div class="create__post__buttons">
         <button class="yellow-color simple__button"><img src="/assets/icons/cat-button-icon.svg" alt="cat"/>Кошка
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div *ngIf="numberOfSlide == 3" class="create__post__main create__post__main__third">
+    <div *ngIf="numberOfSlide() == 3" class="create__post__main create__post__main__third">
       <div class="create__post__place__for__photos"
            (dragover)="onDragOver($event)"
            (dragleave)="onDragLeave($event)"
@@ -59,12 +59,13 @@
             </div>
           </div>
           <app-add-photo-button [selectedFiles]="selectedFiles"/>
-          <app-confirm-overlay *ngIf="photosOverlay()" [photosOverlay]="photosOverlay" [target]="'photo'" />
+          <app-confirm-overlay *ngIf="photosOverlay()" [thisOverlay]="photosOverlay" [target]="'photo'"
+                               [selectedFiles]="selectedFiles" [numberOfSlide]="numberOfSlide" />
         </div>
       </div>
     </div>
 
-    <div *ngIf="numberOfSlide == 4" class="create__post__main create__post__main__fourth">
+    <div *ngIf="numberOfSlide() == 4" class="create__post__main create__post__main__fourth">
       <div class="create__post__calendar">
         <app-custom-calendar
           (valueChange)="updateValue($event)"/>
@@ -80,43 +81,45 @@
           <input type="text" class="create__post__search ft20 fw400" placeholder="Введите район или метро">
         </div>
         <div class="create__post__text__place__list">
-          <div [style.gap.px]="5" [style.display]="'flex'" [style.align-items]="'center'">
-            <button appClickToSelect class="yellow__button__choose"></button>
-            <div>м. Комендантский проспект</div>
+          <div>
+            <label [style.gap.px]="5" [style.display]="'flex'" [style.align-items]="'center'">
+              <button appClickToSelect="selectedPlace" class="yellow__button__choose"></button>
+              <div>м. Комендантский проспект</div>
+            </label>
           </div>
           <div [style.gap.px]="5" [style.display]="'flex'" [style.align-items]="'center'">
-            <button appClickToSelect class="yellow__button__choose"></button>
+            <button appClickToSelect="selectedPlace" class="yellow__button__choose"></button>
             <span>р-н Колпинский</span>
           </div>
         </div>
 
         <div
           class="create__post__calendar__text__district">{{ !selectedDate ? '' : selectedDate | date: 'dd.mm.yyyy,' }}
-          {{ countOfSlides }}
+          район писят два
         </div>
       </div>
     </div>
 
-    <div *ngIf="numberOfSlide == 5" class="create__post__main__fifth">
+    <div *ngIf="numberOfSlide() == 5" class="create__post__main__fifth">
       <div class="ft20 fw400" [style.padding-bottom.px]="30">Какой-то текст</div>
       <div class="ft24 fw700" [style.padding-bottom.px]="15">Окрас</div>
       <div class="create__post__main create__post__choose__color">
         <div *ngFor="let color of chooseColors" [style.gap.px]="15" [style.display]="'flex'"
              [style.align-items]="'center'">
-          <button class="yellow__button__choose" appClickToSelect></button>
+          <button class="yellow__button__choose" appClickToSelect="selectedColor"></button>
           <div class="ft20 fw400">{{ color }}</div>
         </div>
       </div>
     </div>
 
-    <div *ngIf="numberOfSlide == 6" class="create__post__main create__post__main__sixth">
+    <div *ngIf="numberOfSlide() == 6" class="create__post__main create__post__main__sixth">
       <div class="ft20 fw400">Добавьте общую информацию о пропавшем питомце: пол, окрас и обстоятельства потери.
         Не рекомендуем вводить кое-что пока Ангелина формулирует, что написать дальше
       </div>
       <textarea class="textarea__description"></textarea>
     </div>
 
-    <div *ngIf="numberOfSlide <= countOfSlides" class="create__post__button__next">
+    <div *ngIf="numberOfSlide() <= countOfSlides" class="create__post__button__next">
       <button class="button__next fw700 ft20"
               (click)="buttonNextClick()">Дальше
       </button>

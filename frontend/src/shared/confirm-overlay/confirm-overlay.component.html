@@ -12,8 +12,8 @@
         }}
       </div>
       <div class="confirm__overlay__buttons">
-        <app-add-photo-button class="basic__button" *ngIf="target == 'photo'" [photosOverlay]="photosOverlay"/>
-        <button class="basic__button skip__this__step fw700 ft20">Пропустить этот шаг</button>
+        <app-add-photo-button class="basic__button" *ngIf="target == 'photo'" [photosOverlay]="thisOverlay" [selectedFiles]="selectedFiles"/>
+        <button class="basic__button skip__this__step fw700 ft20" (click)="goToNext()">Пропустить этот шаг</button>
       </div>
     </div>
   </div>

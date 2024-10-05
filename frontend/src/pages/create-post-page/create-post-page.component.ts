@@ -41,7 +41,6 @@ interface TitleObject {
 export class CreatePostPageComponent {
   @ViewChild('fileInput') fileInput: ElementRef | undefined;
   titleObject: TitleObject;
-  numberOfSlide: number;
   selectedFiles: { name: string, preview: string }[] = [];
   isDragging = false;
   selectedDate!: Date;
@@ -49,11 +48,12 @@ export class CreatePostPageComponent {
   buttonActive: boolean;
   countOfSlides: number;
 
+  numberOfSlide: WritableSignal<number>;
   photosOverlay: WritableSignal<boolean>;
 
   constructor(authService: AuthService) {
     this.buttonActive = false;
-    this.numberOfSlide = 1;
+    this.numberOfSlide = signal<number>(1);
     this.titleObject = {
       1: "Что случилось?",
       2: "Кто пропал?",
@@ -118,10 +118,10 @@ export class CreatePostPageComponent {
   }
 
   buttonNextClick() {
-    if (this.numberOfSlide === 3 && !this.selectedFiles.length) {
+    if (this.numberOfSlide() === 3 && !this.selectedFiles.length) {
       this.photosOverlay.set(true);
     } else {
-      this.numberOfSlide += 1;
+      this.numberOfSlide.set(this.numberOfSlide() + 1);
     }
   }
 }

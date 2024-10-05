@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {catchError, Observable, tap, throwError} from "rxjs";
+import {Observable, tap} from "rxjs";
 import {CookieService} from "ngx-cookie-service";
 import {Router} from "@angular/router";
 
