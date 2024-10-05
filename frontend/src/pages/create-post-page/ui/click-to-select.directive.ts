@@ -5,26 +5,24 @@ import {Directive, ElementRef, HostListener, Input, Renderer2} from '@angular/co
   selector: '[appClickToSelect]'
 })
 export class ClickToSelectDirective {
-  // Статическая переменная для хранения ранее выбранного элемента
-  private static selectedElement: HTMLElement | null = null;
+  @Input('appClickToSelect') classNameSelect!: string;
 
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef, private renderer: Renderer2) {}
 
   @HostListener('click') onClick() {
-    const currentElement = this.el.nativeElement;
+    const element = this.el.nativeElement;
 
-    // Если уже есть выбранный элемент и он отличается от текущего
-    if (ClickToSelectDirective.selectedElement && ClickToSelectDirective.selectedElement !== currentElement) {
-      // Снимаем класс выделения с предыдущего элемента
-      ClickToSelectDirective.selectedElement.classList.remove('selected');
+    // Удаляем класс со всех других элементов, у которых он есть
+    const elementsWithClass = document.querySelectorAll(`.${this.classNameSelect}`);
+    elementsWithClass.forEach(el => {
+      this.renderer.removeClass(el, this.classNameSelect);
+    });
+
+    // Переключаем класс на текущем элементе
+    if (!element.classList.contains(this.classNameSelect)) {
+      this.renderer.addClass(element, this.classNameSelect);
+    } else {
+      this.renderer.removeClass(element, this.classNameSelect);
     }
-
-    // Устанавливаем или убираем класс 'selected' для текущего элемента
-    currentElement.classList.toggle('selected');
-
-    // Обновляем статическую переменную для отслеживания выбранного элемента
-    ClickToSelectDirective.selectedElement = currentElement.classList.contains('selected')
-      ? currentElement
-      : null;
   }
 }
