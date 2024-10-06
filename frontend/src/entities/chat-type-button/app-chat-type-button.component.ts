@@ -1,5 +1,5 @@
 import {Component, Input} from "@angular/core";
-import {ToggleActiveDirective} from "../../pages/chats-page/toggle-active.directive";
+import {ToggleActiveDirective} from "../../directives/toggle-active/toggle-active.directive";
 
 @Component({
   selector: 'app-chat-type-button',

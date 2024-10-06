@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {NgClass} from "@angular/common";
-import {ToggleActiveDirective} from "../../toggle-active.directive";
+import {ToggleActiveDirective} from "../../../../directives/toggle-active/toggle-active.directive";
 
 @Component({
   selector: 'app-chat',

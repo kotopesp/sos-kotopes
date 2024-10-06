@@ -229,4 +229,12 @@ a, button {
   color: var(--brown-main-color);
 }
 
+.animals__button {
+  display: flex;
+  color: var(--text-brown-light-color);
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
 

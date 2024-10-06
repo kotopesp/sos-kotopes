@@ -115,14 +115,6 @@
           }
         }
       }
-      app-confirm-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 10000;
-      }
     }
 
     .create__post__main__fourth {
@@ -230,11 +222,9 @@
       right: 40px;
       bottom: 40px;
 
-      .button__next {
+      .white__buttons {
         background: var(--white-color);
         color: var(--brown-main-color);
-        width: 120px;
-        height: 46px;
         border-radius: 10px;
 
         &:hover {
@@ -243,6 +233,16 @@
           border: 2px solid var(--white-color);
           transition: 0.3s ease;
         }
+      }
+
+      .button__next {
+        width: 120px;
+        height: 46px;
+      }
+
+      .button__create__post {
+        width: 240px;
+        height: 56px;
       }
     }
   }
@@ -286,4 +286,13 @@
 
 .selectedColor {
   background: var(--yellow-color-bg);
+}
+
+app-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
 }
