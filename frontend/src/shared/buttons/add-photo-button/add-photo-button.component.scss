@@ -1,3 +1,15 @@
 .yellow-color {
   background: var(--yellow-color-bg);
 }
+
+.add__photo__button {
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  border-radius: 16px;
+  color: var(--brown-main-color);
+}

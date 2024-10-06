@@ -8,10 +8,12 @@ import { RouterLink} from "@angular/router";
 import {DatePipe, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {CustomCalendarComponent} from "./ui/custom-calendar/custom-calendar.component";
 import {RanWarningComponent} from "../../shared/ran-warning/ran-warning.component";
-import {ClickToSelectDirective} from "./ui/click-to-select.directive";
+import {ClickToSelectDirective} from "../../directives/click-to-select/click-to-select.directive";
 import {AddPhotoButtonComponent} from "../../shared/buttons/add-photo-button/add-photo-button.component";
 import {ConfirmOverlayComponent} from "../../shared/confirm-overlay/confirm-overlay.component";
 import {AuthService} from "../../services/auth-service/auth.service";
+import {FormsModule} from "@angular/forms";
+import {ChooseOneDirective} from "../../directives/choose-one/choose-one.directive";
 
 interface TitleObject {
   [key: number]: string
@@ -34,6 +36,8 @@ interface TitleObject {
     ClickToSelectDirective,
     AddPhotoButtonComponent,
     ConfirmOverlayComponent,
+    FormsModule,
+    ChooseOneDirective,
   ],
   templateUrl: './create-post-page.component.html',
   styleUrl: './create-post-page.component.scss'
@@ -44,12 +48,15 @@ export class CreatePostPageComponent {
   selectedFiles: { name: string, preview: string }[] = [];
   isDragging = false;
   selectedDate!: Date;
+  selectedDistrict!: string;
   chooseColors: string[] = [];
   buttonActive: boolean;
   countOfSlides: number;
 
+  textValue: string;
   numberOfSlide: WritableSignal<number>;
   photosOverlay: WritableSignal<boolean>;
+  descriptionOverlay: WritableSignal<boolean>;
 
   constructor(authService: AuthService) {
     this.buttonActive = false;
@@ -65,6 +72,8 @@ export class CreatePostPageComponent {
     }
     this.chooseColors = ['Чёрный', 'Белый', 'Чёрно-белый ("маркиз")', 'Полосатый', 'Рыжий', 'Серый', 'Трёхцветный']
     this.photosOverlay = signal<boolean>(false)
+    this.descriptionOverlay = signal<boolean>(false)
+    this.textValue = '';
 
     if (authService.Token) {
       this.countOfSlides = 6;
@@ -123,6 +132,12 @@ export class CreatePostPageComponent {
     } else {
       this.numberOfSlide.set(this.numberOfSlide() + 1);
     }
+  }
+
+  createPost() {
+    if (!this.textValue) {
+        this.descriptionOverlay.set(true);
+      }
   }
 }
 

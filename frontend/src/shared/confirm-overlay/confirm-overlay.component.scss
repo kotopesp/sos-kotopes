@@ -37,6 +37,11 @@
           border-radius: 10px;
         }
 
+        .add__description {
+          background: var(--yellow-color-bg);
+          color: var(--brown-main-color);
+        }
+
         .skip__this__step {
           border: none;
           background: var(--red-confirm-button);

@@ -6,7 +6,7 @@ import {ChatComponent} from "./ui/chat/chat.component";
 import {MessageComponent} from "./ui/message/message.component";
 import {PostAnswerComponent} from "./ui/post-answer/post-answer.component";
 import {AddToChatComponent} from "./ui/add-to-chat/add-to-chat.component";
-import {ToggleActiveDirective} from "./toggle-active.directive";
+import {ToggleActiveDirective} from "../../directives/toggle-active/toggle-active.directive";
 
 @Component({
   selector: 'app-chats-page',

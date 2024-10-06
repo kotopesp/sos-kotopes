@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Output} from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {ClickToSelectDirective} from "../click-to-select.directive";
+import {ClickToSelectDirective} from "../../../../directives/click-to-select/click-to-select.directive";
 
 @Component({
   selector: 'app-custom-calendar',
@@ -71,9 +71,9 @@ export class CustomCalendarComponent {
 
   // Метод для удаления класса selected у всех элементов с этим классом
   clearSelection() {
-    const selectedElements = document.querySelectorAll('.selected');
+    const selectedElements = document.querySelectorAll('.selectedDay');
     selectedElements.forEach((element) => {
-      element.classList.remove('selected');
+      element.classList.remove('selectedDay');
     });
   }
 
