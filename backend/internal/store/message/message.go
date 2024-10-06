@@ -42,16 +42,6 @@ func ifMessageExists(s *store, ctx context.Context, messageID int) error {
 	return nil
 }
 
-// func (s *store) MarkMessagesAsRead(ctx context.Context, chatID, userID int) error {
-// 	err := s.DB.WithContext(ctx).Model(&core.Message{}).
-// 		Where("chat_id = ? AND user_id != ? AND is_read = ?", chatID, userID, false).
-// 		Update("is_read", true).Error
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
-
 func (s *store) MarkMessagesAsRead(ctx context.Context, chatID, userID int) error {
 	var unreadMessages []core.Message
 
@@ -75,7 +65,7 @@ func (s *store) MarkMessagesAsRead(ctx context.Context, chatID, userID int) erro
 		reads = append(reads, core.MessageRead{
 			MessageID: message.ID,
 			UserID:    userID,
-			ReadAt:    time.Now(),
+			ReadAt:    time.Now().UTC(),
 		})
 	}
 
@@ -120,7 +110,6 @@ func (s *store) GetAllMessages(ctx context.Context, id int, sortType, searchText
 			Content:    mes.Content,
 			CreatedAt:  mes.CreatedAt,
 			SenderName: mes.SenderName,
-			// IsRead:    mes.IsRead,
 		})
 	}
 	return messagesResponse, nil
@@ -136,7 +125,8 @@ func (s *store) CreateMessage(ctx context.Context, data chat.Message) (chat.Mess
 		UserID:     data.UserID,
 		ChatID:     data.ChatID,
 		Content:    data.Content,
-		CreatedAt:  data.CreatedAt,
+		CreatedAt:  time.Now().UTC(),
+		UpdatedAt:  time.Now().UTC(),
 		SenderName: user.Username,
 	}
 	if err := ifChatExists(s, ctx, data.ChatID); err != nil {
@@ -148,11 +138,13 @@ func (s *store) CreateMessage(ctx context.Context, data chat.Message) (chat.Mess
 	readMessage := core.MessageRead{
 		MessageID: dataToInsert.ID,
 		UserID:    dataToInsert.UserID,
-		ReadAt:    time.Now(),
+		ReadAt:    time.Now().UTC(),
 	}
 	if err := s.DB.WithContext(ctx).Create(&readMessage).Error; err != nil {
 		return chat.Message{}, err
 	}
+	data.SenderName = user.Username
+	data.CreatedAt = dataToInsert.CreatedAt
 	return data, nil
 }
 

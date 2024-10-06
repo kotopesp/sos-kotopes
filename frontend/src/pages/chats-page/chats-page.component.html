@@ -108,10 +108,10 @@
                   <div *ngFor="let message of messages">
                     <div class="message">
                       <app-message 
-                      [name]="!message.is_user_message ? message.sender_name : ''"
-                      [answer]="message.is_user_message" 
+                      [name]="message.user_id === userId ? '': message.sender_name"
+                      [answer]="message.user_id === userId" 
                       [messageContent]="message.message_content" 
-                      [messageTime]="message.time"/>
+                      [messageTime]="formatTime(message.created_at)"/>
                     </div>
                   </div>
                 </div>

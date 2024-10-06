@@ -1,4 +1,4 @@
-package http
+package websockets
 
 import (
 	"log"
@@ -13,8 +13,8 @@ type WebSocketManager struct {
 	mu          sync.Mutex                       // мьютекс для синхронизации
 }
 
-func NewWebSocketManager() *WebSocketManager {
-	return &WebSocketManager{
+func NewWebSocketManager() WebSocketManager {
+	return WebSocketManager{
 		connections: make(map[int]map[*websocket.Conn]bool),
 	}
 }

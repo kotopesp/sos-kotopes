@@ -1,8 +1,6 @@
 package http
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
@@ -28,12 +26,9 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 	}
 
 	userID, err := getIDFromToken(ctx)
-	fmt.Println("\n", userID, err, "\n\n\n")
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}
-
-	// userID := 1
 
 	chats, total, err := r.chatService.GetAllChats(ctx.UserContext(), sortType, userID)
 	if err != nil {
@@ -66,9 +61,7 @@ func (r *Router) getChatWithUsersByID(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) createChat(ctx *fiber.Ctx) error {
-	// userID := 1
 	userID, err := getIDFromToken(ctx)
-	fmt.Println("\n", userID, "\n\n\n")
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}
@@ -102,11 +95,11 @@ func (r *Router) createChat(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusConflict).JSON(model.OKResponse(existingChat))
 	}
 
-	chat := chat.Chat{
+	data := chat.Chat{
 		ChatType: chatType,
 	}
 
-	createdChat, err := r.chatService.CreateChat(ctx.UserContext(), chat, users.UserIds)
+	createdChat, err := r.chatService.CreateChat(ctx.UserContext(), data, users.UserIds)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))

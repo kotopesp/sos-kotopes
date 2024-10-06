@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/websocket/v2"
 	_ "github.com/kotopesp/sos-kotopes/docs"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/websockets"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
@@ -22,7 +23,7 @@ type Router struct {
 	chatService          core.ChatService
 	messageService       core.MessageService
 	chatMemberService    core.ChatMemberService
-	webSocketManager     WebSocketManager
+	webSocketManager     websockets.WebSocketManager
 }
 
 func NewRouter(
@@ -36,7 +37,7 @@ func NewRouter(
 	messageService core.MessageService,
 	chatMemberService core.ChatMemberService,
 	formValidator validator.FormValidatorService,
-	webSocketManager WebSocketManager,
+	webSocketManager websockets.WebSocketManager,
 ) {
 	router := &Router{
 		app:               app,
@@ -65,6 +66,7 @@ func (r *Router) initRoutes() {
 	r.app.Get("/swagger/*", swagger.HandlerDefault) // default
 
 	v1 := r.app.Group("/api/v1")
+
 	// websocket service
 	v1.Use("/ws/:chatID", r.webSocketManager.HandleWebSocket)
 	v1.Get("/ws/:chatID", websocket.New(r.webSocketManager.WebSocketEndpoint))
@@ -76,7 +78,7 @@ func (r *Router) initRoutes() {
 	v1.Delete("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.deleteComment)
 
 	// favourites users todo
-	v1.Get("/users/favourites", r.GetFavouriteUsers)
+	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
 	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
 	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
 
@@ -118,7 +120,7 @@ func (r *Router) initRoutes() {
 	// chats
 	v1.Get("/chats", r.protectedMiddleware(), r.getAllChats)
 	v1.Get("/chats/:chat_id", r.protectedMiddleware(), r.getChatWithUsersByID)
-	v1.Post("/chats", r.createChat)
+	v1.Post("/chats", r.protectedMiddleware(), r.createChat)
 	v1.Delete("/chats/:chat_id", r.deleteChat)
 
 	// messages

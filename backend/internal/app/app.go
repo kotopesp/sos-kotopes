@@ -25,12 +25,11 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
-	webSocketManager "github.com/kotopesp/sos-kotopes/internal/controller/http"
+	webSocketManager "github.com/kotopesp/sos-kotopes/internal/controller/http/websockets"
 	chatservice "github.com/kotopesp/sos-kotopes/internal/service/chat"
 	chatmemberservice "github.com/kotopesp/sos-kotopes/internal/service/chat_member"
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
 
-	// commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
 	messageservice "github.com/kotopesp/sos-kotopes/internal/service/message"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
@@ -38,7 +37,6 @@ import (
 	chatmemberstore "github.com/kotopesp/sos-kotopes/internal/store/chat_member"
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 
-	// commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
 	messagestore "github.com/kotopesp/sos-kotopes/internal/store/message"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
@@ -124,11 +122,11 @@ func Run(cfg *config.Config) {
 		messageService,
 		chatMemberService,
 		formValidator,
-		*webSocketManager,
+		webSocketManager,
 	)
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	//err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
-	app.Listen(cfg.HTTP.Port)
+	err = app.Listen(cfg.HTTP.Port)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())
 	}

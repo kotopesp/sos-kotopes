@@ -84,21 +84,6 @@ func (s *store) GetUnreadMessageCount(ctx context.Context, chatID, userID int) (
 }
 
 func (s *store) GetAllChats(ctx context.Context, sortType string, userID int) ([]chat.Chat, error) {
-	// userID := 2
-
-	// lastMessageSubQuery := s.DB.WithContext(ctx).Table("message").
-	// 	Select("content, created_at").
-	// 	Where("chat_id = chats.id").
-	// 	Order("created_at DESC").
-	// 	Limit(1)
-	// unreadCountSubQuery := s.DB.WithContext(ctx).Table("message").
-	// 	Select("COUNT(*)").
-	// 	Where("chat_id = chats.id").
-	// 	Where("is_read = false").
-	// 	Where("user_id != ?", userID)
-
-	// query := s.DB.WithContext(ctx).Table("chats").Where("is_deleted = false")
-
 	query := s.DB.WithContext(ctx).
 		Model(&core.Chat{IsDeleted: false}).
 		Joins("JOIN chat_members ON chat_members.chat_id = chats.id").
@@ -123,17 +108,10 @@ func (s *store) GetAllChats(ctx context.Context, sortType string, userID int) ([
 		if err != nil {
 			message = core.Message{}
 		}
-
 		unreadCount, err := s.GetUnreadMessageCount(ctx, chatEl.ID, userID)
 		if err != nil {
 			return nil, err
 		}
-		// err = s.DB.WithContext(ctx).Model(&core.Message{}).
-		// 	Where("chat_id = ? AND is_read = false AND user_id != ?", chatEl.ID, userID).
-		// 	Count(&unreadCount).Error
-		// if err != nil {
-		// 	return nil, err
-		// }
 
 		usersResponse := convertToModelUser(chatEl.Users)
 		lastMessage := convertToModelLastMessage(message)
@@ -166,7 +144,9 @@ func (s *store) GetChatWithUsersByID(ctx context.Context, id int) (chat.Chat, er
 
 func (s *store) CreateChat(ctx context.Context, data chat.Chat) (chat.Chat, error) {
 	dataToInsert := core.Chat{
-		ChatType: data.ChatType,
+		ChatType:  data.ChatType,
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 	}
 	if err := s.DB.WithContext(ctx).Create(&dataToInsert).Error; err != nil {
 		return data, err

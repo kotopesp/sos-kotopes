@@ -9,14 +9,12 @@ import {AddToChatComponent} from "./ui/add-to-chat/add-to-chat.component";
 import {ToggleActiveDirective} from "./toggle-active.directive";
 import { WebsocketService } from '../../services/websocket-service/websocket.service';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
-import { map, Observable, switchMap } from 'rxjs';
+import { map, switchMap } from 'rxjs';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import {ChatService} from '../../services/chat-service/chat.service';
 import { HttpClient } from '@angular/common/http';
 import { Chat } from '../../model/chat.interface';
 import { Message } from '../../model/message.interface';
-import {CookieService} from "ngx-cookie-service";
-import jwt_decode, { jwtDecode } from 'jwt-decode';
 import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
@@ -41,7 +39,7 @@ import { AuthService } from '../../services/auth-service/auth.service';
   styleUrl: './chats-page.component.scss'
 })
 export class ChatsPageComponent implements AfterViewChecked, OnInit {
-  currentChat: Chat = { id: -1, title: '', chat_type: '', unread_count: 0 , users: []};
+  currentChat: Chat = { id: -1, title: '', chat_type: '', unread_count: 0 , users: [], created_at: new Date};
   createChat = false;
 
   countInArray = signal<number>(0);
@@ -60,8 +58,13 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     "msgText": new FormControl("", [Validators.required,]) 
   });
 
+  private previousMessageCount = 0;
+
   ngAfterViewChecked(): void {
-    this.scrollToBottom();
+    if (this.messages.length !== this.previousMessageCount) {
+      this.scrollToBottom();
+      this.previousMessageCount = this.messages.length;
+    }
   }
 
   private scrollToBottom(): void {
@@ -76,6 +79,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   public favusers: { id: number, username: string}[] = [];
   public chatList: Chat[] = [];
   public userId: number = -1;
+  private refreshInterval: any;
   
   constructor(private router: Router, private authService: AuthService, private activatedRoute: ActivatedRoute, private chatService: ChatService, private websocketService: WebsocketService, private http: HttpClient) {}
   
@@ -87,11 +91,11 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     
     this.websocketService.getMessages().subscribe((msg: string) => {
       const message = <Message>JSON.parse(msg)[0];
-      this.chatService.updateChat(message, this.userId);
+      this.chatService.updateChat(message, this.currentChat);
       this.messages.push(message);
     });
     
-    this.userId = this.authService.getIdFromToken; // id пользователя
+    this.userId = this.authService.getIdFromToken;
     this.chatService.getFavUsers().subscribe(
       (users) => {
         this.favusers = users;
@@ -101,7 +105,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     this.chatService.getAllChats(this.userId);
     
     this.chatService.chats$.subscribe(chats => {
-      this.chatList = chats; // Обновляем список чатов при изменении
+      this.chatList = chats;
     });
 
     this.activatedRoute.params.subscribe(params => {
@@ -112,17 +116,17 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
         this.websocketService.connect(chatId);
       }
     });
-    // var token = this.cookieService.get('token');
-    // console.log(token)
-    // if (token) {
-    //   const decoded: any = jwtDecode(token); // Декодируем токен
-    //   this.userId = decoded.id; // Предполагается, что ID пользователя хранится под ключом "id"
-    //   console.log("DECODED", this.userId);
-    // }
+
+    this.refreshInterval = setInterval(() => { // обновляем чаты раз в 1 секунду
+      this.chatService.getAllChats(this.userId);
+    }, 1000);
   }
 
   ngOnDestroy(): void {
     this.websocketService.closeConnection();
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
   
   // Отправляем сообщение через вебсокет
@@ -133,17 +137,18 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     this.messageText = this.sendMsgForm.controls['msgText'].value;
     this.sendMsgForm.reset();
     if (this.messageText && this.messageText.trim()) {
-      const timeNow = Date.now();
       var msgToSend = <Message>{ 
         message_content: this.messageText,
         user_id: this.userId,
         chat_id: this.currentChat.id,
-        is_user_message: true,
-        time: (new Date(timeNow)).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
       this.websocketService.sendMessage(JSON.stringify([msgToSend]));
       this.messageText = '';
     }
+  }
+
+  formatTime(createdAt: Date): string {
+    return new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
   selectedUserIds: number[] = [];
@@ -188,9 +193,6 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
         },
       );
     }
-    else {
-      console.log("no selected users");
-    }
   }
 
   loadChatData(chatId: number): void {
@@ -202,8 +204,6 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
           title: this.chatService.getTitle(chat.users, this.userId),
           });
         this.loadMessages(chatId);
-        const chatIndex = this.chatList.findIndex(c => c.id === chat.id);
-        this.chatService.readMessages(chatIndex);
       },
       error: (err) => {
         console.error('Ошибка при загрузке данных чата:', err);
@@ -212,11 +212,9 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   }
   
   loadMessages(chatId: number): void {
-    this.chatService.getMessagesByChatId(chatId, this.userId).subscribe({
+    this.chatService.getMessagesByChatId(chatId).subscribe({
       next: (messages: Message[]) => {
         this.messages = messages;
-
-        this.scrollToBottom();
       },
       error: (err) => {
         console.error('Ошибка при загрузке сообщений:', err);

@@ -8,9 +8,7 @@ import {Router} from "@angular/router";
 
 export interface LoginResponse {
   status: string,
-  data: {
-    access_token: string
-  }
+  data: string
 }
 
 @Injectable({
@@ -30,26 +28,21 @@ export class AuthService {
     if (!this.token) {
       this.token = this.cookieService.get('token')
     }
-    // console.log(this.token);
     return !!this.token;
+  }
+
+  get getToken() : string | null {
+    return localStorage.getItem('authToken');
   }
 
   get getIdFromToken() : number {
     if (!this.token) {
       this.token = this.cookieService.get('token')
     }
-    console.log(this.token);
-    var res = -1
-    try {
-      const payload = this.token.split('.')[1];
-      const decoded = atob(payload);
-      const decObject = JSON.parse(decoded);
-      res = decObject.id;
-    }
-    finally {
-      res = -1;
-    }
-    console.log(res);
+    const payload = this.token.split('.')[1];
+    const decoded = atob(payload);
+    const decObject = JSON.parse(decoded);
+    var res = decObject.id;
     return res;
   }
 
@@ -63,7 +56,7 @@ export class AuthService {
     ).pipe(
       tap((res: LoginResponse) => {
           this.saveTokens(res);
-          console.log("это токен после нажатия на log in:", this.token);
+          localStorage.setItem('authToken', res.data);
         }
       )
     );
@@ -94,7 +87,7 @@ export class AuthService {
   }
 
   saveTokens(res: LoginResponse) {
-    this.setToken(res.data.access_token);
-    this.cookieService.set('token', res.data.access_token)
+    this.setToken(res.data);
+    this.cookieService.set('token', res.data)
   }
 }

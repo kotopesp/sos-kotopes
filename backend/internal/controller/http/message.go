@@ -1,8 +1,6 @@
 package http
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
@@ -40,8 +38,6 @@ func (r *Router) markMessagesAsRead(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
 
-	// userID := c.Locals("userID").(int) // Получаем ID пользователя из контекста (например, через JWT)
-	// userID := 1
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
@@ -60,10 +56,7 @@ func (r *Router) getUnreadMessageCount(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
 
-	// userID := c.Locals("userID").(int) // Получаем ID пользователя из контекста (например, через JWT)
 	userID, err := getIDFromToken(ctx)
-	fmt.Println(userID, err)
-	// userID := 1
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}

@@ -3,7 +3,6 @@ import { User } from "./user.interface";
 export interface Chat {
     id: number,
     chat_type?: string,
-    // Title: string,
     users: User[],
     title?: string,
     last_message?: {
@@ -15,6 +14,7 @@ export interface Chat {
         sender_name: string,
       };
     unread_count: number;
+    created_at: Date;
 }
 
 export interface ResponseUser {

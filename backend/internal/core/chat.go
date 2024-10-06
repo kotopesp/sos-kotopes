@@ -16,10 +16,6 @@ type (
 		CreatedAt time.Time `gorm:"column:created_at"`
 		UpdatedAt time.Time `gorm:"column:updated_at"`
 		Users     []User    `gorm:"many2many:chat_members;joinForeignKey:ChatID;joinReferences:UserID"`
-		// Title     string    `gorm:"column:title"`
-
-		// LastMessage Message
-		// UnreadCount int
 	}
 
 	Message struct {
@@ -32,7 +28,6 @@ type (
 		CreatedAt  time.Time `gorm:"column:created_at"`
 		UpdatedAt  time.Time `gorm:"column:updated_at"`
 		SenderName string    `gorm:"column:sender_name"`
-		// IsRead    bool      `gorm:"column:is_read"`
 	}
 
 	MessageRead struct {
