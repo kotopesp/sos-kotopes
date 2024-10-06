@@ -12,9 +12,9 @@
     </div>
 
     <div *ngIf="numberOfSlide() == 1" class="create__post__main create__post__main__first">
-      <app-button-lost-pet/>
-      <app-button-find-pet/>
-      <app-button-looking-for-home/>
+      <app-button-lost-pet />
+      <app-button-find-pet />
+      <app-button-looking-for-home />
     </div>
 
     <div *ngIf="numberOfSlide() == 2" class="create__post__main create__post__main__second">
@@ -94,8 +94,9 @@
         </div>
 
         <div
-          class="create__post__calendar__text__district">{{ !selectedDate ? '' : selectedDate | date: 'dd.mm.yyyy,' }}
-          район писят два
+          class="create__post__calendar__text__district">
+          {{ !selectedDate ? '' : selectedDate| date:'dd.MM.yyyy, '}}
+          {{ !selectedDistrict ? '' : selectedDistrict }}
         </div>
       </div>
     </div>
@@ -116,13 +117,18 @@
       <div class="ft20 fw400">Добавьте общую информацию о пропавшем питомце: пол, окрас и обстоятельства потери.
         Не рекомендуем вводить кое-что пока Ангелина формулирует, что написать дальше
       </div>
-      <textarea class="textarea__description"></textarea>
+      <textarea [(ngModel)]="textValue" class="textarea__description" placeholder="Добавьте описание животного"></textarea>
+      <app-confirm-overlay *ngIf="descriptionOverlay()" [thisOverlay]="descriptionOverlay" [target]="'description'"/>
     </div>
 
-    <div *ngIf="numberOfSlide() <= countOfSlides" class="create__post__button__next">
-      <button class="button__next fw700 ft20"
+    <div *ngIf="numberOfSlide() <= countOfSlides - 1" class="create__post__button__next">
+      <button class="white__buttons button__next fw700 ft20"
               (click)="buttonNextClick()">Дальше
       </button>
+    </div>
+
+    <div *ngIf="numberOfSlide() == countOfSlides && countOfSlides == 6" class="create__post__button__next">
+      <button class="white__buttons button__create__post fw700 ft20" (click)="createPost()">Создать объявление</button>
     </div>
   </div>
 </section>
