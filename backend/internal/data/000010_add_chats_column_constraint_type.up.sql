@@ -1,4 +1,3 @@
-  
 ALTER TABLE IF EXISTS chat_members 
     DROP CONSTRAINT IF EXISTS chat_members_pkey;
 
