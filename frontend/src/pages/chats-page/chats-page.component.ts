@@ -39,7 +39,7 @@ import { AuthService } from '../../services/auth-service/auth.service';
   styleUrl: './chats-page.component.scss'
 })
 export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
-  currentChat: Chat = { id: -1, title: '', chat_type: '', unread_count: 0 , users: [], created_at: new Date};
+  currentChat: Chat = { id: -1, title: '', chat_type: 'other', unread_count: 0 , users: [], created_at: new Date};
   createChat = false;
 
   countInArray = signal<number>(0);

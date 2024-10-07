@@ -188,9 +188,9 @@ func (_c *MockChatService_DeleteChat_Call) RunAndReturn(run func(context.Context
 	return _c
 }
 
-// FindChatByUsers provides a mock function with given fields: ctx, userIds
-func (_m *MockChatService) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, error) {
-	ret := _m.Called(ctx, userIds)
+// FindChatByUsers provides a mock function with given fields: ctx, userIds, chat_type
+func (_m *MockChatService) FindChatByUsers(ctx context.Context, userIds []int, chat_type string) (chat.Chat, error) {
+	ret := _m.Called(ctx, userIds, chat_type)
 
 	if len(ret) == 0 {
 		panic("no return value specified for FindChatByUsers")
@@ -198,17 +198,17 @@ func (_m *MockChatService) FindChatByUsers(ctx context.Context, userIds []int) (
 
 	var r0 chat.Chat
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, []int) (chat.Chat, error)); ok {
-		return rf(ctx, userIds)
+	if rf, ok := ret.Get(0).(func(context.Context, []int, string) (chat.Chat, error)); ok {
+		return rf(ctx, userIds, chat_type)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, []int) chat.Chat); ok {
-		r0 = rf(ctx, userIds)
+	if rf, ok := ret.Get(0).(func(context.Context, []int, string) chat.Chat); ok {
+		r0 = rf(ctx, userIds, chat_type)
 	} else {
 		r0 = ret.Get(0).(chat.Chat)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, []int) error); ok {
-		r1 = rf(ctx, userIds)
+	if rf, ok := ret.Get(1).(func(context.Context, []int, string) error); ok {
+		r1 = rf(ctx, userIds, chat_type)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -224,13 +224,14 @@ type MockChatService_FindChatByUsers_Call struct {
 // FindChatByUsers is a helper method to define mock.On call
 //   - ctx context.Context
 //   - userIds []int
-func (_e *MockChatService_Expecter) FindChatByUsers(ctx interface{}, userIds interface{}) *MockChatService_FindChatByUsers_Call {
-	return &MockChatService_FindChatByUsers_Call{Call: _e.mock.On("FindChatByUsers", ctx, userIds)}
+//   - chat_type string
+func (_e *MockChatService_Expecter) FindChatByUsers(ctx interface{}, userIds interface{}, chat_type interface{}) *MockChatService_FindChatByUsers_Call {
+	return &MockChatService_FindChatByUsers_Call{Call: _e.mock.On("FindChatByUsers", ctx, userIds, chat_type)}
 }
 
-func (_c *MockChatService_FindChatByUsers_Call) Run(run func(ctx context.Context, userIds []int)) *MockChatService_FindChatByUsers_Call {
+func (_c *MockChatService_FindChatByUsers_Call) Run(run func(ctx context.Context, userIds []int, chat_type string)) *MockChatService_FindChatByUsers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].([]int))
+		run(args[0].(context.Context), args[1].([]int), args[2].(string))
 	})
 	return _c
 }
@@ -240,7 +241,7 @@ func (_c *MockChatService_FindChatByUsers_Call) Return(_a0 chat.Chat, _a1 error)
 	return _c
 }
 
-func (_c *MockChatService_FindChatByUsers_Call) RunAndReturn(run func(context.Context, []int) (chat.Chat, error)) *MockChatService_FindChatByUsers_Call {
+func (_c *MockChatService_FindChatByUsers_Call) RunAndReturn(run func(context.Context, []int, string) (chat.Chat, error)) *MockChatService_FindChatByUsers_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -64,8 +64,8 @@ func (s *service) CreateChat(ctx context.Context, data chat.Chat, userIds []int)
 	return createdChat, nil
 }
 
-func (s *service) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, error) {
-	foundChat, err := s.ChatStore.FindChatByUsers(ctx, userIds)
+func (s *service) FindChatByUsers(ctx context.Context, userIds []int, chatType string) (chat.Chat, error) {
+	foundChat, err := s.ChatStore.FindChatByUsers(ctx, userIds, chatType)
 	if err != nil {
 		return chat.Chat{ID: -1}, err
 	}

@@ -69,28 +69,28 @@ func (r *Router) createChat(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}
-	chatType := ctx.Query("type", "")
-	var users struct {
-		UserIds []int `json:"userIds"`
+	var bodyData struct {
+		UserIds  []int  `json:"userIds"`
+		ChatType string `json:"chat_type"`
 	}
-	if err := ctx.BodyParser(&users); err != nil {
+	if err := ctx.BodyParser(&bodyData); err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid input"))
 	}
-	if len(users.UserIds) == 0 {
+	if len(bodyData.UserIds) == 0 {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("No users selected"))
 	}
 
 	isChosen := false
-	for _, user := range users.UserIds {
+	for _, user := range bodyData.UserIds {
 		if user == userID {
 			isChosen = true
 		}
 	}
 	if !isChosen {
-		users.UserIds = append(users.UserIds, userID)
+		bodyData.UserIds = append(bodyData.UserIds, userID)
 	}
 
-	existingChat, err := r.chatService.FindChatByUsers(ctx.UserContext(), users.UserIds)
+	existingChat, err := r.chatService.FindChatByUsers(ctx.UserContext(), bodyData.UserIds, bodyData.ChatType)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -100,10 +100,10 @@ func (r *Router) createChat(ctx *fiber.Ctx) error {
 	}
 
 	data := chat.Chat{
-		ChatType: chatType,
+		ChatType: bodyData.ChatType,
 	}
 
-	createdChat, err := r.chatService.CreateChat(ctx.UserContext(), data, users.UserIds)
+	createdChat, err := r.chatService.CreateChat(ctx.UserContext(), data, bodyData.UserIds)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))

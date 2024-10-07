@@ -38,7 +38,7 @@ export class ChatService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken}`
     });
-    return this.http.post<{data: Chat}>(`${this.apiUrl}chats`, { userIds: selectedUserIds}, {headers}).pipe(
+    return this.http.post<{data: Chat}>(`${this.apiUrl}chats`, { userIds: selectedUserIds, chat_type: 'other'}, {headers}).pipe(
       catchError((error: HttpErrorResponse) => {
         // 409 (Conflict), перенаправляем на существующий чат
         if (error.status === 409 && error.error && error.error.data && error.error.data.id) {

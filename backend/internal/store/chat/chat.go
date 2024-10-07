@@ -167,7 +167,7 @@ func (s *store) CreateChat(ctx context.Context, data chat.Chat) (chat.Chat, erro
 	return data, nil
 }
 
-func (s *store) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, error) {
+func (s *store) FindChatByUsers(ctx context.Context, userIds []int, chatType string) (chat.Chat, error) {
 	var foundChat core.Chat
 
 	err := s.DB.WithContext(ctx).
@@ -175,6 +175,7 @@ func (s *store) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, 
 		Joins("JOIN chat_members cm ON cm.chat_id = chats.id").
 		Where("cm.user_id IN ?", userIds).
 		Where("chats.is_deleted = false").
+		Where("chats.chat_type = ?", chatType).
 		Group("chats.id, cm.chat_id").
 		Having("COUNT(DISTINCT cm.user_id) = ?", len(userIds)).
 		Having("COUNT(DISTINCT cm.user_id) = (SELECT COUNT(*) FROM chat_members WHERE chat_members.chat_id = cm.chat_id)").
