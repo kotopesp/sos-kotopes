@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/contrib/jwt v1.0.10
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/swagger v1.1.0
+	github.com/gofiber/websocket/v2 v2.2.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
@@ -21,8 +22,10 @@ require (
 )
 
 require (
+	github.com/fasthttp/websocket v1.5.3 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 )
 

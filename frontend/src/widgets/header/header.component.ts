@@ -1,5 +1,5 @@
 import {Component, OnInit, signal, WritableSignal} from '@angular/core';
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
 import {ProfilePopupComponent} from "./ui/profile-popup/profile-popup.component";
 import {NotificationPopupComponent} from "./ui/notification-popup/notification-popup.component";
@@ -30,7 +30,7 @@ export class HeaderComponent implements OnInit {
   isAuthOverlay: WritableSignal<boolean>;
   isRegisterOverlay: WritableSignal<boolean>;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private router: Router) {
     this.isAuth = signal<boolean>(false);
     this.isAuthOverlay = signal<boolean>(false);
     this.isRegisterOverlay = signal<boolean>(false);
@@ -69,4 +69,8 @@ export class HeaderComponent implements OnInit {
       className: 'header__how-to-help'
     },
   ]
+
+  redirectToChats(): void {
+    this.router.navigate(['/chats']);
+  }
 }

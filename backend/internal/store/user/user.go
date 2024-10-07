@@ -3,9 +3,10 @@ package user
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
+
+	"fmt"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -21,8 +22,9 @@ func New(pg *postgres.Postgres) core.UserStore {
 	return &store{pg}
 }
 
-func (s *store) GetUser(ctx context.Context, id int) (user core.User, err error) {
-	err = s.DB.WithContext(ctx).
+func (s *store) GetUser(ctx context.Context, id int) (core.User, error) {
+	var user core.User
+	err := s.DB.WithContext(ctx).
 		Table("users").
 		Where("id = ?", id).
 		First(&user).Error

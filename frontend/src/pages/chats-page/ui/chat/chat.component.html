@@ -11,19 +11,23 @@
     <div class="block__messages">
       <div class="block__user__info">
         <div class="block__username fw700 ft18">
-          Тимур Зейналов
+          {{ chat.title}}
         </div>
         <div class="block__time__message fw400 ft16">
-          18:40
         </div>
       </div>
       <div class="block__message__info ft18 fw400">
         <div class="message">
-          Го в бравл?
+          <div *ngIf="chat.last_message?.sender_name !== ''">
+            {{ chat.last_message?.sender_name}}: {{chat.last_message?.message_content}}
+          </div>
+          <div *ngIf="chat.last_message?.sender_name === ''">
+            {{ 'No messages yet' }}
+          </div>
         </div>
 
-        <div class="message__count">
-          2
+        <div *ngIf="chat.unread_count > 0" class="message__count">
+          {{ chat.unread_count }}
         </div>
       </div>
     </div>

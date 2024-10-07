@@ -26,10 +26,19 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
+	websocketmanager "github.com/kotopesp/sos-kotopes/internal/controller/http/websockets"
+	chatservice "github.com/kotopesp/sos-kotopes/internal/service/chat"
+	chatmemberservice "github.com/kotopesp/sos-kotopes/internal/service/chat_member"
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
+
+	messageservice "github.com/kotopesp/sos-kotopes/internal/service/message"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
+	chatstore "github.com/kotopesp/sos-kotopes/internal/store/chat"
+	chatmemberstore "github.com/kotopesp/sos-kotopes/internal/store/chat_member"
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
+
+	messagestore "github.com/kotopesp/sos-kotopes/internal/store/message"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
@@ -62,6 +71,10 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
+	chatStore := chatstore.New(pg)
+	messageStore := messagestore.New(pg)
+	chatMemberStore := chatmemberstore.New(pg)
+	webSocketManager := websocketmanager.NewWebSocketManager()
 	refreshSessionStore := refreshsessionstore.New(pg)
 
 	// Services
@@ -84,6 +97,9 @@ func Run(cfg *config.Config) {
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	chatService := chatservice.New(chatStore, userStore)
+	messageService := messageservice.New(messageStore)
+	chatMemberService := chatmemberservice.New(chatMemberStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -103,9 +119,12 @@ func Run(cfg *config.Config) {
 		postService,
 		userService,
 		roleService,
+		chatService,
+		messageService,
+		chatMemberService,
 		formValidator,
+		webSocketManager,
 	)
-
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
 	err = app.Listen(cfg.HTTP.Port)
 	if err != nil {

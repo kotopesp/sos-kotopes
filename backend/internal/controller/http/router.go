@@ -4,8 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/swagger"
+	"github.com/gofiber/websocket/v2"
 	_ "github.com/kotopesp/sos-kotopes/docs"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/websockets"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
@@ -18,6 +20,10 @@ type Router struct {
 	userService          core.UserService
 	roleService          core.RoleService
 	userFavouriteService core.UserFavouriteService
+	chatService          core.ChatService
+	messageService       core.MessageService
+	chatMemberService    core.ChatMemberService
+	webSocketManager     *websockets.WebSocketManager
 }
 
 func NewRouter(
@@ -27,16 +33,24 @@ func NewRouter(
 	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
+	chatService core.ChatService,
+	messageService core.MessageService,
+	chatMemberService core.ChatMemberService,
 	formValidator validator.FormValidatorService,
+	webSocketManager *websockets.WebSocketManager,
 ) {
 	router := &Router{
-		app:            app,
-		formValidator:  formValidator,
-		authService:    authService,
-		postService:    postService,
-		userService:    userService,
-		roleService:    roleService,
-		commentService: commentService,
+		app:               app,
+		formValidator:     formValidator,
+		authService:       authService,
+		postService:       postService,
+		userService:       userService,
+		roleService:       roleService,
+		commentService:    commentService,
+		chatService:       chatService,
+		messageService:    messageService,
+		chatMemberService: chatMemberService,
+		webSocketManager:  webSocketManager,
 	}
 
 	router.initRequestMiddlewares()
@@ -52,7 +66,12 @@ func (r *Router) initRoutes() {
 	r.app.Get("/swagger/*", swagger.HandlerDefault) // default
 
 	v1 := r.app.Group("/api/v1")
-	// comment
+
+	// websocket service
+	v1.Use("/ws/:chatID", r.webSocketManager.HandleWebSocket)
+	v1.Get("/ws/:chatID", websocket.New(r.webSocketManager.WebSocketEndpoint))
+
+	// comment_service
 	v1.Get("/posts/:post_id/comments", r.getComments)
 	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
 	v1.Patch("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
@@ -97,6 +116,26 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
+
+	// chats
+	v1.Get("/chats", r.protectedMiddleware(), r.getAllChats)
+	v1.Get("/chats/:chat_id", r.protectedMiddleware(), r.getChatWithUsersByID)
+	v1.Post("/chats", r.protectedMiddleware(), r.createChat)
+	v1.Delete("/chats/:chat_id", r.protectedMiddleware(), r.deleteChat)
+
+	// messages
+	v1.Patch("/chats/:chat_id/unread", r.protectedMiddleware(), r.markMessagesAsRead)
+	v1.Get("/chats/:chat_id/unread", r.protectedMiddleware(), r.getUnreadMessageCount)
+	v1.Get("/chats/:chat_id/messages", r.protectedMiddleware(), r.getAllMessages)
+	v1.Post("/chats/:chat_id/messages", r.protectedMiddleware(), r.createMessage)
+	v1.Patch("/chats/:chat_id/messages/:message_id", r.protectedMiddleware(), r.updateMessage)
+	v1.Delete("/chats/:chat_id/messages/:message_id", r.protectedMiddleware(), r.deleteMessage)
+
+	// chat members
+	v1.Get("/chats/:chat_id/members", r.protectedMiddleware(), r.getAllMembers)
+	v1.Post("/chats/:chat_id/members/:user_id", r.protectedMiddleware(), r.addMemberToChat)
+	v1.Patch("/chats/:chat_id/members/:user_id", r.protectedMiddleware(), r.updateMemberInfo)
+	v1.Delete("/chats/:chat_id/members/:user_id", r.protectedMiddleware(), r.deleteMemberFromChat)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

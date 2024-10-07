@@ -18,8 +18,8 @@
             <div class="create__new__chat" *ngIf="createChat">
               <div class="create__chat__header">
                 <img src="/assets/icons/exit-cross-icon.svg" width="25" height="25" alt="icon" id="exit__button"
-                     (click)="createChat = false"
-                     (keydown.enter)="createChat = false"
+                     (click)="notCreatingChat()"
+                     (keydown.enter)="notCreatingChat()"
                      tabindex="0"
                      role="button"
                      aria-pressed="false">
@@ -40,24 +40,28 @@
                     <span><input class="search-input fw400 ft20" type="text" placeholder="Поиск"></span>
                   </form>
                 </div>
-
+                
                 <div class="main__add__new__person">
-                  <div class="main__block__persons">
-                    <app-add-to-chat [countInArray]="countInArray" />
-                    <app-add-to-chat [countInArray]="countInArray" />
-                    <app-add-to-chat [countInArray]="countInArray" />
-                    <app-add-to-chat [countInArray]="countInArray" />
-                    <app-add-to-chat [countInArray]="countInArray" />
+                  <div *ngIf="favusers.length > 0">
+                    <app-add-to-chat 
+                      *ngFor="let user of favusers"
+                      [username]="user.username"
+                      [userId]="user.id"
+                      [countInArray]="countInArray"
+                      (userSelectionChanged)="onUserSelectionChanged($event)">
+                    </app-add-to-chat>
                   </div>
                 </div>
-
+                <div *ngIf="favusers.length === 0">
+                  <p>No favorite users found.</p>
+                </div>
               </div>
 
               <div class="create__chat__footer">
                 <div class="footer__footer">
                   <span class="ft16 fw400" [ngStyle]="{color: 'var(--gray-text-tag)'}">Всего участников: <span
                     class="ft18 fw700">{{ countInArray() }}</span></span>
-                  <button id="footer__create__chat" class="ft20 fw700">Создать чат</button>
+                  <button id="footer__create__chat" class="ft20 fw700" (click)="onCreateChat()">Создать чат</button>
                 </div>
               </div>
             </div>
@@ -77,23 +81,22 @@
               </div>
             </div>
             <div class="all__chats">
-              <app-chat appToggleActive (click)="currentChat = true"/>
-              <app-chat appToggleActive (click)="currentChat = true"/>
-              <app-chat appToggleActive (click)="currentChat = true"/>
-              <app-chat appToggleActive (click)="currentChat = true"/>
-              <app-chat appToggleActive (click)="currentChat = true"/>
-              <app-chat appToggleActive (click)="currentChat = true"/>
-              <app-chat appToggleActive (click)="currentChat = true"/>
+              <app-chat *ngFor="let chat of chatList"
+              appToggleActive 
+              [chat]="chat"
+              [ngClass]="{ 'active': isActiveChat(chat) }"
+              (click)="selectChat(chat)"/>
             </div>
           </div>
           <div class="block__current__chat">
-            <div *ngIf="currentChat" class="current__chat">
+            <div *ngIf="currentChat.id !== -1" class="current__chat">
               <div class="block__user__info">
                 <div>
                   <img src="/assets/images/test-cat2.png" alt="avatar" class="message__user__avatar">
                 </div>
                 <div>
-                  <p>Родион Суворов</p>
+                  <p>{{ currentChat.title }}</p> 
+                  <!-- TODO: сюда выводить онлайн и аватарку -->
                   <p id="time__last__online">2 дня назад</p>
                 </div>
               </div>
@@ -102,39 +105,48 @@
               </div>
               <div #scrollableContainer id="block__messages">
                 <div class="container__messages">
-                  <app-message [answer]="false"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="false"/>
-                  <app-message [answer]="false"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="true"/>
-                  <app-message [answer]="false"/>
-                  <app-message [answer]="false"/>
+                  <div *ngFor="let message of messages">
+                    <div class="message">
+                      <app-message 
+                      [name]="message.user_id === userId ? '': message.sender_name"
+                      [answer]="message.user_id === userId" 
+                      [messageContent]="message.message_content" 
+                      [messageTime]="formatTime(message.created_at)"/>
+                    </div>
+                  </div>
                 </div>
               </div>
+              <form action="" 
+              [formGroup]="sendMsgForm" 
+              (ngSubmit)="onSubmit()">
               <div class="block__current__message">
                 <div class="block__clip">
                   <img src="/assets/icons/clip-icon.svg" alt="icon">
                 </div>
-                <textarea autocomplete="no" placeholder="Введите сообщение" id="textarea__message" rows="1"></textarea>
+                <textarea
+                  formControlName="msgText"
+                  placeholder="Введите сообщение" 
+                  id="textarea__message" 
+                  rows="1"
+                  (keydown.enter)="onSubmit($event)">
+                </textarea>
                 <div class="block__send__message">
+                  <button class="block__send__message"> 
                   <img src="/assets/icons/send-message-icon.svg" alt="icon">
+                  </button>
                 </div>
               </div>
-            </div>
-            <div *ngIf="!currentChat" class="current__chat__none">
-              <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
-              <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
-                class="start__new__chat"
-                (click)="createChat = true"
-                (keydown.enter)="createChat = true"
-                tabindex="0"
-                role="button"
-                aria-pressed="false">начните новый</span></p></span></div>
-            </div>
+            </form>
+          </div>
+          <div *ngIf="currentChat.id === -1" class="current__chat__none">
+            <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
+            <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
+              class="start__new__chat"
+              (click)="createChat = true"
+              (keydown.enter)="createChat = true"
+              tabindex="0"
+              role="button"
+              aria-pressed="false">начните новый</span></p></span></div>
           </div>
         </div>
       </div>

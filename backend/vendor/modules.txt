@@ -16,6 +16,9 @@ github.com/brianvoe/gofakeit/v7/source
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
+# github.com/fasthttp/websocket v1.5.3
+## explicit; go 1.17
+github.com/fasthttp/websocket
 # github.com/gabriel-vasile/mimetype v1.4.3
 ## explicit; go 1.20
 github.com/gabriel-vasile/mimetype
@@ -61,6 +64,9 @@ github.com/gofiber/fiber/v2/utils
 # github.com/gofiber/swagger v1.1.0
 ## explicit; go 1.18
 github.com/gofiber/swagger
+# github.com/gofiber/websocket/v2 v2.2.1
+## explicit; go 1.17
+github.com/gofiber/websocket/v2
 # github.com/golang-jwt/jwt/v5 v5.2.1
 ## explicit; go 1.18
 github.com/golang-jwt/jwt/v5
@@ -165,6 +171,9 @@ github.com/rivo/uniseg
 github.com/rs/zerolog
 github.com/rs/zerolog/internal/cbor
 github.com/rs/zerolog/internal/json
+# github.com/savsgio/gotils v0.0.0-20230208104028-c358bd845dee
+## explicit; go 1.20
+github.com/savsgio/gotils/strconv
 # github.com/stretchr/objx v0.5.2
 ## explicit; go 1.20
 github.com/stretchr/objx

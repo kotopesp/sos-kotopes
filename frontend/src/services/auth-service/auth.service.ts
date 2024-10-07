@@ -31,6 +31,21 @@ export class AuthService {
     return !!this.token;
   }
 
+  get getToken() : string | null {
+    return localStorage.getItem('authToken');
+  }
+
+  get getIdFromToken() : number {
+    if (!this.token) {
+      this.token = this.cookieService.get('token')
+    }
+    const payload = this.token.split('.')[1];
+    const decoded = atob(payload);
+    const decObject = JSON.parse(decoded);
+    const res = decObject.id;
+    return res;
+  }
+
   login(payload: {
     password: string,
     username: string,
@@ -40,7 +55,8 @@ export class AuthService {
       payload
     ).pipe(
       tap((res: LoginResponse) => {
-          this.saveTokens(res)
+          this.saveTokens(res);
+          localStorage.setItem('authToken', res.data);
         }
       )
     );
