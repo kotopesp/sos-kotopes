@@ -8,8 +8,12 @@ import { NgIf } from '@angular/common';
   styleUrl: './message.component.scss'
 })
 export class MessageComponent {
-  @Input() answer: boolean = false;
-  @Input() messageContent: string = '';
-  @Input() messageTime: string = '';
-  @Input() name: string = '';
+  @Input()
+  answer!: boolean;
+  @Input()
+  messageContent!: string;
+  @Input()
+  messageTime!: string;
+  @Input()
+  name!: string;
 }

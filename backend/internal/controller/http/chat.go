@@ -52,12 +52,12 @@ func (r *Router) getChatWithUsersByID(ctx *fiber.Ctx) error {
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	chat, err := r.chatService.GetChatWithUsersByID(ctx.UserContext(), id)
+	data, err := r.chatService.GetChatWithUsersByID(ctx.UserContext(), id)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(chat))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(data))
 }
 
 func (r *Router) createChat(ctx *fiber.Ctx) error {

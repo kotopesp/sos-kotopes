@@ -23,7 +23,7 @@ type Router struct {
 	chatService          core.ChatService
 	messageService       core.MessageService
 	chatMemberService    core.ChatMemberService
-	webSocketManager     websockets.WebSocketManager
+	webSocketManager     *websockets.WebSocketManager
 }
 
 func NewRouter(
@@ -37,7 +37,7 @@ func NewRouter(
 	messageService core.MessageService,
 	chatMemberService core.ChatMemberService,
 	formValidator validator.FormValidatorService,
-	webSocketManager websockets.WebSocketManager,
+	webSocketManager *websockets.WebSocketManager,
 ) {
 	router := &Router{
 		app:               app,

@@ -1,11 +1,14 @@
 package websockets
 
 import (
+	"context"
 	"log"
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type WebSocketManager struct {
@@ -13,8 +16,8 @@ type WebSocketManager struct {
 	mu          sync.Mutex                       // мьютекс для синхронизации
 }
 
-func NewWebSocketManager() WebSocketManager {
-	return WebSocketManager{
+func NewWebSocketManager() *WebSocketManager {
+	return &WebSocketManager{
 		connections: make(map[int]map[*websocket.Conn]bool),
 	}
 }
@@ -46,7 +49,9 @@ func (wsm *WebSocketManager) BroadcastMessage(chatID int, message []byte) {
 	for conn := range wsm.connections[chatID] {
 		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 			log.Printf("Error sending message: %v", err)
-			conn.Close()
+			if err := conn.Close(); err != nil {
+				logger.Log().Error(context.Background(), err.Error())
+			}
 			delete(wsm.connections[chatID], conn)
 		}
 	}
@@ -67,7 +72,10 @@ func (wsm *WebSocketManager) HandleWebSocket(c *fiber.Ctx) error {
 }
 
 func (wsm *WebSocketManager) WebSocketEndpoint(c *websocket.Conn) {
-	chatID := c.Locals("chatID").(int)
+	chatID, ok := c.Locals("chatID").(int)
+	if !ok {
+		logger.Log().Error(context.Background(), model.ErrInvalidRequestParameter.Error())
+	}
 
 	// Добавляем соединение
 	wsm.AddConnection(chatID, c)
@@ -75,14 +83,17 @@ func (wsm *WebSocketManager) WebSocketEndpoint(c *websocket.Conn) {
 	defer func() {
 		// Удаляем соединение по завершению работы
 		wsm.RemoveConnection(chatID, c)
-		c.Close()
+		err := c.Close()
+		if err != nil {
+			logger.Log().Error(context.Background(), err.Error())
+		}
 	}()
 
 	// Читаем и отправляем сообщение всем подключенным к чату
 	for {
 		messageType, message, err := c.ReadMessage()
 		if err != nil {
-			log.Println("Error reading message:", err)
+			logger.Log().Error(context.Background(), err.Error())
 			break
 		}
 

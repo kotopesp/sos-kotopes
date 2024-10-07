@@ -15,11 +15,14 @@ var (
 		}
 	}
 
-	ErrInvalidTokenID       = errors.New("invalid token id")
-	ErrInvalidTokenUsername = errors.New("invalid token username")
-	ErrOAuthStateMismatch   = errors.New("states do not match")
-	ErrValidationFailed     = errors.New("validation failed")
-	ErrInvalidBody          = errors.New("invalid body")
-	ErrInvalidPhotoSize     = errors.New("photo is too large")
-	ErrInvalidExtension     = errors.New("invalid photo extension")
+	ErrInvalidTokenID          = errors.New("invalid token id")
+	ErrInvalidTokenUsername    = errors.New("invalid token username")
+	ErrOAuthStateMismatch      = errors.New("states do not match")
+	ErrValidationFailed        = errors.New("validation failed")
+	ErrInvalidBody             = errors.New("invalid body")
+	ErrInvalidPhotoSize        = errors.New("photo is too large")
+	ErrInvalidExtension        = errors.New("invalid photo extension")
+	ErrInvalidChatID           = errors.New("invalid chat id")
+	ErrInvalidMessageID        = errors.New("invalid message id")
+	ErrInvalidRequestParameter = errors.New("invalid request parameter")
 )

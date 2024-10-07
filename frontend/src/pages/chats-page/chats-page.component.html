@@ -89,7 +89,7 @@
             </div>
           </div>
           <div class="block__current__chat">
-            <div *ngIf="currentChat.id != -1" class="current__chat">
+            <div *ngIf="currentChat.id !== -1" class="current__chat">
               <div class="block__user__info">
                 <div>
                   <img src="/assets/images/test-cat2.png" alt="avatar" class="message__user__avatar">
@@ -118,8 +118,7 @@
               </div>
               <form action="" 
               [formGroup]="sendMsgForm" 
-              (ngSubmit)="onSubmit()"
-              (keydown.enter)="onSubmit($event)">
+              (ngSubmit)="onSubmit()">
               <div class="block__current__message">
                 <div class="block__clip">
                   <img src="/assets/icons/clip-icon.svg" alt="icon">
@@ -128,7 +127,8 @@
                   formControlName="msgText"
                   placeholder="Введите сообщение" 
                   id="textarea__message" 
-                  rows="1">
+                  rows="1"
+                  (keydown.enter)="onSubmit($event)">
                 </textarea>
                 <div class="block__send__message">
                   <button class="block__send__message"> 
@@ -138,7 +138,7 @@
               </div>
             </form>
           </div>
-          <div *ngIf="currentChat.id == -1" class="current__chat__none">
+          <div *ngIf="currentChat.id === -1" class="current__chat__none">
             <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
             <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
               class="start__new__chat"

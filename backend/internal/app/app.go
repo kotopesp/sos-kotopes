@@ -25,7 +25,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
-	webSocketManager "github.com/kotopesp/sos-kotopes/internal/controller/http/websockets"
+	websocketmanager "github.com/kotopesp/sos-kotopes/internal/controller/http/websockets"
 	chatservice "github.com/kotopesp/sos-kotopes/internal/service/chat"
 	chatmemberservice "github.com/kotopesp/sos-kotopes/internal/service/chat_member"
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
@@ -73,7 +73,7 @@ func Run(cfg *config.Config) {
 	chatStore := chatstore.New(pg)
 	messageStore := messagestore.New(pg)
 	chatMemberStore := chatmemberstore.New(pg)
-	webSocketManager := webSocketManager.NewWebSocketManager()
+	webSocketManager := websocketmanager.NewWebSocketManager()
 	refreshSessionStore := refreshsessionstore.New(pg)
 
 	// Services
@@ -125,7 +125,6 @@ func Run(cfg *config.Config) {
 		webSocketManager,
 	)
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
-	//err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
 	err = app.Listen(cfg.HTTP.Port)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())

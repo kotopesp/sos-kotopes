@@ -5,12 +5,11 @@ import (
 	"errors"
 	"time"
 
-	"gorm.io/gorm"
-
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/chat"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	err "github.com/kotopesp/sos-kotopes/internal/store/errors"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
+	"gorm.io/gorm"
 )
 
 type (
@@ -29,7 +28,7 @@ func ifChatExists(s *store, ctx context.Context, chatID int) error {
 		return err
 	}
 	if counter != 1 {
-		return err.ErrInvalidChatID
+		return model.ErrInvalidChatID
 	}
 	return nil
 }
@@ -54,7 +53,7 @@ func convertToModelChat(coreChat core.Chat, users []chat.User, lastMessage chat.
 		UpdatedAt:   coreChat.UpdatedAt,
 		Users:       users,
 		LastMessage: lastMessage,
-		UnreadCount: int(unreadCount),
+		UnreadCount: unreadCount,
 	}
 }
 

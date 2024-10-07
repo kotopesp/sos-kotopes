@@ -7,6 +7,7 @@ import (
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	websocketmanager "github.com/kotopesp/sos-kotopes/internal/controller/http/websockets"
 	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 )
 
@@ -31,7 +32,11 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	mockCommentService := mocks.NewMockCommentService(t)
 	mockRoleService := mocks.NewMockRoleService(t)
 	mockUserService := mocks.NewMockUserService(t)
+	mockChatService := mocks.NewMockChatService(t)
+	mockChatMemberService := mocks.NewMockChatMemberService(t)
+	mockMessageService := mocks.NewMockMessageService(t)
 	formValidatorService := validator.New(ctx, baseValidator.New())
+	webSocketManager := websocketmanager.NewWebSocketManager()
 
 	mockAuthService.On("GetJWTSecret").Return(secret)
 
@@ -43,7 +48,11 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 		mockPostService,
 		mockUserService,
 		mockRoleService,
+		mockChatService,
+		mockMessageService,
+		mockChatMemberService,
 		formValidatorService,
+		webSocketManager,
 	)
 
 	return app, appDependencies{

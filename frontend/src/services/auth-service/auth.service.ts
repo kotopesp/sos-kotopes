@@ -42,7 +42,7 @@ export class AuthService {
     const payload = this.token.split('.')[1];
     const decoded = atob(payload);
     const decObject = JSON.parse(decoded);
-    var res = decObject.id;
+    const res = decObject.id;
     return res;
   }
 

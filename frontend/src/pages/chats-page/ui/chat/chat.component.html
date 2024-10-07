@@ -18,10 +18,10 @@
       </div>
       <div class="block__message__info ft18 fw400">
         <div class="message">
-          <div *ngIf="chat.last_message?.sender_name != ''">
+          <div *ngIf="chat.last_message?.sender_name !== ''">
             {{ chat.last_message?.sender_name}}: {{chat.last_message?.message_content}}
           </div>
-          <div *ngIf="chat.last_message?.sender_name == ''">
+          <div *ngIf="chat.last_message?.sender_name === ''">
             {{ 'No messages yet' }}
           </div>
         </div>

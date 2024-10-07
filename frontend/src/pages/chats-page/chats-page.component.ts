@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, ElementRef, signal, ViewChild, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, signal, ViewChild, OnInit, OnDestroy} from '@angular/core';
 import {AppChatTypeButtonComponent} from "../../entities/chat-type-button/app-chat-type-button.component";
 import {Button} from "../../model/button";
 import {NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase} from "@angular/common";
@@ -38,7 +38,7 @@ import { AuthService } from '../../services/auth-service/auth.service';
   templateUrl: './chats-page.component.html',
   styleUrl: './chats-page.component.scss'
 })
-export class ChatsPageComponent implements AfterViewChecked, OnInit {
+export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
   currentChat: Chat = { id: -1, title: '', chat_type: '', unread_count: 0 , users: [], created_at: new Date};
   createChat = false;
 
@@ -75,11 +75,11 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   }
 
   public messages: Message[] = [];
-  public messageText: string = '';
+  public messageText = '';
   public favusers: { id: number, username: string}[] = [];
   public chatList: Chat[] = [];
-  public userId: number = -1;
-  private refreshInterval: any;
+  public userId = -1;
+  private refreshInterval!: NodeJS.Timeout;
   
   constructor(private router: Router, private authService: AuthService, private activatedRoute: ActivatedRoute, private chatService: ChatService, private websocketService: WebsocketService, private http: HttpClient) {}
   
@@ -90,7 +90,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     );
     
     this.websocketService.getMessages().subscribe((msg: string) => {
-      const message = <Message>JSON.parse(msg)[0];
+      const message = JSON.parse(msg)[0] as Message;
       this.chatService.updateChat(message, this.currentChat);
       this.messages.push(message);
     });
@@ -137,11 +137,11 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
     this.messageText = this.sendMsgForm.controls['msgText'].value;
     this.sendMsgForm.reset();
     if (this.messageText && this.messageText.trim()) {
-      var msgToSend = <Message>{ 
+      const msgToSend = { 
         message_content: this.messageText,
         user_id: this.userId,
         chat_id: this.currentChat.id,
-        };
+        } as Message;
       this.websocketService.sendMessage(JSON.stringify([msgToSend]));
       this.messageText = '';
     }
@@ -167,7 +167,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit {
   notCreatingChat() {
     this.createChat = false;
     this.selectedUserIds = [];
-    this.countInArray.update(_ => 0);
+    this.countInArray.update(() => 0);
   }
 
   selectChat(chat: Chat) {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/store/errors"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
@@ -25,7 +25,7 @@ func ifChatExists(s *store, ctx context.Context, chatID int) error {
 		return err
 	}
 	if counter != 1 {
-		return errors.ErrInvalidChatID
+		return model.ErrInvalidChatID
 	}
 	return nil
 }

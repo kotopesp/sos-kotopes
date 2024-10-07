@@ -22,12 +22,12 @@ export class ChatService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken}`
     });
-    var chat = this.http.get<Chat>(url, {headers}).pipe(
-      map((chat) => <Chat>{
+    const chat = this.http.get<Chat>(url, {headers}).pipe(
+      map((chat) => ({
         ...chat,
         unread_count: 0,
-      })
-    );
+      } as Chat)
+    ));
     this.readMessages(id);
     return chat;
   }
@@ -42,7 +42,7 @@ export class ChatService {
       catchError((error: HttpErrorResponse) => {
         // 409 (Conflict), перенаправляем на существующий чат
         if (error.status === 409 && error.error && error.error.data && error.error.data.id) {
-          var resp = this.getChatById(error.error.data.id).pipe(
+          const resp = this.getChatById(error.error.data.id).pipe(
             map(chat => (
               {data: chat}
             ))
@@ -52,12 +52,12 @@ export class ChatService {
           return throwError(() => error); // Если ошибка другая, пробрасываем дальше
         }
       }),
-      map(chat => <Chat>{
+      map(chat => ({
         ...chat.data,
         title: this.getTitle(chat.data.users, userId),
         unread_count: 0,
       })
-    );
+    ));
   }
 
   updateChat(message: Message, currentChat: Chat) {
@@ -94,7 +94,7 @@ export class ChatService {
   }
 
   getTitle(users: User[], currentUser: number) : string {
-    var sortusers = users.sort().filter(u => u.id != currentUser)
+    const sortusers = users.sort().filter(u => u.id != currentUser)
     return sortusers.length != 0 ? sortusers.map(user => user.username).join(', ') : "Избранное";
   }
 
@@ -102,15 +102,13 @@ export class ChatService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken}`
     });
-    var resp = this.http.get<{ data: any, }>(`${this.apiUrl}chats/${chatId}`, {headers})
+    const resp = this.http.get<{ data: Chat, }>(`${this.apiUrl}chats/${chatId}`, {headers})
     .pipe(
-      map(responce => <Chat> {
-        id: responce.data.id,
-        chat_type: responce.data.chat_type,
-        users: responce.data.users,
+      map(responce => ({
+        ...responce.data,
         unread_count: 0,
       })
-    );
+    ));
     return resp;
   }
 
@@ -118,7 +116,7 @@ export class ChatService {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authService.getToken}`
     });
-    var resp = this.http.patch(`${this.apiUrl}chats/${chatId}/unread`, null, {headers}).pipe(
+    const resp = this.http.patch(`${this.apiUrl}chats/${chatId}/unread`, null, {headers}).pipe(
       map(resp => {
         return resp;
       })
@@ -166,7 +164,7 @@ export class ChatService {
           const chats = response.data.chats;
           const chatObservables = chats.map(chat => 
             this.getUnreadCount(chat.id).pipe(
-              map(unreadCount => (<Chat>{
+              map(unreadCount => ({
                 ...chat,
                 title: this.getTitle(chat.users, userId),
                 last_message: {
@@ -174,7 +172,7 @@ export class ChatService {
                   sender_name: chat.last_message ? (chat.last_message.user_id == userId ? "Вы" : chat.last_message.sender_name) : "",
                 },
                 unread_count: unreadCount
-              })),
+              } as Chat)),
               catchError(() => of({
                 ...chat,
                 title: this.getTitle(chat.users, userId),

@@ -21,8 +21,12 @@
 
     <div *ngIf="isAuth()" class="header__auth__profile">
       <div class="header__auth__button message__block">
-        <a (click)="redirectToChats()">
-          <img src="/assets/icons/message-icon.svg" class="header__message__icon" alt="icon">
+        <a (click)="redirectToChats()"
+           (keydown.ctrlKey+keydown.m)="redirectToChats()"
+            tabindex="0">
+          <img src="/assets/icons/message-icon.svg" 
+          class="header__message__icon" 
+          alt="icon">
         </a>
         <app-message-popup class="popups message__popup"/>
       </div>

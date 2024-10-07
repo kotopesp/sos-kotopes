@@ -18,15 +18,13 @@ export class WebsocketService {
   connect(chatID: number): void {
     this.socket = new WebSocket(`ws:${this.apiUrl.split("//")[1]}ws/${chatID}`);
     this.chatId = chatID;
-    this.socket.onopen = () => {
-    };
+    // this.socket.onopen = () => {};
 
     this.socket.onmessage = (event) => {
       this.messagesSubject.next(event.data);
     };
 
-    this.socket.onclose = () => {
-    };
+    // this.socket.onclose = () => {};
   }
 
   sendMessage(message: string): void {
@@ -34,18 +32,19 @@ export class WebsocketService {
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${this.authService.getToken}`
       });
-      var resp = this.http.post<{data: any}>(`${this.apiUrl}chats/${this.chatId}/messages`, JSON.parse(message)[0], {headers}).pipe(
-              map(response => <Message>{
-                user_id: response.data.user_id,
-                chat_id: this.chatId,
-                message_content: response.data.message_content,
-                sender_name: response.data.sender_name,
-                created_at: response.data.created_at,
-              }),
-            );
-            resp.subscribe(
-              (response => this.socket.send(JSON.stringify([response]))),
-            );
+      const resp = this.http.post<{ data: Message }>(`${this.apiUrl}chats/${this.chatId}/messages`, JSON.parse(message)[0], { headers }).pipe(
+        map(response => ({
+          user_id: response.data.user_id,
+          chat_id: this.chatId,
+          message_content: response.data.message_content,
+          sender_name: response.data.sender_name,
+          created_at: response.data.created_at,
+        } as Message)),
+      );
+      
+      resp.subscribe(
+        (response => this.socket.send(JSON.stringify([response]))),
+      );
     } else {
       console.error('WebSocket is not open.');
     }
