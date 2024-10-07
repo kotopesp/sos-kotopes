@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {catchError, Observable, tap, throwError} from "rxjs";
+import {Observable, tap} from "rxjs";
 import {CookieService} from "ngx-cookie-service";
 import {Router} from "@angular/router";
 
@@ -60,20 +60,6 @@ export class AuthService {
         }
       )
     );
-  }
-
-  refreshAuthToken() {
-    return this.http.post(
-      `${this.baseApiUrl}auth/v1/auth/token/refresh`,
-      ''
-    ).pipe(catchError(
-        error => {
-          this.logout()
-
-          return throwError(error);
-        }
-      )
-    )
   }
 
   logout() {
