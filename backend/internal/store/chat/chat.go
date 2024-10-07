@@ -24,7 +24,11 @@ func New(pg *postgres.Postgres) core.ChatStore {
 
 func ifChatExists(s *store, ctx context.Context, chatID int) error {
 	var counter int64
-	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", chatID).Where("is_deleted", false).Count(&counter).Error; err != nil {
+	if err := s.DB.WithContext(ctx).
+		Model(&core.Chat{}).
+		Where("id", chatID).
+		Where("is_deleted", false).
+		Count(&counter).Error; err != nil {
 		return err
 	}
 	if counter != 1 {
@@ -73,6 +77,7 @@ func (s *store) GetUnreadMessageCount(ctx context.Context, chatID, userID int) (
 		Model(&core.Message{}).
 		Joins("LEFT JOIN message_read mr ON messages.id = mr.message_id AND mr.user_id = ?", userID).
 		Where("messages.chat_id = ? AND mr.id IS NULL", chatID).
+		Where("EXISTS (SELECT 1 FROM chat_members WHERE chat_members.chat_id = ? AND chat_members.user_id = ?)", chatID, userID).
 		Count(&count).Error
 
 	if err != nil {
@@ -103,7 +108,13 @@ func (s *store) GetAllChats(ctx context.Context, sortType string, userID int) ([
 
 	for _, chatEl := range chats {
 		var message core.Message
-		err := s.DB.WithContext(ctx).Model(&core.Message{}).Where("is_deleted = false").Where("chat_id = ?", chatEl.ID).Order("created_at desc").Limit(1).Find(&message).Error
+		err := s.DB.WithContext(ctx).
+			Model(&core.Message{}).
+			Where("is_deleted = false").
+			Where("chat_id = ?", chatEl.ID).
+			Order("created_at desc").
+			Limit(1).
+			Find(&message).Error
 		if err != nil {
 			message = core.Message{}
 		}
@@ -121,13 +132,14 @@ func (s *store) GetAllChats(ctx context.Context, sortType string, userID int) ([
 	return chatResponses, nil
 }
 
-func (s *store) GetChatWithUsersByID(ctx context.Context, id int) (chat.Chat, error) {
-	var foundChat = core.Chat{ID: id, IsDeleted: false}
+func (s *store) GetChatWithUsersByID(ctx context.Context, chatID, userID int) (chat.Chat, error) {
+	var foundChat = core.Chat{ID: chatID, IsDeleted: false}
 	err := s.DB.WithContext(ctx).
 		Table("chats").
 		Joins("JOIN chat_members cm ON cm.chat_id = chats.id").
 		Joins("JOIN users u ON u.id = cm.user_id").
-		Where("chats.id = ? AND cm.is_deleted = false", id).
+		Where("chats.id = ? AND cm.is_deleted = false", chatID).
+		Where("EXISTS (SELECT 1 FROM chat_members WHERE chat_members.chat_id = ? AND chat_members.user_id = ?)", chatID, userID).
 		Preload("Users").
 		First(&foundChat).Error
 	if err != nil {
@@ -147,7 +159,8 @@ func (s *store) CreateChat(ctx context.Context, data chat.Chat) (chat.Chat, erro
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 	}
-	if err := s.DB.WithContext(ctx).Create(&dataToInsert).Error; err != nil {
+	if err := s.DB.WithContext(ctx).
+		Create(&dataToInsert).Error; err != nil {
 		return data, err
 	}
 	data.ID = dataToInsert.ID
@@ -180,11 +193,16 @@ func (s *store) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, 
 	return chatResponse, nil
 }
 
-func (s *store) DeleteChat(ctx context.Context, id int) error {
-	if err := ifChatExists(s, ctx, id); err != nil {
+func (s *store) DeleteChat(ctx context.Context, chatID, userID int) error {
+	if err := ifChatExists(s, ctx, chatID); err != nil {
 		return err
 	}
-	if err := s.DB.WithContext(ctx).Model(&core.Chat{}).Where("id", id).Where("is_deleted", false).Updates(map[string]interface{}{"is_deleted": true, "deleted_at": time.Now()}).Error; err != nil {
+	if err := s.DB.WithContext(ctx).
+		Model(&core.Chat{}).
+		Where("id", chatID).
+		Where("is_deleted", false).
+		Where("EXISTS (SELECT 1 FROM chat_members WHERE chat_members.chat_id = ? AND chat_members.user_id = ?)", chatID, userID).
+		Updates(map[string]interface{}{"is_deleted": true, "deleted_at": time.Now()}).Error; err != nil {
 		return err
 	}
 	return nil
@@ -194,7 +212,8 @@ func (s *store) AddMemberToChat(ctx context.Context, data core.ChatMember) (core
 	if err := ifChatExists(s, ctx, data.ChatID); err != nil {
 		return core.ChatMember{}, err
 	}
-	if err := s.DB.WithContext(ctx).Create(&data).Error; err != nil {
+	if err := s.DB.WithContext(ctx).
+		Create(&data).Error; err != nil {
 		return data, err
 	}
 	return data, nil

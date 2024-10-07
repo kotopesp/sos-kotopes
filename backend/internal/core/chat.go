@@ -20,19 +20,19 @@ type (
 
 	ChatStore interface {
 		GetAllChats(ctx context.Context, sortType string, userID int) (chats []chat.Chat, err error)
-		GetChatWithUsersByID(ctx context.Context, id int) (chat chat.Chat, err error)
+		GetChatWithUsersByID(ctx context.Context, chatID, userID int) (chat chat.Chat, err error)
 		CreateChat(ctx context.Context, data chat.Chat) (chat chat.Chat, err error)
 		FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, error)
-		DeleteChat(ctx context.Context, id int) (err error)
+		DeleteChat(ctx context.Context, chatID, userID int) (err error)
 		AddMemberToChat(ctx context.Context, data ChatMember) (member ChatMember, err error)
 	}
 
 	ChatService interface {
 		GetAllChats(ctx context.Context, sortType string, userID int) (chats []chat.Chat, total int, err error)
-		GetChatWithUsersByID(ctx context.Context, id int) (chat chat.Chat, err error)
+		GetChatWithUsersByID(ctx context.Context, chatID, userID int) (chat chat.Chat, err error)
 		CreateChat(ctx context.Context, data chat.Chat, userIds []int) (chat chat.Chat, err error)
 		FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat, error)
-		DeleteChat(ctx context.Context, id int) (err error)
+		DeleteChat(ctx context.Context, chatID, userID int) (err error)
 		AddMemberToChat(ctx context.Context, data ChatMember) (member ChatMember, err error)
 	}
 )

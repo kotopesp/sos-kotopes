@@ -82,17 +82,17 @@ func (_c *MockMessageService_CreateMessage_Call) RunAndReturn(run func(context.C
 	return _c
 }
 
-// DeleteMessage provides a mock function with given fields: ctx, chatID, messageID
-func (_m *MockMessageService) DeleteMessage(ctx context.Context, chatID int, messageID int) error {
-	ret := _m.Called(ctx, chatID, messageID)
+// DeleteMessage provides a mock function with given fields: ctx, chatID, userID, messageID
+func (_m *MockMessageService) DeleteMessage(ctx context.Context, chatID int, userID int, messageID int) error {
+	ret := _m.Called(ctx, chatID, userID, messageID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteMessage")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
-		r0 = rf(ctx, chatID, messageID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, int) error); ok {
+		r0 = rf(ctx, chatID, userID, messageID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -108,14 +108,15 @@ type MockMessageService_DeleteMessage_Call struct {
 // DeleteMessage is a helper method to define mock.On call
 //   - ctx context.Context
 //   - chatID int
+//   - userID int
 //   - messageID int
-func (_e *MockMessageService_Expecter) DeleteMessage(ctx interface{}, chatID interface{}, messageID interface{}) *MockMessageService_DeleteMessage_Call {
-	return &MockMessageService_DeleteMessage_Call{Call: _e.mock.On("DeleteMessage", ctx, chatID, messageID)}
+func (_e *MockMessageService_Expecter) DeleteMessage(ctx interface{}, chatID interface{}, userID interface{}, messageID interface{}) *MockMessageService_DeleteMessage_Call {
+	return &MockMessageService_DeleteMessage_Call{Call: _e.mock.On("DeleteMessage", ctx, chatID, userID, messageID)}
 }
 
-func (_c *MockMessageService_DeleteMessage_Call) Run(run func(ctx context.Context, chatID int, messageID int)) *MockMessageService_DeleteMessage_Call {
+func (_c *MockMessageService_DeleteMessage_Call) Run(run func(ctx context.Context, chatID int, userID int, messageID int)) *MockMessageService_DeleteMessage_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(int))
 	})
 	return _c
 }
@@ -125,14 +126,14 @@ func (_c *MockMessageService_DeleteMessage_Call) Return(err error) *MockMessageS
 	return _c
 }
 
-func (_c *MockMessageService_DeleteMessage_Call) RunAndReturn(run func(context.Context, int, int) error) *MockMessageService_DeleteMessage_Call {
+func (_c *MockMessageService_DeleteMessage_Call) RunAndReturn(run func(context.Context, int, int, int) error) *MockMessageService_DeleteMessage_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetAllMessages provides a mock function with given fields: ctx, chatID, sortType, searchText
-func (_m *MockMessageService) GetAllMessages(ctx context.Context, chatID int, sortType string, searchText string) ([]chat.Message, int, error) {
-	ret := _m.Called(ctx, chatID, sortType, searchText)
+// GetAllMessages provides a mock function with given fields: ctx, chatID, userID, sortType, searchText
+func (_m *MockMessageService) GetAllMessages(ctx context.Context, chatID int, userID int, sortType string, searchText string) ([]chat.Message, int, error) {
+	ret := _m.Called(ctx, chatID, userID, sortType, searchText)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllMessages")
@@ -141,25 +142,25 @@ func (_m *MockMessageService) GetAllMessages(ctx context.Context, chatID int, so
 	var r0 []chat.Message
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, string, string) ([]chat.Message, int, error)); ok {
-		return rf(ctx, chatID, sortType, searchText)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, string, string) ([]chat.Message, int, error)); ok {
+		return rf(ctx, chatID, userID, sortType, searchText)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, string, string) []chat.Message); ok {
-		r0 = rf(ctx, chatID, sortType, searchText)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, string, string) []chat.Message); ok {
+		r0 = rf(ctx, chatID, userID, sortType, searchText)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]chat.Message)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, string, string) int); ok {
-		r1 = rf(ctx, chatID, sortType, searchText)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int, string, string) int); ok {
+		r1 = rf(ctx, chatID, userID, sortType, searchText)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, int, string, string) error); ok {
-		r2 = rf(ctx, chatID, sortType, searchText)
+	if rf, ok := ret.Get(2).(func(context.Context, int, int, string, string) error); ok {
+		r2 = rf(ctx, chatID, userID, sortType, searchText)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -175,15 +176,16 @@ type MockMessageService_GetAllMessages_Call struct {
 // GetAllMessages is a helper method to define mock.On call
 //   - ctx context.Context
 //   - chatID int
+//   - userID int
 //   - sortType string
 //   - searchText string
-func (_e *MockMessageService_Expecter) GetAllMessages(ctx interface{}, chatID interface{}, sortType interface{}, searchText interface{}) *MockMessageService_GetAllMessages_Call {
-	return &MockMessageService_GetAllMessages_Call{Call: _e.mock.On("GetAllMessages", ctx, chatID, sortType, searchText)}
+func (_e *MockMessageService_Expecter) GetAllMessages(ctx interface{}, chatID interface{}, userID interface{}, sortType interface{}, searchText interface{}) *MockMessageService_GetAllMessages_Call {
+	return &MockMessageService_GetAllMessages_Call{Call: _e.mock.On("GetAllMessages", ctx, chatID, userID, sortType, searchText)}
 }
 
-func (_c *MockMessageService_GetAllMessages_Call) Run(run func(ctx context.Context, chatID int, sortType string, searchText string)) *MockMessageService_GetAllMessages_Call {
+func (_c *MockMessageService_GetAllMessages_Call) Run(run func(ctx context.Context, chatID int, userID int, sortType string, searchText string)) *MockMessageService_GetAllMessages_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(string), args[3].(string))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(string), args[4].(string))
 	})
 	return _c
 }
@@ -193,7 +195,7 @@ func (_c *MockMessageService_GetAllMessages_Call) Return(messages []chat.Message
 	return _c
 }
 
-func (_c *MockMessageService_GetAllMessages_Call) RunAndReturn(run func(context.Context, int, string, string) ([]chat.Message, int, error)) *MockMessageService_GetAllMessages_Call {
+func (_c *MockMessageService_GetAllMessages_Call) RunAndReturn(run func(context.Context, int, int, string, string) ([]chat.Message, int, error)) *MockMessageService_GetAllMessages_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -304,9 +306,9 @@ func (_c *MockMessageService_MarkMessagesAsRead_Call) RunAndReturn(run func(cont
 	return _c
 }
 
-// UpdateMessage provides a mock function with given fields: ctx, chatID, messageID, data
-func (_m *MockMessageService) UpdateMessage(ctx context.Context, chatID int, messageID int, data string) (core.Message, error) {
-	ret := _m.Called(ctx, chatID, messageID, data)
+// UpdateMessage provides a mock function with given fields: ctx, chatID, userID, messageID, data
+func (_m *MockMessageService) UpdateMessage(ctx context.Context, chatID int, userID int, messageID int, data string) (core.Message, error) {
+	ret := _m.Called(ctx, chatID, userID, messageID, data)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateMessage")
@@ -314,17 +316,17 @@ func (_m *MockMessageService) UpdateMessage(ctx context.Context, chatID int, mes
 
 	var r0 core.Message
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int, string) (core.Message, error)); ok {
-		return rf(ctx, chatID, messageID, data)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, int, string) (core.Message, error)); ok {
+		return rf(ctx, chatID, userID, messageID, data)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, int, string) core.Message); ok {
-		r0 = rf(ctx, chatID, messageID, data)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, int, string) core.Message); ok {
+		r0 = rf(ctx, chatID, userID, messageID, data)
 	} else {
 		r0 = ret.Get(0).(core.Message)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, int, string) error); ok {
-		r1 = rf(ctx, chatID, messageID, data)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int, int, string) error); ok {
+		r1 = rf(ctx, chatID, userID, messageID, data)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -340,15 +342,16 @@ type MockMessageService_UpdateMessage_Call struct {
 // UpdateMessage is a helper method to define mock.On call
 //   - ctx context.Context
 //   - chatID int
+//   - userID int
 //   - messageID int
 //   - data string
-func (_e *MockMessageService_Expecter) UpdateMessage(ctx interface{}, chatID interface{}, messageID interface{}, data interface{}) *MockMessageService_UpdateMessage_Call {
-	return &MockMessageService_UpdateMessage_Call{Call: _e.mock.On("UpdateMessage", ctx, chatID, messageID, data)}
+func (_e *MockMessageService_Expecter) UpdateMessage(ctx interface{}, chatID interface{}, userID interface{}, messageID interface{}, data interface{}) *MockMessageService_UpdateMessage_Call {
+	return &MockMessageService_UpdateMessage_Call{Call: _e.mock.On("UpdateMessage", ctx, chatID, userID, messageID, data)}
 }
 
-func (_c *MockMessageService_UpdateMessage_Call) Run(run func(ctx context.Context, chatID int, messageID int, data string)) *MockMessageService_UpdateMessage_Call {
+func (_c *MockMessageService_UpdateMessage_Call) Run(run func(ctx context.Context, chatID int, userID int, messageID int, data string)) *MockMessageService_UpdateMessage_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(string))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(int), args[4].(string))
 	})
 	return _c
 }
@@ -358,7 +361,7 @@ func (_c *MockMessageService_UpdateMessage_Call) Return(message core.Message, er
 	return _c
 }
 
-func (_c *MockMessageService_UpdateMessage_Call) RunAndReturn(run func(context.Context, int, int, string) (core.Message, error)) *MockMessageService_UpdateMessage_Call {
+func (_c *MockMessageService_UpdateMessage_Call) RunAndReturn(run func(context.Context, int, int, int, string) (core.Message, error)) *MockMessageService_UpdateMessage_Call {
 	_c.Call.Return(run)
 	return _c
 }

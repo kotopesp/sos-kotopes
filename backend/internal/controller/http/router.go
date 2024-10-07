@@ -121,21 +121,21 @@ func (r *Router) initRoutes() {
 	v1.Get("/chats", r.protectedMiddleware(), r.getAllChats)
 	v1.Get("/chats/:chat_id", r.protectedMiddleware(), r.getChatWithUsersByID)
 	v1.Post("/chats", r.protectedMiddleware(), r.createChat)
-	v1.Delete("/chats/:chat_id", r.deleteChat)
+	v1.Delete("/chats/:chat_id", r.protectedMiddleware(), r.deleteChat)
 
 	// messages
 	v1.Patch("/chats/:chat_id/unread", r.protectedMiddleware(), r.markMessagesAsRead)
 	v1.Get("/chats/:chat_id/unread", r.protectedMiddleware(), r.getUnreadMessageCount)
-	v1.Get("/chats/:chat_id/messages", r.getAllMessages)
-	v1.Post("/chats/:chat_id/messages", r.createMessage)
-	v1.Patch("/chats/:chat_id/messages/:message_id", r.updateMessage)
-	v1.Delete("/chats/:chat_id/messages/:message_id", r.deleteMessage)
+	v1.Get("/chats/:chat_id/messages", r.protectedMiddleware(), r.getAllMessages)
+	v1.Post("/chats/:chat_id/messages", r.protectedMiddleware(), r.createMessage)
+	v1.Patch("/chats/:chat_id/messages/:message_id", r.protectedMiddleware(), r.updateMessage)
+	v1.Delete("/chats/:chat_id/messages/:message_id", r.protectedMiddleware(), r.deleteMessage)
 
 	// chat members
-	v1.Get("/chats/:chat_id/members", r.getAllMembers)
-	v1.Post("/chats/:chat_id/members/:user_id", r.addMemberToChat)
-	v1.Patch("/chats/:chat_id/members/:user_id", r.updateMemberInfo)
-	v1.Delete("/chats/:chat_id/members/:user_id", r.deleteMemberFromChat)
+	v1.Get("/chats/:chat_id/members", r.protectedMiddleware(), r.getAllMembers)
+	v1.Post("/chats/:chat_id/members/:user_id", r.protectedMiddleware(), r.addMemberToChat)
+	v1.Patch("/chats/:chat_id/members/:user_id", r.protectedMiddleware(), r.updateMemberInfo)
+	v1.Delete("/chats/:chat_id/members/:user_id", r.protectedMiddleware(), r.deleteMemberFromChat)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

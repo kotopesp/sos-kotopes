@@ -48,11 +48,15 @@ func (r *Router) getAllChats(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) getChatWithUsersByID(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("chat_id")
+	userID, err := getIDFromToken(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	data, err := r.chatService.GetChatWithUsersByID(ctx.UserContext(), id)
+	data, err := r.chatService.GetChatWithUsersByID(ctx.UserContext(), chatID, userID)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -108,11 +112,15 @@ func (r *Router) createChat(ctx *fiber.Ctx) error {
 }
 
 func (r *Router) deleteChat(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("chat_id")
+	userID, err := getIDFromToken(ctx)
+	if err != nil {
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	chatID, err := ctx.ParamsInt("chat_id")
 	if err != nil {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid chat ID"))
 	}
-	if err := r.chatService.DeleteChat(ctx.UserContext(), id); err != nil {
+	if err := r.chatService.DeleteChat(ctx.UserContext(), chatID, userID); err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}

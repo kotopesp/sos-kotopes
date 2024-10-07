@@ -30,19 +30,19 @@ type (
 	MessageStore interface {
 		MarkMessagesAsRead(ctx context.Context, chatID, userID int) error
 		GetUnreadMessageCount(ctx context.Context, chatID, userID int) (int64, error)
-		GetAllMessages(ctx context.Context, chatID int, sortType string, searchText string) (messages []chat.Message, err error)
+		GetAllMessages(ctx context.Context, chatID int, userID int, sortType string, searchText string) (messages []chat.Message, err error)
 		CreateMessage(ctx context.Context, data chat.Message) (message chat.Message, err error)
-		UpdateMessage(ctx context.Context, chatID int, messageID int, data string) (message Message, err error)
-		DeleteMessage(ctx context.Context, chatID int, messageID int) (err error)
+		UpdateMessage(ctx context.Context, chatID, userID, messageID int, data string) (message Message, err error)
+		DeleteMessage(ctx context.Context, chatID, userID, messageID int) (err error)
 	}
 
 	MessageService interface {
 		MarkMessagesAsRead(ctx context.Context, chatID, userID int) error
 		GetUnreadMessageCount(ctx context.Context, chatID, userID int) (int64, error)
-		GetAllMessages(ctx context.Context, chatID int, sortType string, searchText string) (messages []chat.Message, total int, err error)
+		GetAllMessages(ctx context.Context, chatID, userID int, sortType string, searchText string) (messages []chat.Message, total int, err error)
 		CreateMessage(ctx context.Context, data chat.Message) (message chat.Message, err error)
-		UpdateMessage(ctx context.Context, chatID int, messageID int, data string) (message Message, err error)
-		DeleteMessage(ctx context.Context, chatID int, messageID int) (err error)
+		UpdateMessage(ctx context.Context, chatID, userID, messageID int, data string) (message Message, err error)
+		DeleteMessage(ctx context.Context, chatID, userID, messageID int) (err error)
 	}
 )
 

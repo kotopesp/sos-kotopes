@@ -36,8 +36,8 @@ func (s *service) GetAllChats(ctx context.Context, sortType string, userID int) 
 	return
 }
 
-func (s *service) GetChatWithUsersByID(ctx context.Context, id int) (data chat.Chat, err error) {
-	data, err = s.ChatStore.GetChatWithUsersByID(ctx, id)
+func (s *service) GetChatWithUsersByID(ctx context.Context, chatID, userID int) (data chat.Chat, err error) {
+	data, err = s.ChatStore.GetChatWithUsersByID(ctx, chatID, userID)
 	return
 }
 
@@ -72,8 +72,8 @@ func (s *service) FindChatByUsers(ctx context.Context, userIds []int) (chat.Chat
 	return foundChat, nil
 }
 
-func (s *service) DeleteChat(ctx context.Context, id int) (err error) {
-	err = s.ChatStore.DeleteChat(ctx, id)
+func (s *service) DeleteChat(ctx context.Context, chatID, userID int) (err error) {
+	err = s.ChatStore.DeleteChat(ctx, chatID, userID)
 	return
 }
 

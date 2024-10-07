@@ -22,9 +22,9 @@ func (_m *MockChatMemberService) EXPECT() *MockChatMemberService_Expecter {
 	return &MockChatMemberService_Expecter{mock: &_m.Mock}
 }
 
-// AddMemberToChat provides a mock function with given fields: ctx, data
-func (_m *MockChatMemberService) AddMemberToChat(ctx context.Context, data core.ChatMember) (core.ChatMember, error) {
-	ret := _m.Called(ctx, data)
+// AddMemberToChat provides a mock function with given fields: ctx, data, userID
+func (_m *MockChatMemberService) AddMemberToChat(ctx context.Context, data core.ChatMember, userID int) (core.ChatMember, error) {
+	ret := _m.Called(ctx, data, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for AddMemberToChat")
@@ -32,17 +32,17 @@ func (_m *MockChatMemberService) AddMemberToChat(ctx context.Context, data core.
 
 	var r0 core.ChatMember
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.ChatMember) (core.ChatMember, error)); ok {
-		return rf(ctx, data)
+	if rf, ok := ret.Get(0).(func(context.Context, core.ChatMember, int) (core.ChatMember, error)); ok {
+		return rf(ctx, data, userID)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.ChatMember) core.ChatMember); ok {
-		r0 = rf(ctx, data)
+	if rf, ok := ret.Get(0).(func(context.Context, core.ChatMember, int) core.ChatMember); ok {
+		r0 = rf(ctx, data, userID)
 	} else {
 		r0 = ret.Get(0).(core.ChatMember)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.ChatMember) error); ok {
-		r1 = rf(ctx, data)
+	if rf, ok := ret.Get(1).(func(context.Context, core.ChatMember, int) error); ok {
+		r1 = rf(ctx, data, userID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -58,13 +58,14 @@ type MockChatMemberService_AddMemberToChat_Call struct {
 // AddMemberToChat is a helper method to define mock.On call
 //   - ctx context.Context
 //   - data core.ChatMember
-func (_e *MockChatMemberService_Expecter) AddMemberToChat(ctx interface{}, data interface{}) *MockChatMemberService_AddMemberToChat_Call {
-	return &MockChatMemberService_AddMemberToChat_Call{Call: _e.mock.On("AddMemberToChat", ctx, data)}
+//   - userID int
+func (_e *MockChatMemberService_Expecter) AddMemberToChat(ctx interface{}, data interface{}, userID interface{}) *MockChatMemberService_AddMemberToChat_Call {
+	return &MockChatMemberService_AddMemberToChat_Call{Call: _e.mock.On("AddMemberToChat", ctx, data, userID)}
 }
 
-func (_c *MockChatMemberService_AddMemberToChat_Call) Run(run func(ctx context.Context, data core.ChatMember)) *MockChatMemberService_AddMemberToChat_Call {
+func (_c *MockChatMemberService_AddMemberToChat_Call) Run(run func(ctx context.Context, data core.ChatMember, userID int)) *MockChatMemberService_AddMemberToChat_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.ChatMember))
+		run(args[0].(context.Context), args[1].(core.ChatMember), args[2].(int))
 	})
 	return _c
 }
@@ -74,22 +75,22 @@ func (_c *MockChatMemberService_AddMemberToChat_Call) Return(member core.ChatMem
 	return _c
 }
 
-func (_c *MockChatMemberService_AddMemberToChat_Call) RunAndReturn(run func(context.Context, core.ChatMember) (core.ChatMember, error)) *MockChatMemberService_AddMemberToChat_Call {
+func (_c *MockChatMemberService_AddMemberToChat_Call) RunAndReturn(run func(context.Context, core.ChatMember, int) (core.ChatMember, error)) *MockChatMemberService_AddMemberToChat_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// DeleteMemberFromChat provides a mock function with given fields: ctx, chatID, userID
-func (_m *MockChatMemberService) DeleteMemberFromChat(ctx context.Context, chatID int, userID int) error {
-	ret := _m.Called(ctx, chatID, userID)
+// DeleteMemberFromChat provides a mock function with given fields: ctx, chatID, userID, currentUserID
+func (_m *MockChatMemberService) DeleteMemberFromChat(ctx context.Context, chatID int, userID int, currentUserID int) error {
+	ret := _m.Called(ctx, chatID, userID, currentUserID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteMemberFromChat")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
-		r0 = rf(ctx, chatID, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, int) error); ok {
+		r0 = rf(ctx, chatID, userID, currentUserID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -106,13 +107,14 @@ type MockChatMemberService_DeleteMemberFromChat_Call struct {
 //   - ctx context.Context
 //   - chatID int
 //   - userID int
-func (_e *MockChatMemberService_Expecter) DeleteMemberFromChat(ctx interface{}, chatID interface{}, userID interface{}) *MockChatMemberService_DeleteMemberFromChat_Call {
-	return &MockChatMemberService_DeleteMemberFromChat_Call{Call: _e.mock.On("DeleteMemberFromChat", ctx, chatID, userID)}
+//   - currentUserID int
+func (_e *MockChatMemberService_Expecter) DeleteMemberFromChat(ctx interface{}, chatID interface{}, userID interface{}, currentUserID interface{}) *MockChatMemberService_DeleteMemberFromChat_Call {
+	return &MockChatMemberService_DeleteMemberFromChat_Call{Call: _e.mock.On("DeleteMemberFromChat", ctx, chatID, userID, currentUserID)}
 }
 
-func (_c *MockChatMemberService_DeleteMemberFromChat_Call) Run(run func(ctx context.Context, chatID int, userID int)) *MockChatMemberService_DeleteMemberFromChat_Call {
+func (_c *MockChatMemberService_DeleteMemberFromChat_Call) Run(run func(ctx context.Context, chatID int, userID int, currentUserID int)) *MockChatMemberService_DeleteMemberFromChat_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(int))
 	})
 	return _c
 }
@@ -122,14 +124,14 @@ func (_c *MockChatMemberService_DeleteMemberFromChat_Call) Return(err error) *Mo
 	return _c
 }
 
-func (_c *MockChatMemberService_DeleteMemberFromChat_Call) RunAndReturn(run func(context.Context, int, int) error) *MockChatMemberService_DeleteMemberFromChat_Call {
+func (_c *MockChatMemberService_DeleteMemberFromChat_Call) RunAndReturn(run func(context.Context, int, int, int) error) *MockChatMemberService_DeleteMemberFromChat_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetAllMembers provides a mock function with given fields: ctx, chatID
-func (_m *MockChatMemberService) GetAllMembers(ctx context.Context, chatID int) ([]core.ChatMember, int, error) {
-	ret := _m.Called(ctx, chatID)
+// GetAllMembers provides a mock function with given fields: ctx, chatID, userID
+func (_m *MockChatMemberService) GetAllMembers(ctx context.Context, chatID int, userID int) ([]core.ChatMember, int, error) {
+	ret := _m.Called(ctx, chatID, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllMembers")
@@ -138,25 +140,25 @@ func (_m *MockChatMemberService) GetAllMembers(ctx context.Context, chatID int) 
 	var r0 []core.ChatMember
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) ([]core.ChatMember, int, error)); ok {
-		return rf(ctx, chatID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) ([]core.ChatMember, int, error)); ok {
+		return rf(ctx, chatID, userID)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) []core.ChatMember); ok {
-		r0 = rf(ctx, chatID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) []core.ChatMember); ok {
+		r0 = rf(ctx, chatID, userID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]core.ChatMember)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int) int); ok {
-		r1 = rf(ctx, chatID)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) int); ok {
+		r1 = rf(ctx, chatID, userID)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, int) error); ok {
-		r2 = rf(ctx, chatID)
+	if rf, ok := ret.Get(2).(func(context.Context, int, int) error); ok {
+		r2 = rf(ctx, chatID, userID)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -172,13 +174,14 @@ type MockChatMemberService_GetAllMembers_Call struct {
 // GetAllMembers is a helper method to define mock.On call
 //   - ctx context.Context
 //   - chatID int
-func (_e *MockChatMemberService_Expecter) GetAllMembers(ctx interface{}, chatID interface{}) *MockChatMemberService_GetAllMembers_Call {
-	return &MockChatMemberService_GetAllMembers_Call{Call: _e.mock.On("GetAllMembers", ctx, chatID)}
+//   - userID int
+func (_e *MockChatMemberService_Expecter) GetAllMembers(ctx interface{}, chatID interface{}, userID interface{}) *MockChatMemberService_GetAllMembers_Call {
+	return &MockChatMemberService_GetAllMembers_Call{Call: _e.mock.On("GetAllMembers", ctx, chatID, userID)}
 }
 
-func (_c *MockChatMemberService_GetAllMembers_Call) Run(run func(ctx context.Context, chatID int)) *MockChatMemberService_GetAllMembers_Call {
+func (_c *MockChatMemberService_GetAllMembers_Call) Run(run func(ctx context.Context, chatID int, userID int)) *MockChatMemberService_GetAllMembers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(int))
 	})
 	return _c
 }
@@ -188,14 +191,14 @@ func (_c *MockChatMemberService_GetAllMembers_Call) Return(members []core.ChatMe
 	return _c
 }
 
-func (_c *MockChatMemberService_GetAllMembers_Call) RunAndReturn(run func(context.Context, int) ([]core.ChatMember, int, error)) *MockChatMemberService_GetAllMembers_Call {
+func (_c *MockChatMemberService_GetAllMembers_Call) RunAndReturn(run func(context.Context, int, int) ([]core.ChatMember, int, error)) *MockChatMemberService_GetAllMembers_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// UpdateMemberInfo provides a mock function with given fields: ctx, chatID, userID
-func (_m *MockChatMemberService) UpdateMemberInfo(ctx context.Context, chatID int, userID int) (core.ChatMember, error) {
-	ret := _m.Called(ctx, chatID, userID)
+// UpdateMemberInfo provides a mock function with given fields: ctx, chatID, userID, currentUserID
+func (_m *MockChatMemberService) UpdateMemberInfo(ctx context.Context, chatID int, userID int, currentUserID int) (core.ChatMember, error) {
+	ret := _m.Called(ctx, chatID, userID, currentUserID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateMemberInfo")
@@ -203,17 +206,17 @@ func (_m *MockChatMemberService) UpdateMemberInfo(ctx context.Context, chatID in
 
 	var r0 core.ChatMember
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) (core.ChatMember, error)); ok {
-		return rf(ctx, chatID, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, int) (core.ChatMember, error)); ok {
+		return rf(ctx, chatID, userID, currentUserID)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) core.ChatMember); ok {
-		r0 = rf(ctx, chatID, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, int) core.ChatMember); ok {
+		r0 = rf(ctx, chatID, userID, currentUserID)
 	} else {
 		r0 = ret.Get(0).(core.ChatMember)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
-		r1 = rf(ctx, chatID, userID)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int, int) error); ok {
+		r1 = rf(ctx, chatID, userID, currentUserID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -230,13 +233,14 @@ type MockChatMemberService_UpdateMemberInfo_Call struct {
 //   - ctx context.Context
 //   - chatID int
 //   - userID int
-func (_e *MockChatMemberService_Expecter) UpdateMemberInfo(ctx interface{}, chatID interface{}, userID interface{}) *MockChatMemberService_UpdateMemberInfo_Call {
-	return &MockChatMemberService_UpdateMemberInfo_Call{Call: _e.mock.On("UpdateMemberInfo", ctx, chatID, userID)}
+//   - currentUserID int
+func (_e *MockChatMemberService_Expecter) UpdateMemberInfo(ctx interface{}, chatID interface{}, userID interface{}, currentUserID interface{}) *MockChatMemberService_UpdateMemberInfo_Call {
+	return &MockChatMemberService_UpdateMemberInfo_Call{Call: _e.mock.On("UpdateMemberInfo", ctx, chatID, userID, currentUserID)}
 }
 
-func (_c *MockChatMemberService_UpdateMemberInfo_Call) Run(run func(ctx context.Context, chatID int, userID int)) *MockChatMemberService_UpdateMemberInfo_Call {
+func (_c *MockChatMemberService_UpdateMemberInfo_Call) Run(run func(ctx context.Context, chatID int, userID int, currentUserID int)) *MockChatMemberService_UpdateMemberInfo_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(int))
 	})
 	return _c
 }
@@ -246,7 +250,7 @@ func (_c *MockChatMemberService_UpdateMemberInfo_Call) Return(member core.ChatMe
 	return _c
 }
 
-func (_c *MockChatMemberService_UpdateMemberInfo_Call) RunAndReturn(run func(context.Context, int, int) (core.ChatMember, error)) *MockChatMemberService_UpdateMemberInfo_Call {
+func (_c *MockChatMemberService_UpdateMemberInfo_Call) RunAndReturn(run func(context.Context, int, int, int) (core.ChatMember, error)) *MockChatMemberService_UpdateMemberInfo_Call {
 	_c.Call.Return(run)
 	return _c
 }
