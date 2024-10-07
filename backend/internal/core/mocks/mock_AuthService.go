@@ -24,6 +24,75 @@ func (_m *MockAuthService) EXPECT() *MockAuthService_Expecter {
 	return &MockAuthService_Expecter{mock: &_m.Mock}
 }
 
+// AuthorizeTelegram provides a mock function with given fields: ctx, user, externalUserID
+func (_m *MockAuthService) AuthorizeTelegram(ctx context.Context, user core.User, externalUserID int) (*string, *string, error) {
+	ret := _m.Called(ctx, user, externalUserID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for AuthorizeTelegram")
+	}
+
+	var r0 *string
+	var r1 *string
+	var r2 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.User, int) (*string, *string, error)); ok {
+		return rf(ctx, user, externalUserID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.User, int) *string); ok {
+		r0 = rf(ctx, user, externalUserID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*string)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, core.User, int) *string); ok {
+		r1 = rf(ctx, user, externalUserID)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(*string)
+		}
+	}
+
+	if rf, ok := ret.Get(2).(func(context.Context, core.User, int) error); ok {
+		r2 = rf(ctx, user, externalUserID)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}
+
+// MockAuthService_AuthorizeTelegram_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AuthorizeTelegram'
+type MockAuthService_AuthorizeTelegram_Call struct {
+	*mock.Call
+}
+
+// AuthorizeTelegram is a helper method to define mock.On call
+//   - ctx context.Context
+//   - user core.User
+//   - externalUserID int
+func (_e *MockAuthService_Expecter) AuthorizeTelegram(ctx interface{}, user interface{}, externalUserID interface{}) *MockAuthService_AuthorizeTelegram_Call {
+	return &MockAuthService_AuthorizeTelegram_Call{Call: _e.mock.On("AuthorizeTelegram", ctx, user, externalUserID)}
+}
+
+func (_c *MockAuthService_AuthorizeTelegram_Call) Run(run func(ctx context.Context, user core.User, externalUserID int)) *MockAuthService_AuthorizeTelegram_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.User), args[2].(int))
+	})
+	return _c
+}
+
+func (_c *MockAuthService_AuthorizeTelegram_Call) Return(accessToken *string, refreshToken *string, err error) *MockAuthService_AuthorizeTelegram_Call {
+	_c.Call.Return(accessToken, refreshToken, err)
+	return _c
+}
+
+func (_c *MockAuthService_AuthorizeTelegram_Call) RunAndReturn(run func(context.Context, core.User, int) (*string, *string, error)) *MockAuthService_AuthorizeTelegram_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // AuthorizeVK provides a mock function with given fields: ctx, token
 func (_m *MockAuthService) AuthorizeVK(ctx context.Context, token string) (*string, *string, error) {
 	ret := _m.Called(ctx, token)

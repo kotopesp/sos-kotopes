@@ -23,7 +23,7 @@ func (_m *MockUserStore) EXPECT() *MockUserStore_Expecter {
 }
 
 // AddExternalUser provides a mock function with given fields: ctx, user, externalUserID, authProvider
-func (_m *MockUserStore) AddExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (int, error) {
+func (_m *MockUserStore) AddExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider core.AuthProvider) (int, error) {
 	ret := _m.Called(ctx, user, externalUserID, authProvider)
 
 	if len(ret) == 0 {
@@ -32,16 +32,16 @@ func (_m *MockUserStore) AddExternalUser(ctx context.Context, user core.User, ex
 
 	var r0 int
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.User, int, string) (int, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.User, int, core.AuthProvider) (int, error)); ok {
 		return rf(ctx, user, externalUserID, authProvider)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.User, int, string) int); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.User, int, core.AuthProvider) int); ok {
 		r0 = rf(ctx, user, externalUserID, authProvider)
 	} else {
 		r0 = ret.Get(0).(int)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.User, int, string) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, core.User, int, core.AuthProvider) error); ok {
 		r1 = rf(ctx, user, externalUserID, authProvider)
 	} else {
 		r1 = ret.Error(1)
@@ -59,14 +59,14 @@ type MockUserStore_AddExternalUser_Call struct {
 //   - ctx context.Context
 //   - user core.User
 //   - externalUserID int
-//   - authProvider string
+//   - authProvider core.AuthProvider
 func (_e *MockUserStore_Expecter) AddExternalUser(ctx interface{}, user interface{}, externalUserID interface{}, authProvider interface{}) *MockUserStore_AddExternalUser_Call {
 	return &MockUserStore_AddExternalUser_Call{Call: _e.mock.On("AddExternalUser", ctx, user, externalUserID, authProvider)}
 }
 
-func (_c *MockUserStore_AddExternalUser_Call) Run(run func(ctx context.Context, user core.User, externalUserID int, authProvider string)) *MockUserStore_AddExternalUser_Call {
+func (_c *MockUserStore_AddExternalUser_Call) Run(run func(ctx context.Context, user core.User, externalUserID int, authProvider core.AuthProvider)) *MockUserStore_AddExternalUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.User), args[2].(int), args[3].(string))
+		run(args[0].(context.Context), args[1].(core.User), args[2].(int), args[3].(core.AuthProvider))
 	})
 	return _c
 }
@@ -76,7 +76,7 @@ func (_c *MockUserStore_AddExternalUser_Call) Return(userID int, err error) *Moc
 	return _c
 }
 
-func (_c *MockUserStore_AddExternalUser_Call) RunAndReturn(run func(context.Context, core.User, int, string) (int, error)) *MockUserStore_AddExternalUser_Call {
+func (_c *MockUserStore_AddExternalUser_Call) RunAndReturn(run func(context.Context, core.User, int, core.AuthProvider) (int, error)) *MockUserStore_AddExternalUser_Call {
 	_c.Call.Return(run)
 	return _c
 }

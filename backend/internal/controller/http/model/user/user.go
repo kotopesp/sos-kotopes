@@ -14,6 +14,7 @@ type (
 		Lastname    *string `form:"lastname" validate:"omitempty,max=25"`
 		Photo       *[]byte
 	}
+
 	UpdateUser struct {
 		Username    *string `form:"username" validate:"omitempty,max=50,no_specials"`
 		Firstname   *string `form:"firstname" validate:"omitempty,max=25"`
@@ -36,5 +37,13 @@ type (
 		Count  *int    `json:"count"`
 		Offset *int    `json:"offset"`
 		Sort   *string `json:"sort"`
+	}
+
+	TelegramUser struct {
+		ID        int    `query:"id"`
+		Username  string `query:"username"`
+		Firstname string `query:"first_name"`
+		Lastname  string `query:"last_name"`
+		PhotoURL  string `query:"photo_url"` // TODO: insert photo from telegram to database
 	}
 )
