@@ -1,12 +1,14 @@
 import {Component, Input, signal, WritableSignal} from '@angular/core';
 import {NgForOf} from "@angular/common";
 import {AuthService} from "../../../../services/auth-service/auth.service";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-profile-popup',
   standalone: true,
   imports: [
-    NgForOf
+    NgForOf,
+    RouterLink
   ],
   templateUrl: './profile-popup.component.html',
   styleUrl: './profile-popup.component.scss'
@@ -25,7 +27,7 @@ export class ProfilePopupComponent {
       icon: 'heart-icon.svg',
     },
     {
-      path: '',
+      path: 'users/1',
       title: 'Профиль',
       icon: 'profile-icon.svg',
     },

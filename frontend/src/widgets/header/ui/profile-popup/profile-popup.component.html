@@ -9,6 +9,7 @@
         <div class="block__control__line">
           <img src="/assets/icons/{{ controlItem.icon }}" alt="icon">
           <p class="ft20 fw400"
+             [routerLink]="controlItem.path"
              (click)="controlItem.title === 'Выйти' ? logout() : ''"
              (keydown.enter)="controlItem.title === 'Выйти' ? logout() : ''"
              tabindex="0"
