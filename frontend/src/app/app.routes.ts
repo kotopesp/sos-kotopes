@@ -10,7 +10,7 @@ export const routes: Routes = [
     path: '', component: StartPageComponent
   },
   {
-    path: 'posts-services', component: PostsComponent
+    path: 'posts', component: PostsComponent
   },
   {
     path: 'chats', component: ChatsPageComponent

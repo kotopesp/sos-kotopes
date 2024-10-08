@@ -66,7 +66,7 @@ export class CreatePostPageComponent {
 
   constructor(private authService: AuthService, private postsService: PostsService) {
     this.buttonActive = false;
-    this.numberOfSlide = signal<number>(4);
+    this.numberOfSlide = signal<number>(1);
     this.titleObject = {
       1: "Что случилось?",
       2: "Кто пропал?",

@@ -70,7 +70,7 @@
         </div>
 
         <div *ngIf="isOwnAccount" class="user__new__post">
-          <button class="button__publish fw700 ft20" [routerLink]="'/posts/create'">+ Разместить объявление</button>
+          <button class="button__publish fw700 ft20" [routerLink]="'/create/post'">+ Разместить объявление</button>
           <div *ngIf="editTextArea" class="textarea__editable" (click)="editTextArea = !editTextArea"
                (keydown.enter)="editTextArea = !editTextArea"
                tabindex="0"
