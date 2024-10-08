@@ -44,7 +44,7 @@ export class HeaderComponent implements OnInit {
 
   headerItems = [
     {
-      path: 'posts-services',
+      path: 'posts',
       text: 'Объявления',
       className: 'header__ads'
     },

@@ -21,39 +21,39 @@
         </div>
         <div *ngIf="haveRoles" class="user__role_info">
           @if (haveRoles) {
-          <div class="user__role__button">
-          <app-role-button icon="../../assets/icons/hand-icon.svg" label="Передержка"
-                           buttonColor="var(--brown-orange-color)"
-                           infoColor="rgba(183, 115, 0, 0.1)"
-                           [active]="openInfo === 1 ? true : false"
-                           (click)="onClickFirst()"
-                           (keydown.enter)="onClickFirst()"
-                           tabindex="0"
-                           role="button"
-                           aria-pressed="false"
-                           />
-          <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"
-                           buttonColor="var(--role-purple-color)"
-                           infoColor="rgba(65, 33, 107, 0.1)"
-                           [active]="openInfo === 2 ? true : false"
-                           (click)="onClickSecond()"
-                           (keydown.enter)="onClickSecond()"
-                           tabindex="0"
-                           role="button"
-                           aria-pressed="false"
-                           />
-          <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
-                           buttonColor="var(--role-green-color)"
-                           infoColor="rgba(47, 89, 85, 0.1)"
-                           [active]="openInfo === 3 ? true : false"
-                           (click)="onClickThird()"
-                           (keydown.enter)="onClickThird()"
-                           tabindex="0"
-                           role="button"
-                           aria-pressed="false"
-                           />
-          </div>
-           }
+            <div class="user__role__button">
+              <app-role-button icon="../../assets/icons/hand-icon.svg" label="Передержка"
+                               buttonColor="var(--brown-orange-color)"
+                               infoColor="rgba(183, 115, 0, 0.1)"
+                               [active]="openInfo === 1 ? true : false"
+                               (click)="onClickFirst()"
+                               (keydown.enter)="onClickFirst()"
+                               tabindex="0"
+                               role="button"
+                               aria-pressed="false"
+              />
+              <app-role-button icon="../../assets/icons/net-icon.svg" label="Отловщик"
+                               buttonColor="var(--role-purple-color)"
+                               infoColor="rgba(65, 33, 107, 0.1)"
+                               [active]="openInfo === 2 ? true : false"
+                               (click)="onClickSecond()"
+                               (keydown.enter)="onClickSecond()"
+                               tabindex="0"
+                               role="button"
+                               aria-pressed="false"
+              />
+              <app-role-button icon="../../assets/icons/cross-icon.svg" label="Ветеринар"
+                               buttonColor="var(--role-green-color)"
+                               infoColor="rgba(47, 89, 85, 0.1)"
+                               [active]="openInfo === 3 ? true : false"
+                               (click)="onClickThird()"
+                               (keydown.enter)="onClickThird()"
+                               tabindex="0"
+                               role="button"
+                               aria-pressed="false"
+              />
+            </div>
+          }
           @if (!haveRoles && isOwnAccount) {
             <div class="add__new__role"><p class="ft40">+</p></div>
           }
@@ -70,7 +70,7 @@
         </div>
 
         <div *ngIf="isOwnAccount" class="user__new__post">
-          <button class="button__publish fw700 ft20">+ Разместить объявление</button>
+          <button class="button__publish fw700 ft20" [routerLink]="'/create/post'">+ Разместить объявление</button>
           <div *ngIf="editTextArea" class="textarea__editable" (click)="editTextArea = !editTextArea"
                (keydown.enter)="editTextArea = !editTextArea"
                tabindex="0"
@@ -106,7 +106,7 @@
                   d="M19.4545 1.5C17.1636 1.5 15.1455 2.66667 14 4.5C12.8545 2.66667 10.8364 1.5 8.54545 1.5C4.94545 1.5 2 4.5 2 8.16667C2 14.7778 14 21.5 14 21.5C14 21.5 26 14.8333 26 8.16667C26 4.5 23.0545 1.5 19.4545 1.5Z"
                   stroke="#21190B" stroke-width="3"/>
               </svg>
-              {{ likeActive ? "Уже в избранном" : 'В избранное'}}
+              {{ likeActive ? "Уже в избранном" : 'В избранное' }}
             </button>
           </div>
         </div>
@@ -115,14 +115,16 @@
   </div>
 
   <div class="user__posts__header">
-    <div class="posts__header" (click)="pressedPost = true" [ngClass]="pressedPost ? 'post__active' : 'post__not__active'"
+    <div class="posts__header" (click)="pressedPost = true"
+         [ngClass]="pressedPost ? 'post__active' : 'post__not__active'"
          (keydown.enter)="pressedPost = true"
          tabindex="0"
          role="button"
          aria-pressed="false">
       <span class="ft24 fw400">Объявления</span>
     </div>
-    <div *ngIf="isOwnAccount" class="likes__header" (click)="pressedPost = false" [ngClass]="pressedPost ? '' : 'likes__active'"
+    <div *ngIf="isOwnAccount" class="likes__header" (click)="pressedPost = false"
+         [ngClass]="pressedPost ? '' : 'likes__active'"
          (keydown.enter)="pressedPost = false"
          tabindex="0"
          role="button"
@@ -131,30 +133,30 @@
     </div>
   </div>
   @if (pressedPost) {
-  <div class="user__posts">
-    <app-post/>
-    <app-post/>
-    <app-post/>
-    <app-post/>
-    <app-post/>
-    <app-post/>
-  </div>
+    <div class="user__posts">
+      <app-post/>
+      <app-post/>
+      <app-post/>
+      <app-post/>
+      <app-post/>
+      <app-post/>
+    </div>
   }
   @if (!pressedPost) {
-  <div class="user__posts">
-    <app-post/>
-    <app-post/>
-    <app-post/>
-    <app-post/>
-    <app-post/>
-    <app-post/>
-  </div>
+    <div class="user__posts">
+      <app-post/>
+      <app-post/>
+      <app-post/>
+      <app-post/>
+      <app-post/>
+      <app-post/>
+    </div>
   }
 
   @if (writeOverlay()) {
-  <app-write-overlay
-  [writeOverlay] = "writeOverlay"
-  />
+    <app-write-overlay
+      [writeOverlay]="writeOverlay"
+    />
   }
 </div>
 

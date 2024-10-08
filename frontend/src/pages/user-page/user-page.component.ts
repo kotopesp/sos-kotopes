@@ -1,5 +1,5 @@
 import {Component, OnInit, signal} from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import {ActivatedRoute, Params, RouterLink} from '@angular/router';
 import {HeaderComponent} from "../../widgets/header/header.component";
 
 import { RoleButtonComponent } from './role-button/role-button.component';
@@ -14,7 +14,7 @@ import {WriteOverlayComponent} from "./write-overlay/write-overlay.component";
 @Component({
   selector: 'app-user-page',
   standalone: true,
-  imports: [HeaderComponent, RoleButtonComponent, CommonModule, PostComponent, WriteOverlayComponent],
+  imports: [HeaderComponent, RoleButtonComponent, CommonModule, PostComponent, WriteOverlayComponent, RouterLink],
   templateUrl: './user-page.component.html',
   styleUrl: './user-page.component.scss'
 })
@@ -25,7 +25,7 @@ export class UserPageComponent implements OnInit {
   username = 'tim.violine';
   totalPosts = '22';
   profilePhoto = '../../assets/images/test-cat.png';
-  isOwnAccount = false;
+  isOwnAccount = true;
 
   user$!: Observable<User>;
 
