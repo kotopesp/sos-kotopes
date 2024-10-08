@@ -1,4 +1,4 @@
-import {Component, ElementRef, signal, ViewChild, WritableSignal} from '@angular/core';
+import {Component, ElementRef, QueryList, signal, ViewChild, ViewChildren, WritableSignal} from '@angular/core';
 import {ButtonLostPetComponent} from "../../shared/buttons/button-lost-pet/button-lost-pet.component";
 import {ButtonFindPetComponent} from "../../shared/buttons/button-find-pet/button-find-pet.component";
 import {
@@ -12,8 +12,9 @@ import {ClickToSelectDirective} from "../../directives/click-to-select/click-to-
 import {AddPhotoButtonComponent} from "../../shared/buttons/add-photo-button/add-photo-button.component";
 import {ConfirmOverlayComponent} from "../../shared/confirm-overlay/confirm-overlay.component";
 import {AuthService} from "../../services/auth-service/auth.service";
-import {FormsModule} from "@angular/forms";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ChooseOneDirective} from "../../directives/choose-one/choose-one.directive";
+import {PostsService} from "../../services/posts-services/posts.service";
 
 interface TitleObject {
   [key: number]: string
@@ -38,29 +39,34 @@ interface TitleObject {
     ConfirmOverlayComponent,
     FormsModule,
     ChooseOneDirective,
+    ReactiveFormsModule,
   ],
   templateUrl: './create-post-page.component.html',
   styleUrl: './create-post-page.component.scss'
 })
 export class CreatePostPageComponent {
   @ViewChild('fileInput') fileInput: ElementRef | undefined;
+  // ViewChild для доступа к элементу div
+  @ViewChildren('myDiv') myDivs: QueryList<ElementRef> | undefined;
   titleObject: TitleObject;
   selectedFiles: { name: string, preview: string }[] = [];
   isDragging = false;
   selectedDate!: Date;
-  selectedDistrict!: string;
+  selectedDistrict: string;
   chooseColors: string[] = [];
+  districts: { text: string }[] = [];
   buttonActive: boolean;
   countOfSlides: number;
 
+  formCreatePost: FormGroup;
   textValue: string;
   numberOfSlide: WritableSignal<number>;
   photosOverlay: WritableSignal<boolean>;
   descriptionOverlay: WritableSignal<boolean>;
 
-  constructor(authService: AuthService) {
+  constructor(private authService: AuthService, private postsService: PostsService) {
     this.buttonActive = false;
-    this.numberOfSlide = signal<number>(1);
+    this.numberOfSlide = signal<number>(4);
     this.titleObject = {
       1: "Что случилось?",
       2: "Кто пропал?",
@@ -70,10 +76,29 @@ export class CreatePostPageComponent {
       6: "Описание",
       7: "Дайте описание о вас"
     }
+
+    this.districts = [
+      { text: 'м. Комендантский Проспект' },
+      { text: 'р-н. Колпинский' },
+    ];
+
     this.chooseColors = ['Чёрный', 'Белый', 'Чёрно-белый ("маркиз")', 'Полосатый', 'Рыжий', 'Серый', 'Трёхцветный']
     this.photosOverlay = signal<boolean>(false)
     this.descriptionOverlay = signal<boolean>(false)
     this.textValue = '';
+    this.selectedDistrict = '';
+
+    this.formCreatePost = new FormGroup({
+      title: new FormControl(null),
+      content: new FormControl(null),
+      animal_type: new FormControl(null),
+      photo: new FormControl(null),
+      age: new FormControl(this.selectedDate),
+      color: new FormControl(null),
+      gender: new FormControl(null),
+      description: new FormControl(this.textValue),
+      status: new FormControl(null),
+    })
 
     if (authService.Token) {
       this.countOfSlides = 6;
@@ -136,8 +161,21 @@ export class CreatePostPageComponent {
 
   createPost() {
     if (!this.textValue) {
-        this.descriptionOverlay.set(true);
-      }
+      this.descriptionOverlay.set(true);
+    }
+  }
+
+  onSubmit() {
+    this.postsService.createPost(this.formCreatePost)
+  }
+
+  // Метод для записи значения из определенного div
+  saveDivValue(index: number) {
+    if (this.myDivs) {
+      const divArray = this.myDivs.toArray();
+      this.selectedDistrict = divArray[index].nativeElement.innerText; // записываем текст из нужного div
+      console.log(this.selectedDistrict); // выводим значение в консоль
+    }
   }
 }
 

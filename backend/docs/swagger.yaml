@@ -386,8 +386,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all posts
-      operationId: get-all-posts
+      description: Get all posts-services
+      operationId: get-all-posts-services
       parameters:
       - description: Limit
         in: query
@@ -450,7 +450,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.Response'
-      summary: Get all posts
+      summary: Get all posts-services
       tags:
       - post
     post:
@@ -1086,8 +1086,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get favourite posts of user by id
-      operationId: get-favourite-posts-user-by-id
+      description: Get favourite posts-services of user by id
+      operationId: get-favourite-posts-services-user-by-id
       parameters:
       - description: Limit
         in: query
@@ -1160,15 +1160,15 @@ paths:
             $ref: '#/definitions/model.Response'
       security:
       - ApiKeyAuthBasic: []
-      summary: Get favourite posts of user by id
+      summary: Get favourite posts-services of user by id
       tags:
       - post
   /user/{id}/posts:
     get:
       consumes:
       - application/json
-      description: Get posts by user ID
-      operationId: get-posts-user-by-id
+      description: Get posts-services by user ID
+      operationId: get-posts-services-user-by-id
       parameters:
       - description: User ID
         in: path
@@ -1241,7 +1241,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.Response'
-      summary: Get posts by user ID
+      summary: Get posts-services by user ID
       tags:
       - post
   /users:
