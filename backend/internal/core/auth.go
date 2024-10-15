@@ -25,6 +25,7 @@ type (
 		Refresh(ctx context.Context, refreshSession RefreshSession) (accessToken, refreshToken *string, err error)
 		ConfigVK() *oauth2.Config
 		AuthorizeVK(ctx context.Context, token string) (accessToken, refreshToken *string, err error)
+		AuthorizeTelegram(ctx context.Context, user User, externalUserID int) (accessToken, refreshToken *string, err error)
 	}
 
 	RefreshSession struct {
@@ -45,6 +46,13 @@ type (
 	}
 
 	UpdateRefreshSessionParam func(*gorm.DB) error
+)
+
+type AuthProvider string
+
+var (
+	AuthProviderVK       AuthProvider = "vk"
+	AuthProviderTelegram AuthProvider = "telegram"
 )
 
 const (
