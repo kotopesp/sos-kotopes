@@ -3,8 +3,9 @@ package commentstore
 import (
 	"context"
 	"errors"
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
@@ -34,7 +35,11 @@ func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comment
 func (s *store) GetAllComments(ctx context.Context, params core.GetAllCommentsParams) (data []core.Comment, total int, err error) {
 	var comments []core.Comment
 
-	query := s.DB.WithContext(ctx).Order(
+	query := s.DB.WithContext(ctx).
+		Model(&core.Comment{}).
+		Where("posts_id=?", params.PostID)
+
+	query = query.Order(
 		"COALESCE(parent_id, id), (parent_id IS NULL)::int DESC, id",
 	) // sorting by comment and replies to it
 
@@ -48,15 +53,16 @@ func (s *store) GetAllComments(ctx context.Context, params core.GetAllCommentsPa
 
 	if err := query.
 		Preload("Author").
-		Find(&comments, "posts_id=?", params.PostID).Error; err != nil {
+		Find(&comments).Error; err != nil {
 		return nil, 0, err
 	}
 
-	var totalInt64 int64
-	if err := s.DB.WithContext(ctx).
+	query = s.DB.WithContext(ctx).
 		Model(&core.Comment{}).
-		Where("posts_id=?", params.PostID).
-		Count(&totalInt64).Error; err != nil {
+		Where("posts_id=?", params.PostID)
+
+	var totalInt64 int64
+	if err := query.Count(&totalInt64).Error; err != nil {
 		return nil, 0, err
 	}
 

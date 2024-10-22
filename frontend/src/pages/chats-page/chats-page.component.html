@@ -1,0 +1,143 @@
+<div class="chats__wrapper">
+  <div class="container">
+    <div class="container__sidebar__chats">
+      <div class="container__sidebar">
+        <div *ngFor="let button of buttons" class="sidebar__chats">
+          <app-chat-type-button
+            [label]="button.label"
+            [color]="button.color"
+            [counter]="button.counter || 0"
+            [icon]="button.iconName"/>
+        </div>
+      </div>
+
+      <div class="container__chats">
+        <div class="block__all-chats">
+          <div class="block__search__chats">
+
+            <div class="create__new__chat" *ngIf="createChat">
+              <div class="create__chat__header">
+                <img src="/assets/icons/exit-cross-icon.svg" width="25" height="25" alt="icon" id="exit__button"
+                     (click)="createChat = false"
+                     (keydown.enter)="createChat = false"
+                     tabindex="0"
+                     role="button"
+                     aria-pressed="false">
+                <div class="header__title">
+                  <img src="/assets/icons/chats-animals-icon.svg" width="95" height="73" alt="icon">
+                  <span class="ft24 fw400" [ngStyle]="{color: 'rgba(255, 255, 255, 0.6'}">Создать чат</span>
+                </div>
+                <div class="header__buttons ft20 fw700">
+                  <span>Недавние</span>
+                  <span>Избранное</span>
+                </div>
+              </div>
+
+              <div class="create__chat__main">
+                <div class="main__searchbar">
+                  <form class="searchbar">
+                    <img src="/assets/icons/lens-icon.svg" alt="icon">
+                    <span><input class="search-input fw400 ft20" type="text" placeholder="Поиск"></span>
+                  </form>
+                </div>
+
+                <div class="main__add__new__person">
+                  <div class="main__block__persons">
+                    <app-add-to-chat [countInArray]="countInArray" />
+                    <app-add-to-chat [countInArray]="countInArray" />
+                    <app-add-to-chat [countInArray]="countInArray" />
+                    <app-add-to-chat [countInArray]="countInArray" />
+                    <app-add-to-chat [countInArray]="countInArray" />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="create__chat__footer">
+                <div class="footer__footer">
+                  <span class="ft16 fw400" [ngStyle]="{color: 'var(--gray-text-tag)'}">Всего участников: <span
+                    class="ft18 fw700">{{ countInArray() }}</span></span>
+                  <button id="footer__create__chat" class="ft20 fw700">Создать чат</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="block__searchbar">
+              <form class="search__and__lens">
+                <img src="/assets/icons/lens-icon.svg" alt="icon">
+                <span><input class="search-input fw400 ft20" type="text" placeholder="Поиск"></span>
+              </form>
+              <div class="searchbar__add__new__chat"
+                   (click)="createChat = true"
+                   (keydown.enter)="createChat = true"
+                   tabindex="0"
+                   role="button"
+                   aria-pressed="false">
+                <img src="/assets/icons/newchat-icon.svg" alt="icon">
+              </div>
+            </div>
+            <div class="all__chats">
+              <app-chat appToggleActive (click)="currentChat = true"/>
+              <app-chat appToggleActive (click)="currentChat = true"/>
+              <app-chat appToggleActive (click)="currentChat = true"/>
+              <app-chat appToggleActive (click)="currentChat = true"/>
+              <app-chat appToggleActive (click)="currentChat = true"/>
+              <app-chat appToggleActive (click)="currentChat = true"/>
+              <app-chat appToggleActive (click)="currentChat = true"/>
+            </div>
+          </div>
+          <div class="block__current__chat">
+            <div *ngIf="currentChat" class="current__chat">
+              <div class="block__user__info">
+                <div>
+                  <img src="/assets/images/test-cat2.png" alt="avatar" class="message__user__avatar">
+                </div>
+                <div>
+                  <p>Родион Суворов</p>
+                  <p id="time__last__online">2 дня назад</p>
+                </div>
+              </div>
+              <div class="block__post__answer">
+                <app-post-answer/>
+              </div>
+              <div #scrollableContainer id="block__messages">
+                <div class="container__messages">
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="true"/>
+                  <app-message [answer]="false"/>
+                  <app-message [answer]="false"/>
+                </div>
+              </div>
+              <div class="block__current__message">
+                <div class="block__clip">
+                  <img src="/assets/icons/clip-icon.svg" alt="icon">
+                </div>
+                <textarea autocomplete="no" placeholder="Введите сообщение" id="textarea__message" rows="1"></textarea>
+                <div class="block__send__message">
+                  <img src="/assets/icons/send-message-icon.svg" alt="icon">
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!currentChat" class="current__chat__none">
+              <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
+              <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
+                class="start__new__chat"
+                (click)="createChat = true"
+                (keydown.enter)="createChat = true"
+                tabindex="0"
+                role="button"
+                aria-pressed="false">начните новый</span></p></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

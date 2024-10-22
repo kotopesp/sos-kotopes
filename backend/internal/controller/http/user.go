@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
@@ -9,6 +10,22 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
+//	@Summary		Get user by id
+//	@Tags			user
+//	@Description	Get user by id
+//	@ID				get-user
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int	true	"User ID"
+//	@Success		200	{object}	model.Response{data=user.ResponseUser}
+//	@Failure		400	{object}	model.Response
+//	@Failure		404	{object}	model.Response
+//
+//	@Failure		422	{object}	model.Response{data=validator.Response}
+//
+//	@Failure		500	{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/users/{id} [get]
 func (r *Router) getUser(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
@@ -30,6 +47,24 @@ func (r *Router) getUser(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(responseUser)
 }
 
+//	@Summary		Update user
+//	@Tags			user
+//	@Description	Update user
+//	@ID				update-user
+//	@Accept			json
+//	@Produce		json
+//	@Param			username	formData	string	false	"Username"
+//	@Param			firstname	formData	string	false	"First name"
+//	@Param			lastname	formData	string	false	"Last name"
+//	@Param			description	formData	string	false	"Description"
+//	@Param			photo		formData	file	false	"Photo"
+//	@Param			password	formData	string	false	"Password"
+//	@Success		200			{object}	model.Response{data=user.ResponseUser}
+//	@Failure		400			{object}	model.Response
+//	@Failure		404			{object}	model.Response
+//	@Failure		422			{object}	model.Response{data=validator.Response}
+//	@Failure		500			{object}	model.Response
+//	@Router			/users [patch]
 func (r *Router) updateUser(ctx *fiber.Ctx) error {
 	id, err := getIDFromToken(ctx)
 	if err != nil {

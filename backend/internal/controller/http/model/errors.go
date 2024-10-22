@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 )
 

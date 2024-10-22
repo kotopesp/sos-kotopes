@@ -1,17 +1,20 @@
 package validator
 
 import (
-	"fmt"
-
 	validatorPkg "github.com/go-playground/validator/v10"
 )
 
 type (
+	Response struct {
+		ValidationErrors []ResponseError `json:"validation_errors,omitempty"`
+		Message          *string         `json:"message,omitempty"`
+	}
+
 	ResponseError struct {
-		FailedField string
-		Tag         string
-		Param       string
-		Value       interface{}
+		FailedField string      `json:"failed_field" example:"username"`
+		Tag         string      `json:"tag" example:"required"`
+		Param       string      `json:"param" example:""`
+		Value       interface{} `json:"value"`
 	}
 
 	formValidator struct {
@@ -22,7 +25,3 @@ type (
 		Validate(data interface{}) []ResponseError
 	}
 )
-
-func (err *ResponseError) Error() string {
-	return fmt.Sprintf("FailedField: %s | Tag: %s | Param: %s | Value: %v", err.FailedField, err.Tag, err.Param, err.Value)
-}

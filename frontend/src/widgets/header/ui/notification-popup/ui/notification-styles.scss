@@ -1,0 +1,52 @@
+@mixin notification__block {
+  width: 496px;
+  margin-top: 20px;
+  padding: 0 20px 20px 30px;
+  max-height: fit-content;
+  border-bottom: 2px solid var(--brown-main-color);
+}
+
+
+@mixin main__image($count) {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+
+  @if ($count == 1) {
+    margin-right: 45px;
+  }
+}
+
+@mixin second__image {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  top: 30px;
+  right: 30px;
+}
+
+@mixin notification__hidden__text($count) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $count;
+  -webkit-box-orient: vertical;
+  color: var(--yellow-color-bg);
+}
+
+@mixin notification__date {
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--gray-text-tag);
+}
+
+@mixin block__images {
+  display: flex;
+  justify-content: center;
+}
+
+.format__text {
+  color: var(--yellow-color-bg)
+}

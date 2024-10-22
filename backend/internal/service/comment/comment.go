@@ -2,15 +2,13 @@ package commentservice
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type service struct {
 	commentStore core.CommentStore
 	postStore    core.PostStore
-	userStore    core.UserStore
 }
 
 func New(
@@ -36,6 +34,40 @@ func (s *service) CreateComment(ctx context.Context, comment core.Comment, userI
 		return comment, err
 	}
 
+	if comment.ParentID != nil {
+		dbComment, err := s.commentStore.GetCommentByID(ctx, *comment.ParentID)
+		if err != nil {
+			return comment, core.ErrParentCommentNotFound
+		}
+
+		if dbComment.PostID != comment.PostID {
+			return comment, core.ErrReplyToCommentOfAnotherPost
+		}
+
+		if dbComment.ParentID != nil {
+			return comment, core.ErrInvalidCommentParentID
+		}
+	}
+
+	if comment.ReplyID != nil {
+		if comment.ParentID == nil {
+			return comment, core.ErrNullCommentParentID
+		}
+
+		dbComment, err := s.commentStore.GetCommentByID(ctx, *comment.ReplyID)
+		if err != nil {
+			return comment, core.ErrReplyCommentNotFound
+		}
+
+		if dbComment.PostID != comment.PostID {
+			return comment, core.ErrReplyToCommentOfAnotherPost
+		}
+
+		if dbComment.ParentID == nil || *dbComment.ParentID != *comment.ParentID {
+			return comment, core.ErrInvalidCommentReplyID
+		}
+	}
+
 	return s.commentStore.CreateComment(ctx, comment)
 }
 
@@ -44,9 +76,6 @@ func (s *service) UpdateComment(ctx context.Context, comment core.Comment) (data
 	if err != nil {
 		return comment, err
 	}
-
-	logger.Log().Debug(ctx, fmt.Sprintf("%v", dbComment))
-	logger.Log().Debug(ctx, fmt.Sprintf("%v", comment))
 
 	if dbComment.AuthorID != comment.AuthorID {
 		return comment, core.ErrCommentAuthorIDMismatch
