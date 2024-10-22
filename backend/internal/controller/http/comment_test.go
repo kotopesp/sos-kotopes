@@ -83,7 +83,7 @@ func TestGetComments(t *testing.T) {
 						PostID: 1,
 						Limit:  &limit,
 						Offset: &offset,
-					}).Return(comments, totalComments, nil).Once()
+					}, 1).Return(comments, totalComments, nil).Once()
 			},
 			wantData: GetCommentsResponse{
 				Data: Data{
@@ -109,7 +109,7 @@ func TestGetComments(t *testing.T) {
 						PostID: 2,
 						Limit:  &limit,
 						Offset: &offset,
-					}).
+					}, 1).
 					Return(nil, 0, core.ErrPostNotFound).Once()
 			},
 			wantCode: http.StatusNotFound,
@@ -125,7 +125,7 @@ func TestGetComments(t *testing.T) {
 						PostID: 1,
 						Limit:  &limit,
 						Offset: &offset,
-					}).
+					}, 1).
 					Return(nil, 0, errors.New("internal error")).Once()
 			},
 			wantCode: http.StatusInternalServerError,
@@ -205,7 +205,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(coreComment, nil).Once()
 			},
 			wantCode: http.StatusCreated,
@@ -224,7 +224,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 2
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, core.ErrPostNotFound).Once()
 			},
 			wantCode: http.StatusNotFound,
@@ -243,7 +243,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, errors.New("internal error")).Once()
 			},
 			wantCode: http.StatusInternalServerError,
@@ -293,7 +293,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, core.ErrParentCommentNotFound).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,
@@ -312,7 +312,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, core.ErrReplyCommentNotFound).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,
@@ -331,7 +331,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, core.ErrReplyToCommentOfAnotherPost).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,
@@ -350,7 +350,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, core.ErrInvalidCommentReplyID).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,
@@ -369,7 +369,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, core.ErrInvalidCommentParentID).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,
@@ -388,7 +388,7 @@ func TestCreateComment(t *testing.T) {
 				coreComment.AuthorID = authorID
 				coreComment.PostID = 1
 				dependencies.commentService.EXPECT().
-					CreateComment(mock.Anything, coreComment).
+					CreateComment(mock.Anything, coreComment, 1).
 					Return(core.Comment{}, core.ErrNullCommentParentID).Once()
 			},
 			wantCode: http.StatusUnprocessableEntity,

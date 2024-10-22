@@ -28,8 +28,8 @@ type CommentStore interface {
 }
 
 type CommentService interface {
-	CreateComment(ctx context.Context, comment Comment) (data Comment, err error)
-	GetAllComments(ctx context.Context, params GetAllCommentsParams) (data []Comment, total int, err error)
+	CreateComment(ctx context.Context, comment Comment, userID int) (data Comment, err error)
+	GetAllComments(ctx context.Context, params GetAllCommentsParams, userID int) (data []Comment, total int, err error)
 	UpdateComment(ctx context.Context, comments Comment) (data Comment, err error)
 	DeleteComment(ctx context.Context, comments Comment) error
 }

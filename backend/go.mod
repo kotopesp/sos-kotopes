@@ -1,6 +1,8 @@
 module github.com/kotopesp/sos-kotopes
 
-go 1.22.5
+go 1.23
+
+toolchain go1.23.2
 
 require (
 	github.com/brianvoe/gofakeit/v7 v7.0.4
@@ -23,7 +25,7 @@ require (
 require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/atomic v1.9.0 // indirect
 )
 
 require (

@@ -3,10 +3,17 @@ package post
 import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"mime/multipart"
+	"path/filepath"
+	"fmt"
 )
 
+func GetExtensionFile(file *multipart.FileHeader) string {
+	return filepath.Ext(file.Filename)
+}
+
 // ToCorePostDetails converts CreateRequestBodyPost from model to core.PostDetails
-func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails {
+func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int, exts []string) core.PostDetails {
 	if p == nil {
 		return core.PostDetails{}
 	}
@@ -14,7 +21,6 @@ func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails
 	post := core.Post{
 		Title:    p.Title,
 		Content:  p.Content,
-		Photo:    p.Photo,
 		AuthorID: authorID,
 	}
 
@@ -28,21 +34,30 @@ func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails
 		Status:      p.Status,
 	}
 
+	photos := []core.Photo{}
+	for i, photo := range p.Photos {
+		photos = append(photos, core.Photo{
+			Photo: 			 photo,
+			FileExtension:   exts[i],
+		})
+		fmt.Printf("exts[i]: %v: %v\n", i, exts[i])
+	}	
+
 	return core.PostDetails{
 		Post:   post,
 		Animal: animal,
+		Photos: photos,
 	}
 }
 
-func (p *UpdateRequestBodyPost) ToCorePostDetails() core.UpdateRequestBodyPost {
+func (p *UpdateRequestBodyPost) ToCorePostDetails() (core.UpdateRequestPost, core.UpdateRequestPhotos) {
 	if p == nil {
-		return core.UpdateRequestBodyPost{}
+		return core.UpdateRequestPost{}, core.UpdateRequestPhotos{}
 	}
 
-	return core.UpdateRequestBodyPost{
+	UpdateRequestPost := core.UpdateRequestPost{
 		Title:       p.Title,
 		Content:     p.Content,
-		Photo:       p.Photo,
 		AnimalType:  p.AnimalType,
 		Age:         p.Age,
 		Color:       p.Color,
@@ -50,6 +65,12 @@ func (p *UpdateRequestBodyPost) ToCorePostDetails() core.UpdateRequestBodyPost {
 		Description: p.Description,
 		Status:      p.Status,
 	}
+
+	UpdateRequestPhotos := core.UpdateRequestPhotos{
+		Photos: p.Photos,
+	}
+
+	return UpdateRequestPost, UpdateRequestPhotos
 }
 
 // ToResponse converts a list of core.PostDetails to Response with pagination meta
@@ -68,6 +89,12 @@ func ToResponse(meta pagination.Pagination, posts []core.PostDetails) Response {
 
 // ToPostResponse converts core.PostDetails to PostResponse
 func ToPostResponse(post core.PostDetails) PostResponse {
+	var urlsPhotos []string
+
+	for _, photo := range post.Photos {
+		urlsPhotos = append(urlsPhotos, photo.URL)
+	}
+
 	return PostResponse{
 		Title:          post.Post.Title,
 		Content:        post.Post.Content,
@@ -79,8 +106,8 @@ func ToPostResponse(post core.PostDetails) PostResponse {
 		Gender:         post.Animal.Gender,
 		Description:    post.Animal.Description,
 		Status:         post.Animal.Status,
-		Photo:          post.Post.Photo,
-		IsFavourite:    false,
+		URLsPhotos:     urlsPhotos,
+		IsFavourite:    post.Post.IsFavourite,
 		Comments:       0,
 	}
 }
@@ -103,7 +130,8 @@ func (p *GetAllPostsParams) ToCoreGetAllPostsParams() core.GetAllPostsParams {
 		Offset:     &p.Offset,
 		Status:     p.Status,
 		AnimalType: p.AnimalType,
-		Gender:     p.Gender,
-		Color:      p.Color,
+		Gender: 	p.Gender,
+		Color:  	p.Color,
+		SearchWord: p.SearchWord,
 	}
 }
