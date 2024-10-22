@@ -83,7 +83,7 @@ func TestGetComments(t *testing.T) {
 						PostID: 1,
 						Limit:  &limit,
 						Offset: &offset,
-					}).Return(comments, totalComments, nil).Once()
+					}, 1).Return(comments, totalComments, nil).Once()
 			},
 			wantData: GetCommentsResponse{
 				Data: Data{
@@ -109,7 +109,7 @@ func TestGetComments(t *testing.T) {
 						PostID: 2,
 						Limit:  &limit,
 						Offset: &offset,
-					}).
+					}, 1).
 					Return(nil, 0, core.ErrPostNotFound).Once()
 			},
 			wantCode: http.StatusNotFound,
@@ -125,7 +125,7 @@ func TestGetComments(t *testing.T) {
 						PostID: 1,
 						Limit:  &limit,
 						Offset: &offset,
-					}).
+					}, 1).
 					Return(nil, 0, errors.New("internal error")).Once()
 			},
 			wantCode: http.StatusInternalServerError,
