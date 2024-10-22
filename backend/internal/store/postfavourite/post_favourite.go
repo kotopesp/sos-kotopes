@@ -115,7 +115,7 @@ func (s *store) AddToFavourites(ctx context.Context, postFavourite core.PostFavo
     }
 
 	postFavourite.CreatedAt = time.Now()
-  
+
     if err := s.DB.WithContext(ctx).Create(&postFavourite).Error; err != nil {
         logger.Log().Error(ctx, err.Error())
         return core.Post{}, err

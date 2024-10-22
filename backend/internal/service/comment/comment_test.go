@@ -87,7 +87,6 @@ func generateTestPost() core.Post {
 	twoDaysAgo := now.Add(-48 * time.Hour)
 
 	// Example photo as a byte slice (you would replace this with actual photo data in a real scenario)
-	photo := []byte{137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82} // Example PNG file header
 
 	// Generate a test post
 	post := core.Post{
@@ -100,7 +99,6 @@ func generateTestPost() core.Post {
 		DeletedAt: time.Time{}, // Zero value means it is not deleted
 		CreatedAt: twoDaysAgo,
 		UpdatedAt: now,
-		Photo:     photo,
 	}
 
 	return post
@@ -202,7 +200,7 @@ func TestGetAllComments(t *testing.T) {
 				).Return(tt.retPost, tt.retPostError).Once()
 			}
 
-			res, total, err := commentService.GetAllComments(ctx, params)
+			res, total, err := commentService.GetAllComments(ctx, params, 1)
 
 			assert.ErrorIs(t, err, tt.wantError, "errors should match")
 			if tt.wantError == nil {
@@ -483,7 +481,7 @@ func TestCreateComment(t *testing.T) {
 			if tt.comment == nil {
 				tt.comment = &comment
 			}
-			res, err := commentService.CreateComment(ctx, *tt.comment)
+			res, err := commentService.CreateComment(ctx, *tt.comment, 1)
 
 			assert.ErrorIs(t, err, tt.wantError, "errors should match")
 			if err == nil {
