@@ -29,7 +29,6 @@ interface TitleObject {
     ButtonLookingForHomeComponent,
     RouterLink,
     NgIf,
-    NgStyle,
     NgForOf,
     CustomCalendarComponent,
     RanWarningComponent,
@@ -174,7 +173,6 @@ export class CreatePostPageComponent {
     if (this.myDivs) {
       const divArray = this.myDivs.toArray();
       this.selectedDistrict = divArray[index].nativeElement.innerText; // записываем текст из нужного div
-      console.log(this.selectedDistrict); // выводим значение в консоль
     }
   }
 }

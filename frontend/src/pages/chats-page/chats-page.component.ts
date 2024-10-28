@@ -1,7 +1,7 @@
 import {AfterViewChecked, Component, ElementRef, signal, ViewChild} from '@angular/core';
 import {AppChatTypeButtonComponent} from "../../entities/chat-type-button/app-chat-type-button.component";
 import {Button} from "../../model/button";
-import {NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase} from "@angular/common";
+import {NgForOf, NgIf, NgStyle} from "@angular/common";
 import {ChatComponent} from "./ui/chat/chat.component";
 import {MessageComponent} from "./ui/message/message.component";
 import {PostAnswerComponent} from "./ui/post-answer/post-answer.component";
@@ -19,11 +19,8 @@ import {ToggleActiveDirective} from "../../directives/toggle-active/toggle-activ
     MessageComponent,
     PostAnswerComponent,
     AddToChatComponent,
-    NgSwitch,
-    NgSwitchCase,
     NgStyle,
     ToggleActiveDirective,
-    NgClass,
   ],
   templateUrl: './chats-page.component.html',
   styleUrl: './chats-page.component.scss'
