@@ -2,8 +2,6 @@ package http
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
@@ -210,8 +208,6 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 	}
 
 	postRequest.Photos = *photoBytes
-
-	fmt.Printf("len(postRequest.Photos): %v\n", len(postRequest.Photos))
 
 	corePostDetails := postRequest.ToCorePostDetails(authorID, exts)
 

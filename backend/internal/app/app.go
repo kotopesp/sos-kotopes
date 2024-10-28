@@ -7,7 +7,7 @@ import (
 	"syscall"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	"github.com/kotopesp/sos-kotopes/internal/migrate"
+	// "github.com/kotopesp/sos-kotopes/internal/migrate"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
 	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
 	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
@@ -51,9 +51,9 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Migrate up
-	if err := migrate.Up(cfg.DB.URL); err != nil {
-		logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
-	}
+	// if err := migrate.Up(cfg.DB.URL); err != nil {
+	// 	logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
+	// }
 
 	// Stores
 	userStore := user.New(pg)

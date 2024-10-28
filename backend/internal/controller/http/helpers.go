@@ -151,8 +151,6 @@ func IsValidPhotoSize(ctx context.Context, file *multipart.FileHeader) (err erro
 }
 
 func validatePhoto(ctx context.Context, file *multipart.FileHeader) (string, error) {
-	fmt.Print("вход в validatePhoto\n")
-
 	// Check file size
 	err := IsValidPhotoSize(ctx, file)
 	if err != nil {
@@ -167,8 +165,6 @@ func validatePhoto(ctx context.Context, file *multipart.FileHeader) (string, err
 		return "", err
 	}
 
-	// Add additional photo validation checks here
-	fmt.Print("выход из validatePhoto\n")
 	return ext, nil
 }
 
@@ -207,8 +203,6 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 }
 
 func openAndValidatePhotos(ctx *fiber.Ctx) (photoBytes *[][]byte, exts []string, err error) {
-	fmt.Print("вход в openAndValidatePhotos\n")
-
 	form, err := ctx.MultipartForm()
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
@@ -246,8 +240,6 @@ func openAndValidatePhotos(ctx *fiber.Ctx) (photoBytes *[][]byte, exts []string,
 		logger.Log().Debug(ctx.UserContext(), model.ErrPhotoNotFound.Error())
 		return nil, nil, model.ErrPhotoNotFound
 	}
-
-	fmt.Print("выход из openAndValidatePhotos\n")
 	
 	return photoBytes, exts, nil
 }
