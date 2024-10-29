@@ -7,7 +7,7 @@ import (
 	"syscall"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	// "github.com/kotopesp/sos-kotopes/internal/migrate"
+	"github.com/kotopesp/sos-kotopes/internal/migrate"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
 	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
 	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
@@ -32,7 +32,7 @@ import (
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
-	photostore "github.com/kotopesp/sos-kotopes/internal/store/photo"
+  photostore "github.com/kotopesp/sos-kotopes/internal/store/photo"
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 )
 
@@ -51,9 +51,9 @@ func Run(cfg *config.Config) {
 	defer pg.Close(ctx)
 
 	// Migrate up
-	// if err := migrate.Up(cfg.DB.URL); err != nil {
-	// 	logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
-	// }
+	if err := migrate.Up(cfg.DB.URL); err != nil {
+		logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
+	}
 
 	// Stores
 	userStore := user.New(pg)
@@ -63,7 +63,7 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
-	photoStore := photostore.New(pg)
+  photoStore := photostore.New(pg)
 	refreshSessionStore := refreshsessionstore.New(pg)
 
 	// Services
@@ -94,7 +94,7 @@ func Run(cfg *config.Config) {
 		CaseSensitive:            true,
 		StrictRouting:            false,
 		EnableSplittingOnParsers: true,
-		BodyLimit:                cfg.HTTP.BodyLimit,
+    BodyLimit:                cfg.HTTP.BodyLimit,
 	})
 	app.Use(recover.New())
 	app.Use(cors.New())
@@ -110,7 +110,7 @@ func Run(cfg *config.Config) {
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
-	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
+	err = app.Listen(cfg.HTTP.Port)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())
 	}

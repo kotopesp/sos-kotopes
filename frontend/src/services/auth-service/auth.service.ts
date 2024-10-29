@@ -1,35 +1,63 @@
-import {inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {FormControl, ɵFormGroupValue, ɵTypedOrUntyped} from "@angular/forms";
+import {Observable, tap} from "rxjs";
+import {CookieService} from "ngx-cookie-service";
+import {Router} from "@angular/router";
 
-// interface LoginResponse {
-//   token: string;
-//   user: {
-//     id: number;
-//     name: string;
-//     email: string;
-//   };
-// }
+
+export interface LoginResponse {
+  status: string,
+  data: string
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  http = inject(HttpClient);
-  baseApiUrl: string = environment.apiUrl;
+  token: string | null;
+  baseApiUrl: string;
 
-  login(payload: ɵTypedOrUntyped<{ password: FormControl<null>; username: FormControl<null> }, ɵFormGroupValue<{
-    password: FormControl<null>;
-    username: FormControl<null>
-  }>, string>): void {
-    console.log(payload)
-    // return this.http.post(
-    //   `${this.baseApiUrl}auth/login`,
-    //   payload
-    //   ).pipe(
-    //   tap(res => console.log(res))
-    // );
+  constructor(private http: HttpClient, private router: Router, private cookieService: CookieService) {
+    this.token = null;
+    this.baseApiUrl = environment.apiUrl;
+  }
+
+  get isAuth() {
+    if (!this.token) {
+      this.token = this.cookieService.get('token')
+    }
+    return !!this.token;
+  }
+
+  login(payload: {
+    password: string,
+    username: string,
+  }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
+      `${this.baseApiUrl}auth/login`,
+      payload
+    ).pipe(
+      tap((res: LoginResponse) => {
+          this.saveTokens(res)
+        }
+      )
+    );
+  }
+
+  logout() {
+    this.cookieService.deleteAll()
+    this.token = null;
+    this.router.navigate([''])
+  }
+
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  saveTokens(res: LoginResponse) {
+    this.setToken(res.data);
+    this.cookieService.set('token', res.data)
   }
 }
