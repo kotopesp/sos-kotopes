@@ -39,9 +39,16 @@ func (r *Router) getComments(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
+	userID, err := getIDFromToken(ctx)
+	if userID != 0 && err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
 	coreComments, total, err := r.commentService.GetAllComments(
 		ctx.UserContext(),
-		getAllCommentsParams.ToCoreGetAllCommentsParams(commentPathParams.PostID),
+		getAllCommentsParams.ToCoreGetAllCommentsParams(commentPathParams.PostID), 
+		userID,
 	)
 	if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
@@ -102,7 +109,7 @@ func (r *Router) createComment(ctx *fiber.Ctx) error {
 	}
 	coreComment.AuthorID = userID
 
-	createdComment, err := r.commentService.CreateComment(ctx.UserContext(), coreComment)
+	createdComment, err := r.commentService.CreateComment(ctx.UserContext(), coreComment, userID)
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrPostNotFound):

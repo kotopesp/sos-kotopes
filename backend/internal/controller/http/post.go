@@ -2,9 +2,6 @@ package http
 
 import (
 	"errors"
-
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	postModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/post"
@@ -31,17 +28,23 @@ import (
 //	@Failure		500			{object}	model.Response
 //	@Router			/posts [get]
 func (r *Router) getPosts(ctx *fiber.Ctx) error {
+	userID, err := getIDFromToken(ctx)
+	if userID != 0 && err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
 	var getAllPostsParams postModel.GetAllPostsParams
 
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
 	if fiberError != nil || parseOrValidationError != nil {
-		logger.Log().Error(ctx.UserContext(), fiberError.Error())
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
 
 	coreGetAllPostsParams := getAllPostsParams.ToCoreGetAllPostsParams()
 
-	postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), coreGetAllPostsParams)
+	postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), userID, coreGetAllPostsParams)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -102,7 +105,7 @@ func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 	pagination := paginate(total, getAllPostsParams.Limit, getAllPostsParams.Offset)
 	response := postModel.ToResponse(pagination, postsDetails)
 
-	return ctx.Status(fiber.StatusOK).JSON(response)
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(response))
 }
 
 //	@Summary		Get post by ID
@@ -119,14 +122,21 @@ func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 //	@Failure		500	{object}	model.Response
 //	@Router			/posts/{id} [get]
 func (r *Router) getPostByID(ctx *fiber.Ctx) error {
+	userID, err := getIDFromToken(ctx)
+	if userID != 0 && err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
 	var pathParams postModel.PathParams
 
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
 	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
 
-	postDetails, err := r.postService.GetPostByID(ctx.UserContext(), pathParams.PostID)
+	postDetails, err := r.postService.GetPostByID(ctx.UserContext(), pathParams.PostID, userID)
 	if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
 			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
@@ -169,6 +179,7 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &postRequest)
 	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
 
@@ -178,15 +189,29 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetAuthorIDFromToken))
 	}
 
-	fileHeader, err := ctx.FormFile("photo") // TODO: check if photo = picture and check size
+	photoBytes, exts, err := openAndValidatePhotos(ctx)
 	if err != nil {
-		logger.Log().Error(ctx.UserContext(), err.Error())
-		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		switch {
+		case errors.Is(err, model.ErrInvalidPhotoSize):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrInvalidExtension):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrPhotoNotFound):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
 	}
 
-	corePostDetails := postRequest.ToCorePostDetails(authorID)
+	postRequest.Photos = *photoBytes
 
-	postDetails, err := r.postService.CreatePost(ctx.UserContext(), corePostDetails, fileHeader)
+	corePostDetails := postRequest.ToCorePostDetails(authorID, exts)
+
+	postDetails, err := r.postService.CreatePost(ctx.UserContext(), corePostDetails)
 	if err != nil {
 		if errors.Is(err, core.ErrNoSuchUser) {
 			logger.Log().Error(ctx.UserContext(), core.ErrNoSuchUser.Error())
@@ -231,9 +256,9 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
 	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
-	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("%v", pathParams.PostID))
 
 	var updateRequestPost postModel.UpdateRequestBodyPost
 
@@ -242,9 +267,28 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	coreUpdateRequestPost := updateRequestPost.ToCorePostDetails()
+	photoBytes, _, err := openAndValidatePhotos(ctx)
+	if err != nil {
+		switch {
+		case errors.Is(err, model.ErrInvalidPhotoSize):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrInvalidExtension):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, model.ErrPhotoNotFound):
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+
+	updateRequestPost.Photos = photoBytes
+
+	coreUpdateRequestPost, coreUpdateRequestPhoto := updateRequestPost.ToCorePostDetails()
 
 	coreUpdateRequestPost.ID = &pathParams.PostID
+	coreUpdateRequestPhoto.PostID = pathParams.PostID
 
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
@@ -253,7 +297,7 @@ func (r *Router) updatePost(ctx *fiber.Ctx) error {
 	}
 	coreUpdateRequestPost.AuthorID = &userID
 
-	postDetails, err := r.postService.UpdatePost(ctx.UserContext(), coreUpdateRequestPost)
+	postDetails, err := r.postService.UpdatePost(ctx.UserContext(), coreUpdateRequestPost, coreUpdateRequestPhoto)
 	if err != nil {
 		switch err {
 		case core.ErrPostNotFound:
@@ -292,6 +336,7 @@ func (r *Router) deletePost(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
 	if fiberError != nil || parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
 		return fiberError
 	}
 

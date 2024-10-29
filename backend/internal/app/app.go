@@ -32,6 +32,7 @@ import (
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+  photostore "github.com/kotopesp/sos-kotopes/internal/store/photo"
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 )
 
@@ -62,6 +63,7 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
+  photoStore := photostore.New(pg)
 	refreshSessionStore := refreshsessionstore.New(pg)
 
 	// Services
@@ -83,7 +85,7 @@ func Run(cfg *config.Config) {
 			RefreshTokenLifetime: cfg.RefreshTokenLifetime,
 		},
 	)
-	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore, photoStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -92,6 +94,7 @@ func Run(cfg *config.Config) {
 		CaseSensitive:            true,
 		StrictRouting:            false,
 		EnableSplittingOnParsers: true,
+    BodyLimit:                cfg.HTTP.BodyLimit,
 	})
 	app.Use(recover.New())
 	app.Use(cors.New())
