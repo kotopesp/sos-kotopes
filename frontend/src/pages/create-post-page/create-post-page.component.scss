@@ -227,7 +227,7 @@
         color: var(--brown-main-color);
         border-radius: 10px;
 
-        &:hover {
+        &:hover &:enabled{
           background: var(--brown-main-color);
           color: var(--white-color);
           border: 2px solid var(--white-color);
@@ -238,6 +238,10 @@
       .button__next {
         width: 120px;
         height: 46px;
+
+        &:disabled {
+          opacity: 0.3;
+        }
       }
 
       .button__create__post {

@@ -1,20 +1,40 @@
-import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, Renderer2, OnInit } from '@angular/core';
+import { ButtonStateService } from "../../services/button-state/button-state.service";
 
 @Directive({
   selector: '[appChooseOne]',
   standalone: true
 })
-export class ChooseOneDirective {
+export class ChooseOneDirective implements OnInit {
   // Статическое хранилище для экземпляров директивы
   private static activeInstances: { [key: string]: ChooseOneDirective[] } = {};
+  @Input() buttonIndex!: number;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {
-    // Сохраняем экземпляр директивы в статическом хранилище по классу
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
+    private buttonState: ButtonStateService
+  ) {
     const className = this.el.nativeElement.className;
     if (!ChooseOneDirective.activeInstances[className]) {
       ChooseOneDirective.activeInstances[className] = [];
     }
     ChooseOneDirective.activeInstances[className].push(this);
+  }
+
+  ngOnInit() {
+    // Если в сервисе есть выбранная кнопка, обновляем состояние
+    const groupKey = this.el.nativeElement.className; // Получаем класс кнопки как идентификатор группы
+    const activeButtonIndex = this.buttonState.getState(groupKey);
+
+    if (activeButtonIndex !== null) {
+      // Если есть информация о нажатой кнопке, устанавливаем активное состояние
+      if (this.buttonIndex === activeButtonIndex) {
+        this.setActiveStyles();
+      } else {
+        this.setInactiveStyles();
+      }
+    }
   }
 
   @HostListener('click') onClick() {
@@ -25,6 +45,9 @@ export class ChooseOneDirective {
 
     // Меняем стили текущего элемента
     this.setActiveStyles();
+
+    // Сохраняем состояние выбранной кнопки в сервисе
+    this.buttonState.setState(className, this.buttonIndex); // Сохраняем индекс как строку
   }
 
   private resetOtherElements(className: string) {

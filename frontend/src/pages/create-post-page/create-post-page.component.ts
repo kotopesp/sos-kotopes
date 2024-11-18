@@ -5,7 +5,7 @@ import {
   ButtonLookingForHomeComponent
 } from "../../shared/buttons/button-looking-for-home/button-looking-for-home.component";
 import { RouterLink} from "@angular/router";
-import {DatePipe, NgForOf, NgIf, NgStyle} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {CustomCalendarComponent} from "./ui/custom-calendar/custom-calendar.component";
 import {RanWarningComponent} from "../../shared/ran-warning/ran-warning.component";
 import {ClickToSelectDirective} from "../../directives/click-to-select/click-to-select.directive";
@@ -15,6 +15,7 @@ import {AuthService} from "../../services/auth-service/auth.service";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ChooseOneDirective} from "../../directives/choose-one/choose-one.directive";
 import {PostsService} from "../../services/posts-services/posts.service";
+import {ButtonStateService} from "../../services/button-state/button-state.service";
 
 interface TitleObject {
   [key: number]: string
@@ -48,14 +49,19 @@ export class CreatePostPageComponent {
   // ViewChild для доступа к элементу div
   @ViewChildren('myDiv') myDivs: QueryList<ElementRef> | undefined;
   titleObject: TitleObject;
-  selectedFiles: { name: string, preview: string }[] = [];
   isDragging = false;
-  selectedDate!: Date;
-  selectedDistrict: string;
-  chooseColors: string[] = [];
-  districts: { text: string }[] = [];
+  districts: Array<{ text: string }>;
   buttonActive: boolean;
   countOfSlides: number;
+  isDisabled: boolean = true;
+
+  reason: string;
+  species: string;
+  gender: string;
+  selectedFiles: { name: string, preview: string }[] = [];
+  chooseColors: Array<string>;
+  selectedDate!: Date;
+  selectedDistrict: string;
 
   formCreatePost: FormGroup;
   textValue: string;
@@ -63,7 +69,10 @@ export class CreatePostPageComponent {
   photosOverlay: WritableSignal<boolean>;
   descriptionOverlay: WritableSignal<boolean>;
 
-  constructor(private authService: AuthService, private postsService: PostsService) {
+  constructor(private authService: AuthService, private postsService: PostsService, private buttonState: ButtonStateService) {
+    this.reason = '';
+    this.gender = '';
+    this.species = ''
     this.buttonActive = false;
     this.numberOfSlide = signal<number>(1);
     this.titleObject = {
@@ -156,16 +165,32 @@ export class CreatePostPageComponent {
     } else {
       this.numberOfSlide.set(this.numberOfSlide() + 1);
     }
+
+    console.log(this.buttonActive);
+    console.log(this.selectedDistrict);
+    console.log(this.textValue);
   }
 
   createPost() {
     if (!this.textValue) {
       this.descriptionOverlay.set(true);
     }
-  }
+    const form = new FormGroup({
+      title: new FormControl('abc'),
+      content: new FormControl('abc'),
+      animal_type: new FormControl('abc'),
+      photo: new FormControl('abc'),
+      age: new FormControl(12),
+      color: new FormControl('abc'),
+      gender: new FormControl('abc'),
+      description: new FormControl('abc'),
+      status: new FormControl('abc'),
+    })
 
-  onSubmit() {
-    this.postsService.createPost(this.formCreatePost)
+    let formObj = form.getRawValue(); // {name: '', description: ''}
+
+    let serializedForm = JSON.stringify(formObj);
+    this.postsService.createPost(serializedForm)
   }
 
   // Метод для записи значения из определенного div

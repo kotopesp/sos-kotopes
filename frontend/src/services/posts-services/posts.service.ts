@@ -13,7 +13,17 @@ export class PostsService {
   constructor(private http: HttpClient, private router: Router) {
   }
 
-  createPost(payload: FormGroup) {
-    return this.http.post<any>(`${environment.apiUrl}/posts`, payload)
+
+  createPost(payload: string) {
+    return this.http.post<any>(`${environment.apiUrl}posts`, payload).subscribe(
+      {
+        next: () => {
+          console.log('success')
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      }
+    )
   }
 }
