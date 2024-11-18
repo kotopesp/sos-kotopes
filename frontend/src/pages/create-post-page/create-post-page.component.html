@@ -99,7 +99,7 @@
                         <div [style.gap.px]="5" [style.display]="'flex'" [style.flex-direction]="'column'">
                             <label [style.gap.px]="5" [style.display]="'flex'" [style.align-items]="'center'"
                                    *ngFor="let district of districts; let i = index">
-                                <button appClickToSelect="selectedPlace" class="yellow__button__choose"
+                                <button appClickToSelect="selectedPlace" [buttonIndex]="i" class="places"
                                         (click)="saveDivValue(i)"></button>
                                 <div #myDiv>{{ district.text }}</div>
                             </label>
@@ -118,9 +118,9 @@
                 <div class="ft20 fw400" [style.padding-bottom.px]="30">Какой-то текст</div>
                 <div class="ft24 fw700" [style.padding-bottom.px]="15">Окрас</div>
                 <div class="create__post__main create__post__choose__color">
-                    <div *ngFor="let color of chooseColors" [style.gap.px]="15" [style.display]="'flex'"
+                    <div *ngFor="let color of chooseColors; let i = index" [style.gap.px]="15" [style.display]="'flex'"
                          [style.align-items]="'center'">
-                        <button class="yellow__button__choose" appClickToSelect="selectedColor"></button>
+                        <button class="colors" appClickToSelect="selectedColor" [buttonIndex]="i"></button>
                         <div class="ft20 fw400" #color>{{ color }}</div>
                     </div>
                 </div>
