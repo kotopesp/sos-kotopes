@@ -29,6 +29,8 @@ type Veterinary struct {
 }
 
 type UpdateVeterinary struct {
+	ID               int     `gorm:"column:id"`      //тут ещё подумать.
+	UserID           int     `gorm:"column:user_id"` //и тут
 	Username         *string `gorm:"column:username"`
 	Firstname        *string `gorm:"column:firstname"`
 	Lastname         *string `gorm:"column:lastname"`
