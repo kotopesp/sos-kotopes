@@ -31,16 +31,21 @@ export class AuthService {
     return !!this.token;
   }
 
+  get getToken() : string | null {
+    return this.cookieService.get("token");
+  }
+
   login(payload: {
     password: string,
     username: string,
   }): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(
       `${this.baseApiUrl}auth/login`,
-      payload
+      payload,
+      {withCredentials: true}
     ).pipe(
       tap((res: LoginResponse) => {
-          this.saveTokens(res)
+          this.saveTokens(res);
         }
       )
     );
@@ -54,6 +59,16 @@ export class AuthService {
 
   setToken(token: string) {
     this.token = token;
+  }
+
+  refreshToken() {
+    this.http.post<LoginResponse>(
+      `${this.baseApiUrl}auth/token/refresh`,
+      {},
+      {withCredentials: true}
+    ).subscribe((res: LoginResponse) => {
+      this.saveTokens(res);
+    })
   }
 
   saveTokens(res: LoginResponse) {
