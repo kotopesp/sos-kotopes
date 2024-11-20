@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {Observable, tap} from "rxjs";
+import {catchError, Observable, tap, throwError} from "rxjs";
 import {CookieService} from "ngx-cookie-service";
 import {Router} from "@angular/router";
 
@@ -62,13 +62,18 @@ export class AuthService {
   }
 
   refreshToken() {
-    this.http.post<LoginResponse>(
+    return this.http.post<LoginResponse>(
       `${this.baseApiUrl}auth/token/refresh`,
       {},
       {withCredentials: true}
-    ).subscribe((res: LoginResponse) => {
-      this.saveTokens(res);
-    })
+    ).pipe(
+      tap((response: LoginResponse) => this.saveTokens(response)),
+      catchError(error => {
+        console.error("Failed to refresh token");
+        this.logout();
+        return throwError(error);
+      })
+    );
   }
 
   saveTokens(res: LoginResponse) {

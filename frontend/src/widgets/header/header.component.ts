@@ -29,7 +29,6 @@ export class HeaderComponent implements OnInit {
   isAuth: WritableSignal<boolean>;
   isAuthOverlay: WritableSignal<boolean>;
   isRegisterOverlay: WritableSignal<boolean>;
-  private refreshTokenInterval!: NodeJS.Timeout;
 
   constructor(private authService: AuthService) {
     this.isAuth = signal<boolean>(false);
@@ -41,14 +40,6 @@ export class HeaderComponent implements OnInit {
     this.isAuth = signal<boolean>(this.authService.isAuth);
     this.isAuthOverlay = signal<boolean>(false);
     this.isRegisterOverlay = signal<boolean>(false);
-
-    // Update access token and refresh token every minute
-    this.refreshTokenInterval = setInterval(() => {
-      if (this.isAuth()) {
-        console.log("Updating jwt tokens...")
-        this.authService.refreshToken();
-      }
-    }, 1000 * 60);
   }
 
   headerItems = [
