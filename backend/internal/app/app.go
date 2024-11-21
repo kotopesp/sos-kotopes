@@ -94,7 +94,12 @@ func Run(cfg *config.Config) {
 		EnableSplittingOnParsers: true,
 	})
 	app.Use(recover.New())
-	app.Use(cors.New())
+
+	// This configuration is necessary so that the frontend can send requests with cookies.
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     cfg.CORS.AllowedOrigins,
+		AllowCredentials: true,
+	}))
 
 	v1.NewRouter(
 		app,
