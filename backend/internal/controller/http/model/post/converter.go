@@ -12,20 +12,18 @@ func (p *CreateRequestBodyPost) ToCorePostDetails(authorID int) core.PostDetails
 	}
 
 	post := core.Post{
-		Title:    p.Title,
-		Content:  p.Content,
-		Photo:    p.Photo,
-		AuthorID: authorID,
+		Photo:       p.Photo,
+		AuthorID:    authorID,
+		Description: p.Description,
+		Location:   p.Location,
 	}
 
 	animal := core.Animal{
-		KeeperID:    authorID,
-		AnimalType:  p.AnimalType,
-		Age:         p.Age,
-		Color:       p.Color,
-		Gender:      p.Gender,
-		Description: p.Description,
-		Status:      p.Status,
+		UserID:     authorID,
+		AnimalType: p.AnimalType,
+		Color:      p.Color,
+		Gender:     p.Gender,
+		Status:     p.Status,
 	}
 
 	return core.PostDetails{
@@ -69,17 +67,15 @@ func ToResponse(meta pagination.Pagination, posts []core.PostDetails) Response {
 // ToPostResponse converts core.PostDetails to PostResponse
 func ToPostResponse(post core.PostDetails) PostResponse {
 	return PostResponse{
-		Title:          post.Post.Title,
-		Content:        post.Post.Content,
 		AuthorUsername: post.Username,
 		CreatedAt:      post.Post.CreatedAt,
 		AnimalType:     post.Animal.AnimalType,
-		Age:            post.Animal.Age,
 		Color:          post.Animal.Color,
 		Gender:         post.Animal.Gender,
-		Description:    post.Animal.Description,
+		Description:    post.Post.Description,
 		Status:         post.Animal.Status,
 		Photo:          post.Post.Photo,
+		Location:       post.Post.Location,
 		IsFavourite:    false,
 		Comments:       0,
 	}

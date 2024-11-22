@@ -2,6 +2,7 @@ package post
 
 import (
 	"context"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
@@ -61,24 +62,12 @@ func (s *service) BuildPostDetails(ctx context.Context, post core.Post) (core.Po
 
 // FuncUpdateRequestBodyPost updates the post details based on UpdateRequestBodyPost
 func FuncUpdateRequestBodyPost(postDetails core.PostDetails, updatePost core.UpdateRequestBodyPost) core.PostDetails {
-	if updatePost.Title != nil {
-		postDetails.Post.Title = *updatePost.Title
-	}
-
-	if updatePost.Content != nil {
-		postDetails.Post.Content = *updatePost.Content
-	}
-
 	if updatePost.Photo != nil {
 		postDetails.Post.Photo = *updatePost.Photo
 	}
 
 	if updatePost.AnimalType != nil {
 		postDetails.Animal.AnimalType = *updatePost.AnimalType
-	}
-
-	if updatePost.Age != nil {
-		postDetails.Animal.Age = *updatePost.Age
 	}
 
 	if updatePost.Color != nil {
@@ -90,7 +79,7 @@ func FuncUpdateRequestBodyPost(postDetails core.PostDetails, updatePost core.Upd
 	}
 
 	if updatePost.Description != nil {
-		postDetails.Animal.Description = *updatePost.Description
+		postDetails.Post.Description = *updatePost.Description
 	}
 
 	if updatePost.Status != nil {

@@ -3,9 +3,7 @@ package post
 import (
 	"context"
 	"fmt"
-	"mime/multipart"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
@@ -74,15 +72,7 @@ func (s *service) GetPostByID(ctx context.Context, id int) (core.PostDetails, er
 }
 
 // CreatePost creates a new post with the provided details and photo
-func (s *service) CreatePost(ctx context.Context, postDetails core.PostDetails, fileHeader *multipart.FileHeader) (core.PostDetails, error) {
-	photoBytes, err := http.GetPhotoBytes(fileHeader)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.PostDetails{}, err
-	}
-
-	postDetails.Post.Photo = *photoBytes
-
+func (s *service) CreatePost(ctx context.Context, postDetails core.PostDetails) (core.PostDetails, error) {
 	animal, err := s.animalStore.CreateAnimal(ctx, postDetails.Animal)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())

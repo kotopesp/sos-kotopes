@@ -2,22 +2,21 @@ package core
 
 import (
 	"context"
-	"mime/multipart"
 	"time"
 )
 
 type (
 	Post struct {
-		ID        int       `gorm:"column:id;primaryKey"` // Unique identifier for the post
-		Title     string    `gorm:"column:title"`         // Title of the post
-		Content   string    `gorm:"column:content"`       // Content of the post
-		AuthorID  int       `gorm:"column:author_id"`     // ID of the author of the post
-		AnimalID  int       `gorm:"column:animal_id"`     // ID of the associated animal
-		IsDeleted bool      `gorm:"column:is_deleted"`    // Flag indicating if the post is deleted
-		DeletedAt time.Time `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
-		CreatedAt time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
-		UpdatedAt time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
-		Photo     []byte    `gorm:"column:photo"`         // Photo animal
+		ID          int       `gorm:"column:id;primaryKey"` // Unique identifier for the post
+		Description string    `gorm:"column:description"`   // Description of the post
+		Location    string    `gorm:"column:location"`      // Location of the animal
+		AuthorID    int       `gorm:"column:author_id"`     // ID of the author of the post
+		AnimalID    int       `gorm:"column:animal_id"`     // ID of the associated animal
+		IsDeleted   bool      `gorm:"column:is_deleted"`    // Flag indicating if the post is deleted
+		DeletedAt   time.Time `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
+		CreatedAt   time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
+		UpdatedAt   time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
+		Photo       []byte    `gorm:"column:photo"`         // Photo animal
 	}
 
 	// Post Details joins post, animal, username
@@ -66,7 +65,7 @@ type (
 		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]PostDetails, int, error)
 		GetUserPosts(ctx context.Context, id int) (posts []PostDetails, count int, err error)
 		GetPostByID(ctx context.Context, id int) (PostDetails, error)
-		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
+		CreatePost(ctx context.Context, postDetails PostDetails) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
 

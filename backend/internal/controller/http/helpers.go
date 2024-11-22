@@ -195,7 +195,13 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 			}
 			bytesTmp := buffer.Bytes()
 			photoBytes = &bytesTmp
+		} else {
+			logger.Log().Debug(ctx.UserContext(), "photo not found")
 		}
-	}
+	} else {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return nil, nil
+	} 
+
 	return photoBytes, nil
 }

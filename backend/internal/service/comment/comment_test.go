@@ -92,8 +92,6 @@ func generateTestPost() core.Post {
 	// Generate a test post
 	post := core.Post{
 		ID:        1,
-		Title:     "Test Post Title",
-		Content:   "This is the content of the test post. It discusses various interesting topics.",
 		AuthorID:  1,
 		AnimalID:  101,
 		IsDeleted: false,
