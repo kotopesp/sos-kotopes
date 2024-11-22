@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { NgClass } from "@angular/common";
 
 @Component({
@@ -9,11 +9,17 @@ import { NgClass } from "@angular/common";
   styleUrl: './find-status-flag.component.scss'
 })
 export class FindStatusFlagComponent implements OnInit {
+  @Input() status: string = 'lost';
   // here we get data from the backend, ex. we get initialState = "Найден"
-  initialStateArr = ["Пропал", "Найден", "Ищет дом"]
-  initialState: string = this.initialStateArr[Math.floor(Math.random() * 3)]
+  initialStateArr: { [key: string]: string } = {
+    lost: "Пропал",
+    found: "Найден",
+    need_home: "Ищет дом",
+  }
+  initialState : string = 'Пропал'
 
   ngOnInit() {
+    this.initialState = this.initialStateArr[this.status];
     this.setFlagClass();
   }
 
@@ -40,5 +46,4 @@ export class FindStatusFlagComponent implements OnInit {
       }
     }
   }
-
 }

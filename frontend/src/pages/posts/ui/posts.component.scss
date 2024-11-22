@@ -93,6 +93,8 @@
     .container__posts {
       margin-left: 35px;
       width: 100%;
+      display: flex;
+      flex-wrap: wrap;
 
       .posts {
         height: fit-content;

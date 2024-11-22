@@ -21,12 +21,8 @@
 
     </div>
     <div class="container__posts">
-      <div class="posts">
-        <app-post/>
-        <app-post/>
-        <app-post/>
-        <app-post/>
-        <app-post/>
+      <div class="posts" *ngFor="let post of posts">
+        <app-post [post]="post"/>
       </div>
     </div>
   </div>
