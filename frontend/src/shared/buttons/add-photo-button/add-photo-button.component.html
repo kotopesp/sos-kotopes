@@ -1,4 +1,4 @@
 <button class="add__photo__button yellow-color" [style.width.px]="270" [style.height.px]="58"
         (click)="fileInput.click()">+ Добавить фото
 </button>
-<input (change)="onFileSelected($event)" #fileInput accept="image/*" multiple type="file" hidden>
+<input (change)="onFileSelected($event)" #fileInput accept="image/*, .png, .jpg, .gif, .web" multiple type="file" hidden>

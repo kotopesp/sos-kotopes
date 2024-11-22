@@ -50,8 +50,8 @@
           </a>
         </div>
 
-        <p class="ft18 fw400">Нет аккаунта? <a class="registration__link" (click)="isRegisterOverlay.set(true)"
-                                               (keydown.enter)="isRegisterOverlay.set(true)" tabindex="0"
+        <p class="ft18 fw400">Нет аккаунта? <a class="registration__link" (click)="isRegisterOverlay.set(true); isAuthOverlay.set(false)"
+                                               (keydown.enter)="isRegisterOverlay.set(true); isAuthOverlay.set(false)" tabindex="0"
                                                role="button"
                                                aria-pressed="false">Зарегистрироваться</a>
         </p>

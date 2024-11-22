@@ -1,15 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {Observable, tap} from "rxjs";
+import {catchError, Observable, tap, throwError} from "rxjs";
 import {CookieService} from "ngx-cookie-service";
 import {Router} from "@angular/router";
-
-
-export interface LoginResponse {
-  status: string,
-  data: string
-}
+import {LoginResponse} from "../../model/login-response.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -89,15 +84,6 @@ export class AuthService {
   saveTokens(res: LoginResponse) {
     this.setToken(res.data);
     this.cookieService.set('token', res.data)
-  }
-
-  decodeToken(token: string): any {
-    // JWT состоит из трех частей, разделенных точками. Получаем полезную нагрузку (payload).
-    const payload = token.split('.')[1];
-    // Декодируем строку Base64
-    const decodedPayload = atob(payload);
-    // Преобразуем декодированную строку в объект JSON
-    return JSON.parse(decodedPayload);
   }
 
   decodeToken(token: string): any {

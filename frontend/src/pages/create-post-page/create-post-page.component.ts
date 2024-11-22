@@ -5,16 +5,17 @@ import {
   ButtonLookingForHomeComponent
 } from "../../shared/buttons/button-looking-for-home/button-looking-for-home.component";
 import { RouterLink} from "@angular/router";
-import {DatePipe, NgForOf, NgIf, NgStyle} from "@angular/common";
+import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
 import {CustomCalendarComponent} from "./ui/custom-calendar/custom-calendar.component";
 import {RanWarningComponent} from "../../shared/ran-warning/ran-warning.component";
 import {ClickToSelectDirective} from "../../directives/click-to-select/click-to-select.directive";
 import {AddPhotoButtonComponent} from "../../shared/buttons/add-photo-button/add-photo-button.component";
 import {ConfirmOverlayComponent} from "../../shared/confirm-overlay/confirm-overlay.component";
 import {AuthService} from "../../services/auth-service/auth.service";
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ChooseOneDirective} from "../../directives/choose-one/choose-one.directive";
 import {PostsService} from "../../services/posts-services/posts.service";
+import {ButtonStateService} from "../../services/button-state/button-state.service";
 
 interface TitleObject {
   [key: number]: string
@@ -29,7 +30,6 @@ interface TitleObject {
     ButtonLookingForHomeComponent,
     RouterLink,
     NgIf,
-    NgStyle,
     NgForOf,
     CustomCalendarComponent,
     RanWarningComponent,
@@ -40,6 +40,7 @@ interface TitleObject {
     FormsModule,
     ChooseOneDirective,
     ReactiveFormsModule,
+    NgClass,
   ],
   templateUrl: './create-post-page.component.html',
   styleUrl: './create-post-page.component.scss'
@@ -49,22 +50,30 @@ export class CreatePostPageComponent {
   // ViewChild для доступа к элементу div
   @ViewChildren('myDiv') myDivs: QueryList<ElementRef> | undefined;
   titleObject: TitleObject;
-  selectedFiles: { name: string, preview: string }[] = [];
   isDragging = false;
-  selectedDate!: Date;
-  selectedDistrict: string;
-  chooseColors: string[] = [];
-  districts: { text: string }[] = [];
+  districts: Array<{ text: string }>;
   buttonActive: boolean;
   countOfSlides: number;
-
-  formCreatePost: FormGroup;
+  isDisabled: boolean = true;
+  reason: string;
+  species: string;
+  gender: string;
+  selectedColor: string;
+  selectedFiles: { name: string, preview: string, file: File}[] = [];
+  chooseColors: Array<string>;
+  selectedDate!: Date;
+  selectedDistrict: string;
   textValue: string;
   numberOfSlide: WritableSignal<number>;
   photosOverlay: WritableSignal<boolean>;
   descriptionOverlay: WritableSignal<boolean>;
+  disableObject: { [key: number]: Array<any> };
 
-  constructor(private authService: AuthService, private postsService: PostsService) {
+  constructor(private authService: AuthService, private postsService: PostsService, private buttonState: ButtonStateService) {
+    this.reason = '';
+    this.gender = '';
+    this.species = '';
+    this.selectedColor = '';
     this.buttonActive = false;
     this.numberOfSlide = signal<number>(1);
     this.titleObject = {
@@ -88,22 +97,20 @@ export class CreatePostPageComponent {
     this.textValue = '';
     this.selectedDistrict = '';
 
-    this.formCreatePost = new FormGroup({
-      title: new FormControl(null),
-      content: new FormControl(null),
-      animal_type: new FormControl(null),
-      photo: new FormControl(null),
-      age: new FormControl(this.selectedDate),
-      color: new FormControl(null),
-      gender: new FormControl(null),
-      description: new FormControl(this.textValue),
-      status: new FormControl(null),
-    })
-
     if (authService.Token) {
       this.countOfSlides = 6;
     } else {
       this.countOfSlides = 7
+    }
+
+    this.disableObject = {
+      1: [() => this.reason],
+      2: [() => this.species, () => this.gender],
+      3: [() => this.selectedFiles],
+      4: [() => this.selectedDistrict, () => this.selectedDate],
+      5: [() => this.selectedColor],
+      6: [() => this.species, () => this.gender],
+      // 7: [() => this.species, () => this.gender],
     }
   }
 
@@ -139,7 +146,8 @@ export class CreatePostPageComponent {
       reader.onload = (e: any) => {
         this.selectedFiles.push({
           name: file.name,
-          preview: e.target.result
+          preview: e.target.result,
+          file: e.target.file,
         });
       };
 
@@ -157,24 +165,57 @@ export class CreatePostPageComponent {
     } else {
       this.numberOfSlide.set(this.numberOfSlide() + 1);
     }
+    console.log(this.selectedFiles);
   }
 
   createPost() {
     if (!this.textValue) {
       this.descriptionOverlay.set(true);
     }
+    const form = new FormData()
+    form.append('animal_type', this.species)
+    this.selectedFiles.forEach((item) => {
+      console.log(item);
+      form.append('photo', item.file);
+    });
+    form.append('color', this.selectedColor)
+    form.append('location', this.selectedDistrict)
+    form.append('gender', this.gender)
+    form.append('description', this.textValue)
+    form.append('status', this.reason)
+
+    this.postsService.createPost(form)
   }
 
-  onSubmit() {
-    this.postsService.createPost(this.formCreatePost)
-  }
-
-  // Метод для записи значения из определенного div
   saveDivValue(index: number) {
     if (this.myDivs) {
       const divArray = this.myDivs.toArray();
-      this.selectedDistrict = divArray[index].nativeElement.innerText; // записываем текст из нужного div
-      console.log(this.selectedDistrict); // выводим значение в консоль
+      this.selectedDistrict = divArray[index].nativeElement.innerText;
+    }
+  }
+
+  buttonNextDisabled(): boolean {
+    const dependencies = this.disableObject[this.numberOfSlide()];
+    if (!dependencies) return false;
+    return !dependencies.every((dependencyFn) => {
+      const value = dependencyFn();
+      return Boolean(value);
+    });
+  }
+
+
+  getPhotoClass(count: number): string {
+    switch (count) {
+      case 1:
+        return '';
+      case 2:
+        return 'two-photos';
+      case 3:
+        return 'three-photos';
+      case 4:
+        return 'four-photos';
+      default:
+        return '';
     }
   }
 }

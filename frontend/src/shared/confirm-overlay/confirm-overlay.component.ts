@@ -15,7 +15,7 @@ import {NgIf, NgStyle} from "@angular/common";
 })
 export class ConfirmOverlayComponent {
   @Input() target!: string;
-  @Input() selectedFiles!: { name: string, preview: string }[];
+  @Input() selectedFiles!: { name: string, preview: string, file: File }[];
   @Input() thisOverlay!: WritableSignal<boolean>;
   @Input() numberOfSlide!: WritableSignal<number>;
 

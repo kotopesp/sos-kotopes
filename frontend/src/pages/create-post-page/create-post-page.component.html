@@ -6,32 +6,41 @@
       <div *ngIf="numberOfSlide() > 1" class="create__post__progressbar__ready"
            [style.width.%]="100 / countOfSlides * numberOfSlide()"></div>
     </div>
-    <div *ngIf="numberOfSlide() > 1" class="create__post__back__arrow"
-         (click)="numberOfSlide.set(numberOfSlide() - 1)">
-      <img src="/assets/icons/back-arrow-logo.svg" alt="arrow">
-    </div>
 
-    <form (ngSubmit)="onSubmit()" [formGroup]="formCreatePost">
+    <form>
       <div *ngIf="numberOfSlide() == 1" class="create__post__main create__post__main__first">
-        <app-button-lost-pet #reasonButton />
-        <app-button-find-pet #reasonButton  />
-        <app-button-looking-for-home #reasonButton />
+        <app-button-lost-pet appChooseOne="reasons" class="sharedButton" [buttonIndex]="0" (click)="reason='lost'"/>
+        <app-button-find-pet appChooseOne="reasons" class="sharedButton" [buttonIndex]="1" (click)="reason='found'"/>
+        <app-button-looking-for-home appChooseOne="reasons" class="sharedButton" [buttonIndex]="2"
+                                     (click)="reason='need_home'"/>
       </div>
 
       <div *ngIf="numberOfSlide() == 2" class="create__post__main create__post__main__second">
         <p class="ft20 fw700">Вид</p>
         <div class="create__post__buttons">
-          <button class="yellow-color simple__button" #animalType><img src="/assets/icons/cat-button-icon.svg" alt="cat"/>Кошка
-          </button>
-          <button class="pink-color simple__button" #animalType><img src="/assets/icons/dog-button-icon.svg" alt="dog"/>Собака
-          </button>
+          <div appChooseOne="species" class="species" [buttonIndex]="3" (click)="species='cat'">
+            <a class="yellow-color simple__button"><img src="/assets/icons/cat-button-icon.svg"
+                                                        alt="cat"/>Кошка
+            </a>
+          </div>
+          <div appChooseOne="species" class="species" [buttonIndex]="4" (click)="species='dog'">
+            <a class="pink-color simple__button"><img src="/assets/icons/dog-button-icon.svg"
+                                                      alt="dog"/>Собака
+            </a>
+          </div>
         </div>
         <p class="ft20 fw700">Пол</p>
         <div class="create__post__buttons">
-          <button class="yellow-color simple__button" #gender><img src="/assets/icons/boy-button-icon.svg" alt="boy"/>Мальчик
-          </button>
-          <button class="pink-color simple__button" #gender><img src="/assets/icons/girl-button-icon.svg" alt="girl"/>Девочка
-          </button>
+          <div appChooseOne="gender" class="gender" [buttonIndex]="5" (click)="gender='male'">
+            <a class="yellow-color simple__button"><img src="/assets/icons/boy-button-icon.svg"
+                                                        alt="boy"/>Мальчик
+            </a>
+          </div>
+          <div appChooseOne="gender" class="gender" [buttonIndex]="6" (click)="gender='female'">
+            <a class="pink-color simple__button"><img src="/assets/icons/girl-button-icon.svg"
+                                                      alt="girl"/>Девочка
+            </a>
+          </div>
         </div>
       </div>
 
@@ -47,14 +56,15 @@
         </div>
         <div class="create__post__info__photos">
           <div class="create__post__block__photos">
-            <div *ngIf="!selectedFiles.length" class="create__post__photos__text" [style.padding-top.px]="20">
+            <div *ngIf="!selectedFiles.length" class="create__post__photos__text"
+                 [style.padding-top.px]="20">
           <span class="fw700 ft20 lh26">Если у вас нет фотографии питомца, то прикрепите
 похожую фотографию из интернета</span>
               <span class="fw700 ft20 lh26">Убедитесь, что на фотографиях нет никакой
 информации о геолокации</span>
             </div>
 
-            <div *ngIf="selectedFiles.length" class="create__post__photos__preview">
+            <div *ngIf="selectedFiles.length" class="create__post__photos__preview" [ngClass]="getPhotoClass(selectedFiles.length)">
               <div *ngFor="let file of selectedFiles">
                 <img [src]="file.preview" [alt]="file.name" class="photo__preview">
               </div>
@@ -79,13 +89,14 @@
           </div>
           <div class="create__post__calendar__text__find">
             <img src="/assets/icons/lens-icon.svg" alt="icon" width="20" height="20">
-            <input type="text" class="create__post__search ft20 fw400" placeholder="Введите район или метро">
+            <input type="text" class="create__post__search ft20 fw400"
+                   placeholder="Введите район или метро">
           </div>
           <div class="create__post__text__place__list">
             <div [style.gap.px]="5" [style.display]="'flex'" [style.flex-direction]="'column'">
               <label [style.gap.px]="5" [style.display]="'flex'" [style.align-items]="'center'"
                      *ngFor="let district of districts; let i = index">
-                <button appClickToSelect="selectedPlace" class="yellow__button__choose"
+                <button appClickToSelect="selectedPlace" [buttonIndex]="i" class="places"
                         (click)="saveDivValue(i)"></button>
                 <div #myDiv>{{ district.text }}</div>
               </label>
@@ -94,7 +105,7 @@
 
           <div
             class="create__post__calendar__text__district">
-            {{ !selectedDate ? '' : selectedDate| date:'dd.MM.yyyy, ' }}
+            {{ !selectedDate ? '' : selectedDate | date:'dd.MM.yyyy, ' }}
             {{ !selectedDistrict ? '' : selectedDistrict }}
           </div>
         </div>
@@ -104,30 +115,44 @@
         <div class="ft20 fw400" [style.padding-bottom.px]="30">Какой-то текст</div>
         <div class="ft24 fw700" [style.padding-bottom.px]="15">Окрас</div>
         <div class="create__post__main create__post__choose__color">
-          <div *ngFor="let color of chooseColors" [style.gap.px]="15" [style.display]="'flex'"
+          <div *ngFor="let color of chooseColors; let i = index" [style.gap.px]="15" [style.display]="'flex'"
                [style.align-items]="'center'">
-            <button class="yellow__button__choose" appClickToSelect="selectedColor"></button>
+            <button class="colors" appClickToSelect="selectedColor" [buttonIndex]="i"
+                    (click)="this.selectedColor=color"></button>
             <div class="ft20 fw400" #color>{{ color }}</div>
           </div>
         </div>
       </div>
 
       <div *ngIf="numberOfSlide() == 6" class="create__post__main create__post__main__sixth">
-        <div class="ft20 fw400">Добавьте общую информацию о пропавшем питомце: пол, окрас и обстоятельства потери.
+        <div class="ft20 fw400">Добавьте общую информацию о пропавшем питомце: пол, окрас и обстоятельства
+          потери.
           Не рекомендуем вводить кое-что пока Ангелина формулирует, что написать дальше
         </div>
-        <textarea [(ngModel)]="textValue" class="textarea__description"
+        <textarea [(ngModel)]="textValue" name="textValue" class="textarea__description"
                   placeholder="Добавьте описание животного" #description></textarea>
-        <app-confirm-overlay *ngIf="descriptionOverlay()" [thisOverlay]="descriptionOverlay" [target]="'description'"/>
+        <app-confirm-overlay *ngIf="descriptionOverlay()" [thisOverlay]="descriptionOverlay"
+                             [target]="'description'"/>
       </div>
 
       <div *ngIf="numberOfSlide() <= countOfSlides - 1" class="create__post__button__next">
+        <button *ngIf="numberOfSlide() > 1" class="button__back fw700 ft20"
+                (click)="numberOfSlide.set(numberOfSlide() - 1)">
+          Назад
+        </button>
+
         <button class="white__buttons button__next fw700 ft20"
-                (click)="buttonNextClick()">Дальше
+                (click)="buttonNextClick()"
+                [disabled]="buttonNextDisabled()">
+          Дальше
         </button>
       </div>
-
       <div *ngIf="numberOfSlide() == countOfSlides && countOfSlides == 6" class="create__post__button__next">
+        <button *ngIf="numberOfSlide() > 1" class="button__back fw700 ft20"
+                (click)="numberOfSlide.set(numberOfSlide() - 1)">
+          Назад
+        </button>
+
         <button class="white__buttons button__create__post fw700 ft20" (click)="createPost()" type="submit">
           Создать объявление
         </button>

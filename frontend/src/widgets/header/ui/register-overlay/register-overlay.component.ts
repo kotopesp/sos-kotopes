@@ -17,12 +17,14 @@ import {Router} from "@angular/router";
 })
 export class RegisterOverlayComponent {
   @Input() isRegisterOverlay: WritableSignal<boolean>;
+  @Input() isAuthOverlay: WritableSignal<boolean>;
   formRegister: FormGroup;
   isPasswordVisible = signal<boolean>(false);
   isPasswordVisibleRepeat = signal<boolean>(false);
 
   constructor(private register: RegisterService, private router: Router) {
     this.isRegisterOverlay = signal<boolean>(false)
+    this.isAuthOverlay = signal<boolean>(false)
 
     this.formRegister = new FormGroup({
       email: new FormControl(null, Validators.required),

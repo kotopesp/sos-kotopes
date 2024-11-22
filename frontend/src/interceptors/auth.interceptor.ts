@@ -2,6 +2,7 @@ import {HttpEvent, HttpHandlerFn, HttpRequest} from "@angular/common/http";
 import {catchError, Observable, switchMap, throwError} from "rxjs";
 import {inject} from "@angular/core";
 import {AuthService} from "../services/auth-service/auth.service";
+import {LoginResponse} from "../model/login-response.interface";
 
 let isRefreshing = false
 
@@ -38,7 +39,7 @@ const refreshAndProceed = (
     isRefreshing = true
     return authService.refreshToken()
       .pipe(
-        switchMap((response) => {
+        switchMap((response: LoginResponse) => {
           isRefreshing = false
           return next(addToken(req, response.data));
         })

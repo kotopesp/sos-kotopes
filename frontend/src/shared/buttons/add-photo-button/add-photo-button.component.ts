@@ -8,7 +8,7 @@ import {Component, Input, WritableSignal} from '@angular/core';
   styleUrl: './add-photo-button.component.scss'
 })
 export class AddPhotoButtonComponent {
-  @Input() selectedFiles!: { name: string, preview: string }[];
+  @Input() selectedFiles!: { name: string, preview: string, file: File }[];
   @Input() photosOverlay!: WritableSignal<boolean>
 
   // Обработка выбора файлов через input
@@ -16,6 +16,7 @@ export class AddPhotoButtonComponent {
     const files = event.target.files;
     if (files) {
       this.handleFiles(files);
+      console.log(files)
       this.photosOverlay.set(false);
     }
   }
@@ -27,9 +28,11 @@ export class AddPhotoButtonComponent {
       const reader = new FileReader();
 
       reader.onload = (e: any) => {
+        console.log(file)
         this.selectedFiles.push({
           name: file.name,
-          preview: e.target.result
+          preview: e.target.result,
+          file: file
         });
       };
 
