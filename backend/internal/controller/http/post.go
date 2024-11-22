@@ -195,7 +195,7 @@ func (r *Router) createPost(ctx *fiber.Ctx) error {
 
 	if photoBytes == nil {
 		logger.Log().Debug(ctx.UserContext(), "No photo uploaded")
-		photoBytes = nil
+		postRequest.Photo = nil
 	} else {
 		logger.Log().Debug(ctx.UserContext(), "Photo uploaded")
 		postRequest.Photo = *photoBytes
