@@ -28,7 +28,6 @@ export class PostsComponent {
       if (response) {
         this.posts = response.data.posts;  // Сохраняем массив постов
         this.meta = response.data.meta;
-        console.log(this.posts)// Сохраняем мета-информацию
       }
     });
   }

@@ -6,14 +6,14 @@
       </div>
       <div class="confirm__overlay__subtitle ft24 fw700">
         {{
-          target == 'photo' ?
+          target === 'photo' ?
             'Наличие фотографии в объявлении увеличит шансы на нахождение питомца' :
             'Описание ситуации существенно повышает шансы на успешные поиски'
         }}
       </div>
       <div class="confirm__overlay__buttons">
-        <app-add-photo-button *ngIf="target == 'photo'" [photosOverlay]="thisOverlay" [selectedFiles]="selectedFiles"/>
-        <button *ngIf="target == 'description'" class="basic__button add__description fw700 ft20" (click)="goToNext()">Добавить описание</button>
+        <app-add-photo-button *ngIf="target === 'photo'" [photosOverlay]="thisOverlay" [selectedFiles]="selectedFiles"/>
+        <button *ngIf="target === 'description'" class="basic__button add__description fw700 ft20" (click)="goToNext()">Добавить описание</button>
         <button class="basic__button skip__this__step fw700 ft20" (click)="goToNext()">Пропустить этот шаг</button>
       </div>
     </div>

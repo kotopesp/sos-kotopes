@@ -8,14 +8,14 @@
     </div>
 
     <form>
-      <div *ngIf="numberOfSlide() == 1" class="create__post__main create__post__main__first">
+      <div *ngIf="numberOfSlide() === 1" class="create__post__main create__post__main__first">
         <app-button-lost-pet appChooseOne="reasons" class="sharedButton" [buttonIndex]="0" (click)="reason='lost'"/>
         <app-button-find-pet appChooseOne="reasons" class="sharedButton" [buttonIndex]="1" (click)="reason='found'"/>
         <app-button-looking-for-home appChooseOne="reasons" class="sharedButton" [buttonIndex]="2"
                                      (click)="reason='need_home'"/>
       </div>
 
-      <div *ngIf="numberOfSlide() == 2" class="create__post__main create__post__main__second">
+      <div *ngIf="numberOfSlide() === 2" class="create__post__main create__post__main__second">
         <p class="ft20 fw700">Вид</p>
         <div class="create__post__buttons">
           <div appChooseOne="species" class="species" [buttonIndex]="3" (click)="species='cat'">
@@ -44,7 +44,7 @@
         </div>
       </div>
 
-      <div *ngIf="numberOfSlide() == 3" class="create__post__main create__post__main__third">
+      <div *ngIf="numberOfSlide() === 3" class="create__post__main create__post__main__third">
         <div class="create__post__place__for__photos"
              (dragover)="onDragOver($event)"
              (dragleave)="onDragLeave($event)"
@@ -76,7 +76,7 @@
         </div>
       </div>
 
-      <div *ngIf="numberOfSlide() == 4" class="create__post__main create__post__main__fourth">
+      <div *ngIf="numberOfSlide() === 4" class="create__post__main create__post__main__fourth">
         <div class="create__post__calendar">
           <app-custom-calendar
             (valueChange)="updateValue($event)"/>
@@ -111,7 +111,7 @@
         </div>
       </div>
 
-      <div *ngIf="numberOfSlide() == 5" class="create__post__main__fifth">
+      <div *ngIf="numberOfSlide() === 5" class="create__post__main__fifth">
         <div class="ft20 fw400" [style.padding-bottom.px]="30">Какой-то текст</div>
         <div class="ft24 fw700" [style.padding-bottom.px]="15">Окрас</div>
         <div class="create__post__main create__post__choose__color">
@@ -124,7 +124,7 @@
         </div>
       </div>
 
-      <div *ngIf="numberOfSlide() == 6" class="create__post__main create__post__main__sixth">
+      <div *ngIf="numberOfSlide() === 6" class="create__post__main create__post__main__sixth">
         <div class="ft20 fw400">Добавьте общую информацию о пропавшем питомце: пол, окрас и обстоятельства
           потери.
           Не рекомендуем вводить кое-что пока Ангелина формулирует, что написать дальше
@@ -147,7 +147,7 @@
           Дальше
         </button>
       </div>
-      <div *ngIf="numberOfSlide() == countOfSlides && countOfSlides == 6" class="create__post__button__next">
+      <div *ngIf="numberOfSlide() === countOfSlides && countOfSlides === 6" class="create__post__button__next">
         <button *ngIf="numberOfSlide() > 1" class="button__back fw700 ft20"
                 (click)="numberOfSlide.set(numberOfSlide() - 1)">
           Назад

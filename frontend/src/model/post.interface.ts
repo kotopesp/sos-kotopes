@@ -13,6 +13,11 @@ export interface PostResponse {
   status: string;
 }
 
+export interface PostResponse {
+  posts: Post[];
+  meta: Meta;
+}
+
 export interface Post {
   animal_type: string
   author_username: string

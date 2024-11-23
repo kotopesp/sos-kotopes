@@ -1,5 +1,5 @@
 import {Component, OnInit, signal} from '@angular/core';
-import {ActivatedRoute, Params, RouterLink} from '@angular/router';
+import {ActivatedRoute, Params, Router, RouterLink} from '@angular/router';
 import {HeaderComponent} from "../../widgets/header/header.component";
 
 import { RoleButtonComponent } from './role-button/role-button.component';
@@ -10,6 +10,8 @@ import {UserService} from "../../services/user.service";
 import {User} from "../../model/user.interface";
 import {PostComponent} from "../../shared/post/post.component";
 import {WriteOverlayComponent} from "./write-overlay/write-overlay.component";
+import {Meta, Post} from "../../model/post.interface";
+import {PostsService} from "../../services/posts-services/posts.service";
 
 @Component({
   selector: 'app-user-page',
@@ -28,6 +30,10 @@ export class UserPageComponent implements OnInit {
   isOwnAccount = true;
 
   user$!: Observable<User>;
+  userPosts!: Post[];
+  favoritesPosts!: Post[];
+  userID!: string | null;
+  meta!: Meta;
 
   likeActive = false;
   editTextArea = false;
@@ -37,14 +43,31 @@ export class UserPageComponent implements OnInit {
 
   writeOverlay = signal<boolean>(false);
 
-  constructor(private activatedRoute: ActivatedRoute, private userService: UserService) {
+  constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private postService: PostsService) {
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.userID = params.get('id');
+    })
   }
 
   ngOnInit(): void {
-    this.user$ = this.activatedRoute.params.pipe(
-      map((params: Params) => parseInt(params['id'], 10)),
-      switchMap((userId: number) => this.userService.getById(userId))
-    );
+    this.user$ = this.userService.getById(this.userID)
+    this.postService.getPostsUser(this.userID).subscribe(
+      response => {
+        if (response) {
+          this.userPosts = response.posts;
+          this.meta = response.meta;
+        }
+      }
+    )
+
+    this.postService.getPostsFavoritesUser().subscribe(
+      response => {
+        if (response) {
+          this.favoritesPosts = response.posts;
+          this.meta = response.meta;
+        }
+      }
+    )
   }
 
   likeActiveButton(): void {

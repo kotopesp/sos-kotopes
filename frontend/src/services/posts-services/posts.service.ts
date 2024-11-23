@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
-import {Router} from "@angular/router";
-import {Post, PostResponse} from "../../model/post.interface";
-import {map, Observable} from "rxjs";
-import {User} from "../../model/user.interface";
+import { PostResponse} from "../../model/post.interface";
+import { Observable} from "rxjs";
 
 
 @Injectable({
@@ -14,7 +12,7 @@ export class PostsService {
   limit: string | null = null;
   offset: string | null = null;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient) {
   }
 
 
@@ -34,7 +32,16 @@ export class PostsService {
 
   getPosts(): Observable<PostResponse> {
     const params = { limit: this.limit || '10', offset: this.offset || '0' };
-
     return this.http.get<PostResponse>(`${environment.apiUrl}posts`, { params});
+  }
+
+  getPostsUser(user_id: string | null): Observable<PostResponse> {
+    const params = { limit: this.limit || '10', offset: this.offset || '0' };
+    return this.http.get<PostResponse>(`${environment.apiUrl}users/${user_id}/posts`, { params})
+  }
+
+  getPostsFavoritesUser(): Observable<PostResponse> {
+    const params = { limit: this.limit || '10', offset: this.offset || '0' };
+    return this.http.get<PostResponse>(`${environment.apiUrl}posts/favourites`, { params})
   }
 }

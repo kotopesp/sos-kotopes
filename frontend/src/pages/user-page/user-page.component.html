@@ -134,22 +134,16 @@
   </div>
   @if (pressedPost) {
     <div class="user__posts">
-      <app-post/>
-      <app-post/>
-      <app-post/>
-      <app-post/>
-      <app-post/>
-      <app-post/>
+      <div class="post" *ngFor="let post of userPosts">
+        <app-post [post]="post"/>
+      </div>
     </div>
   }
   @if (!pressedPost) {
     <div class="user__posts">
-      <app-post/>
-      <app-post/>
-      <app-post/>
-      <app-post/>
-      <app-post/>
-      <app-post/>
+      <div class="post" *ngFor="let post of favoritesPosts">
+        <app-post [post]="post"/>
+      </div>
     </div>
   }
 

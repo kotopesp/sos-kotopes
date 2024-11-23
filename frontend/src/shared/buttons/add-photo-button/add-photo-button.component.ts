@@ -28,7 +28,6 @@ export class AddPhotoButtonComponent {
       const reader = new FileReader();
 
       reader.onload = (e: any) => {
-        console.log(file)
         this.selectedFiles.push({
           name: file.name,
           preview: e.target.result,
