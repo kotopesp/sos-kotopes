@@ -19,6 +19,7 @@ export interface PostResponse {
 }
 
 export interface Post {
+  id: number;
   animal_type: string
   author_username: string
   color: string

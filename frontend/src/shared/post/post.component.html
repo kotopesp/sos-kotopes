@@ -2,7 +2,7 @@
   <div class="post__inferior_container">
     <div class="photo__container">
       <img class="pet_photo" [src]="'data:image/png;base64,' + post.photo" alt=""/>
-      <app-favorites-button/>
+      <app-favorites-button [isPressed]="post.is_favourite" [postID]="post.id" />
     </div>
     <div class="info-under-photo__container">
       <app-find-status-flag [status]="post.status"/>
