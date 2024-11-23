@@ -67,6 +67,7 @@ func ToResponse(meta pagination.Pagination, posts []core.PostDetails) Response {
 // ToPostResponse converts core.PostDetails to PostResponse
 func ToPostResponse(post core.PostDetails) PostResponse {
 	return PostResponse{
+		ID:             post.Post.ID,
 		AuthorUsername: post.Username,
 		CreatedAt:      post.Post.CreatedAt,
 		AnimalType:     post.Animal.AnimalType,

@@ -20,6 +20,7 @@ type (
 
 	// PostResponse represents the structure of a post response with additional details
 	PostResponse struct {
+		ID             int       `form:"id" json:"id" validate:"required"`
 		AuthorUsername string    `form:"author_username" json:"author_username"`
 		CreatedAt      time.Time `form:"created_at " json:"created_at"`
 		Photo          []byte    `form:"photo" json:"photo"`
