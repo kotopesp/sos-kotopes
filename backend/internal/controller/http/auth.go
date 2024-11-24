@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"mime/multipart"
+	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
@@ -31,6 +32,27 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 		},
 		ErrorHandler: authErrorHandler,
 	})
+}
+
+func (r *Router) authorize() fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		tokenString := ctx.Get("Authorization")
+		tokenString = strings.TrimSpace(strings.TrimPrefix(tokenString, "Bearer"))
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, model.ErrFailedToParseToken
+			}
+
+			return r.authService.GetJWTSecret(), nil
+		})
+
+		if err == nil {
+			ctx.Locals("user", token)
+		}
+
+		return ctx.Next()
+	}
 }
 
 // loginBasic Login through username and password

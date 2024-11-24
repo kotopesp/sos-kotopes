@@ -23,21 +23,31 @@ func (_m *MockPostService) EXPECT() *MockPostService_Expecter {
 }
 
 // AddToFavourites provides a mock function with given fields: ctx, postFavourite
-func (_m *MockPostService) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) error {
+func (_m *MockPostService) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) (core.PostDetails, error) {
 	ret := _m.Called(ctx, postFavourite)
 
 	if len(ret) == 0 {
 		panic("no return value specified for AddToFavourites")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.PostFavourite) error); ok {
+	var r0 core.PostDetails
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.PostFavourite) (core.PostDetails, error)); ok {
+		return rf(ctx, postFavourite)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.PostFavourite) core.PostDetails); ok {
 		r0 = rf(ctx, postFavourite)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(core.PostDetails)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, core.PostFavourite) error); ok {
+		r1 = rf(ctx, postFavourite)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // MockPostService_AddToFavourites_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddToFavourites'
@@ -59,12 +69,12 @@ func (_c *MockPostService_AddToFavourites_Call) Run(run func(ctx context.Context
 	return _c
 }
 
-func (_c *MockPostService_AddToFavourites_Call) Return(_a0 error) *MockPostService_AddToFavourites_Call {
-	_c.Call.Return(_a0)
+func (_c *MockPostService_AddToFavourites_Call) Return(_a0 core.PostDetails, _a1 error) *MockPostService_AddToFavourites_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockPostService_AddToFavourites_Call) RunAndReturn(run func(context.Context, core.PostFavourite) error) *MockPostService_AddToFavourites_Call {
+func (_c *MockPostService_AddToFavourites_Call) RunAndReturn(run func(context.Context, core.PostFavourite) (core.PostDetails, error)) *MockPostService_AddToFavourites_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -126,17 +136,17 @@ func (_c *MockPostService_CreatePost_Call) RunAndReturn(run func(context.Context
 	return _c
 }
 
-// DeleteFromFavourites provides a mock function with given fields: ctx, postID, userID
-func (_m *MockPostService) DeleteFromFavourites(ctx context.Context, postID int, userID int) error {
-	ret := _m.Called(ctx, postID, userID)
+// DeleteFromFavourites provides a mock function with given fields: _a0, _a1
+func (_m *MockPostService) DeleteFromFavourites(_a0 context.Context, _a1 core.PostFavourite) error {
+	ret := _m.Called(_a0, _a1)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteFromFavourites")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
-		r0 = rf(ctx, postID, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, core.PostFavourite) error); ok {
+		r0 = rf(_a0, _a1)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -150,16 +160,15 @@ type MockPostService_DeleteFromFavourites_Call struct {
 }
 
 // DeleteFromFavourites is a helper method to define mock.On call
-//   - ctx context.Context
-//   - postID int
-//   - userID int
-func (_e *MockPostService_Expecter) DeleteFromFavourites(ctx interface{}, postID interface{}, userID interface{}) *MockPostService_DeleteFromFavourites_Call {
-	return &MockPostService_DeleteFromFavourites_Call{Call: _e.mock.On("DeleteFromFavourites", ctx, postID, userID)}
+//   - _a0 context.Context
+//   - _a1 core.PostFavourite
+func (_e *MockPostService_Expecter) DeleteFromFavourites(_a0 interface{}, _a1 interface{}) *MockPostService_DeleteFromFavourites_Call {
+	return &MockPostService_DeleteFromFavourites_Call{Call: _e.mock.On("DeleteFromFavourites", _a0, _a1)}
 }
 
-func (_c *MockPostService_DeleteFromFavourites_Call) Run(run func(ctx context.Context, postID int, userID int)) *MockPostService_DeleteFromFavourites_Call {
+func (_c *MockPostService_DeleteFromFavourites_Call) Run(run func(_a0 context.Context, _a1 core.PostFavourite)) *MockPostService_DeleteFromFavourites_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
+		run(args[0].(context.Context), args[1].(core.PostFavourite))
 	})
 	return _c
 }
@@ -169,7 +178,7 @@ func (_c *MockPostService_DeleteFromFavourites_Call) Return(_a0 error) *MockPost
 	return _c
 }
 
-func (_c *MockPostService_DeleteFromFavourites_Call) RunAndReturn(run func(context.Context, int, int) error) *MockPostService_DeleteFromFavourites_Call {
+func (_c *MockPostService_DeleteFromFavourites_Call) RunAndReturn(run func(context.Context, core.PostFavourite) error) *MockPostService_DeleteFromFavourites_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -221,9 +230,9 @@ func (_c *MockPostService_DeletePost_Call) RunAndReturn(run func(context.Context
 	return _c
 }
 
-// GetAllPosts provides a mock function with given fields: ctx, params
-func (_m *MockPostService) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
-	ret := _m.Called(ctx, params)
+// GetAllPosts provides a mock function with given fields: ctx, userID, params
+func (_m *MockPostService) GetAllPosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
+	ret := _m.Called(ctx, userID, params)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllPosts")
@@ -232,25 +241,25 @@ func (_m *MockPostService) GetAllPosts(ctx context.Context, params core.GetAllPo
 	var r0 []core.PostDetails
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllPostsParams) ([]core.PostDetails, int, error)); ok {
-		return rf(ctx, params)
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.GetAllPostsParams) ([]core.PostDetails, int, error)); ok {
+		return rf(ctx, userID, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllPostsParams) []core.PostDetails); ok {
-		r0 = rf(ctx, params)
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.GetAllPostsParams) []core.PostDetails); ok {
+		r0 = rf(ctx, userID, params)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]core.PostDetails)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllPostsParams) int); ok {
-		r1 = rf(ctx, params)
+	if rf, ok := ret.Get(1).(func(context.Context, int, core.GetAllPostsParams) int); ok {
+		r1 = rf(ctx, userID, params)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, core.GetAllPostsParams) error); ok {
-		r2 = rf(ctx, params)
+	if rf, ok := ret.Get(2).(func(context.Context, int, core.GetAllPostsParams) error); ok {
+		r2 = rf(ctx, userID, params)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -265,14 +274,15 @@ type MockPostService_GetAllPosts_Call struct {
 
 // GetAllPosts is a helper method to define mock.On call
 //   - ctx context.Context
+//   - userID int
 //   - params core.GetAllPostsParams
-func (_e *MockPostService_Expecter) GetAllPosts(ctx interface{}, params interface{}) *MockPostService_GetAllPosts_Call {
-	return &MockPostService_GetAllPosts_Call{Call: _e.mock.On("GetAllPosts", ctx, params)}
+func (_e *MockPostService_Expecter) GetAllPosts(ctx interface{}, userID interface{}, params interface{}) *MockPostService_GetAllPosts_Call {
+	return &MockPostService_GetAllPosts_Call{Call: _e.mock.On("GetAllPosts", ctx, userID, params)}
 }
 
-func (_c *MockPostService_GetAllPosts_Call) Run(run func(ctx context.Context, params core.GetAllPostsParams)) *MockPostService_GetAllPosts_Call {
+func (_c *MockPostService_GetAllPosts_Call) Run(run func(ctx context.Context, userID int, params core.GetAllPostsParams)) *MockPostService_GetAllPosts_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.GetAllPostsParams))
+		run(args[0].(context.Context), args[1].(int), args[2].(core.GetAllPostsParams))
 	})
 	return _c
 }
@@ -282,14 +292,14 @@ func (_c *MockPostService_GetAllPosts_Call) Return(_a0 []core.PostDetails, _a1 i
 	return _c
 }
 
-func (_c *MockPostService_GetAllPosts_Call) RunAndReturn(run func(context.Context, core.GetAllPostsParams) ([]core.PostDetails, int, error)) *MockPostService_GetAllPosts_Call {
+func (_c *MockPostService_GetAllPosts_Call) RunAndReturn(run func(context.Context, int, core.GetAllPostsParams) ([]core.PostDetails, int, error)) *MockPostService_GetAllPosts_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetFavouritePosts provides a mock function with given fields: ctx, userID
-func (_m *MockPostService) GetFavouritePosts(ctx context.Context, userID int) ([]core.PostDetails, int, error) {
-	ret := _m.Called(ctx, userID)
+// GetFavouritePosts provides a mock function with given fields: ctx, userID, params
+func (_m *MockPostService) GetFavouritePosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
+	ret := _m.Called(ctx, userID, params)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetFavouritePosts")
@@ -298,25 +308,25 @@ func (_m *MockPostService) GetFavouritePosts(ctx context.Context, userID int) ([
 	var r0 []core.PostDetails
 	var r1 int
 	var r2 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) ([]core.PostDetails, int, error)); ok {
-		return rf(ctx, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.GetAllPostsParams) ([]core.PostDetails, int, error)); ok {
+		return rf(ctx, userID, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) []core.PostDetails); ok {
-		r0 = rf(ctx, userID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.GetAllPostsParams) []core.PostDetails); ok {
+		r0 = rf(ctx, userID, params)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]core.PostDetails)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int) int); ok {
-		r1 = rf(ctx, userID)
+	if rf, ok := ret.Get(1).(func(context.Context, int, core.GetAllPostsParams) int); ok {
+		r1 = rf(ctx, userID, params)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
-	if rf, ok := ret.Get(2).(func(context.Context, int) error); ok {
-		r2 = rf(ctx, userID)
+	if rf, ok := ret.Get(2).(func(context.Context, int, core.GetAllPostsParams) error); ok {
+		r2 = rf(ctx, userID, params)
 	} else {
 		r2 = ret.Error(2)
 	}
@@ -332,13 +342,14 @@ type MockPostService_GetFavouritePosts_Call struct {
 // GetFavouritePosts is a helper method to define mock.On call
 //   - ctx context.Context
 //   - userID int
-func (_e *MockPostService_Expecter) GetFavouritePosts(ctx interface{}, userID interface{}) *MockPostService_GetFavouritePosts_Call {
-	return &MockPostService_GetFavouritePosts_Call{Call: _e.mock.On("GetFavouritePosts", ctx, userID)}
+//   - params core.GetAllPostsParams
+func (_e *MockPostService_Expecter) GetFavouritePosts(ctx interface{}, userID interface{}, params interface{}) *MockPostService_GetFavouritePosts_Call {
+	return &MockPostService_GetFavouritePosts_Call{Call: _e.mock.On("GetFavouritePosts", ctx, userID, params)}
 }
 
-func (_c *MockPostService_GetFavouritePosts_Call) Run(run func(ctx context.Context, userID int)) *MockPostService_GetFavouritePosts_Call {
+func (_c *MockPostService_GetFavouritePosts_Call) Run(run func(ctx context.Context, userID int, params core.GetAllPostsParams)) *MockPostService_GetFavouritePosts_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(core.GetAllPostsParams))
 	})
 	return _c
 }
@@ -348,14 +359,14 @@ func (_c *MockPostService_GetFavouritePosts_Call) Return(_a0 []core.PostDetails,
 	return _c
 }
 
-func (_c *MockPostService_GetFavouritePosts_Call) RunAndReturn(run func(context.Context, int) ([]core.PostDetails, int, error)) *MockPostService_GetFavouritePosts_Call {
+func (_c *MockPostService_GetFavouritePosts_Call) RunAndReturn(run func(context.Context, int, core.GetAllPostsParams) ([]core.PostDetails, int, error)) *MockPostService_GetFavouritePosts_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetPostByID provides a mock function with given fields: ctx, id
-func (_m *MockPostService) GetPostByID(ctx context.Context, id int) (core.PostDetails, error) {
-	ret := _m.Called(ctx, id)
+// GetPostByID provides a mock function with given fields: ctx, postID, userID
+func (_m *MockPostService) GetPostByID(ctx context.Context, postID int, userID int) (core.PostDetails, error) {
+	ret := _m.Called(ctx, postID, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetPostByID")
@@ -363,17 +374,17 @@ func (_m *MockPostService) GetPostByID(ctx context.Context, id int) (core.PostDe
 
 	var r0 core.PostDetails
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (core.PostDetails, error)); ok {
-		return rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) (core.PostDetails, error)); ok {
+		return rf(ctx, postID, userID)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) core.PostDetails); ok {
-		r0 = rf(ctx, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) core.PostDetails); ok {
+		r0 = rf(ctx, postID, userID)
 	} else {
 		r0 = ret.Get(0).(core.PostDetails)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = rf(ctx, id)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int) error); ok {
+		r1 = rf(ctx, postID, userID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -388,14 +399,15 @@ type MockPostService_GetPostByID_Call struct {
 
 // GetPostByID is a helper method to define mock.On call
 //   - ctx context.Context
-//   - id int
-func (_e *MockPostService_Expecter) GetPostByID(ctx interface{}, id interface{}) *MockPostService_GetPostByID_Call {
-	return &MockPostService_GetPostByID_Call{Call: _e.mock.On("GetPostByID", ctx, id)}
+//   - postID int
+//   - userID int
+func (_e *MockPostService_Expecter) GetPostByID(ctx interface{}, postID interface{}, userID interface{}) *MockPostService_GetPostByID_Call {
+	return &MockPostService_GetPostByID_Call{Call: _e.mock.On("GetPostByID", ctx, postID, userID)}
 }
 
-func (_c *MockPostService_GetPostByID_Call) Run(run func(ctx context.Context, id int)) *MockPostService_GetPostByID_Call {
+func (_c *MockPostService_GetPostByID_Call) Run(run func(ctx context.Context, postID int, userID int)) *MockPostService_GetPostByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(int))
 	})
 	return _c
 }
@@ -405,7 +417,7 @@ func (_c *MockPostService_GetPostByID_Call) Return(_a0 core.PostDetails, _a1 err
 	return _c
 }
 
-func (_c *MockPostService_GetPostByID_Call) RunAndReturn(run func(context.Context, int) (core.PostDetails, error)) *MockPostService_GetPostByID_Call {
+func (_c *MockPostService_GetPostByID_Call) RunAndReturn(run func(context.Context, int, int) (core.PostDetails, error)) *MockPostService_GetPostByID_Call {
 	_c.Call.Return(run)
 	return _c
 }

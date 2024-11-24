@@ -16,6 +16,7 @@ type (
 		DeletedAt   time.Time `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
 		CreatedAt   time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
 		UpdatedAt   time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
+		IsFavourite bool      `gorm:"column:is_favourite"`  // Flag indicating if the post is favourite
 		Photo       []byte    `gorm:"column:photo"`         // Photo animal
 	}
 
@@ -53,18 +54,18 @@ type (
 	}
 
 	PostStore interface {
-		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]Post, int, error)
+		GetAllPosts(ctx context.Context, userID int, params GetAllPostsParams) ([]Post, int, error)
 		GetUserPosts(ctx context.Context, id int) (posts []Post, count int, err error)
-		GetPostByID(ctx context.Context, id int) (Post, error)
+		GetPostByID(ctx context.Context, postID, userID int) (Post, error)
 		CreatePost(ctx context.Context, post Post) (Post, error)
 		UpdatePost(ctx context.Context, post Post) (Post, error)
 		DeletePost(ctx context.Context, id int) error
 	}
 
 	PostService interface {
-		GetAllPosts(ctx context.Context, params GetAllPostsParams) ([]PostDetails, int, error)
+		GetAllPosts(ctx context.Context, userID int, params GetAllPostsParams) ([]PostDetails, int, error)
 		GetUserPosts(ctx context.Context, id int) (posts []PostDetails, count int, err error)
-		GetPostByID(ctx context.Context, id int) (PostDetails, error)
+		GetPostByID(ctx context.Context, postID int, userID int) (PostDetails, error)
 		CreatePost(ctx context.Context, postDetails PostDetails) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error

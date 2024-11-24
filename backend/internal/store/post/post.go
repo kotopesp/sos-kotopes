@@ -20,12 +20,13 @@ func New(pg *postgres.Postgres) core.PostStore {
 }
 
 // GetAllPosts retrieves all posts from the database based on the GetAllPostsParams
-func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.Post, int, error) {
+func (s *store) GetAllPosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.Post, int, error) {
 	var posts []core.Post
 
 	query := s.DB.WithContext(ctx).Model(&core.Post{}).
 		Joins("JOIN animals ON posts.animal_id = animals.id").
-		Where("posts.is_deleted = ?", false)
+		Where("posts.is_deleted = ?", false).
+		Select("posts.*, EXISTS(SELECT 1 FROM favourite_posts WHERE favourite_posts.post_id = posts.id AND favourite_posts.user_id = ?) AS is_favourite", userID)
 
 	// Apply filtering based on the GetAllPostsParams
 	if params.Limit != nil {
@@ -52,13 +53,18 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 		query = query.Where("animals.color = ?", *params.Color)
 	}
 
+	// if params.SearchWord != nil && *params.SearchWord != "" {
+	// 	searchWord := "%" + *params.SearchWord + "%"
+	// 	query = query.Where("posts.title ILIKE ? OR posts.content ILIKE ?", searchWord, searchWord)
+	// }
+
 	var total int64
 	if err := query.Count(&total).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
 	}
 
-	if err := query.Select("posts.*").Find(&posts).Error; err != nil {
+	if err := query.Model(&core.Post{}).Find(&posts).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
 	}
@@ -85,15 +91,19 @@ func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, co
 }
 
 // GetPostByID retrieves a post from the database by its ID
-func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
+func (s *store) GetPostByID(ctx context.Context, postID, userID int) (core.Post, error) {
 	var post core.Post
 
-	if err := s.DB.WithContext(ctx).Where("id = ? AND is_deleted = ?", id, false).First(&post).Error; err != nil {
+	if err := s.DB.WithContext(ctx).
+		Model(&core.Post{}).
+		Select("posts.*, EXISTS(SELECT 1 FROM favourite_posts WHERE favourite_posts.post_id = posts.id AND favourite_posts.user_id = ?) AS is_favourite", userID).
+		Where("posts.id = ? AND posts.is_deleted = ?", postID, false).
+		First(&post).Error; err != nil {
+
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
 		}
-
 		logger.Log().Error(ctx, err.Error())
 		return core.Post{}, err
 	}

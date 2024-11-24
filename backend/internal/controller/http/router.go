@@ -86,10 +86,10 @@ func (r *Router) initRoutes() {
 	v1.Get("/auth/login/vk/callback", r.callback)
 
 	// posts
-	v1.Get("/posts", r.getPosts)
+	v1.Get("/posts", r.authorize(), r.getPosts)
 	v1.Get("/users/:id/posts", r.getUserPosts)
 	v1.Get("/posts/favourites", r.protectedMiddleware(), r.getFavouritePostsUserByID) // gets all favourite posts from the user (there may be collisions with "/posts/:id")
-	v1.Get("/posts/:id", r.getPostByID)
+	v1.Get("/posts/:id", r.authorize(), r.getPostByID)
 	v1.Post("/posts", r.protectedMiddleware(), r.createPost)
 	v1.Patch("/posts/:id", r.protectedMiddleware(), r.updatePost)
 	v1.Delete("/posts/:id", r.protectedMiddleware(), r.deletePost)

@@ -7,12 +7,8 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-func (s *service) GetFavouritePosts(ctx context.Context, userID int) ([]core.PostDetails, int, error) {
-	// TODO: add GetAllPostsParams
-	limit := 0
-	offset := 0
-
-	posts, total, err := s.postFavouriteStore.GetFavouritePosts(ctx, userID, limit, offset)
+func (s *service) GetFavouritePosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
+	posts, total, err := s.postFavouriteStore.GetFavouritePosts(ctx, userID, params)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
@@ -23,13 +19,37 @@ func (s *service) GetFavouritePosts(ctx context.Context, userID int) ([]core.Pos
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
 	}
-
+	
 	return postDetails, total, nil
 }
 
-func (s *service) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) error {
-	// TODO: return PostDetails
-	err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
+func (s *service) AddToFavourites(ctx context.Context, postFavourite core.PostFavourite) (core.PostDetails, error) {
+	post, err := s.postFavouriteStore.AddToFavourites(ctx, postFavourite)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.PostDetails{}, err
+	}
+
+	postDetails, err := s.BuildPostDetails(ctx, post)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.PostDetails{}, err
+	}
+	
+	return postDetails, nil
+}
+
+func (s *service) DeleteFromFavourites(ctx context.Context, post core.PostFavourite) error {
+	dbFavourite, err := s.postFavouriteStore.GetPostFavouriteByPostAndUserID(ctx, post.PostID, post.UserID)
+	if err != nil {
+		return err
+	}
+
+	if dbFavourite.UserID != post.UserID {
+		return core.ErrPostAuthorIDMismatch
+	}
+
+	err = s.postFavouriteStore.DeleteFromFavourites(ctx, post.PostID, post.UserID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err
@@ -38,12 +58,3 @@ func (s *service) AddToFavourites(ctx context.Context, postFavourite core.PostFa
 	return nil
 }
 
-func (s *service) DeleteFromFavourites(ctx context.Context, postID, userID int) error {
-	err := s.postFavouriteStore.DeleteFromFavourites(ctx, postID, userID)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return err
-	}
-
-	return nil
-}

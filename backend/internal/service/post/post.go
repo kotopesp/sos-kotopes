@@ -26,9 +26,9 @@ func New(postStore core.PostStore, postFavouriteStore core.PostFavouriteStore, a
 }
 
 // GetAllPosts retrieves all posts with the given parameters
-func (s *service) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
+func (s *service) GetAllPosts(ctx context.Context, userID int, params core.GetAllPostsParams) ([]core.PostDetails, int, error) {
 
-	posts, total, err := s.postStore.GetAllPosts(ctx, params)
+	posts, total, err := s.postStore.GetAllPosts(ctx, userID, params)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, 0, err
@@ -55,8 +55,8 @@ func (s *service) GetUserPosts(ctx context.Context, id int) (postsDetails []core
 }
 
 // GetPostByID retrieves a post by its ID
-func (s *service) GetPostByID(ctx context.Context, id int) (core.PostDetails, error) {
-	post, err := s.postStore.GetPostByID(ctx, id)
+func (s *service) GetPostByID(ctx context.Context, postID, userID int) (core.PostDetails, error) {
+	post, err := s.postStore.GetPostByID(ctx, postID, userID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
@@ -101,7 +101,7 @@ func (s *service) CreatePost(ctx context.Context, postDetails core.PostDetails) 
 // UpdatePost updates an existing post with the provided details
 func (s *service) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateRequestBodyPost) (core.PostDetails, error) {
 	logger.Log().Debug(ctx, fmt.Sprintf("%v", *postUpdateRequest.ID))
-	dbPost, err := s.GetPostByID(ctx, *postUpdateRequest.ID)
+	dbPost, err := s.GetPostByID(ctx, *postUpdateRequest.ID, *postUpdateRequest.AuthorID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.PostDetails{}, err
@@ -137,7 +137,7 @@ func (s *service) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateR
 
 // DeletePost deletes a post by its ID
 func (s *service) DeletePost(ctx context.Context, post core.Post) error {
-	dbPost, err := s.postStore.GetPostByID(ctx, post.ID)
+	dbPost, err := s.postStore.GetPostByID(ctx, post.ID, post.AuthorID)
 	if err != nil {
 		return err
 	}

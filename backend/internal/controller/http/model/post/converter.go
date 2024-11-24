@@ -77,7 +77,7 @@ func ToPostResponse(post core.PostDetails) PostResponse {
 		Status:         post.Animal.Status,
 		Photo:          post.Post.Photo,
 		Location:       post.Post.Location,
-		IsFavourite:    false,
+		IsFavourite:    post.Post.IsFavourite,
 		Comments:       0,
 	}
 }

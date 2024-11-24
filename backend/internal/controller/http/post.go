@@ -31,6 +31,14 @@ import (
 // @Failure		500			{object}	model.Response
 // @Router			/posts [get]
 func (r *Router) getPosts(ctx *fiber.Ctx) error {
+	userID, err := getIDFromToken(ctx)
+	if userID != 0 && err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	fmt.Printf("userID: %v\n", userID)
+
 	var getAllPostsParams postModel.GetAllPostsParams
 
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &getAllPostsParams)
@@ -41,7 +49,7 @@ func (r *Router) getPosts(ctx *fiber.Ctx) error {
 
 	coreGetAllPostsParams := getAllPostsParams.ToCoreGetAllPostsParams()
 
-	postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), coreGetAllPostsParams)
+	postsDetails, total, err := r.postService.GetAllPosts(ctx.UserContext(), userID, coreGetAllPostsParams)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -119,6 +127,12 @@ func (r *Router) getUserPosts(ctx *fiber.Ctx) error {
 // @Failure		500	{object}	model.Response
 // @Router			/posts/{id} [get]
 func (r *Router) getPostByID(ctx *fiber.Ctx) error {
+	userID, err := getIDFromToken(ctx)
+	if userID != 0 && err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
 	var pathParams postModel.PathParams
 
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &pathParams)
@@ -126,7 +140,7 @@ func (r *Router) getPostByID(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	postDetails, err := r.postService.GetPostByID(ctx.UserContext(), pathParams.PostID)
+	postDetails, err := r.postService.GetPostByID(ctx.UserContext(), pathParams.PostID, userID)
 	if err != nil {
 		if errors.Is(err, core.ErrPostNotFound) {
 			logger.Log().Error(ctx.UserContext(), core.ErrPostNotFound.Error())
