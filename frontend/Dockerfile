@@ -9,7 +9,7 @@ WORKDIR /usr/local/app
 COPY ./frontend /usr/local/app
 
 RUN npm install
-
+RUN npm ci
 RUN npm run build
 
 FROM nginx:${NGINX_VERSION}-${NODE_BASE_IMAGE}
@@ -18,4 +18,4 @@ RUN rm -rf /usr/share/nginx/html/*
 
 COPY --from=build  /usr/local/app/dist/frontend/browser /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 4200
