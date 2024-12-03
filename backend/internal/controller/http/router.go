@@ -17,6 +17,7 @@ type Router struct {
 	postService          core.PostService
 	userService          core.UserService
 	roleService          core.RoleService
+	seekerService        core.SeekersService
 	userFavouriteService core.UserFavouriteService
 }
 
@@ -28,6 +29,7 @@ func NewRouter(
 	userService core.UserService,
 	roleService core.RoleService,
 	formValidator validator.FormValidatorService,
+	seekerService core.SeekersService,
 ) {
 	router := &Router{
 		app:            app,
@@ -37,6 +39,7 @@ func NewRouter(
 		userService:    userService,
 		roleService:    roleService,
 		commentService: commentService,
+		seekerService:  seekerService,
 	}
 
 	router.initRequestMiddlewares()
@@ -62,6 +65,11 @@ func (r *Router) initRoutes() {
 	v1.Get("/users/favourites", r.protectedMiddleware(), r.GetFavouriteUsers)
 	v1.Post("/users/:id/favourites", r.AddUserToFavourites)
 	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
+
+	// seekers
+	v1.Get("/seekers/:id", r.getSeeker)
+	v1.Post("/seekers", r.createSeeker)
+	v1.Post("/seekers", r.updateSeeker)
 
 	// users
 	v1.Get("/users/:id", r.getUser)
