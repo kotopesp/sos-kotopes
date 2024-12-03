@@ -30,11 +30,17 @@ CREATE TABLE IF NOT EXISTS
 CREATE TABLE IF NOT EXISTS
     seekers
 (
-    id          SERIAL PRIMARY KEY,
-    user_id     INTEGER REFERENCES users (id),
-    description VARCHAR,
-    created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    id            SERIAL PRIMARY KEY,
+    user_id       INTEGER   NOT NULL REFERENCES users (id),
+    description   VARCHAR,
+    location      VARCHAR   NOT NULL,
+    equipment     VARCHAR   NOT NULL,
+    price         INTEGER   NOT NULL,
+    car           BOOLEAN   NOT NULL,
+    is_deleted    BOOLEAN   NOT NULL DEFAULT false,
+    deleted_at    TIMESTAMP,
+    created_at    TIMESTAMP      NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMP      NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS
