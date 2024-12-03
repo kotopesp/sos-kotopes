@@ -244,7 +244,7 @@ func setRefreshTokenCookie(ctx *fiber.Ctx, refreshToken string) {
 		Value:    refreshToken,
 		HTTPOnly: true,
 		Secure:   true,
-		SameSite: "Lax",
+		SameSite: "Strict",
 	})
 }
 
