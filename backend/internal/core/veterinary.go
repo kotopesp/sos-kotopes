@@ -73,17 +73,18 @@ type VeterinaryStore interface {
 }
 
 type VeterinaryService interface {
-	UpdateByID(ctx context.Context, userID int, veterinary UpdateVeterinary) (VeterinaryDetails, err error)
+	UpdateByID(ctx context.Context, veterinary UpdateVeterinary) (VeterinaryDetails, error)
 	GetAll(ctx context.Context, params GetAllVeterinaryParams) ([]VeterinaryDetails, error)
-	GetByID(ctx context.Context, id int) (veterinary Veterinary, err error)
-	GetByOrgName(ctx context.Context, orgName string) (veterinary Veterinary, err error)
+	GetByID(ctx context.Context, id int) (veterinary VeterinaryDetails, err error)
+	GetByOrgName(ctx context.Context, orgName string) (veterinary VeterinaryDetails, err error)
 	Create(ctx context.Context, veterinary Veterinary) error
 	DeleteByID(ctx context.Context, id int, userID int) error
 }
 
 // errors
 var (
-	ErrNoSuchVeterinary = errors.New("veterinary does not exist")
+	ErrNoSuchVeterinary          = errors.New("veterinary does not exist")
+	ErrVeterinaryUserIDMissmatch = errors.New("veterinary user ID mismatch")
 )
 
 // TableName table name in db for gorm

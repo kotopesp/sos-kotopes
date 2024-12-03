@@ -70,9 +70,8 @@ func (s *service) GetByID(ctx context.Context, id int) (core.VeterinaryDetails, 
 	}, nil
 }
 
-// переделать под то что нада
-func (s *service) GetByOrgName(ctx context.Context, id int) (core.VeterinaryDetails, error) {
-	veterinary, err := s.VeterinaryStore.GetByID(ctx, id)
+func (s *service) GetByOrgName(ctx context.Context, orgName string) (core.VeterinaryDetails, error) {
+	veterinary, err := s.VeterinaryStore.GetByOrgName(ctx, orgName)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.VeterinaryDetails{}, err
@@ -106,8 +105,8 @@ func (s *service) DeleteByID(ctx context.Context, id, userID int) error {
 	}
 
 	if storedVeterinary.UserID != userID {
-		logger.Log().Error(ctx, core.ErrKeeperUserIDMissmatch.Error())
-		return core.ErrKeeperUserIDMissmatch
+		logger.Log().Error(ctx, core.ErrVeterinaryUserIDMissmatch.Error())
+		return core.ErrVeterinaryUserIDMissmatch
 	} else if storedVeterinary.IsDeleted {
 		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 		return core.ErrRecordNotFound
@@ -124,8 +123,8 @@ func (s *service) UpdateByID(ctx context.Context, veterinary core.UpdateVeterina
 	}
 
 	if storedVeterinary.UserID != veterinary.UserID {
-		logger.Log().Error(ctx, core.ErrKeeperUserIDMissmatch.Error())
-		return core.VeterinaryDetails{}, core.ErrKeeperUserIDMissmatch
+		logger.Log().Error(ctx, core.ErrVeterinaryUserIDMissmatch.Error())
+		return core.VeterinaryDetails{}, core.ErrVeterinaryUserIDMissmatch
 	} else if storedVeterinary.IsDeleted {
 		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 		return core.VeterinaryDetails{}, core.ErrRecordNotFound
