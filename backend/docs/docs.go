@@ -143,9 +143,7 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
-                        "schema": {
-                            "type": "object"
-                        }
+                        "schema": {}
                     },
                     "400": {
                         "description": "Bad Request",
@@ -1477,6 +1475,132 @@ const docTemplate = `{
                 }
             }
         },
+        "/seekers": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Create a seeker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "Create a seeker",
+                "operationId": "create-seeker",
+                "parameters": [
+                    {
+                        "description": "Seeker",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/seeker.ResponseSeekers"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeekers"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seekers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Get seeker by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "Get seeker",
+                "operationId": "get-seeker",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeekers"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/{id}/posts": {
             "get": {
                 "description": "Get posts by user ID",
@@ -2396,6 +2520,32 @@ const docTemplate = `{
                         "seeker",
                         "vet"
                     ]
+                }
+            }
+        },
+        "seeker.ResponseSeekers": {
+            "type": "object",
+            "properties": {
+                "car": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "equipment": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

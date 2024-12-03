@@ -192,6 +192,23 @@ definitions:
     required:
     - name
     type: object
+  seeker.ResponseSeekers:
+    properties:
+      car:
+        type: boolean
+      description:
+        type: string
+      equipment:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      price:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   user.Login:
     properties:
       password:
@@ -336,8 +353,7 @@ paths:
       responses:
         "201":
           description: Created
-          schema:
-            type: object
+          schema: {}
         "400":
           description: Bad Request
           schema:
@@ -1163,6 +1179,81 @@ paths:
       summary: Get favourite posts of user by id
       tags:
       - post
+  /seekers:
+    post:
+      consumes:
+      - application/json
+      description: Create a seeker
+      operationId: create-seeker
+      parameters:
+      - description: Seeker
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/seeker.ResponseSeekers'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeekers'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Create a seeker
+      tags:
+      - seeker
+  /seekers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get seeker by id
+      operationId: get-seeker
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeekers'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Get seeker
+      tags:
+      - seeker
   /user/{id}/posts:
     get:
       consumes:
