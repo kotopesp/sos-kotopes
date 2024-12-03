@@ -35,10 +35,10 @@ func (s *store) CreateSeeker(ctx context.Context, seekers core.Seekers) (core.Se
 func (s *store) GetSeeker(ctx context.Context, id int) (core.Seekers, error) {
 	var seeker core.Seekers
 
-	if err := s.DB.WithContext(ctx).Table("seekers").Where("id = ?", id).First(&seeker).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Table("seekers").Where("user_id = ?", id).First(&seeker).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.Seekers{}, core.ErrAnimalNotFound
+			return core.Seekers{}, core.ErrSeekerNotFound
 		}
 
 		logger.Log().Error(ctx, err.Error())
