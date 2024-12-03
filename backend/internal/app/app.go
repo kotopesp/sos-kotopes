@@ -28,11 +28,13 @@ import (
 
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	seekerservice "github.com/kotopesp/sos-kotopes/internal/service/seeker"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
+	seekerstore "github.com/kotopesp/sos-kotopes/internal/store/seeker"
 )
 
 // Run creates objects via constructors.
@@ -63,6 +65,7 @@ func Run(cfg *config.Config) {
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 	refreshSessionStore := refreshsessionstore.New(pg)
+	seekerStore := seekerstore.New(pg)
 
 	// Services
 	commentService := commentservice.New(
@@ -84,6 +87,7 @@ func Run(cfg *config.Config) {
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	seekerService := seekerservice.New(seekerStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -104,6 +108,7 @@ func Run(cfg *config.Config) {
 		userService,
 		roleService,
 		formValidator,
+		seekerService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
