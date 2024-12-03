@@ -130,7 +130,7 @@ func (s *service) UpdateByID(ctx context.Context, veterinary core.UpdateVeterina
 		return core.VeterinaryDetails{}, core.ErrRecordNotFound
 	}
 
-	updatedVeterinary, err := s.VeterinaryStore.UpdateByID(ctx, veterinary) //тут ещё раз проверить
+	updatedVeterinary, err := s.VeterinaryStore.UpdateByID(ctx, veterinary)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.VeterinaryDetails{}, err
