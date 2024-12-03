@@ -12,9 +12,9 @@ type service struct {
 	userStore       core.UserStore
 }
 
-func New(VeterinaryStore core.VeterinaryStore, userStore core.UserStore) core.VeterinaryService {
+func New(veterinaryStore core.VeterinaryStore, userStore core.UserStore) core.VeterinaryService {
 	return &service{
-		VeterinaryStore: VeterinaryStore,
+		VeterinaryStore: veterinaryStore,
 		userStore:       userStore,
 	}
 }
