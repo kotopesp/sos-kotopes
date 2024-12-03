@@ -7,43 +7,44 @@ import (
 )
 
 type Veterinary struct {
-	ID               int        `gorm:"column:id"`
-	UserID           int        `gorm:"column:user_id"`
-	Entity           string     `gorm:"column:entity"` // individual or legal entity
-	Username         string     `gorm:"column:username"`
-	Firstname        *string    `gorm:"column:firstname"`
-	Lastname         *string    `gorm:"column:lastname"`
-	Patronymic       *string    `gorm:"column:patronymic"`
-	Education        *string    `gorm:"column:education"`
-	OrgName          *string    `gorm:"column:org_name"`
-	Location         *string    `gorm:"column:location"`
-	OrgEmail         *string    `gorm:"column:org_email"`
-	InnNumber        *string    `gorm:"column:inn_number"`
-	RemoteConsulting bool       `gorm:"column:remote_consulting"`
-	Inpatient        bool       `gorm:"column:inpatient"`
-	Description      *string    `gorm:"column:description"`
-	IsDeleted        bool       `gorm:"column:is_deleted"`
-	CreatedAt        time.Time  `gorm:"column:created_at"`
-	UpdatedAt        time.Time  `gorm:"column:updated_at"`
-	DeletedAt        *time.Time `gorm:"column:deleted_at"`
+	ID               int       `gorm:"column:id"`
+	UserID           int       `gorm:"column:user_id"`
+	Entity           string    `gorm:"column:entity"` // individual or legal entity
+	Username         string    `gorm:"column:username"`
+	Firstname        *string   `gorm:"column:firstname"`
+	Lastname         *string   `gorm:"column:lastname"`
+	Patronymic       *string   `gorm:"column:patronymic"`
+	Education        *string   `gorm:"column:education"`
+	OrgName          *string   `gorm:"column:org_name"`
+	Location         *string   `gorm:"column:location"`
+	OrgEmail         *string   `gorm:"column:org_email"`
+	InnNumber        *string   `gorm:"column:inn_number"`
+	RemoteConsulting bool      `gorm:"column:remote_consulting"`
+	Inpatient        bool      `gorm:"column:inpatient"`
+	Description      *string   `gorm:"column:description"`
+	IsDeleted        bool      `gorm:"column:is_deleted"`
+	CreatedAt        time.Time `gorm:"column:created_at"`
+	UpdatedAt        time.Time `gorm:"column:updated_at"`
+	DeletedAt        time.Time `gorm:"column:deleted_at"`
 }
 
 type UpdateVeterinary struct {
-	ID               int     `gorm:"column:id"`      //тут ещё подумать.
-	UserID           int     `gorm:"column:user_id"` //и тут
-	Username         *string `gorm:"column:username"`
-	Firstname        *string `gorm:"column:firstname"`
-	Lastname         *string `gorm:"column:lastname"`
-	Patronymic       *string `gorm:"column:patronymic"`
-	Education        *string `gorm:"column:education"`
-	OrgName          *string `gorm:"column:org_name"`
-	Location         *string `gorm:"column:location"`
-	Price            float64 `gorm:"column:price"`
-	OrgEmail         *string `gorm:"column:org_email"`
-	InnNumber        *string `gorm:"column:Inn_number"`
-	RemoteConsulting bool    `gorm:"column:remote_consuting"`
-	Inpatient        bool    `gorm:"column:inpatient"`
-	Description      *string `gorm:"column:description"`
+	ID               int       `gorm:"column:id"`      //тут ещё подумать.
+	UserID           int       `gorm:"column:user_id"` //и тут
+	Username         *string   `gorm:"column:username"`
+	Firstname        *string   `gorm:"column:firstname"`
+	Lastname         *string   `gorm:"column:lastname"`
+	Patronymic       *string   `gorm:"column:patronymic"`
+	Education        *string   `gorm:"column:education"`
+	OrgName          *string   `gorm:"column:org_name"`
+	Location         *string   `gorm:"column:location"`
+	Price            float64   `gorm:"column:price"`
+	OrgEmail         *string   `gorm:"column:org_email"`
+	InnNumber        *string   `gorm:"column:Inn_number"`
+	RemoteConsulting bool      `gorm:"column:remote_consuting"`
+	Inpatient        bool      `gorm:"column:inpatient"`
+	Description      *string   `gorm:"column:description"`
+	UpdatedAt        time.Time `gorm:"autoUpdateTime;column:updated_at"`
 }
 
 type VeterinaryDetails struct {
