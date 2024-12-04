@@ -119,11 +119,13 @@ func (s *store) GetAllMessages(ctx context.Context, chatID, userID int, sortType
 	var messagesResponse []chat.Message
 	for _, mes := range messages {
 		messagesResponse = append(messagesResponse, chat.Message{
-			UserID:     mes.UserID,
-			ChatID:     mes.ChatID,
-			Content:    mes.Content,
-			CreatedAt:  mes.CreatedAt,
-			SenderName: mes.SenderName,
+			UserID:      mes.UserID,
+			ChatID:      mes.ChatID,
+			TextContent: mes.Content,
+			CreatedAt:   mes.CreatedAt,
+			SenderName:  mes.SenderName,
+			IsAudio:     mes.IsAudio,
+			AudioBytes:  mes.AudioBytes,
 		})
 	}
 	return messagesResponse, nil
@@ -142,10 +144,12 @@ func (s *store) CreateMessage(ctx context.Context, data chat.Message) (chat.Mess
 	dataToInsert := core.Message{
 		UserID:     data.UserID,
 		ChatID:     data.ChatID,
-		Content:    data.Content,
+		Content:    data.TextContent,
 		CreatedAt:  time.Now().UTC(),
 		UpdatedAt:  time.Now().UTC(),
 		SenderName: user.Username,
+		IsAudio:    data.IsAudio,
+		AudioBytes: data.AudioBytes,
 	}
 	if err := ifChatExists(s, ctx, data.ChatID); err != nil {
 		return chat.Message{}, err
