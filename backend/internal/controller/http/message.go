@@ -100,7 +100,7 @@ func (r *Router) createMessage(ctx *fiber.Ctx) error {
 
 		openedFile, err := file.Open()
 		if err != nil {
-			ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse("Failed to read audio bytes"))
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse("Failed to read audio bytes"))
 		}
 
 		byteBuffer := make([]byte, file.Size)
