@@ -10,19 +10,19 @@ import (
 )
 
 // @Summary		Get seeker
-// @Tags			seeker
+// @Tags		seeker
 // @Description	Get seeker by id
-// @ID				get-seeker
-// @Accept			json
+// @ID			get-seeker
+// @Accept		json
 // @Produce		json
-// @Param			id	path		int	true	"User ID"
+// @Param		id	path		int	true	"User ID"
 // @Success		200	{object}	model.Response{data=seeker.ResponseSeekers}
 // @Failure		400	{object}	model.Response
 // @Failure		500	{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers/{id}  [get]
+// @Security	ApiKeyAuthBasic
+// @Router		/seekers/{user_id}  [get]
 func (r *Router) getSeeker(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
+	id, err := ctx.ParamsInt("user_id")
 
 	if err != nil {
 		logger.Log().Debug(ctx.Context(), err.Error())
@@ -47,17 +47,17 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 }
 
 // @Summary		Create a seeker
-// @Tags			seeker
+// @Tags		seeker
 // @Description	Create a seeker
-// @ID				create-seeker
-// @Accept			json
+// @ID			create-seeker
+// @Accept		json
 // @Produce		json
-// @Param			request	body		seeker.ResponseSeekers	true	"Seeker"
+// @Param		request	body		seeker.ResponseSeekers	true	"Seeker"
 // @Success		200		{object}	model.Response{data=seeker.ResponseSeekers}
 // @Failure		400		{object}	model.Response
 // @Failure		500		{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers [post]
+// @Security	ApiKeyAuthBasic
+// @Router		/seekers [post]
 func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 	var responseSeeker seeker.ResponseSeekers
 

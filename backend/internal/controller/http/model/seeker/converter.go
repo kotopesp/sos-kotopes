@@ -12,7 +12,7 @@ func ToResponseSeeker(seekers *core.Seekers) ResponseSeekers {
 		Location:    seekers.Location,
 		Equipment:   seekers.Equipment,
 		Description: seekers.Description,
-		Car:         seekers.Car,
+		HaveCar:     seekers.HaveCar,
 	}
 }
 
@@ -23,6 +23,6 @@ func (seekers *ResponseSeekers) ToCoreSeeker() core.Seekers {
 		Location:    seekers.Location,
 		Equipment:   seekers.Equipment,
 		Description: seekers.Description,
-		Car:         seekers.Car,
+		HaveCar:     seekers.HaveCar,
 	}
 }

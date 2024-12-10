@@ -6,6 +6,6 @@ type ResponseSeekers struct {
 	Description string `json:"description"`
 	Location    string `json:"location"`
 	Equipment   string `json:"equipment"`
-	Car         bool   `json:"car"`
+	HaveCar     bool   `json:"have_car"`
 	Price       int    `json:"price"`
 }
