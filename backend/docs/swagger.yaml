@@ -192,16 +192,14 @@ definitions:
     required:
     - name
     type: object
-  seeker.ResponseSeekers:
+  seeker.ResponseSeeker:
     properties:
-      car:
-        type: boolean
       description:
         type: string
       equipment:
         type: string
-      id:
-        type: integer
+      have_car:
+        type: boolean
       location:
         type: string
       price:
@@ -1191,7 +1189,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/seeker.ResponseSeekers'
+          $ref: '#/definitions/seeker.ResponseSeeker'
       produces:
       - application/json
       responses:
@@ -1202,7 +1200,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/seeker.ResponseSeekers'
+                  $ref: '#/definitions/seeker.ResponseSeeker'
               type: object
         "400":
           description: Bad Request
@@ -1239,7 +1237,7 @@ paths:
             - $ref: '#/definitions/model.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/seeker.ResponseSeekers'
+                  $ref: '#/definitions/seeker.ResponseSeeker'
               type: object
         "400":
           description: Bad Request
