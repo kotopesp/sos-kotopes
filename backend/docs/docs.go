@@ -1501,7 +1501,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/seeker.ResponseSeeker"
+                            "$ref": "#/definitions/seeker.CreateSeeker"
                         }
                     }
                 ],
@@ -1539,7 +1539,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/seekers/{id}": {
+        "/seekers/{user_id}": {
             "get": {
                 "security": [
                     {
@@ -1562,7 +1562,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "User ID",
-                        "name": "id",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
                     }
@@ -2523,6 +2523,29 @@ const docTemplate = `{
                 }
             }
         },
+        "seeker.CreateSeeker": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "equipment": {
+                    "type": "string"
+                },
+                "have_car": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "seeker.ResponseSeeker": {
             "type": "object",
             "properties": {
@@ -2534,6 +2557,9 @@ const docTemplate = `{
                 },
                 "have_car": {
                     "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "location": {
                     "type": "string"
