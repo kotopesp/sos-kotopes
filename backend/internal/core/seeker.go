@@ -13,7 +13,7 @@ type (
 		Location    string    `gorm:"column:location"`
 		Equipment   string    `gorm:"column:equipment"`
 		Price       int       `gorm:"column:price"`
-		Car         bool      `gorm:"column:car"`
+		HaveCar     bool      `gorm:"column:have_car"`
 		CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
 		UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
 		IsDeleted   bool      `gorm:"column:is_deleted"`
@@ -27,7 +27,7 @@ type (
 		Location    string    `gorm:"column:location"`
 		Equipment   string    `gorm:"column:equipment"`
 		Price       int       `gorm:"column:price"`
-		Car         bool      `gorm:"column:car"`
+		HaveCar     bool      `gorm:"column:have_car"`
 		UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
 	}
 
