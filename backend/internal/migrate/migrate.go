@@ -12,7 +12,7 @@ import (
 const (
 	sslMode          = "?sslmode=disable"
 	dataBase         = "postgres"
-	pathToMigrations = "file:///app/internal/data/"
+	pathToMigrations = "file://internal/data/"
 )
 
 func Up(dataBaseURL string) error {
