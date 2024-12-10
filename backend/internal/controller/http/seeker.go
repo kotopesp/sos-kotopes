@@ -9,28 +9,26 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-// @Summary		Get seeker
-// @Tags		seeker
-// @Description	Get seeker by id
-// @ID			get-seeker
-// @Accept		json
-// @Produce		json
-// @Param		id	path		int	true	"User ID"
-// @Success		200	{object}	model.Response{data=seeker.ResponseSeekers}
-// @Failure		400	{object}	model.Response
-// @Failure		500	{object}	model.Response
-// @Security	ApiKeyAuthBasic
-// @Router		/seekers/{user_id}  [get]
+// @Summary			Get seeker
+// @Tags			seeker
+// @Description		Get seeker by id
+// @ID				get-seeker
+// @Accept			json
+// @Produce			json
+// @Param			id	path		int	true	"User ID"
+// @Success			200	{object}	model.Response{data=seeker.ResponseSeeker}
+// @Failure			400	{object}	model.Response
+// @Failure			500	{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/seekers/{id}  [get]
 func (r *Router) getSeeker(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("user_id")
-
+	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		logger.Log().Debug(ctx.Context(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
 	getSeeker, err := r.seekerService.GetSeeker(ctx.UserContext(), id)
-
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):
@@ -46,20 +44,20 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(responseSeeker)
 }
 
-// @Summary		Create a seeker
-// @Tags		seeker
-// @Description	Create a seeker
-// @ID			create-seeker
-// @Accept		json
-// @Produce		json
-// @Param		request	body		seeker.ResponseSeekers	true	"Seeker"
-// @Success		200		{object}	model.Response{data=seeker.ResponseSeekers}
-// @Failure		400		{object}	model.Response
-// @Failure		500		{object}	model.Response
-// @Security	ApiKeyAuthBasic
-// @Router		/seekers [post]
+// @Summary			Create a seeker
+// @Tags			seeker
+// @Description		Create a seeker
+// @ID				create-seeker
+// @Accept			json
+// @Produce			json
+// @Param			request	body		seeker.ResponseSeeker	true	"Seeker"
+// @Success			200		{object}	model.Response{data=seeker.ResponseSeeker}
+// @Failure			400		{object}	model.Response
+// @Failure			500		{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/seekers [post]
 func (r *Router) createSeeker(ctx *fiber.Ctx) error {
-	var responseSeeker seeker.ResponseSeekers
+	var responseSeeker seeker.ResponseSeeker
 
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &responseSeeker)
 	if fiberError != nil || parseOrValidationError != nil {

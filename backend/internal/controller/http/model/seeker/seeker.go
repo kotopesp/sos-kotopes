@@ -1,7 +1,6 @@
 package seeker
 
-type ResponseSeekers struct {
-	ID          int    `json:"id"`
+type ResponseSeeker struct {
 	UserID      int    `json:"user_id"`
 	Description string `json:"description"`
 	Location    string `json:"location"`
