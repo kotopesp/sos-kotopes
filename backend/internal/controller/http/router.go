@@ -67,7 +67,7 @@ func (r *Router) initRoutes() {
 	v1.Delete("/users/:id/favourites", r.DeleteUserFromFavourites)
 
 	// seekers
-	v1.Get("/seekers/:id", r.getSeeker)
+	v1.Get("/seekers/:user_id", r.getSeeker)
 	v1.Post("/seekers", r.protectedMiddleware(), r.createSeeker)
 	v1.Post("/seekers", r.protectedMiddleware(), r.updateSeeker)
 
