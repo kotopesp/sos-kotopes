@@ -3,10 +3,7 @@ package seeker
 import "github.com/kotopesp/sos-kotopes/internal/core"
 
 func equipmentChecker(s string) bool {
-	if s == "" {
-		return false
-	}
-	return true
+	return s != ""
 }
 
 func (seeker *CreateSeeker) GetEquipment() core.Equipment {
