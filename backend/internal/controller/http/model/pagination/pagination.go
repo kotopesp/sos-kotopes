@@ -1,8 +1,8 @@
 package pagination
 
 type Pagination struct {
-	Total       int `json:"total"`
-	TotalPages  int `json:"total_pages"`
-	CurrentPage int `json:"current_page"`
-	PerPage     int `json:"per_page"`
+	Total       int `json:"total" example:"10"`
+	TotalPages  int `json:"total_pages" example:"10"`
+	CurrentPage int `json:"current_page" example:"1"`
+	PerPage     int `json:"per_page" example:"1"`
 }

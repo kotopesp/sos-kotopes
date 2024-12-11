@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/migrate"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
 	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
 	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
@@ -30,12 +31,13 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
-	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment_service"
+	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
-	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment_store"
+	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
+	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 )
 
 // Run creates objects via constructors.
@@ -52,6 +54,11 @@ func Run(cfg *config.Config) {
 	}
 	defer pg.Close(ctx)
 
+	// Migrate up
+	if err := migrate.Up(cfg.DB.URL); err != nil {
+		logger.Log().Fatal(ctx, "error with up migrations for database: %s", err.Error())
+	}
+
 	// Stores
 	userStore := user.New(pg)
 	commentStore := commentstore.New(pg)
@@ -62,6 +69,7 @@ func Run(cfg *config.Config) {
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
+	refreshSessionStore := refreshsessionstore.New(pg)
 
 	// Services
 	commentService := commentservice.New(
@@ -73,6 +81,7 @@ func Run(cfg *config.Config) {
 	keeperService := keeperservice.New(keepersStore, keeperReviewsStore, userStore)
 	authService := auth.New(
 		userStore,
+		refreshSessionStore,
 		core.AuthServiceConfig{
 			JWTSecret:            cfg.JWTSecret,
 			VKClientID:           cfg.VKClientID,
@@ -93,7 +102,12 @@ func Run(cfg *config.Config) {
 		EnableSplittingOnParsers: true,
 	})
 	app.Use(recover.New())
-	app.Use(cors.New())
+
+	// This configuration is necessary so that the frontend can send requests with cookies.
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     cfg.CORS.AllowedOrigins,
+		AllowCredentials: true,
+	}))
 
 	v1.NewRouter(
 		app,
@@ -107,7 +121,7 @@ func Run(cfg *config.Config) {
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)
-	err = app.ListenTLS(cfg.HTTP.Port, cfg.TLSCert, cfg.TLSKey)
+	err = app.Listen(cfg.HTTP.Port)
 	if err != nil {
 		logger.Log().Fatal(ctx, "server was stopped: %s", err.Error())
 	}

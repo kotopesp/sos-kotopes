@@ -19,8 +19,6 @@ services:
     image: postgres:16.3
     container_name: postgres
     restart: always
-    #ports: \\uncomment for a debug
-    #  - "15432:5432"
     env_file:
       - .env
     environment:
@@ -37,6 +35,17 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    container_name: frontend
+    restart: always
+    ports:
+          - "4200:80"
+    networks:
+      - sos-kotopes
+    command: ["nginx", "-g", "daemon off;"]
 networks:
   sos-kotopes:
     driver: bridge

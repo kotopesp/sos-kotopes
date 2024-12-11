@@ -1,0 +1,21 @@
+@mixin container__post__status($color) {
+  width: 111px;
+  height: 33px;
+  border-radius: 10px;
+  background: $color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.find-home {
+  @include container__post__status(var(--orange-active-button-bg));
+}
+
+.lost {
+  @include container__post__status(var(--red-active-button-bg));
+}
+
+.found {
+  @include container__post__status(var(--green-active-button-bg));
+}

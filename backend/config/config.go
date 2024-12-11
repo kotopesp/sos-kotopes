@@ -12,6 +12,7 @@ type (
 		DB
 		TLS
 		Auth
+		CORS
 	}
 
 	HTTP struct {
@@ -39,6 +40,10 @@ type (
 		AccessTokenLifetime  int
 		RefreshTokenLifetime int
 	}
+
+	CORS struct {
+		AllowedOrigins string
+	}
 )
 
 // NewConfig returns app config.
@@ -52,8 +57,9 @@ func NewConfig() (*Config, error) {
 	vkClientID := flag.String("vk_client_id", "", "vk id of our app")
 	vkClientSecret := flag.String("vk_client_secret", "", "key that used to access vk api")
 	vkCallback := flag.String("vk_callback", "https://59bf-91-223-89-38.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
-	accessTokenLifetime := flag.Int("access_token_lifetime", 2, "access token lifetime in minutes")
+	accessTokenLifetime := flag.Int("access_token_lifetime", 10, "access token lifetime in minutes")
 	refreshTokenLifetime := flag.Int("refresh_token_lifetime", 43800, "refresh token lifetime in minutes")
+	frontendOrigins := flag.String("frontend_allowed_origins", "http://localhost:4200", "comma separated list of origins for the frontend")
 
 	flag.Parse()
 
@@ -78,6 +84,9 @@ func NewConfig() (*Config, error) {
 			VKCallback:           *vkCallback,
 			AccessTokenLifetime:  *accessTokenLifetime,
 			RefreshTokenLifetime: *refreshTokenLifetime,
+		},
+		CORS: CORS{
+			AllowedOrigins: *frontendOrigins,
 		},
 	}
 

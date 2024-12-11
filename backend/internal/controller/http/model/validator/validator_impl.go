@@ -3,10 +3,13 @@ package validator
 import (
 	"context"
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
+
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	validatorPkg "github.com/go-playground/validator/v10"
@@ -88,7 +91,8 @@ func customValidationOptions(ctx context.Context, validator *validatorPkg.Valida
 }
 
 func New(ctx context.Context, validator *validatorPkg.Validate) FormValidatorService {
-	logger.Log().Info(context.Background(), "validator created")
+	logger.Log().Info(ctx, "validator created")
+
 	customValidationOptions(ctx, validator)
 	return &formValidator{
 		validator: validator,
@@ -118,4 +122,15 @@ func (v *formValidator) Validate(data interface{}) []ResponseError {
 		}
 	}
 	return validationErrors
+}
+
+func (err *ResponseError) Error() string {
+	return fmt.Sprintf("FailedField: %s | Tag: %s | Param: %s | Value: %v", err.FailedField, err.Tag, err.Param, err.Value)
+}
+
+func NewResponse(validationErrors []ResponseError, message *string) Response {
+	return Response{
+		ValidationErrors: validationErrors,
+		Message:          message,
+	}
 }

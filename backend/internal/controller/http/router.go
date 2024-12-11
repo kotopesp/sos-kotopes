@@ -3,6 +3,8 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/swagger"
+	_ "github.com/kotopesp/sos-kotopes/docs"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
@@ -50,8 +52,10 @@ func NewRouter(
 func (r *Router) initRoutes() {
 	r.app.Get("/ping", r.ping)
 
+	r.app.Get("/swagger/*", swagger.HandlerDefault) // default
+
 	v1 := r.app.Group("/api/v1")
-	// comment_service
+	// comment
 	v1.Get("/posts/:post_id/comments", r.getComments)
 	v1.Post("/posts/:post_id/comments", r.protectedMiddleware(), r.createComment)
 	v1.Patch("/posts/:post_id/comments/:comment_id", r.protectedMiddleware(), r.updateComment)
@@ -78,7 +82,7 @@ func (r *Router) initRoutes() {
 	// auth
 	v1.Post("/auth/login", r.loginBasic)
 	v1.Post("/auth/signup", r.signup)
-	v1.Post("/auth/token/refresh", r.refreshTokenMiddleware(), r.refresh)
+	v1.Post("/auth/token/refresh", r.refresh)
 
 	// auth vk
 	v1.Get("/auth/login/vk", r.loginVK)

@@ -2,22 +2,21 @@ package core
 
 import (
 	"context"
-	"errors"
 	"time"
 )
 
 type Comment struct {
-	ID        int        `gorm:"column:id"`
-	ParentID  *int       `gorm:"column:parent_id"`
-	ReplyID   *int       `gorm:"column:reply_id"`
-	PostID    int        `gorm:"column:posts_id"`
-	AuthorID  int        `gorm:"column:author_id"`
-	Author    User       `gorm:"foreignKey:AuthorID;references:ID"`
-	Content   string     `gorm:"column:content"`
-	IsDeleted bool       `gorm:"column:is_deleted"`
-	DeletedAt *time.Time `gorm:"column:deleted_at"`
-	CreatedAt time.Time  `gorm:"column:created_at"`
-	UpdatedAt time.Time  `gorm:"column:updated_at"`
+	ID        int        `gorm:"column:id" fake:"{number:1,100}"`
+	ParentID  *int       `gorm:"column:parent_id" fake:"{number:1,100}"`
+	ReplyID   *int       `gorm:"column:reply_id" fake:"{number:1,100}"`
+	PostID    int        `gorm:"column:posts_id" fake:"{number:1,100}"`
+	AuthorID  int        `gorm:"column:author_id" fake:"{number:1,100}"`
+	Author    User       `gorm:"foreignKey:AuthorID;references:ID" fake:"skip"`
+	Content   string     `gorm:"column:content" fake:"{sentence:3}"`
+	IsDeleted bool       `gorm:"column:is_deleted" fake:"skip"`
+	DeletedAt *time.Time `gorm:"column:deleted_at" fake:"skip"`
+	CreatedAt time.Time  `gorm:"column:created_at" fake:"skip"`
+	UpdatedAt time.Time  `gorm:"column:updated_at" fake:"skip"`
 }
 
 type CommentStore interface {
@@ -40,14 +39,6 @@ type GetAllCommentsParams struct {
 	Limit  *int
 	Offset *int
 }
-
-// errors
-var (
-	ErrCommentAuthorIDMismatch = errors.New("your user_id and db author_id mismatch")
-	ErrCommentPostIDMismatch   = errors.New("your posts_id and db posts_id mismatch")
-	ErrNoSuchComment           = errors.New("no such comment")
-	ErrCommentIsDeleted        = errors.New("comment is deleted")
-)
 
 // TableName table name in db for gorm
 func (Comment) TableName() string {

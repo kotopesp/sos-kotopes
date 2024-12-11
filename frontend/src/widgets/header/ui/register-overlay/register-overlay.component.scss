@@ -1,0 +1,118 @@
+.block__registration__overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 100px;
+  overflow: scroll;
+
+  .registration__overlay {
+    width: 1019px;
+    min-height: 949px;
+    max-height: fit-content;
+    border-radius: 30px;
+    background: var(--brown-main-color);
+    background-image: url(/assets/images/steps-profile.svg);
+
+    .block__title__and__icon {
+      height: 211px;
+    }
+
+    .close__cross {
+      width: 100%;
+      padding-top: 30px;
+      display: flex;
+      justify-content: end;
+      padding-right: 20px;
+      cursor: pointer;
+    }
+
+    .title__and__icon {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .title__registration {
+        margin-top: 10px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+    }
+  }
+
+  .block__registration__info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    height: 660px;
+    width: 100%;
+    padding: 40px 0 100px 100px;
+    background: var(--brown-ads-color);
+
+
+    .block__password {
+      position: relative;
+
+      .password__eye {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+      }
+
+      .password__eye__line {
+        position: absolute;
+        width: 25px;
+        right: -1px;
+        top: 40%;
+        border-bottom: 2px solid var(--white-color);
+        transform: translateY(-50%) rotate(45deg);
+      }
+    }
+
+    .block__about__user {
+
+      .about__user__area {
+        width: 333px;
+        height: 112px;
+        border-radius: 10px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+      }
+    }
+
+    .input__text {
+      width: 333px;
+      height: 46px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+  }
+
+  .block__registration__button {
+    display: flex;
+    width: 100%;
+    height: 119px;
+    align-items: center;
+    justify-content: center;
+
+    .registration__button {
+      width: 333px;
+      height: 54px;
+      background: var(--white-color);
+      background-image: url(/assets/images/steps-profile.svg);
+      color: var(--brown-main-color);
+      border-radius: 10px;
+      border: none;
+    }
+  }
+}
+
