@@ -197,7 +197,9 @@ definitions:
       description:
         type: string
       equipment:
-        type: string
+        items:
+          type: string
+        type: array
       have_car:
         type: boolean
       location:
@@ -212,7 +214,7 @@ definitions:
       description:
         type: string
       equipment:
-        type: string
+        type: integer
       have_car:
         type: boolean
       id:

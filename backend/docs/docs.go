@@ -2530,7 +2530,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "equipment": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "have_car": {
                     "type": "boolean"
@@ -2553,7 +2556,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "equipment": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "have_car": {
                     "type": "boolean"
