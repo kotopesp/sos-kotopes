@@ -80,25 +80,25 @@ func (_c *MockSeekersStore_CreateEquipment_Call) RunAndReturn(run func(context.C
 }
 
 // CreateSeeker provides a mock function with given fields: ctx, seeker
-func (_m *MockSeekersStore) CreateSeeker(ctx context.Context, seeker core.Seekers) (core.Seekers, error) {
+func (_m *MockSeekersStore) CreateSeeker(ctx context.Context, seeker core.Seeker) (core.Seeker, error) {
 	ret := _m.Called(ctx, seeker)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateSeeker")
 	}
 
-	var r0 core.Seekers
+	var r0 core.Seeker
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.Seekers) (core.Seekers, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.Seeker) (core.Seeker, error)); ok {
 		return rf(ctx, seeker)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.Seekers) core.Seekers); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.Seeker) core.Seeker); ok {
 		r0 = rf(ctx, seeker)
 	} else {
-		r0 = ret.Get(0).(core.Seekers)
+		r0 = ret.Get(0).(core.Seeker)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.Seekers) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, core.Seeker) error); ok {
 		r1 = rf(ctx, seeker)
 	} else {
 		r1 = ret.Error(1)
@@ -114,45 +114,45 @@ type MockSeekersStore_CreateSeeker_Call struct {
 
 // CreateSeeker is a helper method to define mock.On call
 //   - ctx context.Context
-//   - seeker core.Seekers
+//   - seeker core.Seeker
 func (_e *MockSeekersStore_Expecter) CreateSeeker(ctx interface{}, seeker interface{}) *MockSeekersStore_CreateSeeker_Call {
 	return &MockSeekersStore_CreateSeeker_Call{Call: _e.mock.On("CreateSeeker", ctx, seeker)}
 }
 
-func (_c *MockSeekersStore_CreateSeeker_Call) Run(run func(ctx context.Context, seeker core.Seekers)) *MockSeekersStore_CreateSeeker_Call {
+func (_c *MockSeekersStore_CreateSeeker_Call) Run(run func(ctx context.Context, seeker core.Seeker)) *MockSeekersStore_CreateSeeker_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.Seekers))
+		run(args[0].(context.Context), args[1].(core.Seeker))
 	})
 	return _c
 }
 
-func (_c *MockSeekersStore_CreateSeeker_Call) Return(_a0 core.Seekers, _a1 error) *MockSeekersStore_CreateSeeker_Call {
+func (_c *MockSeekersStore_CreateSeeker_Call) Return(_a0 core.Seeker, _a1 error) *MockSeekersStore_CreateSeeker_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockSeekersStore_CreateSeeker_Call) RunAndReturn(run func(context.Context, core.Seekers) (core.Seekers, error)) *MockSeekersStore_CreateSeeker_Call {
+func (_c *MockSeekersStore_CreateSeeker_Call) RunAndReturn(run func(context.Context, core.Seeker) (core.Seeker, error)) *MockSeekersStore_CreateSeeker_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSeeker provides a mock function with given fields: ctx, id
-func (_m *MockSeekersStore) GetSeeker(ctx context.Context, id int) (core.Seekers, error) {
+func (_m *MockSeekersStore) GetSeeker(ctx context.Context, id int) (core.Seeker, error) {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetSeeker")
 	}
 
-	var r0 core.Seekers
+	var r0 core.Seeker
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (core.Seekers, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) (core.Seeker, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) core.Seekers); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) core.Seeker); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(core.Seekers)
+		r0 = ret.Get(0).(core.Seeker)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
@@ -183,36 +183,36 @@ func (_c *MockSeekersStore_GetSeeker_Call) Run(run func(ctx context.Context, id 
 	return _c
 }
 
-func (_c *MockSeekersStore_GetSeeker_Call) Return(_a0 core.Seekers, _a1 error) *MockSeekersStore_GetSeeker_Call {
+func (_c *MockSeekersStore_GetSeeker_Call) Return(_a0 core.Seeker, _a1 error) *MockSeekersStore_GetSeeker_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockSeekersStore_GetSeeker_Call) RunAndReturn(run func(context.Context, int) (core.Seekers, error)) *MockSeekersStore_GetSeeker_Call {
+func (_c *MockSeekersStore_GetSeeker_Call) RunAndReturn(run func(context.Context, int) (core.Seeker, error)) *MockSeekersStore_GetSeeker_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UpdateSeeker provides a mock function with given fields: ctx, seeker
-func (_m *MockSeekersStore) UpdateSeeker(ctx context.Context, seeker core.UpdateSeekers) (core.Seekers, error) {
+func (_m *MockSeekersStore) UpdateSeeker(ctx context.Context, seeker core.UpdateSeeker) (core.Seeker, error) {
 	ret := _m.Called(ctx, seeker)
 
 	if len(ret) == 0 {
 		panic("no return value specified for UpdateSeeker")
 	}
 
-	var r0 core.Seekers
+	var r0 core.Seeker
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateSeekers) (core.Seekers, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateSeeker) (core.Seeker, error)); ok {
 		return rf(ctx, seeker)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateSeekers) core.Seekers); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateSeeker) core.Seeker); ok {
 		r0 = rf(ctx, seeker)
 	} else {
-		r0 = ret.Get(0).(core.Seekers)
+		r0 = ret.Get(0).(core.Seeker)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.UpdateSeekers) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, core.UpdateSeeker) error); ok {
 		r1 = rf(ctx, seeker)
 	} else {
 		r1 = ret.Error(1)
@@ -228,24 +228,24 @@ type MockSeekersStore_UpdateSeeker_Call struct {
 
 // UpdateSeeker is a helper method to define mock.On call
 //   - ctx context.Context
-//   - seeker core.UpdateSeekers
+//   - seeker core.UpdateSeeker
 func (_e *MockSeekersStore_Expecter) UpdateSeeker(ctx interface{}, seeker interface{}) *MockSeekersStore_UpdateSeeker_Call {
 	return &MockSeekersStore_UpdateSeeker_Call{Call: _e.mock.On("UpdateSeeker", ctx, seeker)}
 }
 
-func (_c *MockSeekersStore_UpdateSeeker_Call) Run(run func(ctx context.Context, seeker core.UpdateSeekers)) *MockSeekersStore_UpdateSeeker_Call {
+func (_c *MockSeekersStore_UpdateSeeker_Call) Run(run func(ctx context.Context, seeker core.UpdateSeeker)) *MockSeekersStore_UpdateSeeker_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.UpdateSeekers))
+		run(args[0].(context.Context), args[1].(core.UpdateSeeker))
 	})
 	return _c
 }
 
-func (_c *MockSeekersStore_UpdateSeeker_Call) Return(_a0 core.Seekers, _a1 error) *MockSeekersStore_UpdateSeeker_Call {
+func (_c *MockSeekersStore_UpdateSeeker_Call) Return(_a0 core.Seeker, _a1 error) *MockSeekersStore_UpdateSeeker_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockSeekersStore_UpdateSeeker_Call) RunAndReturn(run func(context.Context, core.UpdateSeekers) (core.Seekers, error)) *MockSeekersStore_UpdateSeeker_Call {
+func (_c *MockSeekersStore_UpdateSeeker_Call) RunAndReturn(run func(context.Context, core.UpdateSeeker) (core.Seeker, error)) *MockSeekersStore_UpdateSeeker_Call {
 	_c.Call.Return(run)
 	return _c
 }

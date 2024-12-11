@@ -195,6 +195,7 @@ definitions:
   seeker.CreateSeeker:
     properties:
       description:
+        maxLength: 4000
         type: string
       equipment:
         items:
@@ -205,9 +206,16 @@ definitions:
       location:
         type: string
       price:
+        minimum: 0
         type: integer
       user_id:
+        minimum: 1
         type: integer
+    required:
+    - equipment
+    - have_car
+    - location
+    - user_id
     type: object
   seeker.ResponseSeeker:
     properties:

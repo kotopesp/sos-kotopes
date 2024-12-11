@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS
     );
 
 ALTER TABLE IF EXISTS seekers
-    ADD id_equipment  INTEGER REFERENCES equipments (id);
+    ADD equipment_id  INTEGER REFERENCES equipments (id);

@@ -11,7 +11,7 @@ type (
 		UserID      int       `gorm:"column:user_id"`
 		Description string    `gorm:"column:description"`
 		Location    string    `gorm:"column:location"`
-		EquipmentID int       `gorm:"column:id_equipment"`
+		EquipmentID int       `gorm:"column:equipment_id"`
 		Price       int       `gorm:"column:price"`
 		HaveCar     bool      `gorm:"column:have_car"`
 		CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
@@ -25,7 +25,7 @@ type (
 		UserID      int       `gorm:"column:user_id"`
 		Description string    `gorm:"column:description"`
 		Location    string    `gorm:"column:location"`
-		EquipmentID int       `gorm:"column:id_equipment"`
+		EquipmentID int       `gorm:"column:equipment_id"`
 		Price       int       `gorm:"column:price"`
 		HaveCar     bool      `gorm:"column:have_car"`
 		UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
