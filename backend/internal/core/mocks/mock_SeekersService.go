@@ -22,6 +22,63 @@ func (_m *MockSeekersService) EXPECT() *MockSeekersService_Expecter {
 	return &MockSeekersService_Expecter{mock: &_m.Mock}
 }
 
+// CreateEquipment provides a mock function with given fields: ctx, equipment
+func (_m *MockSeekersService) CreateEquipment(ctx context.Context, equipment core.Equipment) (int, error) {
+	ret := _m.Called(ctx, equipment)
+
+	if len(ret) == 0 {
+		panic("no return value specified for CreateEquipment")
+	}
+
+	var r0 int
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.Equipment) (int, error)); ok {
+		return rf(ctx, equipment)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.Equipment) int); ok {
+		r0 = rf(ctx, equipment)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, core.Equipment) error); ok {
+		r1 = rf(ctx, equipment)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockSeekersService_CreateEquipment_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateEquipment'
+type MockSeekersService_CreateEquipment_Call struct {
+	*mock.Call
+}
+
+// CreateEquipment is a helper method to define mock.On call
+//   - ctx context.Context
+//   - equipment core.Equipment
+func (_e *MockSeekersService_Expecter) CreateEquipment(ctx interface{}, equipment interface{}) *MockSeekersService_CreateEquipment_Call {
+	return &MockSeekersService_CreateEquipment_Call{Call: _e.mock.On("CreateEquipment", ctx, equipment)}
+}
+
+func (_c *MockSeekersService_CreateEquipment_Call) Run(run func(ctx context.Context, equipment core.Equipment)) *MockSeekersService_CreateEquipment_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.Equipment))
+	})
+	return _c
+}
+
+func (_c *MockSeekersService_CreateEquipment_Call) Return(_a0 int, _a1 error) *MockSeekersService_CreateEquipment_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockSeekersService_CreateEquipment_Call) RunAndReturn(run func(context.Context, core.Equipment) (int, error)) *MockSeekersService_CreateEquipment_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateSeeker provides a mock function with given fields: ctx, seeker
 func (_m *MockSeekersService) CreateSeeker(ctx context.Context, seeker core.Seekers) (core.Seekers, error) {
 	ret := _m.Called(ctx, seeker)

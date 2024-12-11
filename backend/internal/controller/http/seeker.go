@@ -66,12 +66,12 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 
 	equipment := createSeeker.GetEquipment()
 
-	equipmentId, err := r.seekerService.CreateEquipment(ctx.UserContext(), equipment)
+	equipmentID, err := r.seekerService.CreateEquipment(ctx.UserContext(), equipment)
 	if err != nil {
 		return fiberError
 	}
 
-	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker(equipmentId))
+	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker(equipmentID))
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):
