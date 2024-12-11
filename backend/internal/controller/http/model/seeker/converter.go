@@ -2,8 +2,8 @@ package seeker
 
 import "github.com/kotopesp/sos-kotopes/internal/core"
 
-func checker(s string) bool {
-	if len(s) == 0 {
+func equipmentChecker(s string) bool {
+	if s == "" {
 		return false
 	}
 	return true
@@ -11,21 +11,22 @@ func checker(s string) bool {
 
 func (seeker *CreateSeeker) GetEquipment() core.Equipment {
 	return core.Equipment{
-		HaveMetalCage:   checker(seeker.Equipment[0]),
-		HavePlasticCage: checker(seeker.Equipment[1]),
-		HaveNet:         checker(seeker.Equipment[2]),
-		HaveLadder:      checker(seeker.Equipment[3]),
+		HaveMetalCage:   equipmentChecker(seeker.Equipment[0]),
+		HavePlasticCage: equipmentChecker(seeker.Equipment[1]),
+		HaveNet:         equipmentChecker(seeker.Equipment[2]),
+		HaveLadder:      equipmentChecker(seeker.Equipment[3]),
 		HaveOther:       seeker.Equipment[4],
 	}
 }
 
-func (seeker *CreateSeeker) ToCoreSeeker(equipmentId int) core.Seekers {
+func (seeker *CreateSeeker) ToCoreSeeker(equipmentID int) core.Seekers {
 	return core.Seekers{
 		UserID:      seeker.UserID,
-		IdEquipment: equipmentId,
+		EquipmentID: equipmentID,
 		Description: seeker.Description,
 		Location:    seeker.Location,
 		HaveCar:     seeker.HaveCar,
+		Price:       seeker.Price,
 	}
 }
 
@@ -37,8 +38,9 @@ func ToResponseSeeker(seeker *core.Seekers) ResponseSeeker {
 		ID:          seeker.ID,
 		UserID:      seeker.UserID,
 		Location:    seeker.Location,
-		Equipment:   seeker.IdEquipment,
+		Equipment:   seeker.EquipmentID,
 		Description: seeker.Description,
 		HaveCar:     seeker.HaveCar,
+		Price:       seeker.Price,
 	}
 }
