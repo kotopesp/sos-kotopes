@@ -2525,9 +2525,16 @@ const docTemplate = `{
         },
         "seeker.CreateSeeker": {
             "type": "object",
+            "required": [
+                "equipment",
+                "have_car",
+                "location",
+                "user_id"
+            ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 4000
                 },
                 "equipment": {
                     "type": "array",
@@ -2542,10 +2549,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "price": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 0
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },
