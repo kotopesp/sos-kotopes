@@ -32,6 +32,15 @@ func (s *store) CreateSeeker(ctx context.Context, seekers core.Seekers) (core.Se
 	return seekers, nil
 }
 
+func (s *store) CreateEquipment(ctx context.Context, equipment core.Equipment) (int, error) {
+	if err := s.DB.WithContext(ctx).Table("equipments").Create(&equipment).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return -1, err
+	}
+
+	return equipment.ID, nil
+}
+
 func (s *store) GetSeeker(ctx context.Context, id int) (core.Seekers, error) {
 	var seeker core.Seekers
 
