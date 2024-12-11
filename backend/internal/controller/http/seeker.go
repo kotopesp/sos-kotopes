@@ -9,18 +9,18 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-//	@Summary		Get seeker
-//	@Tags			seeker
-//	@Description	Get seeker by id
-//	@ID				get-seeker
-//	@Accept			json
-//	@Produce		json
-//	@Param			user_id	path		int	true	"User ID"
-//	@Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
-//	@Failure		400		{object}	model.Response
-//	@Failure		500		{object}	model.Response
-//	@Security		ApiKeyAuthBasic
-//	@Router			/seekers/{user_id}  [get]
+// @Summary		Get seeker
+// @Tags			seeker
+// @Description	Get seeker by id
+// @ID				get-seeker
+// @Accept			json
+// @Produce		json
+// @Param			user_id	path		int	true	"User ID"
+// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+// @Failure		400		{object}	model.Response
+// @Failure		500		{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/seekers/{user_id}  [get]
 func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("user_id")
 	if err != nil {
@@ -44,18 +44,18 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(responseSeeker)
 }
 
-//	@Summary		Create a seeker
-//	@Tags			seeker
-//	@Description	Create a seeker
-//	@ID				create-seeker
-//	@Accept			json
-//	@Produce		json
-//	@Param			request	body		seeker.CreateSeeker	true	"Seeker"
-//	@Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
-//	@Failure		400		{object}	model.Response
-//	@Failure		500		{object}	model.Response
-//	@Security		ApiKeyAuthBasic
-//	@Router			/seekers [post]
+// @Summary		Create a seeker
+// @Tags			seeker
+// @Description	Create a seeker
+// @ID				create-seeker
+// @Accept			json
+// @Produce		json
+// @Param			request	body		seeker.CreateSeeker	true	"Seeker"
+// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+// @Failure		400		{object}	model.Response
+// @Failure		500		{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/seekers [post]
 func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 	var createSeeker seeker.CreateSeeker
 
@@ -64,7 +64,14 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker())
+	equipment := createSeeker.GetEquipment()
+
+	equipmentId, err := r.seekerService.CreateEquipment(ctx.UserContext(), equipment)
+	if err != nil {
+		return fiberError
+	}
+
+	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker(equipmentId))
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):
