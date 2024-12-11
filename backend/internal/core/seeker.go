@@ -6,7 +6,7 @@ import (
 )
 
 type (
-	Seekers struct {
+	Seeker struct {
 		ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
 		UserID      int       `gorm:"column:user_id"`
 		Description string    `gorm:"column:description"`
@@ -20,7 +20,7 @@ type (
 		DeletedAt   time.Time `gorm:"column:deleted_at"`
 	}
 
-	UpdateSeekers struct {
+	UpdateSeeker struct {
 		ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
 		UserID      int       `gorm:"column:user_id"`
 		Description string    `gorm:"column:description"`
@@ -41,21 +41,21 @@ type (
 	}
 
 	SeekersService interface {
-		CreateSeeker(ctx context.Context, seeker Seekers) (Seekers, error)
-		GetSeeker(ctx context.Context, id int) (Seekers, error)
-		UpdateSeeker(ctx context.Context, seeker UpdateSeekers) (Seekers, error)
+		CreateSeeker(ctx context.Context, seeker Seeker) (Seeker, error)
+		GetSeeker(ctx context.Context, id int) (Seeker, error)
+		UpdateSeeker(ctx context.Context, seeker UpdateSeeker) (Seeker, error)
 		CreateEquipment(ctx context.Context, equipment Equipment) (int, error)
 	}
 
 	SeekersStore interface {
-		CreateSeeker(ctx context.Context, seeker Seekers) (Seekers, error)
-		GetSeeker(ctx context.Context, id int) (Seekers, error)
-		UpdateSeeker(ctx context.Context, seeker UpdateSeekers) (Seekers, error)
+		CreateSeeker(ctx context.Context, seeker Seeker) (Seeker, error)
+		GetSeeker(ctx context.Context, id int) (Seeker, error)
+		UpdateSeeker(ctx context.Context, seeker UpdateSeeker) (Seeker, error)
 		CreateEquipment(ctx context.Context, equipment Equipment) (int, error)
 	}
 )
 
 // TableName table name in db for gorm
-func (Seekers) TableName() string {
+func (Seeker) TableName() string {
 	return "seekers"
 }
