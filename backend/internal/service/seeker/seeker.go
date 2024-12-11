@@ -13,6 +13,10 @@ func New(seekersStore core.SeekersStore) core.SeekersService {
 	return &service{seekersStore: seekersStore}
 }
 
+func (s *service) CreateEquipment(ctx context.Context, equipment core.Equipment) (int, error) {
+	return s.seekersStore.CreateEquipment(ctx, equipment)
+}
+
 func (s *service) CreateSeeker(ctx context.Context, seeker core.Seekers) (core.Seekers, error) {
 	return s.seekersStore.CreateSeeker(ctx, seeker)
 }
