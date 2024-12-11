@@ -16,10 +16,9 @@ func (seeker *CreateSeeker) GetEquipment() core.Equipment {
 	}
 }
 
-func (seeker *CreateSeeker) ToCoreSeeker(equipmentID int) core.Seeker {
+func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 	return core.Seeker{
 		UserID:      seeker.UserID,
-		EquipmentID: equipmentID,
 		Description: seeker.Description,
 		Location:    seeker.Location,
 		HaveCar:     seeker.HaveCar,

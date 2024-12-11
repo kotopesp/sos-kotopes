@@ -5,7 +5,7 @@ type CreateSeeker struct {
 	Description string   `json:"description" validate:"omitempty,max=4000"`
 	Location    string   `json:"location" validate:"required"`
 	Equipment   []string `json:"equipment" validate:"required"`
-	HaveCar     bool     `json:"have_car" validate:"required"`
+	HaveCar     bool     `json:"have_car"`
 	Price       int      `json:"price" validate:"min=0"`
 }
 

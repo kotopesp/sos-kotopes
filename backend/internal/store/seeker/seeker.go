@@ -19,26 +19,37 @@ func New(pg *postgres.Postgres) core.SeekersStore {
 	return &store{pg}
 }
 
-func (s *store) CreateSeeker(ctx context.Context, seeker core.Seeker) (core.Seeker, error) {
-	// Set the creation and update timestamps
+func (s *store) CreateSeeker(ctx context.Context, seeker core.Seeker, equipment core.Equipment) (core.Seeker, error) {
+	tx := s.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.Seeker{}, err
+	}
+
+	err := tx.WithContext(ctx).Table("equipments").Create(&equipment).Error // CreateEquipment теперь работает в транзакции
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.Seeker{}, err
+	}
+
 	seeker.CreatedAt = time.Now()
 	seeker.UpdatedAt = time.Now()
+	seeker.EquipmentID = equipment.ID
 
-	if err := s.DB.WithContext(ctx).Table("seekers").Create(&seeker).Error; err != nil {
+	err = tx.WithContext(ctx).Table("seekers").Create(&seeker).Error // CreateSeeker теперь работает в транзакции
+	if err != nil {
+		tx.Rollback()
 		logger.Log().Error(ctx, err.Error())
 		return core.Seeker{}, err
 	}
 
 	return seeker, nil
-}
-
-func (s *store) CreateEquipment(ctx context.Context, equipment core.Equipment) (int, error) {
-	if err := s.DB.WithContext(ctx).Table("equipments").Create(&equipment).Error; err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return -1, err
-	}
-
-	return equipment.ID, nil
 }
 
 func (s *store) GetSeeker(ctx context.Context, id int) (core.Seeker, error) {

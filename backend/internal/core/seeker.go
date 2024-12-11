@@ -41,17 +41,15 @@ type (
 	}
 
 	SeekersService interface {
-		CreateSeeker(ctx context.Context, seeker Seeker) (Seeker, error)
+		CreateSeeker(ctx context.Context, seeker Seeker, equipment Equipment) (Seeker, error)
 		GetSeeker(ctx context.Context, id int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, seeker UpdateSeeker) (Seeker, error)
-		CreateEquipment(ctx context.Context, equipment Equipment) (int, error)
 	}
 
 	SeekersStore interface {
-		CreateSeeker(ctx context.Context, seeker Seeker) (Seeker, error)
+		CreateSeeker(ctx context.Context, seeker Seeker, equipment Equipment) (Seeker, error)
 		GetSeeker(ctx context.Context, id int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, seeker UpdateSeeker) (Seeker, error)
-		CreateEquipment(ctx context.Context, equipment Equipment) (int, error)
 	}
 )
 
