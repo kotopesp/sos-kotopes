@@ -10,8 +10,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
-
 	validatorPkg "github.com/go-playground/validator/v10"
 )
 
