@@ -18,7 +18,16 @@ func (s *service) CreateSeeker(ctx context.Context, seeker core.Seeker, equipmen
 }
 
 func (s *service) GetSeeker(ctx context.Context, id int) (core.Seeker, error) {
-	return s.seekersStore.GetSeeker(ctx, id)
+	seeker, err := s.seekersStore.GetSeeker(ctx, id)
+	if err != nil {
+		return core.Seeker{}, core.ErrSeekerNotFound
+	}
+
+	if seeker.IsDeleted == true {
+		return core.Seeker{}, core.ErrSeekerDeleted
+	}
+
+	return seeker, nil
 }
 
 func (s *service) UpdateSeeker(ctx context.Context, seeker core.UpdateSeeker) (core.Seeker, error) {
