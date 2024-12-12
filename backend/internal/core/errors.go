@@ -21,7 +21,8 @@ var (
 	ErrAnimalNotFound = errors.New("animal not found")
 
 	// seeker errors
-	ErrSeekerNotFound = errors.New("seeker not found")
+	ErrSeekerNotFound   = errors.New("seeker not found")
+	ErrInvalidEquipment = errors.New("incorrect amount of equipment")
 
 	// favourite errors
 	ErrPostAlreadyInFavourites = errors.New("post already added to favourites")

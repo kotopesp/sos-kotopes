@@ -213,7 +213,6 @@ definitions:
         type: integer
     required:
     - equipment
-    - have_car
     - location
     - user_id
     type: object

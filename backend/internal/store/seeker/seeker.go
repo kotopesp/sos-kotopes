@@ -54,7 +54,6 @@ func (s *store) CreateSeeker(ctx context.Context, seeker core.Seeker, equipment 
 
 func (s *store) GetSeeker(ctx context.Context, id int) (core.Seeker, error) {
 	var seeker core.Seeker
-
 	if err := s.DB.WithContext(ctx).Table("seekers").Where("user_id = ?", id).First(&seeker).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())

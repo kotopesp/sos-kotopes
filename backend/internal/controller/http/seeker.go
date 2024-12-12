@@ -64,7 +64,11 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	equipment := createSeeker.GetEquipment()
+	equipment, err := createSeeker.GetEquipment()
+	if err != nil {
+		logger.Log().Debug(ctx.Context(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
 
 	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker(), equipment)
 	if err != nil {

@@ -2527,7 +2527,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "equipment",
-                "have_car",
                 "location",
                 "user_id"
             ],

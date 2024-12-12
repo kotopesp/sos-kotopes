@@ -6,14 +6,18 @@ func equipmentChecker(s string) bool {
 	return s != ""
 }
 
-func (seeker *CreateSeeker) GetEquipment() core.Equipment {
+func (seeker *CreateSeeker) GetEquipment() (core.Equipment, error) {
+	if len(seeker.Equipment) != 5 {
+		return core.Equipment{}, core.ErrInvalidEquipment
+	}
+
 	return core.Equipment{
 		HaveMetalCage:   equipmentChecker(seeker.Equipment[0]),
 		HavePlasticCage: equipmentChecker(seeker.Equipment[1]),
 		HaveNet:         equipmentChecker(seeker.Equipment[2]),
 		HaveLadder:      equipmentChecker(seeker.Equipment[3]),
 		HaveOther:       seeker.Equipment[4],
-	}
+	}, nil
 }
 
 func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
