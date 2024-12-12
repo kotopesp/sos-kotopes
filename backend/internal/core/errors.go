@@ -23,6 +23,8 @@ var (
 	// seeker errors
 	ErrSeekerNotFound   = errors.New("seeker not found")
 	ErrInvalidEquipment = errors.New("incorrect amount of equipment")
+	ErrSeekerDeleted    = errors.New("seeker is deleted")
+	ErrSeekerExists     = errors.New("seeker already exists")
 
 	// favourite errors
 	ErrPostAlreadyInFavourites = errors.New("post already added to favourites")
