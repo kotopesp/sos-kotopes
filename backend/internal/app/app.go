@@ -6,25 +6,25 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
-	"github.com/kotopesp/sos-kotopes/internal/migrate"
-	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
-	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
-	vetService "github.com/kotopesp/sos-kotopes/internal/service/vet"
-	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
-	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
-	vetStore "github.com/kotopesp/sos-kotopes/internal/store/vet"
-
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
+	"github.com/kotopesp/sos-kotopes/internal/migrate"
+	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
+	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	vetservice "github.com/kotopesp/sos-kotopes/internal/service/vet"
 
 	"github.com/kotopesp/sos-kotopes/config"
 	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/auth"
+	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
+	vetstore "github.com/kotopesp/sos-kotopes/internal/store/vet"
+	vetreviewsstore "github.com/kotopesp/sos-kotopes/internal/store/vet_review"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
@@ -65,7 +65,8 @@ func Run(cfg *config.Config) {
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 	refreshSessionStore := refreshsessionstore.New(pg)
-	vetStore := vetStore.New(pg) // Добавляем хранилище ветеринаров
+	vetStore := vetstore.New(pg)
+	vetReviewsStore := vetreviewsstore.New(pg)
 
 	// Services
 	commentService := commentservice.New(
@@ -87,7 +88,7 @@ func Run(cfg *config.Config) {
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
-	vetService := vetService.New(vetStore, userStore) // Добавляем сервис ветеринаров
+	vetService := vetservice.New(vetStore, vetReviewsStore, userStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
