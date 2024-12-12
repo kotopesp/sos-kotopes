@@ -30,6 +30,16 @@ func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 	}
 }
 
+func (seeker *UpdateSeeker) ToCoreUpdateSeeker() core.UpdateSeeker {
+	return core.UpdateSeeker{
+		UserID:      seeker.UserID,
+		Description: seeker.Description,
+		Location:    seeker.Location,
+		HaveCar:     seeker.HaveCar,
+		Price:       seeker.Price,
+	}
+}
+
 func ToResponseSeeker(seeker *core.Seeker) ResponseSeeker {
 	if seeker == nil {
 		return ResponseSeeker{}

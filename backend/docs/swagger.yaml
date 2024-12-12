@@ -233,6 +233,27 @@ definitions:
       user_id:
         type: integer
     type: object
+  seeker.UpdateSeeker:
+    properties:
+      description:
+        maxLength: 4000
+        type: string
+      equipment:
+        items:
+          type: string
+        type: array
+      have_car:
+        type: boolean
+      location:
+        type: string
+      price:
+        type: integer
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - user_id
+    type: object
   user.Login:
     properties:
       password:
@@ -1276,6 +1297,43 @@ paths:
       security:
       - ApiKeyAuthBasic: []
       summary: Get seeker
+      tags:
+      - seeker
+    patch:
+      consumes:
+      - application/json
+      description: Update a seeker
+      operationId: update-seeker
+      parameters:
+      - description: Seeker
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/seeker.UpdateSeeker'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Update a seeker
       tags:
       - seeker
   /user/{id}/posts:
