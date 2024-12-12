@@ -1,4 +1,4 @@
-package veterinary
+package vet
 
 import (
 	"context"
@@ -8,142 +8,136 @@ import (
 )
 
 type service struct {
-	VeterinaryStore core.VeterinaryStore
-	userStore       core.UserStore
+	vetStore  core.VetStore
+	userStore core.UserStore
 }
 
-func New(veterinaryStore core.VeterinaryStore, userStore core.UserStore) core.VeterinaryService {
+func New(vetStore core.VetStore, userStore core.UserStore) core.VetService {
 	return &service{
-		VeterinaryStore: veterinaryStore,
-		userStore:       userStore,
+		vetStore:  vetStore,
+		userStore: userStore,
 	}
 }
 
-func (s *service) GetAll(ctx context.Context, params core.GetAllVeterinaryParams) ([]core.VeterinaryDetails, error) {
-	if *params.SortBy == "" {
-		*params.SortBy = "created_at"
-	}
-	if *params.SortOrder == "" {
-		*params.SortOrder = "desc"
-	}
-
-	veterinary, err := s.VeterinaryStore.GetAll(ctx, params)
+func (s *service) GetAll(ctx context.Context, params core.GetAllVetParams) ([]core.VetsDetails, error) {
+	vet, err := s.vetStore.GetAll(ctx, params)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, err
 	}
 
-	VeterinaryDetails := make([]core.VeterinaryDetails, len(veterinary))
+	var vetsDetails []core.VetsDetails
 
-	for i, veterinary := range veterinary {
-		veterinaryUser, err := s.userStore.GetUserByID(ctx, veterinary.UserID)
+	for _, v := range vet {
+		if v.IsDeleted {
+			continue
+		}
+
+		vetUser, err := s.userStore.GetUserByID(ctx, v.UserID)
 		if err != nil {
 			logger.Log().Error(ctx, err.Error())
 			return nil, err
 		}
 
-		VeterinaryDetails[i] = core.VeterinaryDetails{
-			Veterinary: veterinary,
-			User:       veterinaryUser,
-		}
+		vetsDetails = append(vetsDetails, core.VetsDetails{
+			Vet:  v,
+			User: vetUser,
+		})
 	}
 
-	return VeterinaryDetails, nil
+	return vetsDetails, nil
 }
 
-func (s *service) GetByID(ctx context.Context, id int) (core.VeterinaryDetails, error) {
-	veterinary, err := s.VeterinaryStore.GetByID(ctx, id)
+func (s *service) GetByUserID(ctx context.Context, userID int) (core.VetsDetails, error) {
+	vet, err := s.vetStore.GetByUserID(ctx, userID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.VeterinaryDetails{}, err
+		return core.VetsDetails{}, err
 	}
 
-	veterinaryUser, err := s.userStore.GetUserByID(ctx, veterinary.UserID)
+	vetUser, err := s.userStore.GetUserByID(ctx, userID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.VeterinaryDetails{}, err
+		return core.VetsDetails{}, err
 	}
 
-	return core.VeterinaryDetails{
-		Veterinary: veterinary,
-		User:       veterinaryUser,
+	return core.VetsDetails{
+		Vet:  vet,
+		User: vetUser,
 	}, nil
 }
 
-func (s *service) GetByOrgName(ctx context.Context, orgName string) (core.VeterinaryDetails, error) {
-	veterinary, err := s.VeterinaryStore.GetByOrgName(ctx, orgName)
+func (s *service) GetByOrgName(ctx context.Context, orgName string) (core.VetsDetails, error) {
+	vet, err := s.vetStore.GetByOrgName(ctx, orgName)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.VeterinaryDetails{}, err
+		return core.VetsDetails{}, err
 	}
 
-	veterinaryUser, err := s.userStore.GetUserByID(ctx, veterinary.UserID)
+	vetUser, err := s.userStore.GetUserByID(ctx, vet.UserID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.VeterinaryDetails{}, err
+		return core.VetsDetails{}, err
 	}
 
-	return core.VeterinaryDetails{
-		Veterinary: veterinary,
-		User:       veterinaryUser,
+	return core.VetsDetails{
+		Vet:  vet,
+		User: vetUser,
 	}, nil
 }
 
-func (s *service) Create(ctx context.Context, veterinary core.Veterinary) error {
-	if veterinary.CreatedAt.IsZero() {
-		veterinary.CreatedAt = time.Now()
+func (s *service) Create(ctx context.Context, vet core.Vets) error {
+	if vet.CreatedAt.IsZero() {
+		vet.CreatedAt = time.Now()
 	}
 
-	return s.VeterinaryStore.Create(ctx, veterinary)
+	return s.vetStore.Create(ctx, vet)
 }
 
-func (s *service) DeleteByID(ctx context.Context, id, userID int) error {
-	storedVeterinary, err := s.VeterinaryStore.GetByID(ctx, id)
+func (s *service) DeleteByUserID(ctx context.Context, userID int) error {
+	storedVet, err := s.vetStore.GetByUserID(ctx, userID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
 
-	if storedVeterinary.UserID != userID {
-		logger.Log().Error(ctx, core.ErrVeterinaryUserIDMissmatch.Error())
-		return core.ErrVeterinaryUserIDMissmatch
-	} else if storedVeterinary.IsDeleted {
+	if storedVet.IsDeleted {
 		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 		return core.ErrRecordNotFound
 	}
 
-	return s.VeterinaryStore.DeleteByID(ctx, id)
+	return s.vetStore.DeleteByUserID(ctx, storedVet.ID)
 }
 
-func (s *service) UpdateByID(ctx context.Context, veterinary core.UpdateVeterinary) (core.VeterinaryDetails, error) {
-	storedVeterinary, err := s.VeterinaryStore.GetByID(ctx, veterinary.ID)
+func (s *service) UpdateByUserID(ctx context.Context, vet core.UpdateVets) (core.VetsDetails, error) {
+	storedVet, err := s.vetStore.GetByUserID(ctx, vet.UserID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.VeterinaryDetails{}, err
+		return core.VetsDetails{}, err
 	}
 
-	if storedVeterinary.UserID != veterinary.UserID {
-		logger.Log().Error(ctx, core.ErrVeterinaryUserIDMissmatch.Error())
-		return core.VeterinaryDetails{}, core.ErrVeterinaryUserIDMissmatch
-	} else if storedVeterinary.IsDeleted {
+	if storedVet.UserID != vet.UserID {
+		logger.Log().Error(ctx, core.ErrVetUserIDMismatch.Error())
+		return core.VetsDetails{}, core.ErrVetUserIDMismatch
+	} else if storedVet.IsDeleted {
 		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-		return core.VeterinaryDetails{}, core.ErrRecordNotFound
+		return core.VetsDetails{}, core.ErrRecordNotFound
 	}
 
-	updatedVeterinary, err := s.VeterinaryStore.UpdateByID(ctx, veterinary)
+	updatedVet, err := s.vetStore.UpdateByID(ctx, vet)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.VeterinaryDetails{}, err
+		return core.VetsDetails{}, err
 	}
 
-	veterinaryUser, err := s.userStore.GetUserByID(ctx, updatedVeterinary.UserID)
+	vetUser, err := s.userStore.GetUserByID(ctx, updatedVet.UserID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
-		return core.VeterinaryDetails{}, err
+		return core.VetsDetails{}, err
 	}
 
-	return core.VeterinaryDetails{
-		Veterinary: updatedVeterinary,
-		User:       veterinaryUser,
+	return core.VetsDetails{
+		Vet:  updatedVet,
+		User: vetUser,
 	}, nil
 }

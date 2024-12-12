@@ -1,4 +1,4 @@
-package veterinarystore
+package vetstore
 
 import (
 	"context"
@@ -13,46 +13,52 @@ type store struct {
 	*postgres.Postgres
 }
 
-func New(pg *postgres.Postgres) core.VeterinaryStore {
+func New(pg *postgres.Postgres) core.VetStore {
 	return &store{pg}
 }
 
-func (s *store) Create(ctx context.Context, veterinary core.Veterinary) error {
-	if err := s.DB.WithContext(ctx).Create(&veterinary).Error; err != nil {
+func (s *store) Create(ctx context.Context, vet core.Vets) error {
+	if err := s.DB.WithContext(ctx).Create(&vet).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *store) DeleteByID(ctx context.Context, id int) error {
-	err := s.DB.WithContext(ctx).Model(&core.Veterinary{}).Where("id = ?", id).Updates(core.Veterinary{IsDeleted: true, DeletedAt: time.Now()}).Error
+func (s *store) DeleteByUserID(ctx context.Context, userID int) error {
+	err := s.DB.WithContext(ctx).
+		Model(&core.Vets{}).
+		Where("user_id = ?", userID).
+		Updates(core.Vets{
+			IsDeleted: true,
+			DeletedAt: time.Now(),
+		}).Error
 
 	return err
 }
 
-func (s *store) UpdateByID(ctx context.Context, veterinary core.UpdateVeterinary) (core.Veterinary, error) {
-	veterinary.UpdatedAt = time.Now()
+func (s *store) UpdateByID(ctx context.Context, vet core.UpdateVets) (core.Vets, error) {
+	vet.UpdatedAt = time.Now()
 
-	var updatedVeterinary core.Veterinary
+	var updatedVet core.Vets
 
-	result := s.DB.WithContext(ctx).Model(&core.Veterinary{}).Where("id = ? AND is_deleted = ?", veterinary.ID, false).Updates(veterinary).First(&updatedVeterinary, veterinary.ID)
+	result := s.DB.WithContext(ctx).Model(&core.Vets{}).Where("id = ? AND is_deleted = ?", vet.ID, false).Updates(vet).First(&updatedVet, vet.ID)
 	if result.Error != nil {
 
 		if errors.Is(result.Error, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.Veterinary{}, core.ErrRecordNotFound
+			return core.Vets{}, core.ErrRecordNotFound
 		}
 
 		logger.Log().Error(ctx, result.Error.Error())
-		return core.Veterinary{}, result.Error
+		return core.Vets{}, result.Error
 	}
 
-	return updatedVeterinary, nil
+	return updatedVet, nil
 }
 
-func (s *store) GetAll(ctx context.Context, params core.GetAllVeterinaryParams) ([]core.Veterinary, error) {
-	var veterinaries []core.Veterinary
-	query := s.DB.WithContext(ctx).Model(&core.Veterinary{})
+func (s *store) GetAll(ctx context.Context, params core.GetAllVetParams) ([]core.Vets, error) {
+	var veterinaries []core.Vets
+	query := s.DB.WithContext(ctx).Model(&core.Vets{})
 
 	// Filter by price range
 	if params.MinPrice != nil {
@@ -64,10 +70,10 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllVeterinaryParams) 
 
 	// Add optional filters for ratings
 	if params.MinRating != nil {
-		query = query.Having("AVG(veterinary_reviews.grade) >= ?", *params.MinRating)
+		query = query.Having("AVG(vet_reviews.grade) >= ?", *params.MinRating)
 	}
 	if params.MaxRating != nil {
-		query = query.Having("AVG(veterinary_reviews.grade) <= ?", *params.MaxRating)
+		query = query.Having("AVG(vet_reviews.grade) <= ?", *params.MaxRating)
 	}
 
 	// Add optional location filter
@@ -76,8 +82,8 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllVeterinaryParams) 
 	}
 
 	// Select and join to calculate the average grade
-	query = query.Select("veterinaries.*, AVG(veterinary_reviews.grade) as avg_grade").
-		Joins("left join veterinary_reviews on veterinary_reviews.veterinary_id = veterinaries.id").
+	query = query.Select("veterinaries.*, AVG(vet_reviews.grade) as avg_grade").
+		Joins("left join vet_reviews on vet_reviews.vet_id = veterinaries.id").
 		Group("veterinaries.id")
 
 	if params.SortBy != nil && params.SortOrder != nil {
@@ -99,28 +105,30 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllVeterinaryParams) 
 	return veterinaries, nil
 }
 
-func (s *store) GetByID(ctx context.Context, id int) (core.Veterinary, error) {
-	var veterinary = core.Veterinary{ID: id}
+func (s *store) GetByUserID(ctx context.Context, userID int) (core.Vets, error) {
+	var vet core.Vets
 
-	if err := s.DB.WithContext(ctx).First(&veterinary).Error; err != nil {
-		return core.Veterinary{}, err
+	// Добавляем условие IsDeleted = false
+	if err := s.DB.WithContext(ctx).
+		Where("user_id = ? AND is_deleted = ?", userID, false).
+		First(&vet).Error; err != nil {
+		return core.Vets{}, err
 	}
-
-	return veterinary, nil
+	return vet, nil
 }
 
-func (s *store) GetByOrgName(ctx context.Context, orgName string) (core.Veterinary, error) {
-	var veterinary core.Veterinary
+func (s *store) GetByOrgName(ctx context.Context, orgName string) (core.Vets, error) {
+	var vet core.Vets
 
-	if err := s.DB.WithContext(ctx).Where("org_name = ?", orgName).First(&veterinary).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Where("org_name = ?", orgName).First(&vet).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.Veterinary{}, core.ErrRecordNotFound
+			return core.Vets{}, core.ErrRecordNotFound
 		}
 
 		logger.Log().Error(ctx, err.Error())
-		return core.Veterinary{}, err
+		return core.Vets{}, err
 	}
 
-	return veterinary, nil
+	return vet, nil
 }

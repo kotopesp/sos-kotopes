@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-type Veterinary struct {
+type Vets struct {
 	ID               int       `gorm:"column:id"`
 	UserID           int       `gorm:"column:user_id"`
-	Entity           string    `gorm:"column:entity"` // individual or legal entity
+	IsOrganization   bool      `gorm:"column:is_organization"`
 	Username         string    `gorm:"column:username"`
 	Firstname        *string   `gorm:"column:firstname"`
 	Lastname         *string   `gorm:"column:lastname"`
@@ -20,7 +20,7 @@ type Veterinary struct {
 	OrgEmail         *string   `gorm:"column:org_email"`
 	InnNumber        *string   `gorm:"column:inn_number"`
 	RemoteConsulting bool      `gorm:"column:remote_consulting"`
-	Inpatient        bool      `gorm:"column:inpatient"`
+	IsInpatient      bool      `gorm:"column:is_inpatient"`
 	Description      *string   `gorm:"column:description"`
 	IsDeleted        bool      `gorm:"column:is_deleted"`
 	CreatedAt        time.Time `gorm:"column:created_at"`
@@ -28,31 +28,31 @@ type Veterinary struct {
 	DeletedAt        time.Time `gorm:"column:deleted_at"`
 }
 
-type UpdateVeterinary struct {
-	ID               int       `gorm:"column:id"`
-	UserID           int       `gorm:"column:user_id"`
-	Username         *string   `gorm:"column:username"`
-	Firstname        *string   `gorm:"column:firstname"`
-	Lastname         *string   `gorm:"column:lastname"`
-	Patronymic       *string   `gorm:"column:patronymic"`
-	Education        *string   `gorm:"column:education"`
-	OrgName          *string   `gorm:"column:org_name"`
-	Location         *string   `gorm:"column:location"`
-	Price            float64   `gorm:"column:price"`
-	OrgEmail         *string   `gorm:"column:org_email"`
-	InnNumber        *string   `gorm:"column:Inn_number"`
-	RemoteConsulting bool      `gorm:"column:remote_consuting"`
-	Inpatient        bool      `gorm:"column:inpatient"`
-	Description      *string   `gorm:"column:description"`
-	UpdatedAt        time.Time `gorm:"autoUpdateTime;column:updated_at"`
+type UpdateVets struct {
+	ID                 int       `gorm:"column:id"`
+	UserID             int       `gorm:"column:user_id"`
+	Username           *string   `gorm:"column:username"`
+	Firstname          *string   `gorm:"column:firstname"`
+	Lastname           *string   `gorm:"column:lastname"`
+	Patronymic         *string   `gorm:"column:patronymic"`
+	Education          *string   `gorm:"column:education"`
+	OrgName            *string   `gorm:"column:org_name"`
+	Location           *string   `gorm:"column:location"`
+	Price              float64   `gorm:"column:price"`
+	OrgEmail           *string   `gorm:"column:org_email"`
+	InnNumber          *string   `gorm:"column:Inn_number"`
+	IsRemoteConsulting bool      `gorm:"column:is_remote_consulting"`
+	IsInpatient        bool      `gorm:"column:is_inpatient"`
+	Description        *string   `gorm:"column:description"`
+	UpdatedAt          time.Time `gorm:"autoUpdateTime;column:updated_at"`
 }
 
-type VeterinaryDetails struct {
-	Veterinary Veterinary
-	User       User
+type VetsDetails struct {
+	Vet  Vets
+	User User
 }
 
-type GetAllVeterinaryParams struct {
+type GetAllVetParams struct {
 	SortBy    *string
 	SortOrder *string
 	Location  *string
@@ -64,31 +64,31 @@ type GetAllVeterinaryParams struct {
 	Offset    *int
 }
 
-type VeterinaryStore interface {
-	UpdateByID(ctx context.Context, update UpdateVeterinary) (updatedVeterinary Veterinary, err error)
-	GetAll(ctx context.Context, params GetAllVeterinaryParams) ([]Veterinary, error)
-	GetByID(ctx context.Context, id int) (veterinary Veterinary, err error)
-	GetByOrgName(ctx context.Context, orgName string) (veterinary Veterinary, err error)
-	Create(ctx context.Context, veterinary Veterinary) error
-	DeleteByID(ctx context.Context, id int) error
+type VetStore interface {
+	UpdateByID(ctx context.Context, update UpdateVets) (updatedVet Vets, err error)
+	GetAll(ctx context.Context, params GetAllVetParams) ([]Vets, error)
+	GetByUserID(ctx context.Context, userID int) (vet Vets, err error)
+	GetByOrgName(ctx context.Context, orgName string) (vet Vets, err error)
+	Create(ctx context.Context, vet Vets) error
+	DeleteByUserID(ctx context.Context, userID int) error
 }
 
-type VeterinaryService interface {
-	UpdateByID(ctx context.Context, veterinary UpdateVeterinary) (VeterinaryDetails, error)
-	GetAll(ctx context.Context, params GetAllVeterinaryParams) ([]VeterinaryDetails, error)
-	GetByID(ctx context.Context, id int) (veterinary VeterinaryDetails, err error)
-	GetByOrgName(ctx context.Context, orgName string) (veterinary VeterinaryDetails, err error)
-	Create(ctx context.Context, veterinary Veterinary) error
-	DeleteByID(ctx context.Context, id int, userID int) error
+type VetService interface {
+	UpdateByUserID(ctx context.Context, vet UpdateVets) (VetsDetails, error)
+	GetAll(ctx context.Context, params GetAllVetParams) ([]VetsDetails, error)
+	GetByUserID(ctx context.Context, userID int) (vet VetsDetails, err error)
+	GetByOrgName(ctx context.Context, orgName string) (vet VetsDetails, err error)
+	Create(ctx context.Context, vet Vets) error
+	DeleteByUserID(ctx context.Context, userID int) error
 }
 
 // errors
 var (
-	ErrNoSuchVeterinary          = errors.New("veterinary does not exist")
-	ErrVeterinaryUserIDMissmatch = errors.New("veterinary user ID mismatch")
+	ErrNoSuchVet         = errors.New("vet does not exist")
+	ErrVetUserIDMismatch = errors.New("vet user ID mismatch")
 )
 
 // TableName table name in db for gorm
-func (Veterinary) TableName() string {
-	return "Veterinaries"
+func (Vets) TableName() string {
+	return "Vets"
 }
