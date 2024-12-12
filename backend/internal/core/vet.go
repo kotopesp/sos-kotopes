@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"errors"
 	"time"
 )
 
@@ -81,12 +80,6 @@ type VetService interface {
 	Create(ctx context.Context, vet Vets) error
 	DeleteByUserID(ctx context.Context, userID int) error
 }
-
-// errors
-var (
-	ErrNoSuchVet         = errors.New("vet does not exist")
-	ErrVetUserIDMismatch = errors.New("vet user ID mismatch")
-)
 
 // TableName table name in db for gorm
 func (Vets) TableName() string {

@@ -10,8 +10,10 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/migrate"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
 	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
+	vetService "github.com/kotopesp/sos-kotopes/internal/service/vet"
 	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
 	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
+	vetStore "github.com/kotopesp/sos-kotopes/internal/store/vet"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -63,6 +65,7 @@ func Run(cfg *config.Config) {
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 	refreshSessionStore := refreshsessionstore.New(pg)
+	vetStore := vetStore.New(pg) // Добавляем хранилище ветеринаров
 
 	// Services
 	commentService := commentservice.New(
@@ -84,6 +87,7 @@ func Run(cfg *config.Config) {
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	vetService := vetService.New(vetStore, userStore) // Добавляем сервис ветеринаров
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -108,6 +112,7 @@ func Run(cfg *config.Config) {
 		postService,
 		userService,
 		roleService,
+		vetService,
 		formValidator,
 	)
 

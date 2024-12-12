@@ -27,6 +27,7 @@ func NewRouter(
 	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
+	vetService core.VetService,
 	formValidator validator.FormValidatorService,
 ) {
 	router := &Router{
@@ -36,6 +37,7 @@ func NewRouter(
 		postService:    postService,
 		userService:    userService,
 		roleService:    roleService,
+		vetService:     vetService,
 		commentService: commentService,
 	}
 
@@ -97,6 +99,7 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
+
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

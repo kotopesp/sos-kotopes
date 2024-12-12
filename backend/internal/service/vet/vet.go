@@ -2,20 +2,23 @@ package vet
 
 import (
 	"context"
+	"time"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
-	"time"
 )
 
 type service struct {
-	vetStore  core.VetStore
-	userStore core.UserStore
+	vetStore        core.VetStore
+	vetReviewsStore core.VetReviewsStore
+	userStore       core.UserStore
 }
 
-func New(vetStore core.VetStore, userStore core.UserStore) core.VetService {
+func New(vetStore core.VetStore, vetReviewsStore core.VetReviewsStore, userStore core.UserStore) core.VetService {
 	return &service{
-		vetStore:  vetStore,
-		userStore: userStore,
+		vetStore:        vetStore,
+		vetReviewsStore: vetReviewsStore,
+		userStore:       userStore,
 	}
 }
 
