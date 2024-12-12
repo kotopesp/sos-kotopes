@@ -31,7 +31,7 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 	getSeeker, err := r.seekerService.GetSeeker(ctx.UserContext(), id)
 	if err != nil {
 		switch {
-		case errors.Is(err, core.ErrNoSuchUser):
+		case errors.Is(err, core.ErrSeekerNotFound):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		default:
@@ -86,4 +86,48 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(responseSeeker)
 }
 
-func (r *Router) updateSeeker(ctx *fiber.Ctx) error { return nil }
+// @Summary		Update a seeker
+// @Tags			seeker
+// @Description	Update a seeker
+// @ID				update-seeker
+// @Accept			json
+// @Produce		json
+// @Param			request	body		seeker.UpdateSeeker	true	"Seeker"
+// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+// @Failure		400		{object}	model.Response
+// @Failure		500		{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/seekers/{user_id}  [patch]
+func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
+	//userID, err := getIDFromToken(ctx)
+	//if err != nil {
+	//	logger.Log().Debug(ctx.UserContext(), err.Error())
+	//	return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	//}
+
+	var update seeker.UpdateSeeker
+
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &update)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+	coreUpdate := update.ToCoreUpdateSeeker()
+
+	updatedSeeker, err := r.seekerService.UpdateSeeker(ctx.UserContext(), coreUpdate)
+	if err != nil {
+		switch {
+		case errors.Is(err, core.ErrNoSuchUser):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, core.ErrEmptyUpdateRequest):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+	responseUser := seeker.ToResponseSeeker(&updatedSeeker)
+
+	return ctx.Status(fiber.StatusOK).JSON(responseUser)
+}

@@ -9,6 +9,15 @@ type CreateSeeker struct {
 	Price       int      `json:"price" validate:"min=0"`
 }
 
+type UpdateSeeker struct {
+	UserID      *int      `json:"user_id" validate:"required,min=1"`
+	Description *string   `json:"description" validate:"omitempty,max=4000"`
+	Location    *string   `json:"location" validate:"omitempty"`
+	Equipment   *[]string `json:"equipment" validate:"omitempty"`
+	HaveCar     *bool     `json:"have_car" validate:"omitempty"`
+	Price       *int      `json:"price" validate:"omitempty"`
+}
+
 type ResponseSeeker struct {
 	ID          int    `json:"id"`
 	UserID      int    `json:"user_id"`
