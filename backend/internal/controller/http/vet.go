@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/vet"
+	vetModel "github.com/kotopesp/sos-kotopes/internal/controller/http/model/vet"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
@@ -20,20 +20,17 @@ import (
 // @Router			/vets [get]
 func (r *Router) getVets(c *fiber.Ctx) error {
 	params := core.GetAllVetParams{}
-	// Here we can parse query params from the request to pass to the service layer
 	if err := c.QueryParser(&params); err != nil {
 		logger.Log().Error(c.UserContext(), err.Error())
 		return c.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	// Calling service method to get vets
 	vets, err := r.vetService.GetAll(c.Context(), params)
 	if err != nil {
 		logger.Log().Error(c.UserContext(), err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	// Returning the response with the list of vets
 	return c.Status(fiber.StatusOK).JSON(model.OKResponse(vets))
 }
 
@@ -64,7 +61,60 @@ func (r *Router) getVetByUserID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(vet.FromCoreVetWithUser(v)))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(vetModel.FromCoreVetWithUser(v)))
+}
+
+// @Summary		Create a vet profile
+// @Tags			vets
+// @Description	Create a new vet profile
+// @ID				create-vet
+// @Accept			json
+// @Produce		json
+// @Param			is_organization	formData	bool	true	"Is Organization"
+// @Param			username			formData	string	true	"Username"
+// @Param			firstname			formData	string	false	"Firstname"
+// @Param			lastname			formData	string	false	"Lastname"
+// @Param			patronymic			formData	string	false	"Patronymic"
+// @Param			education			formData	string	false	"Education"
+// @Param			org_name			formData	string	false	"Organization Name"
+// @Param			location			formData	string	true	"Location"
+// @Param			org_email			formData	string	false	"Organization Email"
+// @Param			inn_number			formData	string	false	"INN Number"
+// @Param			is_remote_consulting	formData	bool	false	"Is Remote Consulting"
+// @Param			is_inpatient		formData	bool	false	"Is Inpatient"
+// @Param			description			formData	string	false	"Description"
+// @Success		201					{object}	model.Response{data=vet.VetResponse}
+// @Failure		400					{object}	model.Response
+// @Failure		401					{object}	model.Response
+// @Failure		422					{object}	model.Response{data=validator.Response}
+// @Failure		500					{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/vets [post]
+func (r *Router) createVet(ctx *fiber.Ctx) error {
+	var vetRequest vetModel.VetsCreate
+
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &vetRequest)
+	if fiberError != nil || parseOrValidationError != nil {
+		return fiberError
+	}
+
+	userID, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(core.ErrFailedToGetUserIDFromToken))
+	}
+
+	vetRequest.UserID = userID
+
+	coreVet := vetRequest.ToCoreNewVet()
+
+	err = r.vetService.Create(ctx.UserContext(), coreVet)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	return ctx.Status(fiber.StatusCreated).JSON(model.OKResponse("Vet profile created successfully"))
 }
 
 // @Summary			Update vet by user id
@@ -87,7 +137,7 @@ func (r *Router) updateVetByUserID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	var updateVet vet.VetsUpdate
+	var updateVet vetModel.VetsUpdate
 
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &updateVet)
 	if fiberError != nil || parseOrValidationError != nil {
@@ -105,7 +155,7 @@ func (r *Router) updateVetByUserID(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(vet.FromCoreVetWithUser(updatedVet)))
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(vetModel.FromCoreVetWithUser(updatedVet)))
 }
 
 // @Summary		Delete vet by user id

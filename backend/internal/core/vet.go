@@ -81,6 +81,8 @@ type VetService interface {
 	GetByOrgName(ctx context.Context, orgName string) (vet VetsDetails, err error)
 	Create(ctx context.Context, vet Vets) error
 	DeleteByUserID(ctx context.Context, userID int) error
+
+	VetReviewsService
 }
 
 // TableName table name in db for gorm

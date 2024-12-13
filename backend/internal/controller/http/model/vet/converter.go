@@ -86,22 +86,3 @@ func FromCoreVetWithUser(coreVet core.VetsDetails) VetsResponseWithUser {
 		User: user.ToResponseUser(&coreVet.User),
 	}
 }
-
-func FromCoreVetList(coreVets []core.Vets) []VetsResponse {
-	var vets []VetsResponse
-	for _, coreVet := range coreVets {
-		vets = append(vets, FromCoreVet(coreVet))
-	}
-	return vets
-}
-
-func FromCoreVetWithMeta(coreVets []core.VetsDetails, pagination core.Pagination) VetsResponseWithMeta {
-	var responseData []VetsResponseWithUser
-	for _, coreVet := range coreVets {
-		responseData = append(responseData, FromCoreVetWithUser(coreVet))
-	}
-	return VetsResponseWithMeta{
-		Meta: pagination,
-		Data: responseData,
-	}
-}
