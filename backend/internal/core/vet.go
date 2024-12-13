@@ -6,25 +6,26 @@ import (
 )
 
 type Vets struct {
-	ID               int       `gorm:"column:id"`
-	UserID           int       `gorm:"column:user_id"`
-	IsOrganization   bool      `gorm:"column:is_organization"`
-	Username         string    `gorm:"column:username"`
-	Firstname        *string   `gorm:"column:firstname"`
-	Lastname         *string   `gorm:"column:lastname"`
-	Patronymic       *string   `gorm:"column:patronymic"`
-	Education        *string   `gorm:"column:education"`
-	OrgName          *string   `gorm:"column:org_name"`
-	Location         *string   `gorm:"column:location"`
-	OrgEmail         *string   `gorm:"column:org_email"`
-	InnNumber        *string   `gorm:"column:inn_number"`
-	RemoteConsulting bool      `gorm:"column:remote_consulting"`
-	IsInpatient      bool      `gorm:"column:is_inpatient"`
-	Description      *string   `gorm:"column:description"`
-	IsDeleted        bool      `gorm:"column:is_deleted"`
-	CreatedAt        time.Time `gorm:"column:created_at"`
-	UpdatedAt        time.Time `gorm:"column:updated_at"`
-	DeletedAt        time.Time `gorm:"column:deleted_at"`
+	ID                 int       `gorm:"column:id"`
+	UserID             int       `gorm:"column:user_id"`
+	IsOrganization     bool      `gorm:"column:is_organization"`
+	Username           *string   `gorm:"column:username"`
+	Firstname          *string   `gorm:"column:firstname"`
+	Lastname           *string   `gorm:"column:lastname"`
+	Patronymic         *string   `gorm:"column:patronymic"`
+	Education          *string   `gorm:"column:education"`
+	OrgName            *string   `gorm:"column:org_name"`
+	Location           *string   `gorm:"column:location"`
+	Price              float64   `gorm:"column:price"`
+	OrgEmail           *string   `gorm:"column:org_email"`
+	InnNumber          *string   `gorm:"column:inn_number"`
+	IsRemoteConsulting bool      `gorm:"column:remote_consulting"`
+	IsInpatient        bool      `gorm:"column:is_inpatient"`
+	Description        *string   `gorm:"column:description"`
+	IsDeleted          bool      `gorm:"column:is_deleted"`
+	CreatedAt          time.Time `gorm:"column:created_at"`
+	UpdatedAt          time.Time `gorm:"column:updated_at"`
+	DeletedAt          time.Time `gorm:"column:deleted_at"`
 }
 
 type UpdateVets struct {
@@ -40,7 +41,8 @@ type UpdateVets struct {
 	Price              float64   `gorm:"column:price"`
 	OrgEmail           *string   `gorm:"column:org_email"`
 	InnNumber          *string   `gorm:"column:Inn_number"`
-	IsRemoteConsulting bool      `gorm:"column:is_remote_consulting"`
+	IsRemoteConsulting bool      `gorm:"column:remote_consulting"`
+	IsOrganization     bool      `gorm:"column:is_organization"`
 	IsInpatient        bool      `gorm:"column:is_inpatient"`
 	Description        *string   `gorm:"column:description"`
 	UpdatedAt          time.Time `gorm:"autoUpdateTime;column:updated_at"`

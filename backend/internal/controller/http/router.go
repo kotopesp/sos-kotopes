@@ -17,6 +17,7 @@ type Router struct {
 	postService          core.PostService
 	userService          core.UserService
 	roleService          core.RoleService
+	vetService           core.VetService
 	userFavouriteService core.UserFavouriteService
 }
 
@@ -100,6 +101,17 @@ func (r *Router) initRoutes() {
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
 
+	// vets
+	v1.Get("/vets", r.getVets)
+	v1.Get("/vets/:id", r.getVetByUserID)
+	v1.Put("/vets/:id", r.protectedMiddleware(), r.updateVetByUserID)
+	v1.Delete("/vets/:id", r.protectedMiddleware(), r.deleteVetByUserID)
+
+	// vet reviews
+	v1.Get("/vets/:id/vet_reviews", r.getVetReviews)
+	v1.Post("/vets/:id/vet_reviews", r.protectedMiddleware(), r.createVetReview)
+	v1.Put("/vet_reviews/:id", r.protectedMiddleware(), r.updateVetReview)
+	v1.Delete("/vet_reviews/:id", r.protectedMiddleware(), r.deleteVetReview)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
