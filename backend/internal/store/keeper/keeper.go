@@ -73,6 +73,22 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]
 		query = query.Having("AVG(keeper_reviews.grade) <= ?", *params.MaxRating)
 	}
 
+	if params.HasCage != nil {
+		query = query.Where("has_cage = ?", *params.HasCage)
+	}
+	if params.BoardingDuration != nil {
+		query = query.Where("boarding_duration = ?", *params.BoardingDuration)
+	}
+	if params.BoardingCompensation != nil {
+		query = query.Where("boarding_compensation = ?", *params.BoardingCompensation)
+	}
+	if params.AnimalAcceptance != nil {
+		query = query.Where("animal_acceptance = ?", *params.AnimalAcceptance)
+	}
+	if params.AnimalCategory != nil {
+		query = query.Where("animal_category = ?", *params.AnimalCategory)
+	}
+
 	query = query.Order(*params.SortBy + " " + *params.SortOrder)
 
 	if params.Limit != nil {

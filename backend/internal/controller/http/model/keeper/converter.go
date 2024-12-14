@@ -11,15 +11,20 @@ import (
 func (p *GetAllKeepersParams) ToCoreGetAllKeepersParams() core.GetAllKeepersParams {
 	sortBy, sortOrder := ParseSort(p.Sort)
 	return core.GetAllKeepersParams{
-		SortBy:    &sortBy,
-		SortOrder: &sortOrder,
-		Location:  p.Location,
-		MinRating: p.MinRating,
-		MaxRating: p.MaxRating,
-		MinPrice:  p.MinPrice,
-		MaxPrice:  p.MaxPrice,
-		Limit:     &p.Limit,
-		Offset:    &p.Offset,
+		SortBy:               &sortBy,
+		SortOrder:            &sortOrder,
+		Location:             p.Location,
+		MinRating:            p.MinRating,
+		MaxRating:            p.MaxRating,
+		MinPrice:             p.MinPrice,
+		MaxPrice:             p.MaxPrice,
+		HasCage:              p.HasCage,
+		BoardingDuration:     p.BoardingDuration,
+		BoardingCompensation: p.BoardingCompensation,
+		AnimalAcceptance:     p.AnimalAcceptance,
+		AnimalCategory:       p.AnimalCategory,
+		Limit:                &p.Limit,
+		Offset:               &p.Offset,
 	}
 }
 
@@ -44,10 +49,15 @@ func (k *KeepersCreate) ToCoreNewKeeper() core.Keepers {
 		return core.Keepers{}
 	}
 	return core.Keepers{
-		UserID:      k.UserID,
-		Description: k.Description,
-		Price:       k.Price,
-		Location:    k.Location,
+		UserID:               k.UserID,
+		Description:          k.Description,
+		Price:                k.Price,
+		Location:             k.Location,
+		HasCage:              k.HasCage,
+		BoardingDuration:     k.BoardingDuration,
+		BoardingCompensation: k.BoardingCompensation,
+		AnimalAcceptance:     k.AnimalAcceptance,
+		AnimalCategory:       k.AnimalCategory,
 	}
 }
 
@@ -56,11 +66,16 @@ func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.UpdateKeepers {
 		return core.UpdateKeepers{}
 	}
 	return core.UpdateKeepers{
-		ID:          k.ID,
-		UserID:      k.UserID,
-		Description: k.Description,
-		Price:       k.Price,
-		Location:    k.Location,
+		ID:                   k.ID,
+		UserID:               k.UserID,
+		Description:          k.Description,
+		Price:                k.Price,
+		Location:             k.Location,
+		HasCage:              k.HasCage,
+		BoardingDuration:     k.BoardingDuration,
+		BoardingCompensation: k.BoardingCompensation,
+		AnimalAcceptance:     k.AnimalAcceptance,
+		AnimalCategory:       k.AnimalCategory,
 	}
 }
 
@@ -81,13 +96,18 @@ func ToKeepersResponse(meta pagination.Pagination, coreKeepersDetails []core.Kee
 
 func FromCoreKeeper(coreKeeper core.Keepers) KeepersResponse {
 	return KeepersResponse{
-		ID:          coreKeeper.ID,
-		UserID:      coreKeeper.UserID,
-		Description: coreKeeper.Description,
-		Price:       coreKeeper.Price,
-		Location:    coreKeeper.Location,
-		CreatedAt:   coreKeeper.CreatedAt,
-		UpdatedAt:   coreKeeper.UpdatedAt,
+		ID:                   coreKeeper.ID,
+		UserID:               coreKeeper.UserID,
+		Description:          coreKeeper.Description,
+		Price:                coreKeeper.Price,
+		Location:             coreKeeper.Location,
+		HasCage:              coreKeeper.HasCage,
+		BoardingDuration:     coreKeeper.BoardingDuration,
+		BoardingCompensation: coreKeeper.BoardingCompensation,
+		AnimalAcceptance:     coreKeeper.AnimalAcceptance,
+		AnimalCategory:       coreKeeper.AnimalCategory,
+		CreatedAt:            coreKeeper.CreatedAt,
+		UpdatedAt:            coreKeeper.UpdatedAt,
 	}
 }
 

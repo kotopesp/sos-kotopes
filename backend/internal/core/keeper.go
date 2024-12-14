@@ -6,24 +6,34 @@ import (
 )
 
 type Keepers struct {
-	ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
-	UserID      int       `gorm:"column:user_id"`
-	Description string    `gorm:"column:description"`
-	Price       float64   `gorm:"column:price"`
-	Location    string    `gorm:"column:location"`
-	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
-	IsDeleted   bool      `gorm:"column:is_deleted"`
-	DeletedAt   time.Time `gorm:"column:deleted_at"`
+	ID                   int       `gorm:"primaryKey;autoIncrement;column:id"`
+	UserID               int       `gorm:"column:user_id"`
+	Description          string    `gorm:"column:description"`
+	Price                float64   `gorm:"column:price"`
+	Location             string    `gorm:"column:location"`
+	HasCage              bool      `gorm:"column:has_cage"`
+	BoardingDuration     string    `gorm:"column:boarding_duration"`
+	BoardingCompensation string    `gorm:"column:boarding_compensation"`
+	AnimalAcceptance     string    `gorm:"column:animal_acceptance"`
+	AnimalCategory       string    `gorm:"column:animal_category"`
+	CreatedAt            time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
+	UpdatedAt            time.Time `gorm:"autoUpdateTime;column:updated_at"`
+	IsDeleted            bool      `gorm:"column:is_deleted"`
+	DeletedAt            time.Time `gorm:"column:deleted_at"`
 }
 
 type UpdateKeepers struct {
-	ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
-	UserID      int       `gorm:"column:user_id"`
-	Description string    `gorm:"column:description"`
-	Price       float64   `gorm:"column:price"`
-	Location    string    `gorm:"column:location"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
+	ID                   int       `gorm:"primaryKey;autoIncrement;column:id"`
+	UserID               int       `gorm:"column:user_id"`
+	Description          string    `gorm:"column:description"`
+	Price                float64   `gorm:"column:price"`
+	Location             string    `gorm:"column:location"`
+	HasCage              bool      `gorm:"column:has_cage"`
+	BoardingDuration     string    `gorm:"column:boarding_duration"`
+	BoardingCompensation string    `gorm:"column:boarding_compensation"`
+	AnimalAcceptance     string    `gorm:"column:animal_acceptance"`
+	AnimalCategory       string    `gorm:"column:animal_category"`
+	UpdatedAt            time.Time `gorm:"autoUpdateTime;column:updated_at"`
 }
 
 type KeepersDetails struct {
@@ -32,15 +42,20 @@ type KeepersDetails struct {
 }
 
 type GetAllKeepersParams struct {
-	SortBy    *string
-	SortOrder *string
-	Location  *string
-	MinRating *float64
-	MaxRating *float64
-	MinPrice  *float64
-	MaxPrice  *float64
-	Limit     *int
-	Offset    *int
+	SortBy               *string
+	SortOrder            *string
+	Location             *string
+	MinRating            *float64
+	MaxRating            *float64
+	MinPrice             *float64
+	MaxPrice             *float64
+	HasCage              *bool
+	BoardingDuration     *string
+	BoardingCompensation *string
+	AnimalAcceptance     *string
+	AnimalCategory       *string
+	Limit                *int
+	Offset               *int
 }
 
 type KeeperStore interface {
