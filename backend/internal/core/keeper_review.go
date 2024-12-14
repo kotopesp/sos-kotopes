@@ -36,7 +36,7 @@ type GetAllKeeperReviewsParams struct {
 }
 
 type KeeperReviewsStore interface {
-	GetAllReviews(ctx context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviews, error)
+	GetAllReviews(ctx context.Context, params GetAllKeeperReviewsParams, id int) ([]KeeperReviews, error)
 	GetByIDReview(ctx context.Context, id int) (KeeperReviews, error)
 	CreateReview(ctx context.Context, keeperReview KeeperReviews) error
 	SoftDeleteReviewByID(ctx context.Context, id int) error
@@ -44,7 +44,7 @@ type KeeperReviewsStore interface {
 }
 
 type KeeperReviewsService interface {
-	GetAllReviews(ctx context.Context, params GetAllKeeperReviewsParams) ([]KeeperReviewsDetails, error)
+	GetAllReviews(ctx context.Context, params GetAllKeeperReviewsParams, id int) ([]KeeperReviewsDetails, error)
 	CreateReview(ctx context.Context, keeperReview KeeperReviews) error
 	SoftDeleteReviewByID(ctx context.Context, id int, userID int) error
 	UpdateReviewByID(ctx context.Context, keeperReview UpdateKeeperReviews) (KeeperReviewsDetails, error)

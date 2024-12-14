@@ -50,10 +50,10 @@ func (s *store) UpdateReviewByID(ctx context.Context, review core.UpdateKeeperRe
 	return updatedKeeperReview, nil
 }
 
-func (s *store) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error) {
+func (s *store) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams, id int) ([]core.KeeperReviews, error) {
 	var reviews []core.KeeperReviews
 
-	query := s.DB.WithContext(ctx).Model(&core.KeeperReviews{}).Where("is_deleted = ?", false)
+	query := s.DB.WithContext(ctx).Model(&core.KeeperReviews{KeeperID: id}).Where("is_deleted = ?", false)
 
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)

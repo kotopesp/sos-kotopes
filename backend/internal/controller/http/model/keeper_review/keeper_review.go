@@ -40,6 +40,6 @@ type KeeperReviewsResponseWithUser struct {
 
 // GetAllKeeperReviewsParams represents the query parameters for fetching multiple keeper reviews.
 type GetAllKeeperReviewsParams struct {
-	Limit  int `query:"limit" validate:"omitempty,gt=0"`
-	Offset int `query:"offset" validate:"omitempty,gte=0"`
+	Limit  *int `query:"limit" validate:"omitempty,gt=0"`
+	Offset *int `query:"offset" validate:"omitempty,gte=0"`
 }

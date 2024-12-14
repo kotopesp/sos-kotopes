@@ -8,8 +8,8 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-func (s *service) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviewsDetails, error) {
-	keeperReviews, err := s.keeperReviewsStore.GetAllReviews(ctx, params)
+func (s *service) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams, id int) ([]core.KeeperReviewsDetails, error) {
+	keeperReviews, err := s.keeperReviewsStore.GetAllReviews(ctx, params, id)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return nil, err

@@ -69,9 +69,9 @@ func (_c *MockKeeperReviewsStore_CreateReview_Call) RunAndReturn(run func(contex
 	return _c
 }
 
-// GetAllReviews provides a mock function with given fields: ctx, params
-func (_m *MockKeeperReviewsStore) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error) {
-	ret := _m.Called(ctx, params)
+// GetAllReviews provides a mock function with given fields: ctx, params, id
+func (_m *MockKeeperReviewsStore) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams, id int) ([]core.KeeperReviews, error) {
+	ret := _m.Called(ctx, params, id)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllReviews")
@@ -79,19 +79,19 @@ func (_m *MockKeeperReviewsStore) GetAllReviews(ctx context.Context, params core
 
 	var r0 []core.KeeperReviews
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error)); ok {
-		return rf(ctx, params)
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams, int) ([]core.KeeperReviews, error)); ok {
+		return rf(ctx, params, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams) []core.KeeperReviews); ok {
-		r0 = rf(ctx, params)
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams, int) []core.KeeperReviews); ok {
+		r0 = rf(ctx, params, id)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]core.KeeperReviews)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllKeeperReviewsParams) error); ok {
-		r1 = rf(ctx, params)
+	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllKeeperReviewsParams, int) error); ok {
+		r1 = rf(ctx, params, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -107,13 +107,14 @@ type MockKeeperReviewsStore_GetAllReviews_Call struct {
 // GetAllReviews is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params core.GetAllKeeperReviewsParams
-func (_e *MockKeeperReviewsStore_Expecter) GetAllReviews(ctx interface{}, params interface{}) *MockKeeperReviewsStore_GetAllReviews_Call {
-	return &MockKeeperReviewsStore_GetAllReviews_Call{Call: _e.mock.On("GetAllReviews", ctx, params)}
+//   - id int
+func (_e *MockKeeperReviewsStore_Expecter) GetAllReviews(ctx interface{}, params interface{}, id interface{}) *MockKeeperReviewsStore_GetAllReviews_Call {
+	return &MockKeeperReviewsStore_GetAllReviews_Call{Call: _e.mock.On("GetAllReviews", ctx, params, id)}
 }
 
-func (_c *MockKeeperReviewsStore_GetAllReviews_Call) Run(run func(ctx context.Context, params core.GetAllKeeperReviewsParams)) *MockKeeperReviewsStore_GetAllReviews_Call {
+func (_c *MockKeeperReviewsStore_GetAllReviews_Call) Run(run func(ctx context.Context, params core.GetAllKeeperReviewsParams, id int)) *MockKeeperReviewsStore_GetAllReviews_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.GetAllKeeperReviewsParams))
+		run(args[0].(context.Context), args[1].(core.GetAllKeeperReviewsParams), args[2].(int))
 	})
 	return _c
 }
@@ -123,7 +124,7 @@ func (_c *MockKeeperReviewsStore_GetAllReviews_Call) Return(_a0 []core.KeeperRev
 	return _c
 }
 
-func (_c *MockKeeperReviewsStore_GetAllReviews_Call) RunAndReturn(run func(context.Context, core.GetAllKeeperReviewsParams) ([]core.KeeperReviews, error)) *MockKeeperReviewsStore_GetAllReviews_Call {
+func (_c *MockKeeperReviewsStore_GetAllReviews_Call) RunAndReturn(run func(context.Context, core.GetAllKeeperReviewsParams, int) ([]core.KeeperReviews, error)) *MockKeeperReviewsStore_GetAllReviews_Call {
 	_c.Call.Return(run)
 	return _c
 }

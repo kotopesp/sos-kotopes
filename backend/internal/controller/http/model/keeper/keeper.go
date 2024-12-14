@@ -63,8 +63,8 @@ type KeepersResponseWithMeta struct {
 
 // GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
 type GetAllKeepersParams struct {
-	Sort                 string   `query:"sort" validate:"omitempty,sort_keeper"`
-	Location             *string  `query:"location"`
+	Sort                 *string  `query:"sort" validate:"omitempty,sort_keeper"`
+	Location             *string  `query:"location" validate:"omitempty"`
 	MinRating            *float64 `query:"min_rating" validate:"omitempty,gte=1,lte=5"`
 	MaxRating            *float64 `query:"max_rating" validate:"omitempty,gte=1,lte=5"`
 	MinPrice             *float64 `query:"min_price" validate:"omitempty,gte=0"`
@@ -74,6 +74,6 @@ type GetAllKeepersParams struct {
 	BoardingCompensation *string  `query:"boarding_compensation" validate:"omitempty,oneof=paid free depends"`
 	AnimalAcceptance     *string  `query:"animal_acceptance" validate:"omitempty,oneof=homeless home depends"`
 	AnimalCategory       *string  `query:"animal_category" validate:"omitempty,oneof=dog cat both"`
-	Limit                int      `query:"limit" validate:"omitempty,gt=0"`
-	Offset               int      `query:"offset" validate:"omitempty,gte=0"`
+	Limit                *int     `query:"limit" validate:"omitempty,gt=0"`
+	Offset               *int     `query:"offset" validate:"omitempty,gte=0"`
 }

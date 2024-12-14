@@ -6,9 +6,17 @@ import (
 )
 
 func (p *GetAllKeeperReviewsParams) FromKeeperReviewRequest() core.GetAllKeeperReviewsParams {
+	limit, offset := 10, 0
+	if p.Limit != nil {
+		limit = *p.Limit
+	}
+	if p.Offset != nil {
+		offset = *p.Offset
+	}
+
 	return core.GetAllKeeperReviewsParams{
-		Limit:  &p.Limit,
-		Offset: &p.Offset,
+		Limit:  &limit,
+		Offset: &offset,
 	}
 }
 

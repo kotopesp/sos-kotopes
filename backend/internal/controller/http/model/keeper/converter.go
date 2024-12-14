@@ -9,7 +9,18 @@ import (
 )
 
 func (p *GetAllKeepersParams) ToCoreGetAllKeepersParams() core.GetAllKeepersParams {
-	sortBy, sortOrder := ParseSort(p.Sort)
+	sortBy, sortOrder := "", ""
+	if p.Sort != nil {
+		sortBy, sortOrder = ParseSort(*p.Sort)
+	}
+	limit, offset := 10, 0
+	if p.Limit != nil {
+		limit = *p.Limit
+	}
+	if p.Offset != nil {
+		offset = *p.Offset
+	}
+
 	return core.GetAllKeepersParams{
 		SortBy:               &sortBy,
 		SortOrder:            &sortOrder,
@@ -23,8 +34,8 @@ func (p *GetAllKeepersParams) ToCoreGetAllKeepersParams() core.GetAllKeepersPara
 		BoardingCompensation: p.BoardingCompensation,
 		AnimalAcceptance:     p.AnimalAcceptance,
 		AnimalCategory:       p.AnimalCategory,
-		Limit:                &p.Limit,
-		Offset:               &p.Offset,
+		Limit:                &limit,
+		Offset:               &offset,
 	}
 }
 
