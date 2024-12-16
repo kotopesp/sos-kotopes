@@ -103,10 +103,10 @@ func (r *Router) initRoutes() {
 
 	// vets
 	v1.Get("/vets", r.getVets)
-	v1.Get("/vets/:id", r.getVetByUserID)
+	v1.Get("/vets/:userID", r.getVetByUserID)
 	v1.Post("/vets", r.protectedMiddleware(), r.createVet)
-	v1.Patch("/vets/:id", r.protectedMiddleware(), r.updateVetByUserID)
-	v1.Delete("/vets/:id", r.protectedMiddleware(), r.deleteVetByUserID)
+	v1.Patch("/vets/:userID", r.protectedMiddleware(), r.updateVetByUserID)
+	v1.Delete("/vets/:userID", r.protectedMiddleware(), r.deleteVetByUserID)
 
 	// vet reviews
 	v1.Get("/vets/:id/vet_reviews", r.getVetReviews)

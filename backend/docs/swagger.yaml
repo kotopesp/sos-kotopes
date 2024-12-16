@@ -75,6 +75,8 @@ definitions:
         type: string
       education:
         type: string
+      id:
+        type: integer
       innNumber:
         type: string
       isInpatient:
@@ -88,8 +90,6 @@ definitions:
       orgEmail:
         type: string
       orgName:
-        type: string
-      patronymic:
         type: string
       price:
         type: number
@@ -152,8 +152,6 @@ definitions:
       orgEmail:
         type: string
       orgName:
-        type: string
-      patronymic:
         type: string
       price:
         type: number
@@ -346,6 +344,36 @@ definitions:
         type: string
       value: {}
     type: object
+  vet.VetsCreate:
+    properties:
+      column:is_remote_consulting:
+        type: boolean
+      description:
+        type: string
+      education:
+        type: string
+      inn_number:
+        type: string
+      is_inpatient:
+        type: boolean
+      is_organization:
+        type: boolean
+      location:
+        type: string
+      org_email:
+        type: string
+      org_name:
+        type: string
+      price:
+        type: number
+      user_id:
+        minimum: 0
+        type: integer
+    required:
+    - is_organization
+    - location
+    - user_id
+    type: object
   vet.VetsResponse:
     properties:
       created_at:
@@ -370,8 +398,8 @@ definitions:
         type: string
       org_name:
         type: string
-      patronymic:
-        type: string
+      price:
+        type: number
       updated_at:
         type: string
       user_id:
@@ -1677,41 +1705,6 @@ paths:
       summary: Give role to user
       tags:
       - role
-  /vet/{userID}:
-    get:
-      consumes:
-      - application/json
-      description: Get vet by user ID.
-      operationId: get-vet-by-user-id
-      parameters:
-      - description: User ID
-        in: path
-        name: userID
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/core.VetsDetails'
-              type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.Response'
-      summary: Get vet by user ID
-      tags:
-      - vets
   /vets:
     get:
       consumes:
@@ -1743,48 +1736,12 @@ paths:
       description: Create a new vet profile
       operationId: create-vet
       parameters:
-      - description: Is Organization
-        in: formData
-        name: is_organization
+      - description: Vet
+        in: body
+        name: request
         required: true
-        type: boolean
-      - description: Patronymic
-        in: formData
-        name: patronymic
-        type: string
-      - description: Education
-        in: formData
-        name: education
-        type: string
-      - description: Organization Name
-        in: formData
-        name: org_name
-        type: string
-      - description: Location
-        in: formData
-        name: location
-        required: true
-        type: string
-      - description: Organization Email
-        in: formData
-        name: org_email
-        type: string
-      - description: INN Number
-        in: formData
-        name: inn_number
-        type: string
-      - description: Is Remote Consulting
-        in: formData
-        name: is_remote_consulting
-        type: boolean
-      - description: Is Inpatient
-        in: formData
-        name: is_inpatient
-        type: boolean
-      - description: Description
-        in: formData
-        name: description
-        type: string
+        schema:
+          $ref: '#/definitions/vet.VetsCreate'
       produces:
       - application/json
       responses:
@@ -1848,11 +1805,47 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
       summary: Delete vet by user id
       tags:
       - vets
   /vets/{userID}:
-    put:
+    get:
+      consumes:
+      - application/json
+      description: Get vet by user ID.
+      operationId: get-vet-by-user-id
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/core.VetsDetails'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get vet by user ID
+      tags:
+      - vets
+    patch:
       consumes:
       - application/json
       description: Update vet by user id
@@ -1893,6 +1886,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
       summary: Update vet by user id
       tags:
       - vets

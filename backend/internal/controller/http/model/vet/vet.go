@@ -7,45 +7,42 @@ import (
 )
 
 type VetsCreate struct {
-	UserID             int     `form:"user_id" validate:"required,min=0"`
-	IsOrganization     bool    `form:"is_organization" validate:"required"`
-	Username           *string `form:"username" validate:"required,max=255"`
-	Firstname          *string `form:"firstname"`
-	Lastname           *string `form:"lastname"`
-	Patronymic         *string `form:"patronymic"`
-	Education          *string `form:"education"`
-	OrgName            *string `form:"org_name"`
-	Location           *string `form:"location" validate:"required"`
-	OrgEmail           *string `form:"org_email"`
-	InnNumber          *string `form:"inn_number"`
-	IsRemoteConsulting bool    `gorm:"column:is_remote_consulting"`
-	IsInpatient        bool    `form:"is_inpatient"`
-	Description        *string `form:"description"`
+	UserID             int     `json:"user_id" validate:"required,min=0"`
+	IsOrganization     bool    `json:"is_organization" validate:"required"`
+	Education          *string `json:"education"`
+	OrgName            *string `json:"org_name"`
+	Location           *string `json:"location" validate:"required"`
+	Price              float64 `json:"price"`
+	OrgEmail           *string `json:"org_email"`
+	InnNumber          *string `json:"inn_number"`
+	IsRemoteConsulting bool    `json:"column:is_remote_consulting"`
+	IsInpatient        bool    `json:"is_inpatient"`
+	Description        *string `json:"description"`
 }
 
 type VetsUpdate struct {
-	ID                 int     `form:"id"`
-	UserID             int     `form:"user_id"`
-	IsOrganization     bool    `form:"is_organization"`
-	Patronymic         *string `form:"patronymic"`
-	Education          *string `form:"education"`
-	OrgName            *string `form:"org_name"`
-	Location           *string `form:"location"`
-	OrgEmail           *string `form:"org_email"`
-	InnNumber          *string `form:"inn_number"`
-	IsRemoteConsulting bool    `gorm:"column:is_remote_consulting"`
-	IsInpatient        bool    `form:"is_inpatient"`
-	Description        *string `form:"description"`
+	ID                 int     `json:"id"`
+	UserID             int     `json:"user_id"`
+	IsOrganization     bool    `json:"is_organization"`
+	Education          *string `json:"education"`
+	OrgName            *string `json:"org_name"`
+	Location           *string `json:"location"`
+	Price              float64 `json:"price"`
+	OrgEmail           *string `json:"org_email"`
+	InnNumber          *string `json:"inn_number"`
+	IsRemoteConsulting bool    `json:"column:is_remote_consulting"`
+	IsInpatient        bool    `json:"is_inpatient"`
+	Description        *string `json:"description"`
 }
 
 type VetsResponse struct {
 	ID                 int       `json:"id"`
 	UserID             int       `json:"user_id"`
 	IsOrganization     bool      `json:"is_organization"`
-	Patronymic         *string   `json:"patronymic"`
 	Education          *string   `json:"education"`
 	OrgName            *string   `json:"org_name"`
 	Location           *string   `json:"location"`
+	Price              float64   `json:"price"`
 	OrgEmail           *string   `json:"org_email"`
 	InnNumber          *string   `json:"inn_number"`
 	IsRemoteConsulting bool      `gorm:"column:is_remote_consulting"`

@@ -1,0 +1,150 @@
+### GET request to example server
+# curl -X 'POST'
+#  'http://localhost:8080/api/v1/vets'
+#  -H 'accept: application/json'
+#  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNjg2MjgsImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.wajru0Yx6TVJs_zSnOlVf44kisWn3xqWlVcJjH9uYFQ'
+#  -H 'Content-Type: application/json'
+#  -d '{
+#  "column:is_remote_consulting": true,
+#  "description": "string",
+#  "education": "string",
+#  "inn_number": "string",
+#  "is_inpatient": true,
+#  "is_organization": true,
+#  "location": "string",
+#  "org_email": "string",
+#  "org_name": "string",
+#  "price": 11110,
+#  "user_id": 4
+#}'
+POST http://localhost:8080/api/v1/vets
+accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNzU1NjksImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.spDB7nqKFECBzIFCsfwzQV8xqfHNa7b-pxKN0Xm14yU
+Content-Type: application/json
+
+{
+  "column:is_remote_consulting": true,
+  "description": "string",
+  "education": "string",
+  "inn_number": "string",
+  "is_inpatient": true,
+  "is_organization": true,
+  "location": "string",
+  "org_email": "string",
+  "org_name": "string",
+  "price": 11110,
+  "user_id": 4
+}
+
+
+###
+
+# curl -X 'GET'
+#  'http://localhost:8080/api/v1/vet/4'
+#  -H 'accept: application/json'
+GET http://localhost:8080/api/v1/vets/4
+accept: application/json
+
+
+###
+
+# curl -X 'DELETE'
+#  'http://localhost:8080/api/v1/vets/1'
+#  -H 'accept: application/json'
+#  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNzQ4NzMsImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.EVGG-gaAfbn_8IYgQwZI5ECESBnvo3xoF9lGJy4Ig28'
+DELETE http://localhost:8080/api/v1/vets/4
+accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNzYzMTQsImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.-5EqulHaCPdEizfLbPdiREF-epqC-6LzaaLhi9kd7YA
+
+###
+
+
+# curl -X 'PUT'
+#  'http://localhost:8080/api/v1/vets/4'
+#  -H 'accept: application/json'
+#  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNzQ4NzMsImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.EVGG-gaAfbn_8IYgQwZI5ECESBnvo3xoF9lGJy4Ig28'
+#  -H 'Content-Type: application/json'
+#  -d '{
+#  "description": "string",
+#  "education": "string",
+#  "id": 0,
+#  "innNumber": "string",
+#  "isInpatient": true,
+#  "isOrganization": true,
+#  "isRemoteConsulting": true,
+#  "location": "string",
+#  "orgEmail": "string",
+#  "orgName": "string",
+#  "price": 0,
+#  "updatedAt": "string",
+#  "userID": 0
+#}'
+PUT http://localhost:8080/api/v1/vets/4
+accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNzYxOTgsImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.vsUmChWNaeVvebBrHNsWv2-ByllST-UODDIiZN1Euio
+Content-Type: application/json
+
+{
+  "description": "string",
+  "education": "string=1-03=-1201",
+  "id": 0,
+  "innNumber": "string",
+  "isInpatient": true,
+  "isOrganization": true,
+  "isRemoteConsulting": true,
+  "location": "string",
+  "orgEmail": "string",
+  "orgName": "string",
+  "price": 0,
+  "updatedAt": "string",
+  "userID": 0
+}
+
+###
+
+# curl -X 'PATCH'
+#  'http://localhost:8080/api/v1/vets/4'
+#  -H 'accept: application/json'
+#  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNzYzMTQsImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.-5EqulHaCPdEizfLbPdiREF-epqC-6LzaaLhi9kd7YA'
+#  -H 'Content-Type: application/json'
+#  -d '{
+#  "description": "string",
+#  "education": "stri-4932-49234032934324892384723ng",
+#  "id": 0,
+#  "innNumber": "string",
+#  "isInpatient": true,
+#  "isOrganization": true,
+#  "isRemoteConsulting": true,
+#  "location": "string",
+#  "orgEmail": "string",
+#  "orgName": "string",
+#  "price": 0,
+#  "updatedAt": "string",
+#  "userID": 0
+#}'
+PATCH http://localhost:8080/api/v1/vets/4
+accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQzNzYzMTQsImlkIjo0LCJ1c2VybmFtZSI6InN0cmluZzAifQ.-5EqulHaCPdEizfLbPdiREF-epqC-6LzaaLhi9kd7YA
+Content-Type: application/json
+
+{
+  "description": "string",
+  "education": "stri-4932-49234032934324892384723ng",
+  "id": 0,
+  "innNumber": "string",
+  "isInpatient": true,
+  "isOrganization": true,
+  "isRemoteConsulting": true,
+  "location": "string",
+  "orgEmail": "string",
+  "orgName": "string",
+  "price": 0,
+  "updatedAt": "string",
+  "userID": 0
+}
+
+###
+
+
+
+

@@ -23,10 +23,10 @@ func (v *VetsCreate) ToCoreNewVet() core.Vets {
 	return core.Vets{
 		UserID:             v.UserID,
 		IsOrganization:     v.IsOrganization,
-		Patronymic:         v.Patronymic,
 		Education:          v.Education,
 		OrgName:            v.OrgName,
 		Location:           v.Location,
+		Price:              v.Price,
 		OrgEmail:           v.OrgEmail,
 		InnNumber:          v.InnNumber,
 		IsRemoteConsulting: v.IsRemoteConsulting,
@@ -37,12 +37,13 @@ func (v *VetsCreate) ToCoreNewVet() core.Vets {
 
 func (v *VetsUpdate) ToCoreUpdateVet() core.UpdateVets {
 	return core.UpdateVets{
+		ID:                 v.ID,
 		UserID:             v.UserID,
 		IsOrganization:     v.IsOrganization,
-		Patronymic:         v.Patronymic,
 		Education:          v.Education,
 		OrgName:            v.OrgName,
 		Location:           v.Location,
+		Price:              v.Price,
 		OrgEmail:           v.OrgEmail,
 		InnNumber:          v.InnNumber,
 		IsRemoteConsulting: v.IsRemoteConsulting,
@@ -56,10 +57,10 @@ func FromCoreVet(coreVet core.Vets) VetsResponse {
 		ID:                 coreVet.ID,
 		UserID:             coreVet.UserID,
 		IsOrganization:     coreVet.IsOrganization,
-		Patronymic:         coreVet.Patronymic,
 		Education:          coreVet.Education,
 		OrgName:            coreVet.OrgName,
 		Location:           coreVet.Location,
+		Price:              coreVet.Price,
 		OrgEmail:           coreVet.OrgEmail,
 		InnNumber:          coreVet.InnNumber,
 		IsRemoteConsulting: coreVet.IsRemoteConsulting,

@@ -70,25 +70,6 @@ func (s *service) GetByUserID(ctx context.Context, userID int) (core.VetsDetails
 	}, nil
 }
 
-func (s *service) GetByOrgName(ctx context.Context, orgName string) (core.VetsDetails, error) {
-	vet, err := s.vetStore.GetByOrgName(ctx, orgName)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.VetsDetails{}, err
-	}
-
-	vetUser, err := s.userStore.GetUserByID(ctx, vet.UserID)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.VetsDetails{}, err
-	}
-
-	return core.VetsDetails{
-		Vet:  vet,
-		User: vetUser,
-	}, nil
-}
-
 func (s *service) Create(ctx context.Context, vet core.Vets) error {
 	if vet.CreatedAt.IsZero() {
 		vet.CreatedAt = time.Now()

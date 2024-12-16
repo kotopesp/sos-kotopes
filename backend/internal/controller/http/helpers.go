@@ -28,6 +28,17 @@ var AllowedExtensions = []string{".jpg", ".jpeg", ".png"}
 func getIDFromToken(ctx *fiber.Ctx) (id int, err error) {
 	idItem := getPayloadItem(ctx, "id")
 
+	authHeader := ctx.Get("Authorization")
+	if authHeader == "" {
+		return 0, fmt.Errorf("missing authorization header")
+	}
+
+	// Убираем "Bearer" и получаем сам токен
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		return 0, fmt.Errorf("invalid authorization header format")
+	}
+
 	logger.Log().Debug(ctx.UserContext(), fmt.Sprintf("idItem: %v", idItem))
 
 	idFloat, ok := idItem.(float64)
@@ -52,7 +63,7 @@ func parseBodyAndValidate(ctx *fiber.Ctx, formValidator validator.FormValidatorS
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(model.ErrInvalidBody.Error())), err
 		}
-
+		println(data)
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error())), err
 	}

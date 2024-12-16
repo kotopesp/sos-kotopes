@@ -2116,63 +2116,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/vet/{userID}": {
-            "get": {
-                "description": "Get vet by user ID.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "vets"
-                ],
-                "summary": "Get vet by user ID",
-                "operationId": "get-vet-by-user-id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "userID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/core.VetsDetails"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/vets": {
             "get": {
                 "description": "Get all vets",
@@ -2234,66 +2177,13 @@ const docTemplate = `{
                 "operationId": "create-vet",
                 "parameters": [
                     {
-                        "type": "boolean",
-                        "description": "Is Organization",
-                        "name": "is_organization",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Patronymic",
-                        "name": "patronymic",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Education",
-                        "name": "education",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Organization Name",
-                        "name": "org_name",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Location",
-                        "name": "location",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Organization Email",
-                        "name": "org_email",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "INN Number",
-                        "name": "inn_number",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Is Remote Consulting",
-                        "name": "is_remote_consulting",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Is Inpatient",
-                        "name": "is_inpatient",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Description",
-                        "name": "description",
-                        "in": "formData"
+                        "description": "Vet",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vet.VetsCreate"
+                        }
                     }
                 ],
                 "responses": {
@@ -2356,6 +2246,11 @@ const docTemplate = `{
         },
         "/vets/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
                 "description": "Delete vet by user id",
                 "consumes": [
                     "application/json"
@@ -2397,7 +2292,67 @@ const docTemplate = `{
             }
         },
         "/vets/{userID}": {
-            "put": {
+            "get": {
+                "description": "Get vet by user ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vets"
+                ],
+                "summary": "Get vet by user ID",
+                "operationId": "get-vet-by-user-id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/core.VetsDetails"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
                 "description": "Update vet by user id",
                 "consumes": [
                     "application/json"
@@ -2577,6 +2532,9 @@ const docTemplate = `{
                 "education": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
                 "innNumber": {
                     "type": "string"
                 },
@@ -2596,9 +2554,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "orgName": {
-                    "type": "string"
-                },
-                "patronymic": {
                     "type": "string"
                 },
                 "price": {
@@ -2693,9 +2648,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "orgName": {
-                    "type": "string"
-                },
-                "patronymic": {
                     "type": "string"
                 },
                 "price": {
@@ -2979,6 +2931,50 @@ const docTemplate = `{
                 "value": {}
             }
         },
+        "vet.VetsCreate": {
+            "type": "object",
+            "required": [
+                "is_organization",
+                "location",
+                "user_id"
+            ],
+            "properties": {
+                "column:is_remote_consulting": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "education": {
+                    "type": "string"
+                },
+                "inn_number": {
+                    "type": "string"
+                },
+                "is_inpatient": {
+                    "type": "boolean"
+                },
+                "is_organization": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "org_email": {
+                    "type": "string"
+                },
+                "org_name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
         "vet.VetsResponse": {
             "type": "object",
             "properties": {
@@ -3015,8 +3011,8 @@ const docTemplate = `{
                 "org_name": {
                     "type": "string"
                 },
-                "patronymic": {
-                    "type": "string"
+                "price": {
+                    "type": "number"
                 },
                 "updated_at": {
                     "type": "string"
