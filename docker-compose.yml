@@ -42,7 +42,7 @@ services:
     container_name: frontend
     restart: always
     ports:
-          - "80:80"
+          - "4200:80"
     networks:
       - sos-kotopes
     command: ["nginx", "-g", "daemon off;"]
