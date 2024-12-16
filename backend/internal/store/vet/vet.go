@@ -36,12 +36,12 @@ func (s *store) DeleteByUserID(ctx context.Context, userID int) error {
 	return err
 }
 
-func (s *store) UpdateByID(ctx context.Context, vet core.UpdateVets) (core.Vets, error) {
+func (s *store) UpdateByUserID(ctx context.Context, vet core.UpdateVets) (core.Vets, error) {
 	vet.UpdatedAt = time.Now()
 
 	var updatedVet core.Vets
 
-	result := s.DB.WithContext(ctx).Model(&core.Vets{}).Where("id = ? AND is_deleted = ?", vet.ID, false).Updates(vet).First(&updatedVet, vet.ID)
+	result := s.DB.WithContext(ctx).Model(&core.Vets{}).Where("id = ? AND is_deleted = ?", vet.UserID, false).Updates(vet).First(&updatedVet, vet.UserID)
 	if result.Error != nil {
 
 		if errors.Is(result.Error, core.ErrRecordNotFound) {

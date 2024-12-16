@@ -6,12 +6,9 @@ import (
 )
 
 type Vets struct {
-	ID                 int       `gorm:"column:id"`
+	ID                 int       `gorm:"column:id;primaryKey"`
 	UserID             int       `gorm:"column:user_id"`
 	IsOrganization     bool      `gorm:"column:is_organization"`
-	Username           *string   `gorm:"column:username"`
-	Firstname          *string   `gorm:"column:firstname"`
-	Lastname           *string   `gorm:"column:lastname"`
 	Patronymic         *string   `gorm:"column:patronymic"`
 	Education          *string   `gorm:"column:education"`
 	OrgName            *string   `gorm:"column:org_name"`
@@ -29,11 +26,7 @@ type Vets struct {
 }
 
 type UpdateVets struct {
-	ID                 int       `gorm:"column:id"`
 	UserID             int       `gorm:"column:user_id"`
-	Username           *string   `gorm:"column:username"`
-	Firstname          *string   `gorm:"column:firstname"`
-	Lastname           *string   `gorm:"column:lastname"`
 	Patronymic         *string   `gorm:"column:patronymic"`
 	Education          *string   `gorm:"column:education"`
 	OrgName            *string   `gorm:"column:org_name"`
@@ -66,7 +59,7 @@ type GetAllVetParams struct {
 }
 
 type VetStore interface {
-	UpdateByID(ctx context.Context, update UpdateVets) (updatedVet Vets, err error)
+	UpdateByUserID(ctx context.Context, update UpdateVets) (updatedVet Vets, err error)
 	GetAll(ctx context.Context, params GetAllVetParams) ([]Vets, error)
 	GetByUserID(ctx context.Context, userID int) (vet Vets, err error)
 	GetByOrgName(ctx context.Context, orgName string) (vet Vets, err error)

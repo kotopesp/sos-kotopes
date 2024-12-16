@@ -109,7 +109,7 @@ func (s *service) DeleteByUserID(ctx context.Context, userID int) error {
 		return core.ErrRecordNotFound
 	}
 
-	return s.vetStore.DeleteByUserID(ctx, storedVet.ID)
+	return s.vetStore.DeleteByUserID(ctx, storedVet.UserID)
 }
 
 func (s *service) UpdateByUserID(ctx context.Context, vet core.UpdateVets) (core.VetsDetails, error) {
@@ -127,7 +127,7 @@ func (s *service) UpdateByUserID(ctx context.Context, vet core.UpdateVets) (core
 		return core.VetsDetails{}, core.ErrRecordNotFound
 	}
 
-	updatedVet, err := s.vetStore.UpdateByID(ctx, vet)
+	updatedVet, err := s.vetStore.UpdateByUserID(ctx, vet)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.VetsDetails{}, err

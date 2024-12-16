@@ -27,9 +27,6 @@ type VetsUpdate struct {
 	ID                 int     `form:"id"`
 	UserID             int     `form:"user_id"`
 	IsOrganization     bool    `form:"is_organization"`
-	Username           *string `form:"username"`
-	Firstname          *string `form:"firstname"`
-	Lastname           *string `form:"lastname"`
 	Patronymic         *string `form:"patronymic"`
 	Education          *string `form:"education"`
 	OrgName            *string `form:"org_name"`
@@ -45,9 +42,6 @@ type VetsResponse struct {
 	ID                 int       `json:"id"`
 	UserID             int       `json:"user_id"`
 	IsOrganization     bool      `json:"is_organization"`
-	Username           *string   `json:"username"`
-	Firstname          *string   `json:"firstname"`
-	Lastname           *string   `json:"lastname"`
 	Patronymic         *string   `json:"patronymic"`
 	Education          *string   `json:"education"`
 	OrgName            *string   `json:"org_name"`

@@ -23,9 +23,6 @@ func (v *VetsCreate) ToCoreNewVet() core.Vets {
 	return core.Vets{
 		UserID:             v.UserID,
 		IsOrganization:     v.IsOrganization,
-		Username:           v.Username,
-		Firstname:          v.Firstname,
-		Lastname:           v.Lastname,
 		Patronymic:         v.Patronymic,
 		Education:          v.Education,
 		OrgName:            v.OrgName,
@@ -40,12 +37,8 @@ func (v *VetsCreate) ToCoreNewVet() core.Vets {
 
 func (v *VetsUpdate) ToCoreUpdateVet() core.UpdateVets {
 	return core.UpdateVets{
-		ID:                 v.ID,
 		UserID:             v.UserID,
 		IsOrganization:     v.IsOrganization,
-		Username:           v.Username,
-		Firstname:          v.Firstname,
-		Lastname:           v.Lastname,
 		Patronymic:         v.Patronymic,
 		Education:          v.Education,
 		OrgName:            v.OrgName,
@@ -63,9 +56,6 @@ func FromCoreVet(coreVet core.Vets) VetsResponse {
 		ID:                 coreVet.ID,
 		UserID:             coreVet.UserID,
 		IsOrganization:     coreVet.IsOrganization,
-		Username:           coreVet.Username,
-		Firstname:          coreVet.Firstname,
-		Lastname:           coreVet.Lastname,
 		Patronymic:         coreVet.Patronymic,
 		Education:          coreVet.Education,
 		OrgName:            coreVet.OrgName,
