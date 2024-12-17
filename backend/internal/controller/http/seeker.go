@@ -9,18 +9,18 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-// @Summary		Get seeker
-// @Tags			seeker
-// @Description	Get seeker by id
-// @ID				get-seeker
-// @Accept			json
-// @Produce		json
-// @Param			user_id	path		int	true	"User ID"
-// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
-// @Failure		400		{object}	model.Response
-// @Failure		500		{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers/{user_id}  [get]
+//	@Summary		Get seeker
+//	@Tags			seeker
+//	@Description	Get seeker by id
+//	@ID				get-seeker
+//	@Accept			json
+//	@Produce		json
+//	@Param			user_id	path		int	true	"User ID"
+//	@Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+//	@Failure		400		{object}	model.Response
+//	@Failure		500		{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/seekers/{user_id}  [get]
 func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("user_id")
 	if err != nil {
@@ -44,18 +44,18 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(responseSeeker)
 }
 
-// @Summary		Create a seeker
-// @Tags			seeker
-// @Description	Create a seeker
-// @ID				create-seeker
-// @Accept			json
-// @Produce		json
-// @Param			request	body		seeker.CreateSeeker	true	"Seeker"
-// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
-// @Failure		400		{object}	model.Response
-// @Failure		500		{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers [post]
+//	@Summary		Create a seeker
+//	@Tags			seeker
+//	@Description	Create a seeker
+//	@ID				create-seeker
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		seeker.CreateSeeker	true	"Seeker"
+//	@Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+//	@Failure		400		{object}	model.Response
+//	@Failure		500		{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/seekers [post]
 func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 	var createSeeker seeker.CreateSeeker
 
@@ -86,18 +86,20 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(responseSeeker)
 }
 
-// @Summary		Update a seeker
-// @Tags			seeker
-// @Description	Update a seeker
-// @ID				update-seeker
-// @Accept			json
-// @Produce		json
-// @Param			request	body		seeker.UpdateSeeker	true	"Seeker"
-// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
-// @Failure		400		{object}	model.Response
-// @Failure		500		{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers/{user_id}  [patch]
+//	@Summary		Update a seeker
+//	@Tags			seeker
+//	@Description	Update a seeker
+//	@ID				update-seeker
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			request	body		seeker.UpdateSeeker	true	"Seeker"
+//
+//	@Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+//	@Failure		400		{object}	model.Response
+//	@Failure		500		{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/seekers/{user_id}  [patch]
 func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 	//userID, err := getIDFromToken(ctx)
 	//if err != nil {
@@ -130,4 +132,37 @@ func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 	responseUser := seeker.ToResponseSeeker(&updatedSeeker)
 
 	return ctx.Status(fiber.StatusOK).JSON(responseUser)
+}
+
+//	@Summary		Delete seeker
+//	@Tags			seeker
+//	@Description	Delete seeker
+//	@ID				delete-seeker
+//	@Accept			json
+//	@Produce		json
+//	@Param			user_id	path		int	true	"User ID"
+//	@Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+//	@Failure		400		{object}	model.Response
+//	@Failure		500		{object}	model.Response
+//	@Security		ApiKeyAuthBasic
+//	@Router			/seekers/{user_id}  [delete]
+func (r *Router) deleteSeeker(ctx *fiber.Ctx) error {
+	id, err := ctx.ParamsInt("user_id")
+	if err != nil {
+		logger.Log().Debug(ctx.Context(), err.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	if err = r.seekerService.DeleteSeeker(ctx.UserContext(), id); err != nil {
+		switch {
+		case errors.Is(err, core.ErrSeekerNotFound):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		default:
+			logger.Log().Error(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+		}
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON("Delete")
 }
