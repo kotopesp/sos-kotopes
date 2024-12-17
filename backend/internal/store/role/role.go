@@ -3,11 +3,12 @@ package role
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
-	"time"
 )
 
 type store struct {
@@ -42,7 +43,7 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.Given
 	switch givenRole.Name {
 	case core.Seeker:
 		tableName = "seekers"
-	case core.Keeper:
+	case core.KeeperRole:
 		tableName = "keepers"
 	case core.Vet:
 		tableName = "vets"
@@ -81,7 +82,7 @@ func (s *store) GetUserRoles(ctx context.Context, id int) (roles map[string]core
 	}()
 
 	tableNames := []string{"seekers", "keepers", "vets"}
-	roleNames := []string{core.Seeker, core.Keeper, core.Vet}
+	roleNames := []string{core.Seeker, core.KeeperRole, core.Vet}
 
 	for i, name := range tableNames {
 		var role core.Role
@@ -130,7 +131,7 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole core.Upda
 	switch roleName {
 	case core.Seeker:
 		tableName = "seekers"
-	case core.Keeper:
+	case core.KeeperRole:
 
 		tableName = "keepers"
 	case core.Vet:
@@ -180,7 +181,7 @@ func (s *store) DeleteUserRole(ctx context.Context, id int, roleName string) (er
 	switch roleName {
 	case core.Seeker:
 		err = tx.Table("seekers").Where("user_id = ?", id).Delete(role).Error
-	case core.Keeper:
+	case core.KeeperRole:
 		err = tx.Table("keepers").Where("user_id = ?", id).Delete(role).Error
 	case core.Vet:
 		err = tx.Table("vets").Where("user_id = ?", id).Delete(role).Error

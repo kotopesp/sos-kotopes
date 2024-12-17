@@ -57,5 +57,5 @@ var (
 )
 
 const Seeker = "seeker"
-const Keeper = "keeper"
+const KeeperRole = "keeper"
 const Vet = "vet"
