@@ -31,7 +31,7 @@ func (s *service) GetSeeker(ctx context.Context, id int) (core.Seeker, error) {
 		return core.Seeker{}, core.ErrSeekerNotFound
 	}
 
-	if seeker.IsDeleted == true {
+	if seeker.IsDeleted {
 		logger.Log().Error(ctx, core.ErrSeekerDeleted.Error())
 		return core.Seeker{}, core.ErrSeekerDeleted
 	}
