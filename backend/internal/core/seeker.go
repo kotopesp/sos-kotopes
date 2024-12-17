@@ -40,16 +40,22 @@ type (
 		HaveOther       string `gorm:"column:have_other"`
 	}
 
+	DeleteSeeker struct {
+		UserID int `gorm:"column:user_id"`
+	}
+
 	SeekersService interface {
 		CreateSeeker(ctx context.Context, seeker Seeker, equipment Equipment) (Seeker, error)
 		GetSeeker(ctx context.Context, userID int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, seeker UpdateSeeker) (Seeker, error)
+		DeleteSeeker(ctx context.Context, userID int) error
 	}
 
 	SeekersStore interface {
 		CreateSeeker(ctx context.Context, seeker Seeker, equipment Equipment) (Seeker, error)
 		GetSeeker(ctx context.Context, userID int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, userID int, updateSeeker map[string]interface{}) (Seeker, error)
+		DeleteSeeker(ctx context.Context, userID int) error
 	}
 )
 
