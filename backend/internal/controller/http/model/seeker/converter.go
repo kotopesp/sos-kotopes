@@ -22,21 +22,27 @@ func (seeker *CreateSeeker) GetEquipment() (core.Equipment, error) {
 
 func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 	return core.Seeker{
-		UserID:      seeker.UserID,
-		Description: seeker.Description,
-		Location:    seeker.Location,
-		HaveCar:     seeker.HaveCar,
-		Price:       seeker.Price,
+		UserID:           seeker.UserID,
+		AnimalType:       seeker.AnimalType,
+		Description:      seeker.Description,
+		Location:         seeker.Location,
+		EquipmentRental:  seeker.EquipmentRental,
+		HaveCar:          seeker.HaveCar,
+		Price:            seeker.Price,
+		WillingnessCarry: seeker.WillingnessCarry,
 	}
 }
 
 func (seeker *UpdateSeeker) ToCoreUpdateSeeker() core.UpdateSeeker {
 	return core.UpdateSeeker{
-		UserID:      seeker.UserID,
-		Description: seeker.Description,
-		Location:    seeker.Location,
-		HaveCar:     seeker.HaveCar,
-		Price:       seeker.Price,
+		UserID:           seeker.UserID,
+		AnimalType:       seeker.AnimalType,
+		Description:      seeker.Description,
+		Location:         seeker.Location,
+		EquipmentRental:  seeker.EquipmentRental,
+		HaveCar:          seeker.HaveCar,
+		Price:            seeker.Price,
+		WillingnessCarry: seeker.WillingnessCarry,
 	}
 }
 
@@ -45,12 +51,15 @@ func ToResponseSeeker(seeker *core.Seeker) ResponseSeeker {
 		return ResponseSeeker{}
 	}
 	return ResponseSeeker{
-		ID:          seeker.ID,
-		UserID:      seeker.UserID,
-		Location:    seeker.Location,
-		Equipment:   seeker.EquipmentID,
-		Description: seeker.Description,
-		HaveCar:     seeker.HaveCar,
-		Price:       seeker.Price,
+		ID:               seeker.ID,
+		UserID:           seeker.UserID,
+		AnimalType:       seeker.AnimalType,
+		Location:         seeker.Location,
+		EquipmentRental:  seeker.EquipmentRental,
+		Equipment:        seeker.EquipmentID,
+		Description:      seeker.Description,
+		HaveCar:          seeker.HaveCar,
+		Price:            seeker.Price,
+		WillingnessCarry: seeker.WillingnessCarry,
 	}
 }

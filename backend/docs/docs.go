@@ -2648,11 +2648,22 @@ const docTemplate = `{
         "seeker.CreateSeeker": {
             "type": "object",
             "required": [
+                "animal_type",
                 "equipment",
+                "equipment_rental",
                 "location",
-                "user_id"
+                "user_id",
+                "willingness_carry"
             ],
             "properties": {
+                "animal_type": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
                 "description": {
                     "type": "string",
                     "maxLength": 4000
@@ -2662,6 +2673,10 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "equipment_rental": {
+                    "type": "integer",
+                    "minimum": -1
                 },
                 "have_car": {
                     "type": "boolean"
@@ -2676,16 +2691,33 @@ const docTemplate = `{
                 "user_id": {
                     "type": "integer",
                     "minimum": 1
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
+                    ]
                 }
             }
         },
         "seeker.ResponseSeeker": {
             "type": "object",
+            "required": [
+                "willingness_carry"
+            ],
             "properties": {
+                "animal_type": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
                 "equipment": {
+                    "type": "integer"
+                },
+                "equipment_rental": {
                     "type": "integer"
                 },
                 "have_car": {
@@ -2702,6 +2734,14 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
+                    ]
                 }
             }
         },
@@ -2711,6 +2751,14 @@ const docTemplate = `{
                 "user_id"
             ],
             "properties": {
+                "animal_type": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
                 "description": {
                     "type": "string",
                     "maxLength": 4000
@@ -2720,6 +2768,10 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "equipment_rental": {
+                    "type": "integer",
+                    "minimum": -1
                 },
                 "have_car": {
                     "type": "boolean"
@@ -2733,6 +2785,14 @@ const docTemplate = `{
                 "user_id": {
                     "type": "integer",
                     "minimum": 1
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
+                    ]
                 }
             }
         },
