@@ -65,14 +65,18 @@ func (s *service) UpdateSeeker(ctx context.Context, updateSeeker core.UpdateSeek
 
 	getSeeker, err := s.GetSeeker(ctx, *updateSeeker.UserID)
 	if err != nil {
-		logger.Log().Error(ctx, core.ErrSeekerNotFound.Error())
-		return core.Seeker{}, core.ErrSeekerNotFound
-	}
-
-	if getSeeker.IsDeleted == true {
-		logger.Log().Error(ctx, core.ErrSeekerDeleted.Error())
-		return core.Seeker{}, core.ErrSeekerDeleted
+		logger.Log().Error(ctx, err.Error())
+		return core.Seeker{}, err
 	}
 
 	return s.seekersStore.UpdateSeeker(ctx, getSeeker.ID, updates)
+}
+
+func (s *service) DeleteSeeker(ctx context.Context, userID int) error {
+	if _, err := s.GetSeeker(ctx, userID); err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		return err
+	}
+
+	return s.seekersStore.DeleteSeeker(ctx, userID)
 }
