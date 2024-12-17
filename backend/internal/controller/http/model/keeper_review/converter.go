@@ -5,7 +5,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
-func (p *GetAllKeeperReviewsParams) FromKeeperReviewRequest() core.GetAllKeeperReviewsParams {
+func (p *GetAllKeeperReviewsParams) ToCoreGetAllKeeperReviewsParams() core.GetAllKeeperReviewsParams {
 	limit, offset := 10, 0
 	if p.Limit != nil {
 		limit = *p.Limit
@@ -20,12 +20,12 @@ func (p *GetAllKeeperReviewsParams) FromKeeperReviewRequest() core.GetAllKeeperR
 	}
 }
 
-func (k *KeeperReviewsCreate) ToCoreNewKeeperReview() core.KeeperReviews {
+func (k *CreateKeeperReview) ToCoreKeeperReview() core.KeeperReview {
 	if k == nil {
-		return core.KeeperReviews{}
+		return core.KeeperReview{}
 	}
 
-	return core.KeeperReviews{
+	return core.KeeperReview{
 		AuthorID: k.AuthorID,
 		Content:  k.Content,
 		Grade:    k.Grade,
@@ -33,30 +33,22 @@ func (k *KeeperReviewsCreate) ToCoreNewKeeperReview() core.KeeperReviews {
 	}
 }
 
-func (k *KeeperReviewsUpdate) ToCoreUpdateKeeperReview() core.UpdateKeeperReviews {
-	return core.UpdateKeeperReviews{
-		ID:       k.ID,
-		AuthorID: k.AuthorID,
-		Grade:    k.Grade,
-		Content:  k.Content,
+func (k *UpdateKeeperReview) ToCoreUpdateKeeperReview() core.UpdateKeeperReview {
+	return core.UpdateKeeperReview{
+		Grade:   k.Grade,
+		Content: k.Content,
 	}
 }
 
-func FromCoreKeeperReview(coreReview core.KeeperReviews) KeeperReviewsResponse {
-	return KeeperReviewsResponse{
-		ID:        coreReview.ID,
-		AuthorID:  coreReview.AuthorID,
-		Content:   coreReview.Content,
-		Grade:     coreReview.Grade,
-		KeeperID:  coreReview.KeeperID,
-		CreatedAt: coreReview.CreatedAt,
-		UpdatedAt: coreReview.UpdatedAt,
-	}
-}
-
-func FromCoreKeeperReviewDetails(coreReview core.KeeperReviewsDetails) KeeperReviewsResponseWithUser {
-	return KeeperReviewsResponseWithUser{
-		Review: FromCoreKeeperReview(coreReview.Review),
-		User:   user.ToResponseUser(&coreReview.User),
+func ToModelResponseKeeperReview(k core.KeeperReview) ResponseKeeperReview {
+	return ResponseKeeperReview{
+		ID:        k.ID,
+		AuthorID:  k.AuthorID,
+		Author:    user.ToResponseUser(&k.Author),
+		Content:   k.Content,
+		Grade:     k.Grade,
+		KeeperID:  k.KeeperID,
+		CreatedAt: k.CreatedAt,
+		UpdatedAt: k.UpdatedAt,
 	}
 }

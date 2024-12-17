@@ -55,11 +55,11 @@ func ParseSort(sort string) (sortBy, sortOrder string) {
 	return sortBy, sortOrder
 }
 
-func (k *KeepersCreate) ToCoreNewKeeper() core.Keepers {
+func (k *CreateKeeper) ToCoreKeeper() core.Keeper {
 	if k == nil {
-		return core.Keepers{}
+		return core.Keeper{}
 	}
-	return core.Keepers{
+	return core.Keeper{
 		UserID:               k.UserID,
 		Description:          k.Description,
 		Price:                k.Price,
@@ -72,13 +72,11 @@ func (k *KeepersCreate) ToCoreNewKeeper() core.Keepers {
 	}
 }
 
-func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.UpdateKeepers {
+func (k *UpdateKeeper) ToCoreUpdateKeeper() core.UpdateKeeper {
 	if k == nil {
-		return core.UpdateKeepers{}
+		return core.UpdateKeeper{}
 	}
-	return core.UpdateKeepers{
-		ID:                   k.ID,
-		UserID:               k.UserID,
+	return core.UpdateKeeper{
 		Description:          k.Description,
 		Price:                k.Price,
 		Location:             k.Location,
@@ -90,25 +88,26 @@ func (k *KeepersUpdate) ToCoreUpdatedKeeper() core.UpdateKeepers {
 	}
 }
 
-func ToKeepersResponse(meta pagination.Pagination, coreKeepersDetails []core.KeepersDetails) KeepersResponseWithMeta {
+func ToModelResponseKeepers(meta pagination.Pagination, coreKeepers []core.Keeper) ResponseKeepers {
 	offset := (meta.CurrentPage - 1) * meta.PerPage
-	paginateCoreKeepersDetails := coreKeepersDetails[offset:min(offset+meta.PerPage, meta.Total)]
-	paginateResponseKeepersWithUser := make([]KeepersResponseWithUser, len(paginateCoreKeepersDetails))
+	paginateCoreKeepers := coreKeepers[offset:min(offset+meta.PerPage, meta.Total)]
+	paginateKeepersResponse := make([]ResponseKeeper, len(paginateCoreKeepers))
 
-	for i, coreKeeperDetails := range paginateCoreKeepersDetails {
-		paginateResponseKeepersWithUser[i] = FromCoreKeeperDetails(coreKeeperDetails)
+	for i, coreKeeper := range paginateCoreKeepers {
+		paginateKeepersResponse[i] = ToModelResponseKeeper(coreKeeper)
 	}
 
-	return KeepersResponseWithMeta{
+	return ResponseKeepers{
 		Meta: meta,
-		Data: paginateResponseKeepersWithUser,
+		Data: paginateKeepersResponse,
 	}
 }
 
-func FromCoreKeeper(coreKeeper core.Keepers) KeepersResponse {
-	return KeepersResponse{
+func ToModelResponseKeeper(coreKeeper core.Keeper) ResponseKeeper {
+	return ResponseKeeper{
 		ID:                   coreKeeper.ID,
 		UserID:               coreKeeper.UserID,
+		User:                 user.ToResponseUser(&coreKeeper.User),
 		Description:          coreKeeper.Description,
 		Price:                coreKeeper.Price,
 		Location:             coreKeeper.Location,
@@ -119,12 +118,5 @@ func FromCoreKeeper(coreKeeper core.Keepers) KeepersResponse {
 		AnimalCategory:       coreKeeper.AnimalCategory,
 		CreatedAt:            coreKeeper.CreatedAt,
 		UpdatedAt:            coreKeeper.UpdatedAt,
-	}
-}
-
-func FromCoreKeeperDetails(coreKeeperDetails core.KeepersDetails) KeepersResponseWithUser {
-	return KeepersResponseWithUser{
-		Keeper: FromCoreKeeper(coreKeeperDetails.Keeper),
-		User:   user.ToResponseUser(&coreKeeperDetails.User),
 	}
 }

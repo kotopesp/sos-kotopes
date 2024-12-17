@@ -26,6 +26,8 @@ var (
 	// keeper review errors
 	ErrReviewGradeBounds           = errors.New("grade must be between 1 and 5")
 	ErrKeeperReviewUserIDMissmatch = errors.New("keeper's review id missmatch with the review's author")
+	ErrKeeperReviewToItself        = errors.New("keeper can not review itself")
+	ErrKeeperUserAlreadyKeeper     = errors.New("User already has role keeper")
 
 	// keeper errors
 	ErrKeeperUserIDMissmatch = errors.New("keeper id missmatch with the keeper's user")
@@ -45,5 +47,4 @@ var (
 	ErrReplyCommentNotFound        = errors.New("reply comment not found")
 	ErrInvalidCommentReplyID       = errors.New("invalid comment reply_id")
 	ErrNullCommentParentID         = errors.New("comment parent id is null")
-
 )

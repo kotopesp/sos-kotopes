@@ -9,20 +9,20 @@ import (
 )
 
 type service struct {
-	keeperStore        core.KeeperStore
-	keeperReviewsStore core.KeeperReviewsStore
-	userStore          core.UserStore
+	keeperStore       core.KeeperStore
+	keeperReviewStore core.KeeperReviewStore
+	userStore         core.UserStore
 }
 
-func New(keeperStore core.KeeperStore, keeperReviewStore core.KeeperReviewsStore, userStore core.UserStore) core.KeeperService {
+func New(keeperStore core.KeeperStore, keeperReviewStore core.KeeperReviewStore, userStore core.UserStore) core.KeeperService {
 	return &service{
-		keeperStore:        keeperStore,
-		keeperReviewsStore: keeperReviewStore,
-		userStore:          userStore,
+		keeperStore:       keeperStore,
+		keeperReviewStore: keeperReviewStore,
+		userStore:         userStore,
 	}
 }
 
-func (s *service) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.KeepersDetails, error) {
+func (s *service) GetAllKeepers(ctx context.Context, params core.GetAllKeepersParams) (data []core.Keeper, err error) {
 	if *params.SortBy == "" {
 		*params.SortBy = "created_at"
 	}
@@ -30,104 +30,71 @@ func (s *service) GetAll(ctx context.Context, params core.GetAllKeepersParams) (
 		*params.SortOrder = "desc"
 	}
 
-	keepers, err := s.keeperStore.GetAll(ctx, params)
+	keepers, err := s.keeperStore.GetAllKeepers(ctx, params)
 	if err != nil {
-		logger.Log().Error(ctx, err.Error())
+		logger.Log().Debug(ctx, err.Error())
 		return nil, err
 	}
 
-	keepersDetails := make([]core.KeepersDetails, len(keepers))
-
-	for i, keeper := range keepers {
-		keeperUser, err := s.userStore.GetUserByID(ctx, keeper.UserID)
-		if err != nil {
-			logger.Log().Error(ctx, err.Error())
-			return nil, err
-		}
-
-		keepersDetails[i] = core.KeepersDetails{
-			Keeper: keeper,
-			User:   keeperUser,
-		}
-	}
-
-	return keepersDetails, nil
+	return keepers, nil
 }
 
-func (s *service) GetByID(ctx context.Context, id int) (core.KeepersDetails, error) {
-	keeper, err := s.keeperStore.GetByID(ctx, id)
+func (s *service) GetKeepeByID(ctx context.Context, id int) (data core.Keeper, err error) {
+	keeper, err := s.keeperStore.GetKeeperByID(ctx, id)
 	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.KeepersDetails{}, err
+		logger.Log().Debug(ctx, err.Error())
+		return core.Keeper{}, err
 	}
 
-	keeperUser, err := s.userStore.GetUserByID(ctx, keeper.UserID)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.KeepersDetails{}, err
-	}
-
-	return core.KeepersDetails{
-		Keeper: keeper,
-		User:   keeperUser,
-	}, nil
+	return keeper, nil
 }
 
-func (s *service) Create(ctx context.Context, keeper core.Keepers) error {
-	if keeper.CreatedAt.IsZero() {
-		keeper.CreatedAt = time.Now()
-	}
+func (s *service) CreateKeeper(ctx context.Context, keeper core.Keeper) (data core.Keeper, err error) {
+	keeper.CreatedAt = time.Now()
+	keeper.IsDeleted = false
+	keeper.UpdatedAt = time.Now()
 
-	return s.keeperStore.Create(ctx, keeper)
+	return keeper, s.keeperStore.CreateKeeper(ctx, keeper)
 }
 
-func (s *service) SoftDeleteByID(ctx context.Context, id, userID int) error {
-	storedKeeper, err := s.keeperStore.GetByID(ctx, id)
+func (s *service) DeleteKeeper(ctx context.Context, id int, userID int) error {
+	storedKeeper, err := s.keeperStore.GetKeeperByID(ctx, id)
 	if err != nil {
-		logger.Log().Error(ctx, err.Error())
+		logger.Log().Debug(ctx, err.Error())
 		return err
 	}
 
 	if storedKeeper.UserID != userID {
-		logger.Log().Error(ctx, core.ErrKeeperUserIDMissmatch.Error())
+		logger.Log().Debug(ctx, core.ErrKeeperUserIDMissmatch.Error())
 		return core.ErrKeeperUserIDMissmatch
 	} else if storedKeeper.IsDeleted {
-		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+		logger.Log().Debug(ctx, core.ErrRecordNotFound.Error())
 		return core.ErrRecordNotFound
 	}
 
-	return s.keeperStore.SoftDeleteByID(ctx, id)
+	return s.keeperStore.DeleteKeeper(ctx, id)
 }
 
-func (s *service) UpdateByID(ctx context.Context, keeper core.UpdateKeepers) (core.KeepersDetails, error) {
-	storedKeeper, err := s.keeperStore.GetByID(ctx, keeper.ID)
+func (s *service) UpdateKeeper(ctx context.Context, id int, userID int, keeper core.UpdateKeeper) (core.Keeper, error) {
+	storedKeeper, err := s.keeperStore.GetKeeperByID(ctx, id)
 	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.KeepersDetails{}, err
+		logger.Log().Debug(ctx, err.Error())
+		return core.Keeper{}, err
 	}
 
-	if storedKeeper.UserID != keeper.UserID {
-		logger.Log().Error(ctx, core.ErrKeeperUserIDMissmatch.Error())
-		return core.KeepersDetails{}, core.ErrKeeperUserIDMissmatch
+	if storedKeeper.UserID != userID {
+		logger.Log().Debug(ctx, core.ErrKeeperUserIDMissmatch.Error())
+		return core.Keeper{}, core.ErrKeeperUserIDMissmatch
 	} else if storedKeeper.IsDeleted {
-		logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-		return core.KeepersDetails{}, core.ErrRecordNotFound
+		logger.Log().Debug(ctx, core.ErrRecordNotFound.Error())
+		return core.Keeper{}, core.ErrRecordNotFound
 	}
 
-	updatedKeeper, err := s.keeperStore.UpdateByID(ctx, keeper)
+	updatedKeeper, err := s.keeperStore.UpdateKeeper(ctx, id, keeper)
 	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.KeepersDetails{}, err
+		logger.Log().Debug(ctx, err.Error())
+		return core.Keeper{}, err
 	}
 
-	keeperUser, err := s.userStore.GetUserByID(ctx, updatedKeeper.UserID)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.KeepersDetails{}, err
-	}
-
-	return core.KeepersDetails{
-		Keeper: updatedKeeper,
-		User:   keeperUser,
-	}, nil
+	return updatedKeeper, nil
 }

@@ -22,69 +22,89 @@ func (_m *MockKeeperService) EXPECT() *MockKeeperService_Expecter {
 	return &MockKeeperService_Expecter{mock: &_m.Mock}
 }
 
-// Create provides a mock function with given fields: ctx, keeper
-func (_m *MockKeeperService) Create(ctx context.Context, keeper core.Keepers) error {
+// CreateKeeper provides a mock function with given fields: ctx, keeper
+func (_m *MockKeeperService) CreateKeeper(ctx context.Context, keeper core.Keeper) (core.Keeper, error) {
 	ret := _m.Called(ctx, keeper)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Create")
+		panic("no return value specified for CreateKeeper")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.Keepers) error); ok {
+	var r0 core.Keeper
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.Keeper) (core.Keeper, error)); ok {
+		return rf(ctx, keeper)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.Keeper) core.Keeper); ok {
 		r0 = rf(ctx, keeper)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(core.Keeper)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, core.Keeper) error); ok {
+		r1 = rf(ctx, keeper)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
-// MockKeeperService_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
-type MockKeeperService_Create_Call struct {
+// MockKeeperService_CreateKeeper_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateKeeper'
+type MockKeeperService_CreateKeeper_Call struct {
 	*mock.Call
 }
 
-// Create is a helper method to define mock.On call
+// CreateKeeper is a helper method to define mock.On call
 //   - ctx context.Context
-//   - keeper core.Keepers
-func (_e *MockKeeperService_Expecter) Create(ctx interface{}, keeper interface{}) *MockKeeperService_Create_Call {
-	return &MockKeeperService_Create_Call{Call: _e.mock.On("Create", ctx, keeper)}
+//   - keeper core.Keeper
+func (_e *MockKeeperService_Expecter) CreateKeeper(ctx interface{}, keeper interface{}) *MockKeeperService_CreateKeeper_Call {
+	return &MockKeeperService_CreateKeeper_Call{Call: _e.mock.On("CreateKeeper", ctx, keeper)}
 }
 
-func (_c *MockKeeperService_Create_Call) Run(run func(ctx context.Context, keeper core.Keepers)) *MockKeeperService_Create_Call {
+func (_c *MockKeeperService_CreateKeeper_Call) Run(run func(ctx context.Context, keeper core.Keeper)) *MockKeeperService_CreateKeeper_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.Keepers))
+		run(args[0].(context.Context), args[1].(core.Keeper))
 	})
 	return _c
 }
 
-func (_c *MockKeeperService_Create_Call) Return(_a0 error) *MockKeeperService_Create_Call {
-	_c.Call.Return(_a0)
+func (_c *MockKeeperService_CreateKeeper_Call) Return(data core.Keeper, err error) *MockKeeperService_CreateKeeper_Call {
+	_c.Call.Return(data, err)
 	return _c
 }
 
-func (_c *MockKeeperService_Create_Call) RunAndReturn(run func(context.Context, core.Keepers) error) *MockKeeperService_Create_Call {
+func (_c *MockKeeperService_CreateKeeper_Call) RunAndReturn(run func(context.Context, core.Keeper) (core.Keeper, error)) *MockKeeperService_CreateKeeper_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// CreateReview provides a mock function with given fields: ctx, keeperReview
-func (_m *MockKeeperService) CreateReview(ctx context.Context, keeperReview core.KeeperReviews) error {
-	ret := _m.Called(ctx, keeperReview)
+// CreateReview provides a mock function with given fields: ctx, review
+func (_m *MockKeeperService) CreateReview(ctx context.Context, review core.KeeperReview) (core.KeeperReview, error) {
+	ret := _m.Called(ctx, review)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateReview")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.KeeperReviews) error); ok {
-		r0 = rf(ctx, keeperReview)
+	var r0 core.KeeperReview
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.KeeperReview) (core.KeeperReview, error)); ok {
+		return rf(ctx, review)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.KeeperReview) core.KeeperReview); ok {
+		r0 = rf(ctx, review)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(core.KeeperReview)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, core.KeeperReview) error); ok {
+		r1 = rf(ctx, review)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // MockKeeperService_CreateReview_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateReview'
@@ -94,46 +114,142 @@ type MockKeeperService_CreateReview_Call struct {
 
 // CreateReview is a helper method to define mock.On call
 //   - ctx context.Context
-//   - keeperReview core.KeeperReviews
-func (_e *MockKeeperService_Expecter) CreateReview(ctx interface{}, keeperReview interface{}) *MockKeeperService_CreateReview_Call {
-	return &MockKeeperService_CreateReview_Call{Call: _e.mock.On("CreateReview", ctx, keeperReview)}
+//   - review core.KeeperReview
+func (_e *MockKeeperService_Expecter) CreateReview(ctx interface{}, review interface{}) *MockKeeperService_CreateReview_Call {
+	return &MockKeeperService_CreateReview_Call{Call: _e.mock.On("CreateReview", ctx, review)}
 }
 
-func (_c *MockKeeperService_CreateReview_Call) Run(run func(ctx context.Context, keeperReview core.KeeperReviews)) *MockKeeperService_CreateReview_Call {
+func (_c *MockKeeperService_CreateReview_Call) Run(run func(ctx context.Context, review core.KeeperReview)) *MockKeeperService_CreateReview_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.KeeperReviews))
+		run(args[0].(context.Context), args[1].(core.KeeperReview))
 	})
 	return _c
 }
 
-func (_c *MockKeeperService_CreateReview_Call) Return(_a0 error) *MockKeeperService_CreateReview_Call {
-	_c.Call.Return(_a0)
+func (_c *MockKeeperService_CreateReview_Call) Return(data core.KeeperReview, err error) *MockKeeperService_CreateReview_Call {
+	_c.Call.Return(data, err)
 	return _c
 }
 
-func (_c *MockKeeperService_CreateReview_Call) RunAndReturn(run func(context.Context, core.KeeperReviews) error) *MockKeeperService_CreateReview_Call {
+func (_c *MockKeeperService_CreateReview_Call) RunAndReturn(run func(context.Context, core.KeeperReview) (core.KeeperReview, error)) *MockKeeperService_CreateReview_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetAll provides a mock function with given fields: ctx, params
-func (_m *MockKeeperService) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.KeepersDetails, error) {
+// DeleteKeeper provides a mock function with given fields: ctx, id, userID
+func (_m *MockKeeperService) DeleteKeeper(ctx context.Context, id int, userID int) error {
+	ret := _m.Called(ctx, id, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteKeeper")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
+		r0 = rf(ctx, id, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockKeeperService_DeleteKeeper_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteKeeper'
+type MockKeeperService_DeleteKeeper_Call struct {
+	*mock.Call
+}
+
+// DeleteKeeper is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id int
+//   - userID int
+func (_e *MockKeeperService_Expecter) DeleteKeeper(ctx interface{}, id interface{}, userID interface{}) *MockKeeperService_DeleteKeeper_Call {
+	return &MockKeeperService_DeleteKeeper_Call{Call: _e.mock.On("DeleteKeeper", ctx, id, userID)}
+}
+
+func (_c *MockKeeperService_DeleteKeeper_Call) Run(run func(ctx context.Context, id int, userID int)) *MockKeeperService_DeleteKeeper_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int), args[2].(int))
+	})
+	return _c
+}
+
+func (_c *MockKeeperService_DeleteKeeper_Call) Return(_a0 error) *MockKeeperService_DeleteKeeper_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockKeeperService_DeleteKeeper_Call) RunAndReturn(run func(context.Context, int, int) error) *MockKeeperService_DeleteKeeper_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DeleteReview provides a mock function with given fields: ctx, id, userID
+func (_m *MockKeeperService) DeleteReview(ctx context.Context, id int, userID int) error {
+	ret := _m.Called(ctx, id, userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteReview")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
+		r0 = rf(ctx, id, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockKeeperService_DeleteReview_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteReview'
+type MockKeeperService_DeleteReview_Call struct {
+	*mock.Call
+}
+
+// DeleteReview is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id int
+//   - userID int
+func (_e *MockKeeperService_Expecter) DeleteReview(ctx interface{}, id interface{}, userID interface{}) *MockKeeperService_DeleteReview_Call {
+	return &MockKeeperService_DeleteReview_Call{Call: _e.mock.On("DeleteReview", ctx, id, userID)}
+}
+
+func (_c *MockKeeperService_DeleteReview_Call) Run(run func(ctx context.Context, id int, userID int)) *MockKeeperService_DeleteReview_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int), args[2].(int))
+	})
+	return _c
+}
+
+func (_c *MockKeeperService_DeleteReview_Call) Return(_a0 error) *MockKeeperService_DeleteReview_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockKeeperService_DeleteReview_Call) RunAndReturn(run func(context.Context, int, int) error) *MockKeeperService_DeleteReview_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetAllKeepers provides a mock function with given fields: ctx, params
+func (_m *MockKeeperService) GetAllKeepers(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keeper, error) {
 	ret := _m.Called(ctx, params)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetAll")
+		panic("no return value specified for GetAllKeepers")
 	}
 
-	var r0 []core.KeepersDetails
+	var r0 []core.Keeper
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) ([]core.KeepersDetails, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) ([]core.Keeper, error)); ok {
 		return rf(ctx, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) []core.KeepersDetails); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) []core.Keeper); ok {
 		r0 = rf(ctx, params)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]core.KeepersDetails)
+			r0 = ret.Get(0).([]core.Keeper)
 		}
 	}
 
@@ -146,58 +262,58 @@ func (_m *MockKeeperService) GetAll(ctx context.Context, params core.GetAllKeepe
 	return r0, r1
 }
 
-// MockKeeperService_GetAll_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAll'
-type MockKeeperService_GetAll_Call struct {
+// MockKeeperService_GetAllKeepers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllKeepers'
+type MockKeeperService_GetAllKeepers_Call struct {
 	*mock.Call
 }
 
-// GetAll is a helper method to define mock.On call
+// GetAllKeepers is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params core.GetAllKeepersParams
-func (_e *MockKeeperService_Expecter) GetAll(ctx interface{}, params interface{}) *MockKeeperService_GetAll_Call {
-	return &MockKeeperService_GetAll_Call{Call: _e.mock.On("GetAll", ctx, params)}
+func (_e *MockKeeperService_Expecter) GetAllKeepers(ctx interface{}, params interface{}) *MockKeeperService_GetAllKeepers_Call {
+	return &MockKeeperService_GetAllKeepers_Call{Call: _e.mock.On("GetAllKeepers", ctx, params)}
 }
 
-func (_c *MockKeeperService_GetAll_Call) Run(run func(ctx context.Context, params core.GetAllKeepersParams)) *MockKeeperService_GetAll_Call {
+func (_c *MockKeeperService_GetAllKeepers_Call) Run(run func(ctx context.Context, params core.GetAllKeepersParams)) *MockKeeperService_GetAllKeepers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(core.GetAllKeepersParams))
 	})
 	return _c
 }
 
-func (_c *MockKeeperService_GetAll_Call) Return(_a0 []core.KeepersDetails, _a1 error) *MockKeeperService_GetAll_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockKeeperService_GetAllKeepers_Call) Return(data []core.Keeper, err error) *MockKeeperService_GetAllKeepers_Call {
+	_c.Call.Return(data, err)
 	return _c
 }
 
-func (_c *MockKeeperService_GetAll_Call) RunAndReturn(run func(context.Context, core.GetAllKeepersParams) ([]core.KeepersDetails, error)) *MockKeeperService_GetAll_Call {
+func (_c *MockKeeperService_GetAllKeepers_Call) RunAndReturn(run func(context.Context, core.GetAllKeepersParams) ([]core.Keeper, error)) *MockKeeperService_GetAllKeepers_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetAllReviews provides a mock function with given fields: ctx, params, id
-func (_m *MockKeeperService) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams, id int) ([]core.KeeperReviewsDetails, error) {
-	ret := _m.Called(ctx, params, id)
+// GetAllReviews provides a mock function with given fields: ctx, keeperID, params
+func (_m *MockKeeperService) GetAllReviews(ctx context.Context, keeperID int, params core.GetAllKeeperReviewsParams) ([]core.KeeperReview, error) {
+	ret := _m.Called(ctx, keeperID, params)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllReviews")
 	}
 
-	var r0 []core.KeeperReviewsDetails
+	var r0 []core.KeeperReview
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams, int) ([]core.KeeperReviewsDetails, error)); ok {
-		return rf(ctx, params, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.GetAllKeeperReviewsParams) ([]core.KeeperReview, error)); ok {
+		return rf(ctx, keeperID, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeeperReviewsParams, int) []core.KeeperReviewsDetails); ok {
-		r0 = rf(ctx, params, id)
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.GetAllKeeperReviewsParams) []core.KeeperReview); ok {
+		r0 = rf(ctx, keeperID, params)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]core.KeeperReviewsDetails)
+			r0 = ret.Get(0).([]core.KeeperReview)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllKeeperReviewsParams, int) error); ok {
-		r1 = rf(ctx, params, id)
+	if rf, ok := ret.Get(1).(func(context.Context, int, core.GetAllKeeperReviewsParams) error); ok {
+		r1 = rf(ctx, keeperID, params)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -212,46 +328,46 @@ type MockKeeperService_GetAllReviews_Call struct {
 
 // GetAllReviews is a helper method to define mock.On call
 //   - ctx context.Context
+//   - keeperID int
 //   - params core.GetAllKeeperReviewsParams
-//   - id int
-func (_e *MockKeeperService_Expecter) GetAllReviews(ctx interface{}, params interface{}, id interface{}) *MockKeeperService_GetAllReviews_Call {
-	return &MockKeeperService_GetAllReviews_Call{Call: _e.mock.On("GetAllReviews", ctx, params, id)}
+func (_e *MockKeeperService_Expecter) GetAllReviews(ctx interface{}, keeperID interface{}, params interface{}) *MockKeeperService_GetAllReviews_Call {
+	return &MockKeeperService_GetAllReviews_Call{Call: _e.mock.On("GetAllReviews", ctx, keeperID, params)}
 }
 
-func (_c *MockKeeperService_GetAllReviews_Call) Run(run func(ctx context.Context, params core.GetAllKeeperReviewsParams, id int)) *MockKeeperService_GetAllReviews_Call {
+func (_c *MockKeeperService_GetAllReviews_Call) Run(run func(ctx context.Context, keeperID int, params core.GetAllKeeperReviewsParams)) *MockKeeperService_GetAllReviews_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.GetAllKeeperReviewsParams), args[2].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(core.GetAllKeeperReviewsParams))
 	})
 	return _c
 }
 
-func (_c *MockKeeperService_GetAllReviews_Call) Return(_a0 []core.KeeperReviewsDetails, _a1 error) *MockKeeperService_GetAllReviews_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockKeeperService_GetAllReviews_Call) Return(data []core.KeeperReview, err error) *MockKeeperService_GetAllReviews_Call {
+	_c.Call.Return(data, err)
 	return _c
 }
 
-func (_c *MockKeeperService_GetAllReviews_Call) RunAndReturn(run func(context.Context, core.GetAllKeeperReviewsParams, int) ([]core.KeeperReviewsDetails, error)) *MockKeeperService_GetAllReviews_Call {
+func (_c *MockKeeperService_GetAllReviews_Call) RunAndReturn(run func(context.Context, int, core.GetAllKeeperReviewsParams) ([]core.KeeperReview, error)) *MockKeeperService_GetAllReviews_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetByID provides a mock function with given fields: ctx, id
-func (_m *MockKeeperService) GetByID(ctx context.Context, id int) (core.KeepersDetails, error) {
+// GetKeepeByID provides a mock function with given fields: ctx, id
+func (_m *MockKeeperService) GetKeepeByID(ctx context.Context, id int) (core.Keeper, error) {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByID")
+		panic("no return value specified for GetKeepeByID")
 	}
 
-	var r0 core.KeepersDetails
+	var r0 core.Keeper
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (core.KeepersDetails, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) (core.Keeper, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) core.KeepersDetails); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) core.Keeper); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(core.KeepersDetails)
+		r0 = ret.Get(0).(core.Keeper)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
@@ -263,152 +379,56 @@ func (_m *MockKeeperService) GetByID(ctx context.Context, id int) (core.KeepersD
 	return r0, r1
 }
 
-// MockKeeperService_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
-type MockKeeperService_GetByID_Call struct {
+// MockKeeperService_GetKeepeByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeepeByID'
+type MockKeeperService_GetKeepeByID_Call struct {
 	*mock.Call
 }
 
-// GetByID is a helper method to define mock.On call
+// GetKeepeByID is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int
-func (_e *MockKeeperService_Expecter) GetByID(ctx interface{}, id interface{}) *MockKeeperService_GetByID_Call {
-	return &MockKeeperService_GetByID_Call{Call: _e.mock.On("GetByID", ctx, id)}
+func (_e *MockKeeperService_Expecter) GetKeepeByID(ctx interface{}, id interface{}) *MockKeeperService_GetKeepeByID_Call {
+	return &MockKeeperService_GetKeepeByID_Call{Call: _e.mock.On("GetKeepeByID", ctx, id)}
 }
 
-func (_c *MockKeeperService_GetByID_Call) Run(run func(ctx context.Context, id int)) *MockKeeperService_GetByID_Call {
+func (_c *MockKeeperService_GetKeepeByID_Call) Run(run func(ctx context.Context, id int)) *MockKeeperService_GetKeepeByID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(int))
 	})
 	return _c
 }
 
-func (_c *MockKeeperService_GetByID_Call) Return(_a0 core.KeepersDetails, _a1 error) *MockKeeperService_GetByID_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockKeeperService_GetKeepeByID_Call) Return(data core.Keeper, err error) *MockKeeperService_GetKeepeByID_Call {
+	_c.Call.Return(data, err)
 	return _c
 }
 
-func (_c *MockKeeperService_GetByID_Call) RunAndReturn(run func(context.Context, int) (core.KeepersDetails, error)) *MockKeeperService_GetByID_Call {
+func (_c *MockKeeperService_GetKeepeByID_Call) RunAndReturn(run func(context.Context, int) (core.Keeper, error)) *MockKeeperService_GetKeepeByID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// SoftDeleteByID provides a mock function with given fields: ctx, id, userID
-func (_m *MockKeeperService) SoftDeleteByID(ctx context.Context, id int, userID int) error {
-	ret := _m.Called(ctx, id, userID)
+// UpdateKeeper provides a mock function with given fields: ctx, id, userID, keeper
+func (_m *MockKeeperService) UpdateKeeper(ctx context.Context, id int, userID int, keeper core.UpdateKeeper) (core.Keeper, error) {
+	ret := _m.Called(ctx, id, userID, keeper)
 
 	if len(ret) == 0 {
-		panic("no return value specified for SoftDeleteByID")
+		panic("no return value specified for UpdateKeeper")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
-		r0 = rf(ctx, id, userID)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// MockKeeperService_SoftDeleteByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SoftDeleteByID'
-type MockKeeperService_SoftDeleteByID_Call struct {
-	*mock.Call
-}
-
-// SoftDeleteByID is a helper method to define mock.On call
-//   - ctx context.Context
-//   - id int
-//   - userID int
-func (_e *MockKeeperService_Expecter) SoftDeleteByID(ctx interface{}, id interface{}, userID interface{}) *MockKeeperService_SoftDeleteByID_Call {
-	return &MockKeeperService_SoftDeleteByID_Call{Call: _e.mock.On("SoftDeleteByID", ctx, id, userID)}
-}
-
-func (_c *MockKeeperService_SoftDeleteByID_Call) Run(run func(ctx context.Context, id int, userID int)) *MockKeeperService_SoftDeleteByID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
-	})
-	return _c
-}
-
-func (_c *MockKeeperService_SoftDeleteByID_Call) Return(_a0 error) *MockKeeperService_SoftDeleteByID_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *MockKeeperService_SoftDeleteByID_Call) RunAndReturn(run func(context.Context, int, int) error) *MockKeeperService_SoftDeleteByID_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SoftDeleteReviewByID provides a mock function with given fields: ctx, id, userID
-func (_m *MockKeeperService) SoftDeleteReviewByID(ctx context.Context, id int, userID int) error {
-	ret := _m.Called(ctx, id, userID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SoftDeleteReviewByID")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
-		r0 = rf(ctx, id, userID)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// MockKeeperService_SoftDeleteReviewByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SoftDeleteReviewByID'
-type MockKeeperService_SoftDeleteReviewByID_Call struct {
-	*mock.Call
-}
-
-// SoftDeleteReviewByID is a helper method to define mock.On call
-//   - ctx context.Context
-//   - id int
-//   - userID int
-func (_e *MockKeeperService_Expecter) SoftDeleteReviewByID(ctx interface{}, id interface{}, userID interface{}) *MockKeeperService_SoftDeleteReviewByID_Call {
-	return &MockKeeperService_SoftDeleteReviewByID_Call{Call: _e.mock.On("SoftDeleteReviewByID", ctx, id, userID)}
-}
-
-func (_c *MockKeeperService_SoftDeleteReviewByID_Call) Run(run func(ctx context.Context, id int, userID int)) *MockKeeperService_SoftDeleteReviewByID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
-	})
-	return _c
-}
-
-func (_c *MockKeeperService_SoftDeleteReviewByID_Call) Return(_a0 error) *MockKeeperService_SoftDeleteReviewByID_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *MockKeeperService_SoftDeleteReviewByID_Call) RunAndReturn(run func(context.Context, int, int) error) *MockKeeperService_SoftDeleteReviewByID_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// UpdateByID provides a mock function with given fields: ctx, keeper
-func (_m *MockKeeperService) UpdateByID(ctx context.Context, keeper core.UpdateKeepers) (core.KeepersDetails, error) {
-	ret := _m.Called(ctx, keeper)
-
-	if len(ret) == 0 {
-		panic("no return value specified for UpdateByID")
-	}
-
-	var r0 core.KeepersDetails
+	var r0 core.Keeper
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeepers) (core.KeepersDetails, error)); ok {
-		return rf(ctx, keeper)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, core.UpdateKeeper) (core.Keeper, error)); ok {
+		return rf(ctx, id, userID, keeper)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeepers) core.KeepersDetails); ok {
-		r0 = rf(ctx, keeper)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, core.UpdateKeeper) core.Keeper); ok {
+		r0 = rf(ctx, id, userID, keeper)
 	} else {
-		r0 = ret.Get(0).(core.KeepersDetails)
+		r0 = ret.Get(0).(core.Keeper)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.UpdateKeepers) error); ok {
-		r1 = rf(ctx, keeper)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int, core.UpdateKeeper) error); ok {
+		r1 = rf(ctx, id, userID, keeper)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -416,56 +436,58 @@ func (_m *MockKeeperService) UpdateByID(ctx context.Context, keeper core.UpdateK
 	return r0, r1
 }
 
-// MockKeeperService_UpdateByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateByID'
-type MockKeeperService_UpdateByID_Call struct {
+// MockKeeperService_UpdateKeeper_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateKeeper'
+type MockKeeperService_UpdateKeeper_Call struct {
 	*mock.Call
 }
 
-// UpdateByID is a helper method to define mock.On call
+// UpdateKeeper is a helper method to define mock.On call
 //   - ctx context.Context
-//   - keeper core.UpdateKeepers
-func (_e *MockKeeperService_Expecter) UpdateByID(ctx interface{}, keeper interface{}) *MockKeeperService_UpdateByID_Call {
-	return &MockKeeperService_UpdateByID_Call{Call: _e.mock.On("UpdateByID", ctx, keeper)}
+//   - id int
+//   - userID int
+//   - keeper core.UpdateKeeper
+func (_e *MockKeeperService_Expecter) UpdateKeeper(ctx interface{}, id interface{}, userID interface{}, keeper interface{}) *MockKeeperService_UpdateKeeper_Call {
+	return &MockKeeperService_UpdateKeeper_Call{Call: _e.mock.On("UpdateKeeper", ctx, id, userID, keeper)}
 }
 
-func (_c *MockKeeperService_UpdateByID_Call) Run(run func(ctx context.Context, keeper core.UpdateKeepers)) *MockKeeperService_UpdateByID_Call {
+func (_c *MockKeeperService_UpdateKeeper_Call) Run(run func(ctx context.Context, id int, userID int, keeper core.UpdateKeeper)) *MockKeeperService_UpdateKeeper_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.UpdateKeepers))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(core.UpdateKeeper))
 	})
 	return _c
 }
 
-func (_c *MockKeeperService_UpdateByID_Call) Return(_a0 core.KeepersDetails, _a1 error) *MockKeeperService_UpdateByID_Call {
+func (_c *MockKeeperService_UpdateKeeper_Call) Return(_a0 core.Keeper, _a1 error) *MockKeeperService_UpdateKeeper_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockKeeperService_UpdateByID_Call) RunAndReturn(run func(context.Context, core.UpdateKeepers) (core.KeepersDetails, error)) *MockKeeperService_UpdateByID_Call {
+func (_c *MockKeeperService_UpdateKeeper_Call) RunAndReturn(run func(context.Context, int, int, core.UpdateKeeper) (core.Keeper, error)) *MockKeeperService_UpdateKeeper_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// UpdateReviewByID provides a mock function with given fields: ctx, keeperReview
-func (_m *MockKeeperService) UpdateReviewByID(ctx context.Context, keeperReview core.UpdateKeeperReviews) (core.KeeperReviewsDetails, error) {
-	ret := _m.Called(ctx, keeperReview)
+// UpdateReview provides a mock function with given fields: ctx, id, userID, review
+func (_m *MockKeeperService) UpdateReview(ctx context.Context, id int, userID int, review core.UpdateKeeperReview) (core.KeeperReview, error) {
+	ret := _m.Called(ctx, id, userID, review)
 
 	if len(ret) == 0 {
-		panic("no return value specified for UpdateReviewByID")
+		panic("no return value specified for UpdateReview")
 	}
 
-	var r0 core.KeeperReviewsDetails
+	var r0 core.KeeperReview
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeeperReviews) (core.KeeperReviewsDetails, error)); ok {
-		return rf(ctx, keeperReview)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, core.UpdateKeeperReview) (core.KeeperReview, error)); ok {
+		return rf(ctx, id, userID, review)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeeperReviews) core.KeeperReviewsDetails); ok {
-		r0 = rf(ctx, keeperReview)
+	if rf, ok := ret.Get(0).(func(context.Context, int, int, core.UpdateKeeperReview) core.KeeperReview); ok {
+		r0 = rf(ctx, id, userID, review)
 	} else {
-		r0 = ret.Get(0).(core.KeeperReviewsDetails)
+		r0 = ret.Get(0).(core.KeeperReview)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.UpdateKeeperReviews) error); ok {
-		r1 = rf(ctx, keeperReview)
+	if rf, ok := ret.Get(1).(func(context.Context, int, int, core.UpdateKeeperReview) error); ok {
+		r1 = rf(ctx, id, userID, review)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -473,31 +495,33 @@ func (_m *MockKeeperService) UpdateReviewByID(ctx context.Context, keeperReview 
 	return r0, r1
 }
 
-// MockKeeperService_UpdateReviewByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateReviewByID'
-type MockKeeperService_UpdateReviewByID_Call struct {
+// MockKeeperService_UpdateReview_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateReview'
+type MockKeeperService_UpdateReview_Call struct {
 	*mock.Call
 }
 
-// UpdateReviewByID is a helper method to define mock.On call
+// UpdateReview is a helper method to define mock.On call
 //   - ctx context.Context
-//   - keeperReview core.UpdateKeeperReviews
-func (_e *MockKeeperService_Expecter) UpdateReviewByID(ctx interface{}, keeperReview interface{}) *MockKeeperService_UpdateReviewByID_Call {
-	return &MockKeeperService_UpdateReviewByID_Call{Call: _e.mock.On("UpdateReviewByID", ctx, keeperReview)}
+//   - id int
+//   - userID int
+//   - review core.UpdateKeeperReview
+func (_e *MockKeeperService_Expecter) UpdateReview(ctx interface{}, id interface{}, userID interface{}, review interface{}) *MockKeeperService_UpdateReview_Call {
+	return &MockKeeperService_UpdateReview_Call{Call: _e.mock.On("UpdateReview", ctx, id, userID, review)}
 }
 
-func (_c *MockKeeperService_UpdateReviewByID_Call) Run(run func(ctx context.Context, keeperReview core.UpdateKeeperReviews)) *MockKeeperService_UpdateReviewByID_Call {
+func (_c *MockKeeperService_UpdateReview_Call) Run(run func(ctx context.Context, id int, userID int, review core.UpdateKeeperReview)) *MockKeeperService_UpdateReview_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.UpdateKeeperReviews))
+		run(args[0].(context.Context), args[1].(int), args[2].(int), args[3].(core.UpdateKeeperReview))
 	})
 	return _c
 }
 
-func (_c *MockKeeperService_UpdateReviewByID_Call) Return(_a0 core.KeeperReviewsDetails, _a1 error) *MockKeeperService_UpdateReviewByID_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockKeeperService_UpdateReview_Call) Return(data core.KeeperReview, err error) *MockKeeperService_UpdateReview_Call {
+	_c.Call.Return(data, err)
 	return _c
 }
 
-func (_c *MockKeeperService_UpdateReviewByID_Call) RunAndReturn(run func(context.Context, core.UpdateKeeperReviews) (core.KeeperReviewsDetails, error)) *MockKeeperService_UpdateReviewByID_Call {
+func (_c *MockKeeperService_UpdateReview_Call) RunAndReturn(run func(context.Context, int, int, core.UpdateKeeperReview) (core.KeeperReview, error)) *MockKeeperService_UpdateReview_Call {
 	_c.Call.Return(run)
 	return _c
 }

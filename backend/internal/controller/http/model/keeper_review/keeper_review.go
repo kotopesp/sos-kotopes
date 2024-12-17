@@ -7,35 +7,29 @@ import (
 )
 
 // KeeperReviewsCreate represents the data required to create a new keeper review.
-type KeeperReviewsCreate struct {
-	AuthorID int    `form:"author_id" validate:"required,min=0"`
-	Content  string `form:"content" validate:"required,notblank,max=2000"`
-	Grade    int    `form:"grade" validate:"required,numeric,min=1,max=5"`
-	KeeperID int    `form:"keeper_id" validate:"required,min=0"`
+type CreateKeeperReview struct {
+	AuthorID int     `form:"author_id" validate:"required,min=0"`
+	Content  *string `form:"content" validate:"max=2000"`
+	Grade    int     `form:"grade" validate:"required,numeric,min=1,max=5"`
+	KeeperID int     `form:"keeper_id" validate:"required,min=0"`
 }
 
 // KeeperReviewsUpdate represents the data to update an existing keeper review.
-type KeeperReviewsUpdate struct {
-	ID       int    `form:"id"`
-	AuthorID int    `form:"author_id" validate:"required,min=0"`
-	Content  string `form:"content" validate:"notblank,max=2000"`
-	Grade    int    `form:"grade" validate:"numeric,min=1,max=5"`
+type UpdateKeeperReview struct {
+	Content *string `form:"content" validate:"notblank,max=2000"`
+	Grade   *int    `form:"grade" validate:"numeric,min=1,max=5"`
 }
 
 // KeeperReviewsResponse represents the data to send keeper review back to client.
-type KeeperReviewsResponse struct {
-	ID        int       `json:"id"`
-	AuthorID  int       `json:"author_id"`
-	Content   string    `json:"content"`
-	Grade     int       `json:"grade"`
-	KeeperID  int       `json:"keeper_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-type KeeperReviewsResponseWithUser struct {
-	Review KeeperReviewsResponse `json:"review"`
-	User   user.ResponseUser     `json:"user"`
+type ResponseKeeperReview struct {
+	ID        int               `json:"id"`
+	AuthorID  int               `json:"author_id"`
+	Author    user.ResponseUser `json:"author"`
+	Content   *string           `json:"content"`
+	Grade     int               `json:"grade"`
+	KeeperID  int               `json:"keeper_id"`
+	CreatedAt time.Time         `json:"created_at"`
+	UpdatedAt time.Time         `json:"updated_at"`
 }
 
 // GetAllKeeperReviewsParams represents the query parameters for fetching multiple keeper reviews.

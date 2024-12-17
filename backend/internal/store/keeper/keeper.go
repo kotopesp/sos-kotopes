@@ -18,42 +18,54 @@ func New(pg *postgres.Postgres) core.KeeperStore {
 	return &store{pg}
 }
 
-func (s *store) Create(ctx context.Context, keeper core.Keepers) error {
+func (s *store) CreateKeeper(ctx context.Context, keeper core.Keeper) error {
+	keeperExist := false
+	if err := s.DB.WithContext(ctx).Table(keeper.TableName()).Select("1").Where("user_id = ?", keeper.UserID).Limit(1).Find(&keeperExist).Error; err != nil {
+		return err
+	}
+	if keeperExist {
+		return core.ErrKeeperUserAlreadyKeeper
+	}
 	if err := s.DB.WithContext(ctx).Create(&keeper).Error; err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func (s *store) SoftDeleteByID(ctx context.Context, id int) error {
-	err := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ?", id).Updates(core.Keepers{IsDeleted: true, DeletedAt: time.Now()}).Error
+func (s *store) DeleteKeeper(ctx context.Context, id int) error {
+	now := time.Now()
+	err := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("id = ?", id).Updates(core.Keeper{IsDeleted: true, DeletedAt: &now}).Error
 
 	return err
 }
 
-func (s *store) UpdateByID(ctx context.Context, keeper core.UpdateKeepers) (core.Keepers, error) {
-	keeper.UpdatedAt = time.Now()
+func (s *store) UpdateKeeper(ctx context.Context, id int, keeper core.UpdateKeeper) (core.Keeper, error) {
+	var updatedKeeper core.Keeper
+	updatedKeeper.UpdatedAt = time.Now()
 
-	var updatedKeeper core.Keepers
+	if err := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("id = ? AND is_deleted = ?", id, false).Updates(keeper).Error; err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		return core.Keeper{}, err
+	}
 
-	result := s.DB.WithContext(ctx).Model(&core.Keepers{}).Where("id = ? AND is_deleted = ?", keeper.ID, false).Updates(keeper).First(&updatedKeeper, keeper.ID)
-	if result.Error != nil {
-
-		if errors.Is(result.Error, core.ErrRecordNotFound) {
-			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.Keepers{}, core.ErrRecordNotFound
+	if err := s.DB.WithContext(ctx).Preload("User").First(&updatedKeeper, "id = ? AND is_deleted = ?", id, false).Error; err != nil {
+		switch {
+		case errors.Is(err, core.ErrRecordNotFound):
+			logger.Log().Debug(ctx, core.ErrRecordNotFound.Error())
+			return core.Keeper{}, core.ErrRecordNotFound
+		default:
+			logger.Log().Debug(ctx, err.Error())
+			return core.Keeper{}, err
 		}
-
-		logger.Log().Error(ctx, result.Error.Error())
-		return core.Keepers{}, result.Error
 	}
 
 	return updatedKeeper, nil
 }
 
-func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keepers, error) {
-	var keepers []core.Keepers
-	query := s.DB.WithContext(ctx).Model(&core.Keepers{})
+func (s *store) GetAllKeepers(ctx context.Context, params core.GetAllKeepersParams) (data []core.Keeper, err error) {
+	var keepers []core.Keeper
+	query := s.DB.WithContext(ctx).Model(&core.Keeper{})
 
 	if params.MinPrice != nil {
 		query = query.Where("price >= ?", *params.MinPrice)
@@ -98,7 +110,7 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]
 		query = query.Offset(*params.Offset)
 	}
 
-	if err := query.Find(&keepers).Error; err != nil {
+	if err := query.Preload("User").Find(&keepers).Error; err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return nil, err
 	}
@@ -106,11 +118,11 @@ func (s *store) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]
 	return keepers, nil
 }
 
-func (s *store) GetByID(ctx context.Context, id int) (core.Keepers, error) {
-	var keeper = core.Keepers{ID: id}
+func (s *store) GetKeeperByID(ctx context.Context, id int) (core.Keeper, error) {
+	var keeper = core.Keeper{ID: id}
 
-	if err := s.DB.WithContext(ctx).First(&keeper).Error; err != nil {
-		return core.Keepers{}, err
+	if err := s.DB.WithContext(ctx).Preload("User").First(&keeper).Error; err != nil {
+		return core.Keeper{}, err
 	}
 
 	return keeper, nil

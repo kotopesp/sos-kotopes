@@ -22,16 +22,16 @@ func (_m *MockKeeperStore) EXPECT() *MockKeeperStore_Expecter {
 	return &MockKeeperStore_Expecter{mock: &_m.Mock}
 }
 
-// Create provides a mock function with given fields: ctx, keeper
-func (_m *MockKeeperStore) Create(ctx context.Context, keeper core.Keepers) error {
+// CreateKeeper provides a mock function with given fields: ctx, keeper
+func (_m *MockKeeperStore) CreateKeeper(ctx context.Context, keeper core.Keeper) error {
 	ret := _m.Called(ctx, keeper)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Create")
+		panic("no return value specified for CreateKeeper")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.Keepers) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, core.Keeper) error); ok {
 		r0 = rf(ctx, keeper)
 	} else {
 		r0 = ret.Error(0)
@@ -40,157 +40,41 @@ func (_m *MockKeeperStore) Create(ctx context.Context, keeper core.Keepers) erro
 	return r0
 }
 
-// MockKeeperStore_Create_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Create'
-type MockKeeperStore_Create_Call struct {
+// MockKeeperStore_CreateKeeper_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateKeeper'
+type MockKeeperStore_CreateKeeper_Call struct {
 	*mock.Call
 }
 
-// Create is a helper method to define mock.On call
+// CreateKeeper is a helper method to define mock.On call
 //   - ctx context.Context
-//   - keeper core.Keepers
-func (_e *MockKeeperStore_Expecter) Create(ctx interface{}, keeper interface{}) *MockKeeperStore_Create_Call {
-	return &MockKeeperStore_Create_Call{Call: _e.mock.On("Create", ctx, keeper)}
+//   - keeper core.Keeper
+func (_e *MockKeeperStore_Expecter) CreateKeeper(ctx interface{}, keeper interface{}) *MockKeeperStore_CreateKeeper_Call {
+	return &MockKeeperStore_CreateKeeper_Call{Call: _e.mock.On("CreateKeeper", ctx, keeper)}
 }
 
-func (_c *MockKeeperStore_Create_Call) Run(run func(ctx context.Context, keeper core.Keepers)) *MockKeeperStore_Create_Call {
+func (_c *MockKeeperStore_CreateKeeper_Call) Run(run func(ctx context.Context, keeper core.Keeper)) *MockKeeperStore_CreateKeeper_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.Keepers))
+		run(args[0].(context.Context), args[1].(core.Keeper))
 	})
 	return _c
 }
 
-func (_c *MockKeeperStore_Create_Call) Return(_a0 error) *MockKeeperStore_Create_Call {
+func (_c *MockKeeperStore_CreateKeeper_Call) Return(_a0 error) *MockKeeperStore_CreateKeeper_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *MockKeeperStore_Create_Call) RunAndReturn(run func(context.Context, core.Keepers) error) *MockKeeperStore_Create_Call {
+func (_c *MockKeeperStore_CreateKeeper_Call) RunAndReturn(run func(context.Context, core.Keeper) error) *MockKeeperStore_CreateKeeper_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetAll provides a mock function with given fields: ctx, params
-func (_m *MockKeeperStore) GetAll(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keepers, error) {
-	ret := _m.Called(ctx, params)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetAll")
-	}
-
-	var r0 []core.Keepers
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) ([]core.Keepers, error)); ok {
-		return rf(ctx, params)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) []core.Keepers); ok {
-		r0 = rf(ctx, params)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]core.Keepers)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllKeepersParams) error); ok {
-		r1 = rf(ctx, params)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MockKeeperStore_GetAll_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAll'
-type MockKeeperStore_GetAll_Call struct {
-	*mock.Call
-}
-
-// GetAll is a helper method to define mock.On call
-//   - ctx context.Context
-//   - params core.GetAllKeepersParams
-func (_e *MockKeeperStore_Expecter) GetAll(ctx interface{}, params interface{}) *MockKeeperStore_GetAll_Call {
-	return &MockKeeperStore_GetAll_Call{Call: _e.mock.On("GetAll", ctx, params)}
-}
-
-func (_c *MockKeeperStore_GetAll_Call) Run(run func(ctx context.Context, params core.GetAllKeepersParams)) *MockKeeperStore_GetAll_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.GetAllKeepersParams))
-	})
-	return _c
-}
-
-func (_c *MockKeeperStore_GetAll_Call) Return(_a0 []core.Keepers, _a1 error) *MockKeeperStore_GetAll_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *MockKeeperStore_GetAll_Call) RunAndReturn(run func(context.Context, core.GetAllKeepersParams) ([]core.Keepers, error)) *MockKeeperStore_GetAll_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetByID provides a mock function with given fields: ctx, id
-func (_m *MockKeeperStore) GetByID(ctx context.Context, id int) (core.Keepers, error) {
+// DeleteKeeper provides a mock function with given fields: ctx, id
+func (_m *MockKeeperStore) DeleteKeeper(ctx context.Context, id int) error {
 	ret := _m.Called(ctx, id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByID")
-	}
-
-	var r0 core.Keepers
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (core.Keepers, error)); ok {
-		return rf(ctx, id)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) core.Keepers); ok {
-		r0 = rf(ctx, id)
-	} else {
-		r0 = ret.Get(0).(core.Keepers)
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = rf(ctx, id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MockKeeperStore_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
-type MockKeeperStore_GetByID_Call struct {
-	*mock.Call
-}
-
-// GetByID is a helper method to define mock.On call
-//   - ctx context.Context
-//   - id int
-func (_e *MockKeeperStore_Expecter) GetByID(ctx interface{}, id interface{}) *MockKeeperStore_GetByID_Call {
-	return &MockKeeperStore_GetByID_Call{Call: _e.mock.On("GetByID", ctx, id)}
-}
-
-func (_c *MockKeeperStore_GetByID_Call) Run(run func(ctx context.Context, id int)) *MockKeeperStore_GetByID_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
-	})
-	return _c
-}
-
-func (_c *MockKeeperStore_GetByID_Call) Return(_a0 core.Keepers, _a1 error) *MockKeeperStore_GetByID_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *MockKeeperStore_GetByID_Call) RunAndReturn(run func(context.Context, int) (core.Keepers, error)) *MockKeeperStore_GetByID_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SoftDeleteByID provides a mock function with given fields: ctx, id
-func (_m *MockKeeperStore) SoftDeleteByID(ctx context.Context, id int) error {
-	ret := _m.Called(ctx, id)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SoftDeleteByID")
+		panic("no return value specified for DeleteKeeper")
 	}
 
 	var r0 error
@@ -203,56 +87,58 @@ func (_m *MockKeeperStore) SoftDeleteByID(ctx context.Context, id int) error {
 	return r0
 }
 
-// MockKeeperStore_SoftDeleteByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SoftDeleteByID'
-type MockKeeperStore_SoftDeleteByID_Call struct {
+// MockKeeperStore_DeleteKeeper_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteKeeper'
+type MockKeeperStore_DeleteKeeper_Call struct {
 	*mock.Call
 }
 
-// SoftDeleteByID is a helper method to define mock.On call
+// DeleteKeeper is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int
-func (_e *MockKeeperStore_Expecter) SoftDeleteByID(ctx interface{}, id interface{}) *MockKeeperStore_SoftDeleteByID_Call {
-	return &MockKeeperStore_SoftDeleteByID_Call{Call: _e.mock.On("SoftDeleteByID", ctx, id)}
+func (_e *MockKeeperStore_Expecter) DeleteKeeper(ctx interface{}, id interface{}) *MockKeeperStore_DeleteKeeper_Call {
+	return &MockKeeperStore_DeleteKeeper_Call{Call: _e.mock.On("DeleteKeeper", ctx, id)}
 }
 
-func (_c *MockKeeperStore_SoftDeleteByID_Call) Run(run func(ctx context.Context, id int)) *MockKeeperStore_SoftDeleteByID_Call {
+func (_c *MockKeeperStore_DeleteKeeper_Call) Run(run func(ctx context.Context, id int)) *MockKeeperStore_DeleteKeeper_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(int))
 	})
 	return _c
 }
 
-func (_c *MockKeeperStore_SoftDeleteByID_Call) Return(_a0 error) *MockKeeperStore_SoftDeleteByID_Call {
+func (_c *MockKeeperStore_DeleteKeeper_Call) Return(_a0 error) *MockKeeperStore_DeleteKeeper_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *MockKeeperStore_SoftDeleteByID_Call) RunAndReturn(run func(context.Context, int) error) *MockKeeperStore_SoftDeleteByID_Call {
+func (_c *MockKeeperStore_DeleteKeeper_Call) RunAndReturn(run func(context.Context, int) error) *MockKeeperStore_DeleteKeeper_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// UpdateByID provides a mock function with given fields: ctx, keeper
-func (_m *MockKeeperStore) UpdateByID(ctx context.Context, keeper core.UpdateKeepers) (core.Keepers, error) {
-	ret := _m.Called(ctx, keeper)
+// GetAllKeepers provides a mock function with given fields: ctx, params
+func (_m *MockKeeperStore) GetAllKeepers(ctx context.Context, params core.GetAllKeepersParams) ([]core.Keeper, error) {
+	ret := _m.Called(ctx, params)
 
 	if len(ret) == 0 {
-		panic("no return value specified for UpdateByID")
+		panic("no return value specified for GetAllKeepers")
 	}
 
-	var r0 core.Keepers
+	var r0 []core.Keeper
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeepers) (core.Keepers, error)); ok {
-		return rf(ctx, keeper)
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) ([]core.Keeper, error)); ok {
+		return rf(ctx, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, core.UpdateKeepers) core.Keepers); ok {
-		r0 = rf(ctx, keeper)
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllKeepersParams) []core.Keeper); ok {
+		r0 = rf(ctx, params)
 	} else {
-		r0 = ret.Get(0).(core.Keepers)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Keeper)
+		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, core.UpdateKeepers) error); ok {
-		r1 = rf(ctx, keeper)
+	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllKeepersParams) error); ok {
+		r1 = rf(ctx, params)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -260,31 +146,146 @@ func (_m *MockKeeperStore) UpdateByID(ctx context.Context, keeper core.UpdateKee
 	return r0, r1
 }
 
-// MockKeeperStore_UpdateByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateByID'
-type MockKeeperStore_UpdateByID_Call struct {
+// MockKeeperStore_GetAllKeepers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllKeepers'
+type MockKeeperStore_GetAllKeepers_Call struct {
 	*mock.Call
 }
 
-// UpdateByID is a helper method to define mock.On call
+// GetAllKeepers is a helper method to define mock.On call
 //   - ctx context.Context
-//   - keeper core.UpdateKeepers
-func (_e *MockKeeperStore_Expecter) UpdateByID(ctx interface{}, keeper interface{}) *MockKeeperStore_UpdateByID_Call {
-	return &MockKeeperStore_UpdateByID_Call{Call: _e.mock.On("UpdateByID", ctx, keeper)}
+//   - params core.GetAllKeepersParams
+func (_e *MockKeeperStore_Expecter) GetAllKeepers(ctx interface{}, params interface{}) *MockKeeperStore_GetAllKeepers_Call {
+	return &MockKeeperStore_GetAllKeepers_Call{Call: _e.mock.On("GetAllKeepers", ctx, params)}
 }
 
-func (_c *MockKeeperStore_UpdateByID_Call) Run(run func(ctx context.Context, keeper core.UpdateKeepers)) *MockKeeperStore_UpdateByID_Call {
+func (_c *MockKeeperStore_GetAllKeepers_Call) Run(run func(ctx context.Context, params core.GetAllKeepersParams)) *MockKeeperStore_GetAllKeepers_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(core.UpdateKeepers))
+		run(args[0].(context.Context), args[1].(core.GetAllKeepersParams))
 	})
 	return _c
 }
 
-func (_c *MockKeeperStore_UpdateByID_Call) Return(_a0 core.Keepers, _a1 error) *MockKeeperStore_UpdateByID_Call {
+func (_c *MockKeeperStore_GetAllKeepers_Call) Return(data []core.Keeper, err error) *MockKeeperStore_GetAllKeepers_Call {
+	_c.Call.Return(data, err)
+	return _c
+}
+
+func (_c *MockKeeperStore_GetAllKeepers_Call) RunAndReturn(run func(context.Context, core.GetAllKeepersParams) ([]core.Keeper, error)) *MockKeeperStore_GetAllKeepers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetKeeperByID provides a mock function with given fields: ctx, id
+func (_m *MockKeeperStore) GetKeeperByID(ctx context.Context, id int) (core.Keeper, error) {
+	ret := _m.Called(ctx, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetKeeperByID")
+	}
+
+	var r0 core.Keeper
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) (core.Keeper, error)); ok {
+		return rf(ctx, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int) core.Keeper); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(core.Keeper)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockKeeperStore_GetKeeperByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeeperByID'
+type MockKeeperStore_GetKeeperByID_Call struct {
+	*mock.Call
+}
+
+// GetKeeperByID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id int
+func (_e *MockKeeperStore_Expecter) GetKeeperByID(ctx interface{}, id interface{}) *MockKeeperStore_GetKeeperByID_Call {
+	return &MockKeeperStore_GetKeeperByID_Call{Call: _e.mock.On("GetKeeperByID", ctx, id)}
+}
+
+func (_c *MockKeeperStore_GetKeeperByID_Call) Run(run func(ctx context.Context, id int)) *MockKeeperStore_GetKeeperByID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int))
+	})
+	return _c
+}
+
+func (_c *MockKeeperStore_GetKeeperByID_Call) Return(_a0 core.Keeper, _a1 error) *MockKeeperStore_GetKeeperByID_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockKeeperStore_UpdateByID_Call) RunAndReturn(run func(context.Context, core.UpdateKeepers) (core.Keepers, error)) *MockKeeperStore_UpdateByID_Call {
+func (_c *MockKeeperStore_GetKeeperByID_Call) RunAndReturn(run func(context.Context, int) (core.Keeper, error)) *MockKeeperStore_GetKeeperByID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateKeeper provides a mock function with given fields: ctx, id, keeper
+func (_m *MockKeeperStore) UpdateKeeper(ctx context.Context, id int, keeper core.UpdateKeeper) (core.Keeper, error) {
+	ret := _m.Called(ctx, id, keeper)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateKeeper")
+	}
+
+	var r0 core.Keeper
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.UpdateKeeper) (core.Keeper, error)); ok {
+		return rf(ctx, id, keeper)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.UpdateKeeper) core.Keeper); ok {
+		r0 = rf(ctx, id, keeper)
+	} else {
+		r0 = ret.Get(0).(core.Keeper)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, int, core.UpdateKeeper) error); ok {
+		r1 = rf(ctx, id, keeper)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockKeeperStore_UpdateKeeper_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateKeeper'
+type MockKeeperStore_UpdateKeeper_Call struct {
+	*mock.Call
+}
+
+// UpdateKeeper is a helper method to define mock.On call
+//   - ctx context.Context
+//   - id int
+//   - keeper core.UpdateKeeper
+func (_e *MockKeeperStore_Expecter) UpdateKeeper(ctx interface{}, id interface{}, keeper interface{}) *MockKeeperStore_UpdateKeeper_Call {
+	return &MockKeeperStore_UpdateKeeper_Call{Call: _e.mock.On("UpdateKeeper", ctx, id, keeper)}
+}
+
+func (_c *MockKeeperStore_UpdateKeeper_Call) Run(run func(ctx context.Context, id int, keeper core.UpdateKeeper)) *MockKeeperStore_UpdateKeeper_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int), args[2].(core.UpdateKeeper))
+	})
+	return _c
+}
+
+func (_c *MockKeeperStore_UpdateKeeper_Call) Return(_a0 core.Keeper, _a1 error) *MockKeeperStore_UpdateKeeper_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockKeeperStore_UpdateKeeper_Call) RunAndReturn(run func(context.Context, int, core.UpdateKeeper) (core.Keeper, error)) *MockKeeperStore_UpdateKeeper_Call {
 	_c.Call.Return(run)
 	return _c
 }

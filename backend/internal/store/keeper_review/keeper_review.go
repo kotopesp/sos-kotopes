@@ -14,64 +14,71 @@ type store struct {
 	*postgres.Postgres
 }
 
-func New(pg *postgres.Postgres) core.KeeperReviewsStore {
+func New(pg *postgres.Postgres) core.KeeperReviewStore {
 	return &store{pg}
 }
 
-func (s *store) CreateReview(ctx context.Context, review core.KeeperReviews) error {
+func (s *store) CreateReview(ctx context.Context, review core.KeeperReview) error {
 	if err := s.DB.WithContext(ctx).Create(&review).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (s *store) SoftDeleteReviewByID(ctx context.Context, id int) error {
-	err := s.DB.WithContext(ctx).Model(&core.KeeperReviews{}).Where("id = ?", id).Updates(core.KeeperReviews{IsDeleted: true, DeletedAt: time.Now()}).Error
+func (s *store) DeleteReview(ctx context.Context, id int) error {
+	now := time.Now()
+	err := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Where("id = ?", id).Updates(core.KeeperReview{IsDeleted: true, DeletedAt: &now}).Error
 
 	return err
 }
 
-func (s *store) UpdateReviewByID(ctx context.Context, review core.UpdateKeeperReviews) (core.KeeperReviews, error) {
-	review.UpdatedAt = time.Now()
+func (s *store) UpdateReview(ctx context.Context, id int, review core.UpdateKeeperReview) (data core.KeeperReview, err error) {
+	var updatedReview core.KeeperReview
+	updatedReview.UpdatedAt = time.Now()
 
-	var updatedKeeperReview core.KeeperReviews
-
-	result := s.DB.WithContext(ctx).Model(&core.KeeperReviews{}).Where("id = ? AND is_deleted = ?", review.ID, false).Updates(review).First(&updatedKeeperReview, review.ID)
-	if result.Error != nil {
-
-		if errors.Is(result.Error, core.ErrRecordNotFound) {
-			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.KeeperReviews{}, core.ErrRecordNotFound
-		}
-
-		logger.Log().Error(ctx, result.Error.Error())
-		return core.KeeperReviews{}, result.Error
+	if err := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Preload("Author").Preload("User").Where("id = ? AND is_deleted = ?", id, false).Error; err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		return core.KeeperReview{}, err
 	}
-	return updatedKeeperReview, nil
+
+	if err := s.DB.WithContext(ctx).Updates(review).First(&updatedReview).Error; err != nil {
+		switch {
+		case errors.Is(err, core.ErrRecordNotFound):
+			logger.Log().Debug(ctx, core.ErrRecordNotFound.Error())
+			return core.KeeperReview{}, core.ErrRecordNotFound
+		default:
+			logger.Log().Debug(ctx, err.Error())
+			return core.KeeperReview{}, err
+		}
+	}
+
+	return updatedReview, nil
 }
 
-func (s *store) GetAllReviews(ctx context.Context, params core.GetAllKeeperReviewsParams, id int) ([]core.KeeperReviews, error) {
-	var reviews []core.KeeperReviews
+func (s *store) GetAllReviews(ctx context.Context, keeperID int, params core.GetAllKeeperReviewsParams) (data []core.KeeperReview, err error) {
+	var reviews []core.KeeperReview
 
-	query := s.DB.WithContext(ctx).Model(&core.KeeperReviews{KeeperID: id}).Where("is_deleted = ?", false)
+	query := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Where("is_deleted = ? AND keeper_id", false, keeperID).Preload("Author").Preload("Keeper")
 
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)
 	}
-
 	if params.Offset != nil {
 		query = query.Offset(*params.Offset)
 	}
 
-	err := query.Find(&reviews).Error
-	return reviews, err
+	if err := query.Find(&reviews).Error; err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
 }
 
-func (s *store) GetByIDReview(ctx context.Context, id int) (core.KeeperReviews, error) {
-	var review = core.KeeperReviews{ID: id}
+func (s *store) GetReviewByID(ctx context.Context, id int) (core.KeeperReview, error) {
+	var review = core.KeeperReview{ID: id}
 
-	if err := s.DB.WithContext(ctx).First(&review).Error; err != nil {
-		return core.KeeperReviews{}, err
+	if err := s.DB.WithContext(ctx).Preload("Author").Preload("Keeper").First(&review).Error; err != nil {
+		return core.KeeperReview{}, err
 	}
 
 	return review, nil

@@ -8,57 +8,51 @@ import (
 )
 
 // KeepersCreate represents the data required to create a new keeper.
-type KeepersCreate struct {
-	UserID               int     `form:"user_id" validate:"required,min=0"`
-	Description          string  `form:"description" validate:"required,notblank,max=600"`
-	Price                float64 `form:"price" validate:"required,min=0"`
-	Location             string  `form:"location" validate:"required"`
-	HasCage              bool    `form:"has_cage" validate:"required,boolean"`
-	BoardingDuration     string  `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
-	BoardingCompensation string  `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
-	AnimalAcceptance     string  `form:"animal_acceptance" validate:"required,oneof=homeless home depends"`
-	AnimalCategory       string  `form:"animal_category" validate:"required,oneof=dog cat both"`
+type CreateKeeper struct {
+	UserID               int      `form:"user_id" validate:"required,min=0"`
+	Description          *string  `form:"description" validate:"required,notblank,max=600"`
+	Price                *float64 `form:"price" validate:"required,min=0"`
+	Location             *string  `form:"location" validate:"required"`
+	HasCage              bool     `form:"has_cage" validate:"required,boolean"`
+	BoardingDuration     string   `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
+	BoardingCompensation string   `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
+	AnimalAcceptance     string   `form:"animal_acceptance" validate:"required,oneof=homeless home depends"`
+	AnimalCategory       string   `form:"animal_category" validate:"required,oneof=dog cat both"`
 }
 
 // KeepersUpdate represents the data to update an existing keeper.
-type KeepersUpdate struct {
-	ID                   int     `form:"id"`
-	UserID               int     `form:"user_id"`
-	Description          string  `form:"description" validate:"notblank,max=600"`
-	Price                float64 `form:"price" validate:"min=0"`
-	Location             string  `form:"location"`
-	HasCage              bool    `form:"has_cage" validate:"required,boolean"`
-	BoardingDuration     string  `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
-	BoardingCompensation string  `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
-	AnimalAcceptance     string  `form:"animal_acceptance" validate:"required,oneof=homeless home depends"`
-	AnimalCategory       string  `form:"animal_category" validate:"required,oneof=dog cat both"`
+type UpdateKeeper struct {
+	Description          *string  `form:"description" validate:"notblank,max=600"`
+	Price                *float64 `form:"price" validate:"min=0"`
+	Location             *string  `form:"location"`
+	HasCage              *bool    `form:"has_cage" validate:"required,boolean"`
+	BoardingDuration     *string  `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
+	BoardingCompensation *string  `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
+	AnimalAcceptance     *string  `form:"animal_acceptance" validate:"required,oneof=homeless home depends"`
+	AnimalCategory       *string  `form:"animal_category" validate:"required,oneof=dog cat both"`
 }
 
 // KeepersResponse represents the response keeper entity.
-type KeepersResponse struct {
-	ID                   int       `json:"id"`
-	UserID               int       `json:"user_id"`
-	Description          string    `json:"description"`
-	Price                float64   `json:"price"`
-	Location             string    `json:"location"`
-	HasCage              bool      `json:"has_cage"`
-	BoardingDuration     string    `json:"boarding_duration"`
-	BoardingCompensation string    `json:"boarding_compensation"`
-	AnimalAcceptance     string    `json:"animal_acceptance"`
-	AnimalCategory       string    `json:"animal_category"`
-	CreatedAt            time.Time `json:"created_at"`
-	UpdatedAt            time.Time `json:"updated_at"`
-}
-
-type KeepersResponseWithUser struct {
-	Keeper KeepersResponse
-	User   user.ResponseUser
+type ResponseKeeper struct {
+	ID                   int               `json:"id"`
+	UserID               int               `json:"user_id"`
+	User                 user.ResponseUser `json:"user"`
+	Description          *string           `json:"description"`
+	Price                *float64          `json:"price"`
+	Location             *string           `json:"location"`
+	HasCage              bool              `json:"has_cage"`
+	BoardingDuration     string            `json:"boarding_duration"`
+	BoardingCompensation string            `json:"boarding_compensation"`
+	AnimalAcceptance     string            `json:"animal_acceptance"`
+	AnimalCategory       string            `json:"animal_category"`
+	CreatedAt            time.Time         `json:"created_at"`
+	UpdatedAt            time.Time         `json:"updated_at"`
 }
 
 // KeepersResponseWithMeta represents the respose keeper entity with meta information.
-type KeepersResponseWithMeta struct {
-	Meta pagination.Pagination     `json:"meta"`
-	Data []KeepersResponseWithUser `json:"payload"`
+type ResponseKeepers struct {
+	Meta pagination.Pagination `json:"meta"`
+	Data []ResponseKeeper      `json:"payload"`
 }
 
 // GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
