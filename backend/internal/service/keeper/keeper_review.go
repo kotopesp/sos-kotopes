@@ -22,7 +22,7 @@ func (s *service) CreateReview(ctx context.Context, review core.KeeperReview) (d
 	review.CreatedAt = time.Now()
 
 	if review.Grade < 1 || review.Grade > 5 {
-		logger.Log().Debug(ctx, err.Error())
+		logger.Log().Debug(ctx, core.ErrReviewGradeBounds.Error())
 		return core.KeeperReview{}, core.ErrReviewGradeBounds
 	}
 
@@ -34,7 +34,7 @@ func (s *service) CreateReview(ctx context.Context, review core.KeeperReview) (d
 	return review, nil
 }
 
-func (s *service) DeleteReview(ctx context.Context, id int, userID int) error {
+func (s *service) DeleteReview(ctx context.Context, id, userID int) error {
 	storedReview, err := s.keeperReviewStore.GetReviewByID(ctx, id)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
@@ -52,7 +52,7 @@ func (s *service) DeleteReview(ctx context.Context, id int, userID int) error {
 	return s.keeperReviewStore.DeleteReview(ctx, id)
 }
 
-func (s *service) UpdateReview(ctx context.Context, id int, userID int, review core.UpdateKeeperReview) (data core.KeeperReview, err error) {
+func (s *service) UpdateReview(ctx context.Context, id, userID int, review core.UpdateKeeperReview) (data core.KeeperReview, err error) {
 	storedReview, err := s.keeperReviewStore.GetReviewByID(ctx, id)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())

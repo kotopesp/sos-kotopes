@@ -57,7 +57,7 @@ func (s *service) CreateKeeper(ctx context.Context, keeper core.Keeper) (data co
 	return keeper, s.keeperStore.CreateKeeper(ctx, keeper)
 }
 
-func (s *service) DeleteKeeper(ctx context.Context, id int, userID int) error {
+func (s *service) DeleteKeeper(ctx context.Context, id, userID int) error {
 	storedKeeper, err := s.keeperStore.GetKeeperByID(ctx, id)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
@@ -75,7 +75,7 @@ func (s *service) DeleteKeeper(ctx context.Context, id int, userID int) error {
 	return s.keeperStore.DeleteKeeper(ctx, id)
 }
 
-func (s *service) UpdateKeeper(ctx context.Context, id int, userID int, keeper core.UpdateKeeper) (core.Keeper, error) {
+func (s *service) UpdateKeeper(ctx context.Context, id, userID int, keeper core.UpdateKeeper) (core.Keeper, error) {
 	storedKeeper, err := s.keeperStore.GetKeeperByID(ctx, id)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
