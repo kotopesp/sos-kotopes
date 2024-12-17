@@ -70,6 +70,7 @@ func (r *Router) initRoutes() {
 	v1.Get("/seekers/:user_id", r.getSeeker)
 	v1.Post("/seekers", r.protectedMiddleware(), r.createSeeker)
 	v1.Patch("/seekers/:user_id", r.protectedMiddleware(), r.updateSeeker)
+	v1.Delete("/seekers/:user_id", r.protectedMiddleware(), r.deleteSeeker)
 
 	// users
 	v1.Get("/users/:id", r.getUser)

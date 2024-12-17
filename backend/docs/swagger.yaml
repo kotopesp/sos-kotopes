@@ -1263,6 +1263,42 @@ paths:
       tags:
       - seeker
   /seekers/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete seeker
+      operationId: delete-seeker
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete seeker
+      tags:
+      - seeker
     get:
       consumes:
       - application/json
