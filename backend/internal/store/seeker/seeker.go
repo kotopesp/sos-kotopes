@@ -99,3 +99,20 @@ func (s *store) UpdateSeeker(ctx context.Context, id int, updateSeeker map[strin
 
 	return seeker, nil
 }
+
+func (s *store) DeleteSeeker(ctx context.Context, userID int) error {
+	updates := make(map[string]interface{})
+	updates["is_deleted"] = true
+
+	err := s.DB.WithContext(ctx).Table("seekers").Where("user_id = ?", userID).Updates(updates).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			logger.Log().Debug(ctx, err.Error())
+			return core.ErrNoSuchUser
+		}
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	return nil
+}
