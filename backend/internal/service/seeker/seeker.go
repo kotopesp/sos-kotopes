@@ -42,6 +42,10 @@ func (s *service) GetSeeker(ctx context.Context, id int) (core.Seeker, error) {
 func (s *service) UpdateSeeker(ctx context.Context, updateSeeker core.UpdateSeeker) (core.Seeker, error) {
 	updates := make(map[string]interface{})
 
+	if updateSeeker.AnimalType != nil {
+		updates["animal_type"] = *updateSeeker.AnimalType
+	}
+
 	if updateSeeker.Description != nil {
 		updates["description"] = *updateSeeker.Description
 	}
@@ -50,12 +54,20 @@ func (s *service) UpdateSeeker(ctx context.Context, updateSeeker core.UpdateSeek
 		updates["location"] = *updateSeeker.Location
 	}
 
+	if updateSeeker.EquipmentRental != nil {
+		updates["equipment_rental"] = *updateSeeker.EquipmentRental
+	}
+
 	if updateSeeker.Price != nil {
 		updates["price"] = *updateSeeker.Price
 	}
 
 	if updateSeeker.HaveCar != nil {
 		updates["have_car"] = *updateSeeker.HaveCar
+	}
+
+	if updateSeeker.WillingnessCarry != nil {
+		updates["willingness_carry"] = *updateSeeker.WillingnessCarry
 	}
 
 	if len(updates) == 0 {

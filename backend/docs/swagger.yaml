@@ -194,6 +194,12 @@ definitions:
     type: object
   seeker.CreateSeeker:
     properties:
+      animal_type:
+        enum:
+        - dog
+        - cat
+        - both
+        type: string
       description:
         maxLength: 4000
         type: string
@@ -201,6 +207,9 @@ definitions:
         items:
           type: string
         type: array
+      equipment_rental:
+        minimum: -1
+        type: integer
       have_car:
         type: boolean
       location:
@@ -211,16 +220,29 @@ definitions:
       user_id:
         minimum: 1
         type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
     required:
+    - animal_type
     - equipment
+    - equipment_rental
     - location
     - user_id
+    - willingness_carry
     type: object
   seeker.ResponseSeeker:
     properties:
+      animal_type:
+        type: string
       description:
         type: string
       equipment:
+        type: integer
+      equipment_rental:
         type: integer
       have_car:
         type: boolean
@@ -232,9 +254,23 @@ definitions:
         type: integer
       user_id:
         type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
+    required:
+    - willingness_carry
     type: object
   seeker.UpdateSeeker:
     properties:
+      animal_type:
+        enum:
+        - dog
+        - cat
+        - both
+        type: string
       description:
         maxLength: 4000
         type: string
@@ -242,6 +278,9 @@ definitions:
         items:
           type: string
         type: array
+      equipment_rental:
+        minimum: -1
+        type: integer
       have_car:
         type: boolean
       location:
@@ -251,6 +290,12 @@ definitions:
       user_id:
         minimum: 1
         type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
     required:
     - user_id
     type: object

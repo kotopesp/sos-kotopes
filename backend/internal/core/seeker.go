@@ -7,28 +7,34 @@ import (
 
 type (
 	Seeker struct {
-		ID          int       `gorm:"primaryKey;autoIncrement;column:id"`
-		UserID      int       `gorm:"column:user_id"`
-		Description string    `gorm:"column:description"`
-		Location    string    `gorm:"column:location"`
-		EquipmentID int       `gorm:"column:equipment_id"`
-		Price       int       `gorm:"column:price"`
-		HaveCar     bool      `gorm:"column:have_car"`
-		CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
-		UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
-		IsDeleted   bool      `gorm:"column:is_deleted"`
-		DeletedAt   time.Time `gorm:"column:deleted_at"`
+		ID               int       `gorm:"primaryKey;autoIncrement;column:id"`
+		UserID           int       `gorm:"column:user_id"`
+		AnimalType       string    `gorm:"column:animal_type"`
+		Description      string    `gorm:"column:description"`
+		Location         string    `gorm:"column:location"`
+		EquipmentRental  int       `gorm:"column:equipment_rental"`
+		EquipmentID      int       `gorm:"column:equipment_id"`
+		Price            int       `gorm:"column:price"`
+		HaveCar          bool      `gorm:"column:have_car"`
+		WillingnessCarry string    `gorm:"column:willingness_carry"`
+		CreatedAt        time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
+		UpdatedAt        time.Time `gorm:"autoUpdateTime;column:updated_at"`
+		IsDeleted        bool      `gorm:"column:is_deleted"`
+		DeletedAt        time.Time `gorm:"column:deleted_at"`
 	}
 
 	UpdateSeeker struct {
-		ID          *int      `gorm:"primaryKey;autoIncrement;column:id"`
-		UserID      *int      `gorm:"column:user_id"`
-		Description *string   `gorm:"column:description"`
-		Location    *string   `gorm:"column:location"`
-		EquipmentID *int      `gorm:"column:equipment_id"`
-		Price       *int      `gorm:"column:price"`
-		HaveCar     *bool     `gorm:"column:have_car"`
-		UpdatedAt   time.Time `gorm:"autoUpdateTime;column:updated_at"`
+		ID               *int      `gorm:"column:id"`
+		UserID           *int      `gorm:"column:user_id"`
+		AnimalType       *string   `gorm:"column:animal_type"`
+		Description      *string   `gorm:"column:description"`
+		Location         *string   `gorm:"column:location"`
+		EquipmentRental  *int      `gorm:"column:equipment_rental"`
+		EquipmentID      *int      `gorm:"column:equipment_id"`
+		Price            *int      `gorm:"column:price"`
+		HaveCar          *bool     `gorm:"column:have_car"`
+		WillingnessCarry *string   `gorm:"column:willingness_carry"`
+		UpdatedAt        time.Time `gorm:"autoUpdateTime;column:updated_at"`
 	}
 
 	Equipment struct {
