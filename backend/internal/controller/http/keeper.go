@@ -29,7 +29,7 @@ import (
 //	@Param			animal_category			query		string	false	"Animal category"
 //	@Param			limit					query		int		false	"Limit"		default(10)
 //	@Param			offset					query		int		false	"Offset"	default(0)
-//	@Success		200						{object}	model.Response{data=keeper.responseKeepers}
+//	@Success		200						{object}	model.Response{data=keeper.ResponseKeepers}
 //	@Failure		400						{object}	model.Response
 //	@Failure		500						{object}	model.Response
 //	@Router			/keepers [get]
@@ -139,8 +139,8 @@ func (r *Router) createKeeper(ctx *fiber.Ctx) error {
 //	@Tags			keeper
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		int						true	"Keeper ID"
-//	@Param			body	body		keeper.KeepersUpdate	true	"Updated keeper"
+//	@Param			id		path		int					true	"Keeper ID"
+//	@Param			body	body		keeper.UpdateKeeper	true	"Updated keeper"
 //	@Success		200		{object}	model.Response{data=keeper.ResponseKeeper}
 //	@Failure		400		{object}	model.Response	"Invalid ID or request body"
 //	@Failure		404		{object}	model.Response	"Keeper not found"

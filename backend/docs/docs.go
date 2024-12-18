@@ -215,8 +215,8 @@ const docTemplate = `{
             }
         },
         "/keeper_reviews/{id}": {
-            "put": {
-                "description": "Updates the keeper review details",
+            "delete": {
+                "description": "Deletes the keeper review",
                 "consumes": [
                     "application/json"
                 ],
@@ -226,7 +226,7 @@ const docTemplate = `{
                 "tags": [
                     "keeper review"
                 ],
-                "summary": "Update keeper review",
+                "summary": "Delete keeper review",
                 "parameters": [
                     {
                         "type": "integer",
@@ -234,34 +234,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "Updated keeper review details",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/keeperreview.KeeperReviewsUpdate"
-                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/keeperreview.KeeperReviewsResponseWithUser"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/model.Response"
                         }
                     },
                     "400": {
@@ -290,8 +269,8 @@ const docTemplate = `{
                     }
                 }
             },
-            "delete": {
-                "description": "Deletes the keeper review",
+            "patch": {
+                "description": "Updates the keeper review details",
                 "consumes": [
                     "application/json"
                 ],
@@ -301,7 +280,7 @@ const docTemplate = `{
                 "tags": [
                     "keeper review"
                 ],
-                "summary": "Delete keeper review",
+                "summary": "Update keeper review",
                 "parameters": [
                     {
                         "type": "integer",
@@ -311,12 +290,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Updated keeper review details",
+                        "description": "Updated keeper review",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/keeperreview.KeeperReviewsUpdate"
+                            "$ref": "#/definitions/keeperreview.UpdateKeeperReview"
                         }
                     }
                 ],
@@ -324,13 +303,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "204": {
-                        "description": "Review not found",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeperreview.ResponseKeeperReview"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -341,6 +326,12 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -455,7 +446,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/keeper.KeepersResponseWithMeta"
+                                            "$ref": "#/definitions/keeper.ResponseKeepers"
                                         }
                                     }
                                 }
@@ -464,6 +455,68 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a keeper",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper"
+                ],
+                "summary": "create keeper",
+                "parameters": [
+                    {
+                        "description": "Create keeper",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/keeper.CreateKeeper"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeper.ResponseKeeper"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -511,7 +564,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/keeper.KeepersResponseWithUser"
+                                            "$ref": "#/definitions/keeper.ResponseKeeper"
                                         }
                                     }
                                 }
@@ -520,81 +573,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid ID",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Keeper not found",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Updates the keeper details such as description, price, location, etc.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "keeper"
-                ],
-                "summary": "Update keeper",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Keeper ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Updated keeper details",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/keeper.KeepersUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/keeper.KeepersResponseWithUser"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid ID or request body",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -643,6 +621,81 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Keeper not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates the keeper details such as description, price, location, etc.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper"
+                ],
+                "summary": "Update keeper",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated keeper",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/keeper.UpdateKeeper"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeper.ResponseKeeper"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or request body",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -718,7 +771,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/keeperreview.KeeperReviewsResponseWithUser"
+                                                "$ref": "#/definitions/keeperreview.ResponseKeeperReview"
                                             }
                                         }
                                     }
@@ -759,11 +812,20 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Create keeper review",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/keeperreview.CreateKeeperReview"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "allOf": [
                                 {
@@ -773,7 +835,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/keeperreview.KeeperReviewsResponse"
+                                            "$ref": "#/definitions/keeperreview.ResponseKeeperReview"
                                         }
                                     }
                                 }
@@ -2803,7 +2865,75 @@ const docTemplate = `{
                 }
             }
         },
-        "keeper.KeepersResponse": {
+        "keeper.CreateKeeper": {
+            "type": "object",
+            "required": [
+                "animal_acceptance",
+                "animal_category",
+                "boarding_compensation",
+                "boarding_duration",
+                "description",
+                "has_cage",
+                "location",
+                "price",
+                "user_id"
+            ],
+            "properties": {
+                "animal_acceptance": {
+                    "type": "string",
+                    "enum": [
+                        "homeless",
+                        "home",
+                        "depends"
+                    ]
+                },
+                "animal_category": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
+                "boarding_compensation": {
+                    "type": "string",
+                    "enum": [
+                        "paid",
+                        "free",
+                        "depends"
+                    ]
+                },
+                "boarding_duration": {
+                    "type": "string",
+                    "enum": [
+                        "hours",
+                        "days",
+                        "weeks",
+                        "months",
+                        "depends"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 600
+                },
+                "has_cage": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "user_id": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "keeper.ResponseKeeper": {
             "type": "object",
             "properties": {
                 "animal_acceptance": {
@@ -2839,12 +2969,15 @@ const docTemplate = `{
                 "updated_at": {
                     "type": "string"
                 },
+                "user": {
+                    "$ref": "#/definitions/user.ResponseUser"
+                },
                 "user_id": {
                     "type": "integer"
                 }
             }
         },
-        "keeper.KeepersResponseWithMeta": {
+        "keeper.ResponseKeepers": {
             "type": "object",
             "properties": {
                 "meta": {
@@ -2853,23 +2986,12 @@ const docTemplate = `{
                 "payload": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/keeper.KeepersResponseWithUser"
+                        "$ref": "#/definitions/keeper.ResponseKeeper"
                     }
                 }
             }
         },
-        "keeper.KeepersResponseWithUser": {
-            "type": "object",
-            "properties": {
-                "keeper": {
-                    "$ref": "#/definitions/keeper.KeepersResponse"
-                },
-                "user": {
-                    "$ref": "#/definitions/user.ResponseUser"
-                }
-            }
-        },
-        "keeper.KeepersUpdate": {
+        "keeper.UpdateKeeper": {
             "type": "object",
             "required": [
                 "animal_acceptance",
@@ -2920,24 +3042,48 @@ const docTemplate = `{
                 "has_cage": {
                     "type": "boolean"
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "location": {
                     "type": "string"
                 },
                 "price": {
                     "type": "number",
                     "minimum": 0
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },
-        "keeperreview.KeeperReviewsResponse": {
+        "keeperreview.CreateKeeperReview": {
+            "type": "object",
+            "required": [
+                "author_id",
+                "grade",
+                "keeper_id"
+            ],
+            "properties": {
+                "author_id": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "content": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "grade": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "keeper_id": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "keeperreview.ResponseKeeperReview": {
             "type": "object",
             "properties": {
+                "author": {
+                    "$ref": "#/definitions/user.ResponseUser"
+                },
                 "author_id": {
                     "type": "integer"
                 },
@@ -2961,27 +3107,9 @@ const docTemplate = `{
                 }
             }
         },
-        "keeperreview.KeeperReviewsResponseWithUser": {
+        "keeperreview.UpdateKeeperReview": {
             "type": "object",
             "properties": {
-                "review": {
-                    "$ref": "#/definitions/keeperreview.KeeperReviewsResponse"
-                },
-                "user": {
-                    "$ref": "#/definitions/user.ResponseUser"
-                }
-            }
-        },
-        "keeperreview.KeeperReviewsUpdate": {
-            "type": "object",
-            "required": [
-                "author_id"
-            ],
-            "properties": {
-                "author_id": {
-                    "type": "integer",
-                    "minimum": 0
-                },
                 "content": {
                     "type": "string",
                     "maxLength": 2000
@@ -2990,9 +3118,6 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 5,
                     "minimum": 1
-                },
-                "id": {
-                    "type": "integer"
                 }
             }
         },
