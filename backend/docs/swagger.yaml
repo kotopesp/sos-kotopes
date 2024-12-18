@@ -115,7 +115,6 @@ definitions:
     - animal_category
     - boarding_compensation
     - boarding_duration
-    - description
     - has_cage
     - location
     - price
@@ -197,12 +196,6 @@ definitions:
       price:
         minimum: 0
         type: number
-    required:
-    - animal_acceptance
-    - animal_category
-    - boarding_compensation
-    - boarding_duration
-    - has_cage
     type: object
   keeperreview.CreateKeeperReview:
     properties:

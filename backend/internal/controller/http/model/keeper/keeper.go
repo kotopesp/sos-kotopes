@@ -10,7 +10,7 @@ import (
 // KeepersCreate represents the data required to create a new keeper.
 type CreateKeeper struct {
 	UserID               int      `form:"user_id" validate:"required,min=0"`
-	Description          *string  `form:"description" validate:"required,notblank,max=600"`
+	Description          *string  `form:"description" validate:"notblank,max=600"`
 	Price                *float64 `form:"price" validate:"required,min=0"`
 	Location             *string  `form:"location" validate:"required"`
 	HasCage              bool     `form:"has_cage" validate:"required,boolean"`
@@ -25,11 +25,11 @@ type UpdateKeeper struct {
 	Description          *string  `form:"description" validate:"notblank,max=600"`
 	Price                *float64 `form:"price" validate:"min=0"`
 	Location             *string  `form:"location"`
-	HasCage              *bool    `form:"has_cage" validate:"required,boolean"`
-	BoardingDuration     *string  `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
-	BoardingCompensation *string  `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
-	AnimalAcceptance     *string  `form:"animal_acceptance" validate:"required,oneof=homeless home depends"`
-	AnimalCategory       *string  `form:"animal_category" validate:"required,oneof=dog cat both"`
+	HasCage              *bool    `form:"has_cage" validate:"boolean"`
+	BoardingDuration     *string  `form:"boarding_duration" validate:"oneof=hours days weeks months depends"`
+	BoardingCompensation *string  `form:"boarding_compensation" validate:"oneof=paid free depends"`
+	AnimalAcceptance     *string  `form:"animal_acceptance" validate:"oneof=homeless home depends"`
+	AnimalCategory       *string  `form:"animal_category" validate:"oneof=dog cat both"`
 }
 
 // KeepersResponse represents the response keeper entity.

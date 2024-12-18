@@ -2872,7 +2872,6 @@ const docTemplate = `{
                 "animal_category",
                 "boarding_compensation",
                 "boarding_duration",
-                "description",
                 "has_cage",
                 "location",
                 "price",
@@ -2993,13 +2992,6 @@ const docTemplate = `{
         },
         "keeper.UpdateKeeper": {
             "type": "object",
-            "required": [
-                "animal_acceptance",
-                "animal_category",
-                "boarding_compensation",
-                "boarding_duration",
-                "has_cage"
-            ],
             "properties": {
                 "animal_acceptance": {
                     "type": "string",
