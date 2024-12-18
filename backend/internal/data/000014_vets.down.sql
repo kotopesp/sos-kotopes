@@ -1,0 +1,14 @@
+ALTER TABLE IF EXISTS vets
+DROP COLUMN IF EXISTS is_organization,
+    DROP COLUMN IF EXISTS education,
+    DROP COLUMN IF EXISTS org_name,
+    DROP COLUMN IF EXISTS location,
+    DROP COLUMN IF EXISTS price,
+    DROP COLUMN IF EXISTS org_email,
+    DROP COLUMN IF EXISTS inn_number,
+    DROP COLUMN IF EXISTS remote_consulting,
+    DROP COLUMN IF EXISTS is_inpatient,
+    DROP COLUMN IF EXISTS description,
+    DROP COLUMN IF EXISTS is_deleted,
+    DROP COLUMN IF EXISTS patronymic,
+    DROP COLUMN IF EXISTS deleted_at;
