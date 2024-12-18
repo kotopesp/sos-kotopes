@@ -90,6 +90,7 @@ func (r *Router) initRoutes() {
 
 	// keepers
 	v1.Get("/keepers", r.getKeepers)
+	v1.Post("/keepers", r.createKeeper)
 	v1.Get("/keepers/:id", r.getKeeper)
 	v1.Patch("/keepers/:id", r.protectedMiddleware(), r.updateKeeper)
 	v1.Delete("/keepers/:id", r.protectedMiddleware(), r.deleteKeeper)

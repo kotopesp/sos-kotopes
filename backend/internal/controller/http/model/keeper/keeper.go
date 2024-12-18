@@ -11,8 +11,8 @@ import (
 type CreateKeeper struct {
 	UserID               int      `form:"user_id" validate:"required,min=0"`
 	Description          *string  `form:"description" validate:"notblank,max=600"`
-	Price                *float64 `form:"price" validate:"required,min=0"`
-	Location             *string  `form:"location" validate:"required"`
+	Price                *float64 `form:"price" validate:"min=0"`
+	LocationID           *int     `form:"location_id"`
 	HasCage              bool     `form:"has_cage" validate:"required,boolean"`
 	BoardingDuration     string   `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
 	BoardingCompensation string   `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
@@ -24,7 +24,7 @@ type CreateKeeper struct {
 type UpdateKeeper struct {
 	Description          *string  `form:"description" validate:"notblank,max=600"`
 	Price                *float64 `form:"price" validate:"min=0"`
-	Location             *string  `form:"location"`
+	LocationID           *int     `form:"location_id"`
 	HasCage              *bool    `form:"has_cage" validate:"boolean"`
 	BoardingDuration     *string  `form:"boarding_duration" validate:"oneof=hours days weeks months depends"`
 	BoardingCompensation *string  `form:"boarding_compensation" validate:"oneof=paid free depends"`
@@ -39,7 +39,7 @@ type ResponseKeeper struct {
 	User                 user.ResponseUser `json:"user"`
 	Description          *string           `json:"description"`
 	Price                *float64          `json:"price"`
-	Location             *string           `json:"location"`
+	LocationID           *int              `json:"location_id"`
 	HasCage              bool              `json:"has_cage"`
 	BoardingDuration     string            `json:"boarding_duration"`
 	BoardingCompensation string            `json:"boarding_compensation"`
@@ -58,7 +58,7 @@ type ResponseKeepers struct {
 // GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
 type GetAllKeepersParams struct {
 	Sort                 *string  `query:"sort" validate:"omitempty,sort_keeper"`
-	Location             *string  `query:"location" validate:"omitempty"`
+	LocationID           *int     `query:"location_id" validate:"omitempty"`
 	MinRating            *float64 `query:"min_rating" validate:"omitempty,gte=1,lte=5"`
 	MaxRating            *float64 `query:"max_rating" validate:"omitempty,gte=1,lte=5"`
 	MinPrice             *float64 `query:"min_price" validate:"omitempty,gte=0"`

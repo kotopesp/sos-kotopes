@@ -100,6 +100,9 @@ func (s *store) GetAllKeepers(ctx context.Context, params core.GetAllKeepersPara
 	if params.AnimalCategory != nil {
 		query = query.Where("animal_category = ?", *params.AnimalCategory)
 	}
+	if params.LocationID != nil {
+		query = query.Where("location_id = ?", *params.LocationID)
+	}
 
 	query = query.Order(*params.SortBy + " " + *params.SortOrder)
 

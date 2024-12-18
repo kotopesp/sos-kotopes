@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 

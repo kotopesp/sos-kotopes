@@ -11,7 +11,7 @@ type Keeper struct {
 	User                 User       `gorm:"foreignKey:UserID;references:ID"`
 	Description          *string    `gorm:"column:description"`
 	Price                *float64   `gorm:"column:price"`
-	Location             *string    `gorm:"column:location"`
+	LocationID           *int       `gorm:"column:location_id"`
 	HasCage              bool       `gorm:"column:has_cage"`
 	BoardingDuration     string     `gorm:"column:boarding_duration"`
 	BoardingCompensation string     `gorm:"column:boarding_compensation"`
@@ -26,7 +26,7 @@ type Keeper struct {
 type UpdateKeeper struct {
 	Description          *string  `gorm:"column:description"`
 	Price                *float64 `gorm:"column:price"`
-	Location             *string  `gorm:"column:location"`
+	LocationID           *int     `gorm:"column:location_id"`
 	HasCage              *bool    `gorm:"column:has_cage"`
 	BoardingDuration     *string  `gorm:"column:boarding_duration"`
 	BoardingCompensation *string  `gorm:"column:boarding_compensation"`
@@ -37,7 +37,7 @@ type UpdateKeeper struct {
 type GetAllKeepersParams struct {
 	SortBy               *string
 	SortOrder            *string
-	Location             *string
+	LocationID           *int
 	MinRating            *float64
 	MaxRating            *float64
 	MinPrice             *float64
