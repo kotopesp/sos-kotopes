@@ -1,4 +1,4 @@
-CREATE TYPE animal_acceptance_type AS ENUM ('home', 'homeless', 'depends');
+CREATE TYPE animal_acceptance_type AS ENUM ('home', 'homeless', 'homeless-hadhome', 'depends');
 CREATE TYPE animal_category_type AS ENUM ('cat', 'dog', 'both');
 CREATE TYPE boarding_compensation_type AS ENUM ('paid', 'free', 'depends');
 CREATE TYPE boarding_duration_type AS ENUM ('hours', 'days', 'weeks', 'months', 'depends');
