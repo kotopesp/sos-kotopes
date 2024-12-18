@@ -192,6 +192,113 @@ definitions:
     required:
     - name
     type: object
+  seeker.CreateSeeker:
+    properties:
+      animal_type:
+        enum:
+        - dog
+        - cat
+        - both
+        type: string
+      description:
+        maxLength: 4000
+        type: string
+      equipment:
+        items:
+          type: string
+        type: array
+      equipment_rental:
+        minimum: -1
+        type: integer
+      have_car:
+        type: boolean
+      location:
+        type: string
+      price:
+        minimum: 0
+        type: integer
+      user_id:
+        minimum: 1
+        type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
+    required:
+    - animal_type
+    - equipment
+    - equipment_rental
+    - location
+    - user_id
+    - willingness_carry
+    type: object
+  seeker.ResponseSeeker:
+    properties:
+      animal_type:
+        type: string
+      description:
+        type: string
+      equipment:
+        type: integer
+      equipment_rental:
+        type: integer
+      have_car:
+        type: boolean
+      id:
+        type: integer
+      location:
+        type: string
+      price:
+        type: integer
+      user_id:
+        type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
+    required:
+    - willingness_carry
+    type: object
+  seeker.UpdateSeeker:
+    properties:
+      animal_type:
+        enum:
+        - dog
+        - cat
+        - both
+        type: string
+      description:
+        maxLength: 4000
+        type: string
+      equipment:
+        items:
+          type: string
+        type: array
+      equipment_rental:
+        minimum: -1
+        type: integer
+      have_car:
+        type: boolean
+      location:
+        type: string
+      price:
+        type: integer
+      user_id:
+        minimum: 1
+        type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
+    required:
+    - user_id
+    type: object
   user.Login:
     properties:
       password:
@@ -336,8 +443,7 @@ paths:
       responses:
         "201":
           description: Created
-          schema:
-            type: object
+          schema: {}
         "400":
           description: Bad Request
           schema:
@@ -1163,6 +1269,154 @@ paths:
       summary: Get favourite posts of user by id
       tags:
       - post
+  /seekers:
+    post:
+      consumes:
+      - application/json
+      description: Create a seeker
+      operationId: create-seeker
+      parameters:
+      - description: Seeker
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/seeker.CreateSeeker'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Create a seeker
+      tags:
+      - seeker
+  /seekers/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete seeker
+      operationId: delete-seeker
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete seeker
+      tags:
+      - seeker
+    get:
+      consumes:
+      - application/json
+      description: Get seeker by id
+      operationId: get-seeker
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Get seeker
+      tags:
+      - seeker
+    patch:
+      consumes:
+      - application/json
+      description: Update a seeker
+      operationId: update-seeker
+      parameters:
+      - description: Seeker
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/seeker.UpdateSeeker'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Update a seeker
+      tags:
+      - seeker
   /user/{id}/posts:
     get:
       consumes:

@@ -56,6 +56,6 @@ var (
 	ErrNoFieldsToUpdate = errors.New("no fields to update")
 )
 
-const Seeker = "seeker"
+const Seek = "seeker"
 const Keeper = "keeper"
 const Vet = "vet"
