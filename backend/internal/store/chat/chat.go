@@ -63,10 +63,10 @@ func convertToModelChat(coreChat core.Chat, users []chat.User, lastMessage chat.
 
 func convertToModelLastMessage(message core.Message) chat.Message {
 	return chat.Message{
-		UserID:     message.UserID,
-		Content:    message.Content,
-		CreatedAt:  message.CreatedAt,
-		SenderName: message.SenderName,
+		UserID:      message.UserID,
+		TextContent: message.Content,
+		CreatedAt:   message.CreatedAt,
+		SenderName:  message.SenderName,
 	}
 }
 

@@ -18,6 +18,8 @@ type (
 		CreatedAt  time.Time `gorm:"column:created_at"`
 		UpdatedAt  time.Time `gorm:"column:updated_at"`
 		SenderName string    `gorm:"column:sender_name"`
+		IsAudio    bool      `gorm:"column:is_audio"`
+		AudioBytes []byte    `gorm:"column:audio_bytes"`
 	}
 
 	MessageRead struct {
