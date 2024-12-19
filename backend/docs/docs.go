@@ -1509,26 +1509,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Minimum rating",
-                        "name": "min_equipment_rental",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Maximum rating",
-                        "name": "max_equipment_rental",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Minimum price",
-                        "name": "min_price",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Maximum price",
-                        "name": "max_price",
+                        "description": "Price",
+                        "name": "price",
                         "in": "query"
                     },
                     {

@@ -108,11 +108,26 @@ func ToResponseSeeker(seeker *core.Seeker) ResponseSeeker {
 	}
 }
 
+func toResponseSeeker(seeker core.Seeker) ResponseSeeker {
+	return ResponseSeeker{
+		ID:               seeker.ID,
+		UserID:           seeker.UserID,
+		AnimalType:       seeker.AnimalType,
+		Location:         seeker.Location,
+		EquipmentRental:  seeker.EquipmentRental,
+		Equipment:        seeker.EquipmentID,
+		Description:      seeker.Description,
+		HaveCar:          seeker.HaveCar,
+		Price:            seeker.Price,
+		WillingnessCarry: seeker.WillingnessCarry,
+	}
+}
+
 func ToResponseSeekers(coreSeekers []core.Seeker) ResponseSeekers {
 	responseSeekers := make([]ResponseSeeker, len(coreSeekers))
 
 	for i, coreSeeker := range coreSeekers {
-		responseSeekers[i] = ToResponseSeeker(&coreSeeker)
+		responseSeekers[i] = toResponseSeeker(coreSeeker)
 	}
 
 	return ResponseSeekers{
