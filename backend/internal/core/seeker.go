@@ -9,6 +9,7 @@ type (
 	Seeker struct {
 		ID               int       `gorm:"primaryKey;autoIncrement;column:id"`
 		UserID           int       `gorm:"column:user_id"`
+		User             User      `gorm:"foreignKey:UserID;references:ID"`
 		AnimalType       string    `gorm:"column:animal_type"`
 		Description      string    `gorm:"column:description"`
 		Location         string    `gorm:"column:location"`
@@ -50,11 +51,23 @@ type (
 		UserID int `gorm:"column:user_id"`
 	}
 
+	GetAllSeekersParams struct {
+		SortBy     *string
+		SortOrder  *string
+		AnimalType *string
+		Location   *string
+		Price      *int
+		HaveCar    *bool
+		Limit      *int
+		Offset     *int
+	}
+
 	SeekersService interface {
 		CreateSeeker(ctx context.Context, seeker Seeker, equipment Equipment) (Seeker, error)
 		GetSeeker(ctx context.Context, userID int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, seeker UpdateSeeker) (Seeker, error)
 		DeleteSeeker(ctx context.Context, userID int) error
+		GetAllSeekers(ctx context.Context, params GetAllSeekersParams) ([]Seeker, error)
 	}
 
 	SeekersStore interface {
@@ -62,6 +75,7 @@ type (
 		GetSeeker(ctx context.Context, userID int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, userID int, updateSeeker map[string]interface{}) (Seeker, error)
 		DeleteSeeker(ctx context.Context, userID int) error
+		GetAllSeekers(ctx context.Context, params GetAllSeekersParams) ([]Seeker, error)
 	}
 )
 
