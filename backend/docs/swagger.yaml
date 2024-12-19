@@ -263,6 +263,13 @@ definitions:
     required:
     - willingness_carry
     type: object
+  seeker.ResponseSeekers:
+    properties:
+      payload:
+        items:
+          $ref: '#/definitions/seeker.ResponseSeeker'
+        type: array
+    type: object
   seeker.UpdateSeeker:
     properties:
       animal_type:
@@ -1270,6 +1277,76 @@ paths:
       tags:
       - post
   /seekers:
+    get:
+      consumes:
+      - application/json
+      description: Get seekers
+      parameters:
+      - description: Sort
+        in: query
+        name: sort
+        type: string
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      - description: Minimum rating
+        in: query
+        name: min_equipment_rental
+        type: integer
+      - description: Maximum rating
+        in: query
+        name: max_equipment_rental
+        type: integer
+      - description: Minimum price
+        in: query
+        name: min_price
+        type: integer
+      - description: Maximum price
+        in: query
+        name: max_price
+        type: integer
+      - description: Have car
+        in: query
+        name: have_car
+        type: boolean
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeekers'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: get seekers
+      tags:
+      - seeker
     post:
       consumes:
       - application/json
