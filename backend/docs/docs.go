@@ -1492,7 +1492,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Sort",
-                        "name": "sort",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort",
+                        "name": "sort_order",
                         "in": "query"
                     },
                     {
@@ -1587,13 +1593,56 @@ const docTemplate = `{
                 "operationId": "create-seeker",
                 "parameters": [
                     {
-                        "description": "Seeker",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/seeker.CreateSeeker"
-                        }
+                        "type": "string",
+                        "description": "Animal type",
+                        "name": "animal_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Price",
+                        "name": "equipment_rental",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Price",
+                        "name": "equipment",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have car",
+                        "name": "have_car",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Price",
+                        "name": "price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Price",
+                        "name": "willingness_carry",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1709,15 +1758,6 @@ const docTemplate = `{
                 ],
                 "summary": "Delete seeker",
                 "operationId": "delete-seeker",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1771,13 +1811,46 @@ const docTemplate = `{
                 "operationId": "update-seeker",
                 "parameters": [
                     {
-                        "description": "Seeker",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/seeker.UpdateSeeker"
-                        }
+                        "type": "string",
+                        "description": "Animal type",
+                        "name": "animal_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Price",
+                        "name": "equipment_rental",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have car",
+                        "name": "have_car",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Price",
+                        "name": "price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Price",
+                        "name": "willingness_carry",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2736,63 +2809,6 @@ const docTemplate = `{
                 }
             }
         },
-        "seeker.CreateSeeker": {
-            "type": "object",
-            "required": [
-                "animal_type",
-                "equipment",
-                "equipment_rental",
-                "location",
-                "user_id",
-                "willingness_carry"
-            ],
-            "properties": {
-                "animal_type": {
-                    "type": "string",
-                    "enum": [
-                        "dog",
-                        "cat",
-                        "both"
-                    ]
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 4000
-                },
-                "equipment": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "equipment_rental": {
-                    "type": "integer",
-                    "minimum": -1
-                },
-                "have_car": {
-                    "type": "boolean"
-                },
-                "location": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "integer",
-                    "minimum": 0
-                },
-                "user_id": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "willingness_carry": {
-                    "type": "string",
-                    "enum": [
-                        "yes",
-                        "no",
-                        "situational"
-                    ]
-                }
-            }
-        },
         "seeker.ResponseSeeker": {
             "type": "object",
             "required": [
@@ -2844,57 +2860,6 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/seeker.ResponseSeeker"
                     }
-                }
-            }
-        },
-        "seeker.UpdateSeeker": {
-            "type": "object",
-            "required": [
-                "user_id"
-            ],
-            "properties": {
-                "animal_type": {
-                    "type": "string",
-                    "enum": [
-                        "dog",
-                        "cat",
-                        "both"
-                    ]
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 4000
-                },
-                "equipment": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "equipment_rental": {
-                    "type": "integer",
-                    "minimum": -1
-                },
-                "have_car": {
-                    "type": "boolean"
-                },
-                "location": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "willingness_carry": {
-                    "type": "string",
-                    "enum": [
-                        "yes",
-                        "no",
-                        "situational"
-                    ]
                 }
             }
         },
