@@ -2,7 +2,6 @@ package seeker
 
 import (
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"strings"
 )
 
 func (seeker *CreateSeeker) GetEquipment() (core.Equipment, error) {
@@ -45,27 +44,15 @@ func (seeker *UpdateSeeker) ToCoreUpdateSeeker() core.UpdateSeeker {
 	}
 }
 
-func parseSort(sort string) (sortBy, sortOrder string) {
-	parts := strings.Split(sort, ":")
-	if len(parts) != 2 {
-		return "", ""
-	}
-	sortBy = ""
-	sortOrder = ""
-	if parts[0] != "" {
-		sortBy = parts[0]
-	}
-	if parts[1] != "" {
-		sortOrder = parts[1]
-	}
-	return sortBy, sortOrder
-}
-
 func (p *GetAllSeekerParams) ToCoreGetAllSeekersParams() core.GetAllSeekersParams {
 	sortBy, sortOrder := "", ""
 
-	if p.Sort != nil {
-		sortBy, sortOrder = parseSort(*p.Sort)
+	if p.SortBy != nil {
+		sortBy = *p.SortBy
+	}
+
+	if p.SortOrder != nil {
+		sortBy = *p.SortOrder
 	}
 
 	limit, offset := 10, 0
