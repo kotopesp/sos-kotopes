@@ -192,48 +192,6 @@ definitions:
     required:
     - name
     type: object
-  seeker.CreateSeeker:
-    properties:
-      animal_type:
-        enum:
-        - dog
-        - cat
-        - both
-        type: string
-      description:
-        maxLength: 4000
-        type: string
-      equipment:
-        items:
-          type: string
-        type: array
-      equipment_rental:
-        minimum: -1
-        type: integer
-      have_car:
-        type: boolean
-      location:
-        type: string
-      price:
-        minimum: 0
-        type: integer
-      user_id:
-        minimum: 1
-        type: integer
-      willingness_carry:
-        enum:
-        - "yes"
-        - "no"
-        - situational
-        type: string
-    required:
-    - animal_type
-    - equipment
-    - equipment_rental
-    - location
-    - user_id
-    - willingness_carry
-    type: object
   seeker.ResponseSeeker:
     properties:
       animal_type:
@@ -269,42 +227,6 @@ definitions:
         items:
           $ref: '#/definitions/seeker.ResponseSeeker'
         type: array
-    type: object
-  seeker.UpdateSeeker:
-    properties:
-      animal_type:
-        enum:
-        - dog
-        - cat
-        - both
-        type: string
-      description:
-        maxLength: 4000
-        type: string
-      equipment:
-        items:
-          type: string
-        type: array
-      equipment_rental:
-        minimum: -1
-        type: integer
-      have_car:
-        type: boolean
-      location:
-        type: string
-      price:
-        type: integer
-      user_id:
-        minimum: 1
-        type: integer
-      willingness_carry:
-        enum:
-        - "yes"
-        - "no"
-        - situational
-        type: string
-    required:
-    - user_id
     type: object
   user.Login:
     properties:
@@ -1284,7 +1206,11 @@ paths:
       parameters:
       - description: Sort
         in: query
-        name: sort
+        name: sort_by
+        type: string
+      - description: Sort
+        in: query
+        name: sort_order
         type: string
       - description: Animal type
         in: query
@@ -1341,12 +1267,41 @@ paths:
       description: Create a seeker
       operationId: create-seeker
       parameters:
-      - description: Seeker
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/seeker.CreateSeeker'
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Description
+        in: query
+        name: description
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      - description: Price
+        in: query
+        name: equipment_rental
+        type: integer
+      - collectionFormat: csv
+        description: Price
+        in: query
+        items:
+          type: string
+        name: equipment
+        type: array
+      - description: Have car
+        in: query
+        name: have_car
+        type: boolean
+      - description: Price
+        in: query
+        name: price
+        type: integer
+      - description: Price
+        in: query
+        name: willingness_carry
+        type: string
       produces:
       - application/json
       responses:
@@ -1378,12 +1333,6 @@ paths:
       - application/json
       description: Delete seeker
       operationId: delete-seeker
-      parameters:
-      - description: User ID
-        in: path
-        name: user_id
-        required: true
-        type: integer
       produces:
       - application/json
       responses:
@@ -1451,12 +1400,34 @@ paths:
       description: Update a seeker
       operationId: update-seeker
       parameters:
-      - description: Seeker
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/seeker.UpdateSeeker'
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Description
+        in: query
+        name: description
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      - description: Price
+        in: query
+        name: equipment_rental
+        type: integer
+      - description: Have car
+        in: query
+        name: have_car
+        type: boolean
+      - description: Price
+        in: query
+        name: price
+        type: integer
+      - description: Price
+        in: query
+        name: willingness_carry
+        type: string
       produces:
       - application/json
       responses:

@@ -101,11 +101,11 @@ func (s *service) GetAllSeekers(ctx context.Context, params core.GetAllSeekersPa
 		*params.SortOrder = "desc"
 	}
 
-	keepers, err := s.seekersStore.GetAllSeekers(ctx, params)
+	seekers, err := s.seekersStore.GetAllSeekers(ctx, params)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return nil, err
 	}
 
-	return keepers, nil
+	return seekers, nil
 }
