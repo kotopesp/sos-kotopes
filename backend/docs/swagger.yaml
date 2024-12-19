@@ -1294,21 +1294,9 @@ paths:
         in: query
         name: location
         type: string
-      - description: Minimum rating
+      - description: Price
         in: query
-        name: min_equipment_rental
-        type: integer
-      - description: Maximum rating
-        in: query
-        name: max_equipment_rental
-        type: integer
-      - description: Minimum price
-        in: query
-        name: min_price
-        type: integer
-      - description: Maximum price
-        in: query
-        name: max_price
+        name: price
         type: integer
       - description: Have car
         in: query

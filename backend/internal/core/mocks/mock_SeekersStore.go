@@ -127,6 +127,65 @@ func (_c *MockSeekersStore_DeleteSeeker_Call) RunAndReturn(run func(context.Cont
 	return _c
 }
 
+// GetAllSeekers provides a mock function with given fields: ctx, params
+func (_m *MockSeekersStore) GetAllSeekers(ctx context.Context, params core.GetAllSeekersParams) ([]core.Seeker, error) {
+	ret := _m.Called(ctx, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAllSeekers")
+	}
+
+	var r0 []core.Seeker
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllSeekersParams) ([]core.Seeker, error)); ok {
+		return rf(ctx, params)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.GetAllSeekersParams) []core.Seeker); ok {
+		r0 = rf(ctx, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Seeker)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, core.GetAllSeekersParams) error); ok {
+		r1 = rf(ctx, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockSeekersStore_GetAllSeekers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetAllSeekers'
+type MockSeekersStore_GetAllSeekers_Call struct {
+	*mock.Call
+}
+
+// GetAllSeekers is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params core.GetAllSeekersParams
+func (_e *MockSeekersStore_Expecter) GetAllSeekers(ctx interface{}, params interface{}) *MockSeekersStore_GetAllSeekers_Call {
+	return &MockSeekersStore_GetAllSeekers_Call{Call: _e.mock.On("GetAllSeekers", ctx, params)}
+}
+
+func (_c *MockSeekersStore_GetAllSeekers_Call) Run(run func(ctx context.Context, params core.GetAllSeekersParams)) *MockSeekersStore_GetAllSeekers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.GetAllSeekersParams))
+	})
+	return _c
+}
+
+func (_c *MockSeekersStore_GetAllSeekers_Call) Return(_a0 []core.Seeker, _a1 error) *MockSeekersStore_GetAllSeekers_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockSeekersStore_GetAllSeekers_Call) RunAndReturn(run func(context.Context, core.GetAllSeekersParams) ([]core.Seeker, error)) *MockSeekersStore_GetAllSeekers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetSeeker provides a mock function with given fields: ctx, userID
 func (_m *MockSeekersStore) GetSeeker(ctx context.Context, userID int) (core.Seeker, error) {
 	ret := _m.Called(ctx, userID)
