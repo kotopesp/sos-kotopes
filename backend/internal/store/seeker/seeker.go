@@ -116,3 +116,52 @@ func (s *store) DeleteSeeker(ctx context.Context, userID int) error {
 
 	return nil
 }
+
+func (s *store) GetAllSeekers(ctx context.Context, params core.GetAllSeekersParams) ([]core.Seeker, error) {
+	var seekers []core.Seeker
+	query := s.DB.WithContext(ctx).Model(&core.Seeker{})
+	query.Where("is_deleted = false")
+
+	if params.AnimalType != nil {
+		query = query.Where("animal_type = ?", *params.AnimalType)
+	}
+
+	if params.Location != nil {
+		query = query.Where("location = ?", *params.Location)
+	}
+
+	if params.Price != nil {
+		if *params.Price < 0 {
+			query = query.Where("price < 0")
+		}
+
+		if *params.Price == 0 {
+			query = query.Where("price == 0")
+		}
+
+		if *params.Price > 0 {
+			query = query.Where("price > 0")
+		}
+	}
+
+	if params.HaveCar != nil {
+		query = query.Where("have_car = ?", *params.HaveCar)
+	}
+
+	query = query.Order(*params.SortBy + " " + *params.SortOrder)
+
+	if params.Offset != nil {
+		query = query.Offset(*params.Offset)
+	}
+
+	if params.Limit != nil {
+		query = query.Limit(*params.Limit)
+	}
+
+	if err := query.Preload("User").Find(&seekers).Error; err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		return nil, err
+	}
+
+	return seekers, nil
+}
