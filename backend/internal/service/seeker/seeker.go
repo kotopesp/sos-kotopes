@@ -92,3 +92,20 @@ func (s *service) DeleteSeeker(ctx context.Context, userID int) error {
 
 	return s.seekersStore.DeleteSeeker(ctx, userID)
 }
+
+func (s *service) GetAllSeekers(ctx context.Context, params core.GetAllSeekersParams) ([]core.Seeker, error) {
+	if *params.SortBy == "" {
+		*params.SortBy = "created_at"
+	}
+	if *params.SortOrder == "" {
+		*params.SortOrder = "desc"
+	}
+
+	keepers, err := s.seekersStore.GetAllSeekers(ctx, params)
+	if err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		return nil, err
+	}
+
+	return keepers, nil
+}
