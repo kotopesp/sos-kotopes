@@ -24,6 +24,16 @@ type UpdateSeeker struct {
 	WillingnessCarry *string   `json:"willingness_carry" validate:"omitempty,oneof=yes no situational"`
 }
 
+type GetAllSeekerParams struct {
+	Sort       *string `query:"sort" validate:"omitempty"`
+	AnimalType *string `query:"animal_type" validate:"omitempty,oneof=dog cat both"`
+	Location   *string `query:"location" validate:"omitempty"`
+	Price      *int    `query:"min_price" validate:"omitempty,min=-1"`
+	HaveCar    *bool   `query:"have_car" validate:"omitempty,boolean"`
+	Limit      *int    `query:"limit" validate:"omitempty,min=1"`
+	Offset     *int    `query:"offset" validate:"omitempty,min=0"`
+}
+
 type ResponseSeeker struct {
 	ID               int    `json:"id"`
 	UserID           int    `json:"user_id"`
@@ -35,4 +45,8 @@ type ResponseSeeker struct {
 	HaveCar          bool   `json:"have_car"`
 	Price            int    `json:"price"`
 	WillingnessCarry string `json:"willingness_carry" validate:"required,oneof=yes no situational"`
+}
+
+type ResponseSeekers struct {
+	ResponseSeekers []ResponseSeeker `json:"payload"`
 }
