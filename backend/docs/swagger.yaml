@@ -69,6 +69,139 @@ definitions:
         example: Jack_Vorobey123
         type: string
     type: object
+  keeper.KeepersResponse:
+    properties:
+      animal_acceptance:
+        type: string
+      animal_category:
+        type: string
+      boarding_compensation:
+        type: string
+      boarding_duration:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      has_cage:
+        type: boolean
+      id:
+        type: integer
+      location:
+        type: string
+      price:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  keeper.KeepersResponseWithMeta:
+    properties:
+      meta:
+        $ref: '#/definitions/pagination.Pagination'
+      payload:
+        items:
+          $ref: '#/definitions/keeper.KeepersResponseWithUser'
+        type: array
+    type: object
+  keeper.KeepersResponseWithUser:
+    properties:
+      keeper:
+        $ref: '#/definitions/keeper.KeepersResponse'
+      user:
+        $ref: '#/definitions/user.ResponseUser'
+    type: object
+  keeper.KeepersUpdate:
+    properties:
+      animal_acceptance:
+        enum:
+        - homeless
+        - home
+        - depends
+        type: string
+      animal_category:
+        enum:
+        - dog
+        - cat
+        - both
+        type: string
+      boarding_compensation:
+        enum:
+        - paid
+        - free
+        - depends
+        type: string
+      boarding_duration:
+        enum:
+        - hours
+        - days
+        - weeks
+        - months
+        - depends
+        type: string
+      description:
+        maxLength: 600
+        type: string
+      has_cage:
+        type: boolean
+      id:
+        type: integer
+      location:
+        type: string
+      price:
+        minimum: 0
+        type: number
+      user_id:
+        type: integer
+    required:
+    - animal_acceptance
+    - animal_category
+    - boarding_compensation
+    - boarding_duration
+    - has_cage
+    type: object
+  keeperreview.KeeperReviewsResponse:
+    properties:
+      author_id:
+        type: integer
+      content:
+        type: string
+      created_at:
+        type: string
+      grade:
+        type: integer
+      id:
+        type: integer
+      keeper_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  keeperreview.KeeperReviewsResponseWithUser:
+    properties:
+      review:
+        $ref: '#/definitions/keeperreview.KeeperReviewsResponse'
+      user:
+        $ref: '#/definitions/user.ResponseUser'
+    type: object
+  keeperreview.KeeperReviewsUpdate:
+    properties:
+      author_id:
+        minimum: 0
+        type: integer
+      content:
+        maxLength: 2000
+        type: string
+      grade:
+        maximum: 5
+        minimum: 1
+        type: integer
+      id:
+        type: integer
+    required:
+    - author_id
+    type: object
   model.Response:
     properties:
       data: {}
@@ -336,8 +469,7 @@ paths:
       responses:
         "201":
           description: Created
-          schema:
-            type: object
+          schema: {}
         "400":
           description: Bad Request
           schema:
@@ -382,6 +514,380 @@ paths:
       summary: Refresh token
       tags:
       - auth
+  /keeper_reviews/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the keeper review
+      parameters:
+      - description: Keeper ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated keeper review details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/keeperreview.KeeperReviewsUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Response'
+        "204":
+          description: Review not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Invalid ID or request body
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Delete keeper review
+      tags:
+      - keeper review
+    put:
+      consumes:
+      - application/json
+      description: Updates the keeper review details
+      parameters:
+      - description: Keeper ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated keeper review details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/keeperreview.KeeperReviewsUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/keeperreview.KeeperReviewsResponseWithUser'
+              type: object
+        "400":
+          description: Invalid ID or request body
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Review not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Update keeper review
+      tags:
+      - keeper review
+  /keepers:
+    get:
+      consumes:
+      - application/json
+      description: Fetch a list of keepers based on optional filters and pagination
+      parameters:
+      - description: Location
+        in: query
+        name: location
+        type: string
+      - description: Minimum rating
+        in: query
+        name: min_rating
+        type: number
+      - description: Maximum rating
+        in: query
+        name: max_rating
+        type: number
+      - description: Minimum price
+        in: query
+        name: min_price
+        type: number
+      - description: Maximum price
+        in: query
+        name: max_price
+        type: number
+      - description: Has cage
+        in: query
+        name: has_cage
+        type: boolean
+      - description: Boarding duration
+        in: query
+        name: boarding_duration
+        type: string
+      - description: Boarding compensation
+        in: query
+        name: boarding_compensation
+        type: string
+      - description: Animal acceptance
+        in: query
+        name: animal_acceptance
+        type: string
+      - description: Animal category
+        in: query
+        name: animal_category
+        type: string
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/keeper.KeepersResponseWithMeta'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: get keepers
+      tags:
+      - keeper
+  /keepers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a keeper by its ID.
+      parameters:
+      - description: Keeper ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Invalid ID
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Keeper not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Delete keeper
+      tags:
+      - keeper
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the details of a keeper by its ID
+      parameters:
+      - description: Keeper ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/keeper.KeepersResponseWithUser'
+              type: object
+        "400":
+          description: Invalid ID
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Keeper not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get keeper
+      tags:
+      - keeper
+    put:
+      consumes:
+      - application/json
+      description: Updates the keeper details such as description, price, location,
+        etc.
+      parameters:
+      - description: Keeper ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated keeper details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/keeper.KeepersUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/keeper.KeepersResponseWithUser'
+              type: object
+        "400":
+          description: Invalid ID or request body
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Keeper not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Update keeper
+      tags:
+      - keeper
+  /keepers/{id}/keeper_reviews:
+    get:
+      consumes:
+      - application/json
+      description: Fetch reviews of a keeper based on optional pagination
+      parameters:
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Keeper ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/keeperreview.KeeperReviewsResponseWithUser'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: get keeper reviews
+      tags:
+      - keeper review
+    post:
+      consumes:
+      - application/json
+      description: Create review on a keeper
+      parameters:
+      - description: Keeper ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/keeperreview.KeeperReviewsResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: create keeper review
+      tags:
+      - keeper review
   /posts:
     get:
       consumes:
