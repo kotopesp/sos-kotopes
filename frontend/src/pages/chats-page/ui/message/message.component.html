@@ -1,8 +1,11 @@
 <div class="container__message">
   <div class="block__message" [class]="answer ? 'answer' : ''">
     <span *ngIf="!(name === '')" class="sender-name">{{ name }}</span>
-    <span class="message" id="message__content">
+    <span class="message" id="message__content" *ngIf="!isAudio">
       {{ messageContent }}
+    </span>
+    <span class="message" id="message__content__audio" *ngIf="isAudio">
+      <audio controls  [src]="getAudioUrl()"></audio>
     </span>
     <div class="message__time">
       {{ messageTime }}

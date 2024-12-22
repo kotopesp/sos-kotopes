@@ -40,10 +40,10 @@
                     <span><input class="search-input fw400 ft20" type="text" placeholder="Поиск"></span>
                   </form>
                 </div>
-                
+
                 <div class="main__add__new__person">
                   <div *ngIf="favusers.length > 0">
-                    <app-add-to-chat 
+                    <app-add-to-chat
                       *ngFor="let user of favusers"
                       [username]="user.username"
                       [userId]="user.id"
@@ -82,7 +82,7 @@
             </div>
             <div class="all__chats">
               <app-chat *ngFor="let chat of chatList"
-              appToggleActive 
+              appToggleActive
               [chat]="chat"
               [ngClass]="{ 'active': isActiveChat(chat) }"
               (click)="selectChat(chat)"/>
@@ -95,7 +95,7 @@
                   <img src="/assets/images/test-cat2.png" alt="avatar" class="message__user__avatar">
                 </div>
                 <div>
-                  <p>{{ currentChat.title }}</p> 
+                  <p>{{ currentChat.title }}</p>
                   <!-- TODO: сюда выводить онлайн и аватарку -->
                   <p id="time__last__online">2 дня назад</p>
                 </div>
@@ -107,17 +107,20 @@
                 <div class="container__messages">
                   <div *ngFor="let message of messages">
                     <div class="message">
-                      <app-message 
+                      <app-message
                       [name]="message.user_id === userId ? '': message.sender_name"
-                      [answer]="message.user_id === userId" 
-                      [messageContent]="message.message_content" 
-                      [messageTime]="formatTime(message.created_at)"/>
+                      [answer]="message.user_id === userId"
+                      [messageContent]="message.message_content"
+                      [messageTime]="formatTime(message.created_at)"
+                      [isAudio]="message.is_audio"
+                      [audioBytes]="message.audio_bytes"
+                      />
                     </div>
                   </div>
                 </div>
               </div>
-              <form action="" 
-              [formGroup]="sendMsgForm" 
+              <form action=""
+              [formGroup]="sendMsgForm"
               (ngSubmit)="onSubmit()">
               <div class="block__current__message">
                 <div class="block__clip">
@@ -125,14 +128,17 @@
                 </div>
                 <textarea
                   formControlName="msgText"
-                  placeholder="Введите сообщение" 
-                  id="textarea__message" 
+                  placeholder="Введите сообщение"
+                  id="textarea__message"
                   rows="1"
                   (keydown.enter)="onSubmit($event)">
                 </textarea>
                 <div class="block__send__message">
-                  <button class="block__send__message"> 
-                  <img src="/assets/icons/send-message-icon.svg" alt="icon">
+                  <button class="block__send__message" *ngIf="isMsgTextEmpty()" (mousedown)="handleAudioMouseDown()" (mouseup)="handleAudioMouseUp()">
+                    <img src="/assets/icons/chats/audio-record-icon.svg" alt="icon">
+                  </button>
+                  <button class="block__send__message" *ngIf="!isMsgTextEmpty()">
+                    <img src="/assets/icons/send-message-icon.svg" alt="icon">
                   </button>
                 </div>
               </div>
