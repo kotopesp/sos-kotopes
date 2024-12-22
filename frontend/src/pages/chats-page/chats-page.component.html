@@ -82,10 +82,10 @@
             </div>
             <div class="all__chats">
               <app-chat *ngFor="let chat of chatList"
-              appToggleActive
-              [chat]="chat"
-              [ngClass]="{ 'active': isActiveChat(chat) }"
-              (click)="selectChat(chat)"/>
+                        appToggleActive
+                        [chat]="chat"
+                        [ngClass]="{ 'active': isActiveChat(chat) }"
+                        (click)="selectChat(chat)"/>
             </div>
           </div>
           <div class="block__current__chat">
@@ -108,51 +108,53 @@
                   <div *ngFor="let message of messages">
                     <div class="message">
                       <app-message
-                      [name]="message.user_id === userId ? '': message.sender_name"
-                      [answer]="message.user_id === userId"
-                      [messageContent]="message.message_content"
-                      [messageTime]="formatTime(message.created_at)"
-                      [isAudio]="message.is_audio"
-                      [audioBytes]="message.audio_bytes"
+                        [name]="message.user_id === userId ? '': message.sender_name"
+                        [answer]="message.user_id === userId"
+                        [messageContent]="message.message_content"
+                        [messageTime]="formatTime(message.created_at)"
+                        [isAudio]="message.is_audio"
+                        [audioBytes]="message.audio_bytes"
                       />
                     </div>
                   </div>
                 </div>
               </div>
               <form action=""
-              [formGroup]="sendMsgForm"
-              (ngSubmit)="onSubmit()">
-              <div class="block__current__message">
-                <div class="block__clip">
-                  <img src="/assets/icons/clip-icon.svg" alt="icon">
-                </div>
-                <textarea
-                  formControlName="msgText"
-                  placeholder="Введите сообщение"
-                  id="textarea__message"
-                  rows="1"
-                  (keydown.enter)="onSubmit($event)">
+                    [formGroup]="sendMsgForm"
+                    (ngSubmit)="onSubmit()">
+                <div class="block__current__message">
+                  <div class="block__clip">
+                    <img src="/assets/icons/clip-icon.svg" alt="icon">
+                  </div>
+                  <textarea
+                    formControlName="msgText"
+                    placeholder="Введите сообщение"
+                    id="textarea__message"
+                    rows="1"
+                    (keydown.enter)="onSubmit($event)">
                 </textarea>
-                <div class="block__send__message">
-                  <button class="block__send__message" *ngIf="isMsgTextEmpty()" (mousedown)="handleAudioMouseDown()" (mouseup)="handleAudioMouseUp()">
-                    <img src="/assets/icons/chats/audio-record-icon.svg" alt="icon">
-                  </button>
-                  <button class="block__send__message" *ngIf="!isMsgTextEmpty()">
-                    <img src="/assets/icons/send-message-icon.svg" alt="icon">
-                  </button>
+                  <div class="block__send__message">
+                    <button class="block__send__message" *ngIf="isMsgTextEmpty()" (mousedown)="handleAudioMouseDown()"
+                            (mouseup)="handleAudioMouseUp()">
+                      <img src="/assets/icons/chats/audio-record-icon.svg" alt="icon">
+                    </button>
+                    <button class="block__send__message" *ngIf="!isMsgTextEmpty()">
+                      <img src="/assets/icons/send-message-icon.svg" alt="icon">
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </form>
-          </div>
-          <div *ngIf="currentChat.id === -1" class="current__chat__none">
-            <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
-            <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
-              class="start__new__chat"
-              (click)="createChat = true"
-              (keydown.enter)="createChat = true"
-              tabindex="0"
-              role="button"
-              aria-pressed="false">начните новый</span></p></span></div>
+              </form>
+            </div>
+            <div *ngIf="currentChat.id === -1" class="current__chat__none">
+              <img src="/assets/icons/chats-animals-icon.svg" alt="icon">
+              <div class="ft24 fw400 text__new__chat"><span>Выберите чат <p>или <span
+                class="start__new__chat"
+                (click)="createChat = true"
+                (keydown.enter)="createChat = true"
+                tabindex="0"
+                role="button"
+                aria-pressed="false">начните новый</span></p></span></div>
+            </div>
           </div>
         </div>
       </div>
