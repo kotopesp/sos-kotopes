@@ -90,7 +90,7 @@ func (k *UpdateKeeper) ToCoreUpdateKeeper() core.UpdateKeeper {
 
 func ToModelResponseKeepers(meta pagination.Pagination, coreKeepers []core.Keeper) ResponseKeepers {
 	offset := (meta.CurrentPage - 1) * meta.PerPage
-	paginateCoreKeepers := coreKeepers[offset:min(offset+meta.PerPage, meta.Total)]
+	paginateCoreKeepers := coreKeepers[offset:max(0, min(offset+meta.PerPage, meta.Total))]
 	paginateKeepersResponse := make([]ResponseKeeper, len(paginateCoreKeepers))
 
 	for i, coreKeeper := range paginateCoreKeepers {

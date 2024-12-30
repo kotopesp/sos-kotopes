@@ -9,14 +9,14 @@ import (
 
 // KeepersCreate represents the data required to create a new keeper.
 type CreateKeeper struct {
-	UserID               int      `form:"user_id" validate:"required,min=0"`
+	UserID               int      `form:"user_id" validate:"required,min=1"`
 	Description          *string  `form:"description" validate:"notblank,max=600"`
 	Price                *float64 `form:"price" validate:"min=0"`
 	LocationID           *int     `form:"location_id"`
 	HasCage              bool     `form:"has_cage" validate:"required,boolean"`
 	BoardingDuration     string   `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
 	BoardingCompensation string   `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
-	AnimalAcceptance     string   `form:"animal_acceptance" validate:"required,oneof=homeless home depends"`
+	AnimalAcceptance     string   `form:"animal_acceptance" validate:"required,oneof=homeless home homeless-hadhome depends"`
 	AnimalCategory       string   `form:"animal_category" validate:"required,oneof=dog cat both"`
 }
 
@@ -28,7 +28,7 @@ type UpdateKeeper struct {
 	HasCage              *bool    `form:"has_cage" validate:"boolean"`
 	BoardingDuration     *string  `form:"boarding_duration" validate:"oneof=hours days weeks months depends"`
 	BoardingCompensation *string  `form:"boarding_compensation" validate:"oneof=paid free depends"`
-	AnimalAcceptance     *string  `form:"animal_acceptance" validate:"oneof=homeless home depends"`
+	AnimalAcceptance     *string  `form:"animal_acceptance" validate:"oneof=homeless home homeless-hadhome depends"`
 	AnimalCategory       *string  `form:"animal_category" validate:"oneof=dog cat both"`
 }
 
@@ -66,7 +66,7 @@ type GetAllKeepersParams struct {
 	HasCage              *bool    `query:"has_cage" validate:"omitempty,boolean"`
 	BoardingDuration     *string  `query:"boarding_duration" validate:"omitempty,oneof=hours days weeks months depends"`
 	BoardingCompensation *string  `query:"boarding_compensation" validate:"omitempty,oneof=paid free depends"`
-	AnimalAcceptance     *string  `query:"animal_acceptance" validate:"omitempty,oneof=homeless home depends"`
+	AnimalAcceptance     *string  `query:"animal_acceptance" validate:"omitempty,oneof=homeless home homeless-hadhome depends"`
 	AnimalCategory       *string  `query:"animal_category" validate:"omitempty,oneof=dog cat both"`
 	Limit                *int     `query:"limit" validate:"omitempty,gt=0"`
 	Offset               *int     `query:"offset" validate:"omitempty,gte=0"`

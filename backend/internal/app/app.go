@@ -116,8 +116,8 @@ func Run(cfg *config.Config) {
 		postService,
 		userService,
 		roleService,
-		formValidator,
 		keeperService,
+		formValidator,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

@@ -18,19 +18,23 @@ func New(pg *postgres.Postgres) core.KeeperStore {
 	return &store{pg}
 }
 
-func (s *store) CreateKeeper(ctx context.Context, keeper core.Keeper) error {
+func (s *store) CreateKeeper(ctx context.Context, keeper core.Keeper) (data core.Keeper, err error) {
 	keeperExist := false
-	if err := s.DB.WithContext(ctx).Table(keeper.TableName()).Select("1").Where("user_id = ?", keeper.UserID).Limit(1).Find(&keeperExist).Error; err != nil {
-		return err
+	if err := s.DB.WithContext(ctx).Table(keeper.TableName()).Select("1").Where("user_id = ? AND is_deleted = ?", keeper.UserID, false).Limit(1).Find(&keeperExist).Error; err != nil {
+		return core.Keeper{}, err
 	}
 	if keeperExist {
-		return core.ErrKeeperUserAlreadyKeeper
+		return core.Keeper{}, core.ErrKeeperUserAlreadyKeeper
 	}
 	if err := s.DB.WithContext(ctx).Create(&keeper).Error; err != nil {
-		return err
+		return core.Keeper{}, err
 	}
 
-	return nil
+	if err := s.DB.WithContext(ctx).Preload("User").First(&keeper).Error; err != nil {
+		return core.Keeper{}, err
+	}
+
+	return keeper, nil
 }
 
 func (s *store) DeleteKeeper(ctx context.Context, id int) error {
@@ -64,8 +68,15 @@ func (s *store) UpdateKeeper(ctx context.Context, id int, keeper core.UpdateKeep
 }
 
 func (s *store) GetAllKeepers(ctx context.Context, params core.GetAllKeepersParams) (data []core.Keeper, err error) {
+	var keepersExist core.Keeper
+	if err := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("is_deleted = ?", false).First(&keepersExist).Error; err != nil {
+		logger.Log().Debug(ctx, err.Error())
+		print(err.Error())
+		return []core.Keeper{}, nil
+	}
+
 	var keepers []core.Keeper
-	query := s.DB.WithContext(ctx).Model(&core.Keeper{})
+	query := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("is_deleted = ?", false)
 
 	if params.MinPrice != nil {
 		query = query.Where("price >= ?", *params.MinPrice)
@@ -74,7 +85,7 @@ func (s *store) GetAllKeepers(ctx context.Context, params core.GetAllKeepersPara
 		query = query.Where("price <= ?", *params.MaxPrice)
 	}
 
-	query = query.Select("keepers.*, AVG(keeper_reviews.grade) as avg_grade").
+	query = query.Select("keepers.id, AVG(keeper_reviews.grade) as avg_grade").
 		Joins("left join keeper_reviews on keeper_reviews.keeper_id = keepers.id").
 		Group("keepers.id")
 
@@ -124,7 +135,7 @@ func (s *store) GetAllKeepers(ctx context.Context, params core.GetAllKeepersPara
 func (s *store) GetKeeperByID(ctx context.Context, id int) (core.Keeper, error) {
 	var keeper = core.Keeper{ID: id}
 
-	if err := s.DB.WithContext(ctx).Preload("User").First(&keeper).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Where("id = ? AND is_deleted = ?", id, false).Preload("User").First(&keeper).Error; err != nil {
 		return core.Keeper{}, err
 	}
 

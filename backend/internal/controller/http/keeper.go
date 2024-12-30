@@ -49,8 +49,7 @@ func (r *Router) getKeepers(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
-
-	pagination := paginate(len(coreKeepers), *params.Limit, *params.Offset)
+	pagination := paginate(len(coreKeepers), *coreParams.Limit, *coreParams.Offset)
 	responseKeepers := keeper.ToModelResponseKeepers(pagination, coreKeepers)
 
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(responseKeepers))

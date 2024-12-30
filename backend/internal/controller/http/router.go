@@ -28,8 +28,8 @@ func NewRouter(
 	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
-	formValidator validator.FormValidatorService,
 	keeperService core.KeeperService,
+	formValidator validator.FormValidatorService,
 ) {
 	router := &Router{
 		app:            app,
@@ -90,7 +90,7 @@ func (r *Router) initRoutes() {
 
 	// keepers
 	v1.Get("/keepers", r.getKeepers)
-	v1.Post("/keepers", r.createKeeper)
+	v1.Post("/keepers", r.protectedMiddleware(), r.createKeeper)
 	v1.Get("/keepers/:id", r.getKeeper)
 	v1.Patch("/keepers/:id", r.protectedMiddleware(), r.updateKeeper)
 	v1.Delete("/keepers/:id", r.protectedMiddleware(), r.deleteKeeper)

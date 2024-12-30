@@ -54,7 +54,7 @@ type GetAllKeepersParams struct {
 type KeeperStore interface {
 	GetAllKeepers(ctx context.Context, params GetAllKeepersParams) (data []Keeper, err error)
 	GetKeeperByID(ctx context.Context, id int) (Keeper, error)
-	CreateKeeper(ctx context.Context, keeper Keeper) error
+	CreateKeeper(ctx context.Context, keeper Keeper) (data Keeper, err error)
 	DeleteKeeper(ctx context.Context, id int) error
 	UpdateKeeper(ctx context.Context, id int, keeper UpdateKeeper) (Keeper, error)
 }

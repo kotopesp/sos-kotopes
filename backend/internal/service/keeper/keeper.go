@@ -54,7 +54,9 @@ func (s *service) CreateKeeper(ctx context.Context, keeper core.Keeper) (data co
 	keeper.IsDeleted = false
 	keeper.UpdatedAt = time.Now()
 
-	return keeper, s.keeperStore.CreateKeeper(ctx, keeper)
+	createdKeeper, err := s.keeperStore.CreateKeeper(ctx, keeper)
+
+	return createdKeeper, err
 }
 
 func (s *service) DeleteKeeper(ctx context.Context, id, userID int) error {

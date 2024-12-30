@@ -15,6 +15,7 @@ type (
 		authService    *mocks.MockAuthService
 		postService    *mocks.MockPostService
 		commentService *mocks.MockCommentService
+		keeperService  *mocks.MockKeeperService
 	}
 )
 
@@ -44,13 +45,14 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 		mockPostService,
 		mockUserService,
 		mockRoleService,
-		formValidatorService,
 		mockKeeperService,
+		formValidatorService,
 	)
 
 	return app, appDependencies{
 		authService:    mockAuthService,
 		postService:    mockPostService,
 		commentService: mockCommentService,
+		keeperService:  mockKeeperService,
 	}
 }
