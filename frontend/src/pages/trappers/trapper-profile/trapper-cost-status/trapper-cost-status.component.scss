@@ -1,0 +1,23 @@
+@mixin container__trapper__status($color) {
+    text-align: center;
+    align-content: center;
+    padding: 6px 18px 6px 18px;
+    height: 38px;
+    width: 160px;
+    white-space: nowrap;
+    background: var($bg-color);
+    border-radius: 10px;
+  }
+  
+  .deal {
+    @include container__post__status(var(--orange-active-button-bg));
+  }
+  
+  .pay {
+    @include container__post__status(var(--red-active-button-bg));
+  }
+  
+  .free {
+    @include container__post__status(var(--green-active-button-bg));
+  }
+  

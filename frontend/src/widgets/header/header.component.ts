@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit {
       className: 'header__ads'
     },
     {
-      path: '',
+      path: 'trappers',
       text: 'Отловщики',
       className: 'header__overexposure'
     },

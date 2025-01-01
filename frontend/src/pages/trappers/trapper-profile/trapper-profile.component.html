@@ -1,0 +1,22 @@
+<div class="trapper__interior_container">
+  <div class="trapper__inferior_container">
+    <div class="photo__container">
+      <img class="trapper_photo" [src]="trapper.photo" alt="trapper-photo"/>
+      <app-favorites-button/>
+    </div>
+    <div class="info-under-photo__container">
+      <img class="trapper_type"  [src] = "trapper.animalChoice | trapperType" >
+      <app-trapper-cost-status/>
+      <img class="car_info" [src] = "trapper.carAvailability ? '../../assets/icons/car.png' : '../../assets/icons/nocar.png'" >
+    </div>
+    <div class="trapper-description__container ft20 fw400"> {{trapper.description}} </div>
+    <div class="place__container ft20 fw400">{{trapper.catchingArea}}</div>
+    <div class="trapper-bottom__container">
+      <div class="author-username__container user_tag">&#64;{{trapper.userName}}</div>
+      <a href="#" class="response-button ptbold ft20">
+        <div class="button-figure"></div>
+        <div class="button-text">Сообщение</div>
+      </a>
+    </div>
+  </div>
+</div>
