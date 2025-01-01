@@ -1509,8 +1509,56 @@
                     },
                     {
                         "type": "integer",
+                        "description": "Equipment rental",
+                        "name": "min_equipment_rental",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Equipment rental",
+                        "name": "max_equipment_rental",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have metal cage",
+                        "name": "have_metal_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have plastic cage",
+                        "name": "have_plastic_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have net",
+                        "name": "have_net",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have ladder",
+                        "name": "have_ladder",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Have other",
+                        "name": "have_other",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "Price",
-                        "name": "price",
+                        "name": "min_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Price",
+                        "name": "max_price",
                         "in": "query"
                     },
                     {
@@ -1606,18 +1654,38 @@
                     },
                     {
                         "type": "integer",
-                        "description": "Price",
+                        "description": "Equipment rental",
                         "name": "equipment_rental",
                         "in": "query"
                     },
                     {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "collectionFormat": "csv",
-                        "description": "Price",
-                        "name": "equipment",
+                        "type": "boolean",
+                        "description": "Have metal cage",
+                        "name": "have_metal_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have plastic cage",
+                        "name": "have_plastic_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have net",
+                        "name": "have_net",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have ladder",
+                        "name": "have_ladder",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Have other",
+                        "name": "have_other",
                         "in": "query"
                     },
                     {
@@ -1824,8 +1892,38 @@
                     },
                     {
                         "type": "integer",
-                        "description": "Price",
+                        "description": "Equipment rental",
                         "name": "equipment_rental",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have metal cage",
+                        "name": "have_metal_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have plastic cage",
+                        "name": "have_plastic_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have net",
+                        "name": "have_net",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have ladder",
+                        "name": "have_ladder",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Have other",
+                        "name": "have_other",
                         "in": "query"
                     },
                     {
@@ -2815,13 +2913,25 @@
                 "description": {
                     "type": "string"
                 },
-                "equipment": {
-                    "type": "integer"
-                },
                 "equipment_rental": {
                     "type": "integer"
                 },
                 "have_car": {
+                    "type": "boolean"
+                },
+                "have_ladder": {
+                    "type": "boolean"
+                },
+                "have_metal_cage": {
+                    "type": "boolean"
+                },
+                "have_net": {
+                    "type": "boolean"
+                },
+                "have_other": {
+                    "type": "string"
+                },
+                "have_plastic_cage": {
                     "type": "boolean"
                 },
                 "id": {

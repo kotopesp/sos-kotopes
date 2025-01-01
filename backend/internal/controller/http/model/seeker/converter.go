@@ -4,20 +4,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/core"
 )
 
-func (seeker *CreateSeeker) GetEquipment() (core.Equipment, error) {
-	if len(seeker.Equipment) != 5 {
-		return core.Equipment{}, core.ErrInvalidEquipment
-	}
-
-	return core.Equipment{
-		HaveMetalCage:   seeker.Equipment[0] != "",
-		HavePlasticCage: seeker.Equipment[1] != "",
-		HaveNet:         seeker.Equipment[2] != "",
-		HaveLadder:      seeker.Equipment[3] != "",
-		HaveOther:       seeker.Equipment[4],
-	}, nil
-}
-
 func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 	return core.Seeker{
 		UserID:           seeker.UserID,
@@ -25,6 +11,11 @@ func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 		Description:      seeker.Description,
 		Location:         seeker.Location,
 		EquipmentRental:  seeker.EquipmentRental,
+		HaveMetalCage:    seeker.HaveMetalCage,
+		HavePlasticCage:  seeker.HavePlasticCage,
+		HaveNet:          seeker.HaveNet,
+		HaveLadder:       seeker.HaveLadder,
+		HaveOther:        seeker.HaveOther,
 		HaveCar:          seeker.HaveCar,
 		Price:            seeker.Price,
 		WillingnessCarry: seeker.WillingnessCarry,
@@ -38,6 +29,11 @@ func (seeker *UpdateSeeker) ToCoreUpdateSeeker() core.UpdateSeeker {
 		Description:      seeker.Description,
 		Location:         seeker.Location,
 		EquipmentRental:  seeker.EquipmentRental,
+		HaveMetalCage:    seeker.HaveMetalCage,
+		HavePlasticCage:  seeker.HavePlasticCage,
+		HaveNet:          seeker.HaveNet,
+		HaveLadder:       seeker.HaveLadder,
+		HaveOther:        seeker.HaveOther,
 		HaveCar:          seeker.HaveCar,
 		Price:            seeker.Price,
 		WillingnessCarry: seeker.WillingnessCarry,
@@ -66,14 +62,22 @@ func (p *GetAllSeekerParams) ToCoreGetAllSeekersParams() core.GetAllSeekersParam
 	}
 
 	return core.GetAllSeekersParams{
-		SortBy:     &sortBy,
-		SortOrder:  &sortOrder,
-		AnimalType: p.AnimalType,
-		Location:   p.Location,
-		Price:      p.Price,
-		HaveCar:    p.HaveCar,
-		Limit:      &limit,
-		Offset:     &offset,
+		SortBy:             &sortBy,
+		SortOrder:          &sortOrder,
+		AnimalType:         p.AnimalType,
+		Location:           p.Location,
+		MinPrice:           p.MinPrice,
+		MaxPrice:           p.MaxPrice,
+		MinEquipmentRental: p.MinEquipmentRental,
+		MaxEquipmentRental: p.MaxEquipmentRental,
+		HaveMetalCage:      p.HaveMetalCage,
+		HavePlasticCage:    p.HavePlasticCage,
+		HaveNet:            p.HaveNet,
+		HaveLadder:         p.HaveLadder,
+		HaveOther:          p.HaveOther,
+		HaveCar:            p.HaveCar,
+		Limit:              &limit,
+		Offset:             &offset,
 	}
 }
 
@@ -87,7 +91,11 @@ func ToResponseSeeker(seeker *core.Seeker) ResponseSeeker {
 		AnimalType:       seeker.AnimalType,
 		Location:         seeker.Location,
 		EquipmentRental:  seeker.EquipmentRental,
-		Equipment:        seeker.EquipmentID,
+		HaveMetalCage:    seeker.HaveMetalCage,
+		HavePlasticCage:  seeker.HavePlasticCage,
+		HaveNet:          seeker.HaveNet,
+		HaveLadder:       seeker.HaveLadder,
+		HaveOther:        seeker.HaveOther,
 		Description:      seeker.Description,
 		HaveCar:          seeker.HaveCar,
 		Price:            seeker.Price,
@@ -102,7 +110,11 @@ func toResponseSeeker(seeker core.Seeker) ResponseSeeker {
 		AnimalType:       seeker.AnimalType,
 		Location:         seeker.Location,
 		EquipmentRental:  seeker.EquipmentRental,
-		Equipment:        seeker.EquipmentID,
+		HaveMetalCage:    seeker.HaveMetalCage,
+		HavePlasticCage:  seeker.HavePlasticCage,
+		HaveNet:          seeker.HaveNet,
+		HaveLadder:       seeker.HaveLadder,
+		HaveOther:        seeker.HaveOther,
 		Description:      seeker.Description,
 		HaveCar:          seeker.HaveCar,
 		Price:            seeker.Price,

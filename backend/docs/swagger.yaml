@@ -198,11 +198,19 @@ definitions:
         type: string
       description:
         type: string
-      equipment:
-        type: integer
       equipment_rental:
         type: integer
       have_car:
+        type: boolean
+      have_ladder:
+        type: boolean
+      have_metal_cage:
+        type: boolean
+      have_net:
+        type: boolean
+      have_other:
+        type: string
+      have_plastic_cage:
         type: boolean
       id:
         type: integer
@@ -1220,9 +1228,41 @@ paths:
         in: query
         name: location
         type: string
+      - description: Equipment rental
+        in: query
+        name: min_equipment_rental
+        type: integer
+      - description: Equipment rental
+        in: query
+        name: max_equipment_rental
+        type: integer
+      - description: Have metal cage
+        in: query
+        name: have_metal_cage
+        type: boolean
+      - description: Have plastic cage
+        in: query
+        name: have_plastic_cage
+        type: boolean
+      - description: Have net
+        in: query
+        name: have_net
+        type: boolean
+      - description: Have ladder
+        in: query
+        name: have_ladder
+        type: boolean
+      - description: Have other
+        in: query
+        name: have_other
+        type: string
       - description: Price
         in: query
-        name: price
+        name: min_price
+        type: integer
+      - description: Price
+        in: query
+        name: max_price
         type: integer
       - description: Have car
         in: query
@@ -1279,17 +1319,30 @@ paths:
         in: query
         name: location
         type: string
-      - description: Price
+      - description: Equipment rental
         in: query
         name: equipment_rental
         type: integer
-      - collectionFormat: csv
-        description: Price
+      - description: Have metal cage
         in: query
-        items:
-          type: string
-        name: equipment
-        type: array
+        name: have_metal_cage
+        type: boolean
+      - description: Have plastic cage
+        in: query
+        name: have_plastic_cage
+        type: boolean
+      - description: Have net
+        in: query
+        name: have_net
+        type: boolean
+      - description: Have ladder
+        in: query
+        name: have_ladder
+        type: boolean
+      - description: Have other
+        in: query
+        name: have_other
+        type: string
       - description: Have car
         in: query
         name: have_car
@@ -1412,10 +1465,30 @@ paths:
         in: query
         name: location
         type: string
-      - description: Price
+      - description: Equipment rental
         in: query
         name: equipment_rental
         type: integer
+      - description: Have metal cage
+        in: query
+        name: have_metal_cage
+        type: boolean
+      - description: Have plastic cage
+        in: query
+        name: have_plastic_cage
+        type: boolean
+      - description: Have net
+        in: query
+        name: have_net
+        type: boolean
+      - description: Have ladder
+        in: query
+        name: have_ladder
+        type: boolean
+      - description: Have other
+        in: query
+        name: have_other
+        type: string
       - description: Have car
         in: query
         name: have_car

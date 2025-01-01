@@ -14,7 +14,11 @@ type (
 		Description      string    `gorm:"column:description"`
 		Location         string    `gorm:"column:location"`
 		EquipmentRental  int       `gorm:"column:equipment_rental"`
-		EquipmentID      int       `gorm:"column:equipment_id"`
+		HaveMetalCage    bool      `gorm:"column:have_metal_cage"`
+		HavePlasticCage  bool      `gorm:"column:have_plastic_cage"`
+		HaveNet          bool      `gorm:"column:have_net"`
+		HaveLadder       bool      `gorm:"column:have_ladder"`
+		HaveOther        string    `gorm:"column:have_other"`
 		Price            int       `gorm:"column:price"`
 		HaveCar          bool      `gorm:"column:have_car"`
 		WillingnessCarry string    `gorm:"column:willingness_carry"`
@@ -31,20 +35,15 @@ type (
 		Description      *string   `gorm:"column:description"`
 		Location         *string   `gorm:"column:location"`
 		EquipmentRental  *int      `gorm:"column:equipment_rental"`
-		EquipmentID      *int      `gorm:"column:equipment_id"`
+		HaveMetalCage    *bool     `gorm:"column:have_metal_cage"`
+		HavePlasticCage  *bool     `gorm:"column:have_plastic_cage"`
+		HaveNet          *bool     `gorm:"column:have_net"`
+		HaveLadder       *bool     `gorm:"column:have_ladder"`
+		HaveOther        *string   `gorm:"column:have_other"`
 		Price            *int      `gorm:"column:price"`
 		HaveCar          *bool     `gorm:"column:have_car"`
 		WillingnessCarry *string   `gorm:"column:willingness_carry"`
 		UpdatedAt        time.Time `gorm:"autoUpdateTime;column:updated_at"`
-	}
-
-	Equipment struct {
-		ID              int    `gorm:"primaryKey;autoIncrement;column:id"`
-		HaveMetalCage   bool   `gorm:"column:have_metal_cage"`
-		HavePlasticCage bool   `gorm:"column:have_plastic_cage"`
-		HaveNet         bool   `gorm:"column:have_net"`
-		HaveLadder      bool   `gorm:"column:have_ladder"`
-		HaveOther       string `gorm:"column:have_other"`
 	}
 
 	DeleteSeeker struct {
@@ -52,18 +51,26 @@ type (
 	}
 
 	GetAllSeekersParams struct {
-		SortBy     *string
-		SortOrder  *string
-		AnimalType *string
-		Location   *string
-		Price      *int
-		HaveCar    *bool
-		Limit      *int
-		Offset     *int
+		SortBy             *string
+		SortOrder          *string
+		AnimalType         *string
+		Location           *string
+		MinEquipmentRental *int
+		MaxEquipmentRental *int
+		HaveMetalCage      *bool
+		HavePlasticCage    *bool
+		HaveNet            *bool
+		HaveLadder         *bool
+		HaveOther          *string
+		MinPrice           *int
+		MaxPrice           *int
+		HaveCar            *bool
+		Limit              *int
+		Offset             *int
 	}
 
 	SeekersService interface {
-		CreateSeeker(ctx context.Context, seeker Seeker, equipment Equipment) (Seeker, error)
+		CreateSeeker(ctx context.Context, seeker Seeker) (Seeker, error)
 		GetSeeker(ctx context.Context, userID int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, seeker UpdateSeeker) (Seeker, error)
 		DeleteSeeker(ctx context.Context, userID int) error
@@ -71,7 +78,7 @@ type (
 	}
 
 	SeekersStore interface {
-		CreateSeeker(ctx context.Context, seeker Seeker, equipment Equipment) (Seeker, error)
+		CreateSeeker(ctx context.Context, seeker Seeker) (Seeker, error)
 		GetSeeker(ctx context.Context, userID int) (Seeker, error)
 		UpdateSeeker(ctx context.Context, userID int, updateSeeker map[string]interface{}) (Seeker, error)
 		DeleteSeeker(ctx context.Context, userID int) error

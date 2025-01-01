@@ -50,14 +50,18 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 // @ID				create-seeker
 // @Accept			json
 // @Produce		json
-// @Param			animal_type			query		string		false	"Animal type"
-// @Param			description			query		string		false	"Description"
-// @Param			location			query		string		false	"Location"
-// @Param			equipment_rental	query		int			false	"Price"
-// @Param			equipment			query		[]string	false	"Price"
-// @Param			have_car			query		bool		false	"Have car"
-// @Param			price				query		int			false	"Price"
-// @Param			willingness_carry	query		string		false	"Price"
+// @Param			animal_type			query		string	false	"Animal type"
+// @Param			description			query		string	false	"Description"
+// @Param			location			query		string	false	"Location"
+// @Param			equipment_rental	query		int		false	"Equipment rental"
+// @Param			have_metal_cage		query		bool	false	"Have metal cage"
+// @Param			have_plastic_cage	query		bool	false	"Have plastic cage"
+// @Param			have_net			query		bool	false	"Have net"
+// @Param			have_ladder			query		bool	false	"Have ladder"
+// @Param			have_other			query		string	false	"Have other"
+// @Param			have_car			query		bool	false	"Have car"
+// @Param			price				query		int		false	"Price"
+// @Param			willingness_carry	query		string	false	"Price"
 // @Success		200					{object}	model.Response{data=seeker.ResponseSeeker}
 // @Failure		400					{object}	model.Response
 // @Failure		500					{object}	model.Response
@@ -78,13 +82,7 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 		return fiberError
 	}
 
-	equipment, err := createSeeker.GetEquipment()
-	if err != nil {
-		logger.Log().Debug(ctx.Context(), err.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
-	}
-
-	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker(), equipment)
+	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker())
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):
@@ -109,7 +107,12 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 // @Param			animal_type			query		string	false	"Animal type"
 // @Param			description			query		string	false	"Description"
 // @Param			location			query		string	false	"Location"
-// @Param			equipment_rental	query		int		false	"Price"
+// @Param			equipment_rental	query		int		false	"Equipment rental"
+// @Param			have_metal_cage		query		bool	false	"Have metal cage"
+// @Param			have_plastic_cage	query		bool	false	"Have plastic cage"
+// @Param			have_net			query		bool	false	"Have net"
+// @Param			have_ladder			query		bool	false	"Have ladder"
+// @Param			have_other			query		string	false	"Have other"
 // @Param			have_car			query		bool	false	"Have car"
 // @Param			price				query		int		false	"Price"
 // @Param			willingness_carry	query		string	false	"Price"
@@ -189,17 +192,25 @@ func (r *Router) deleteSeeker(ctx *fiber.Ctx) error {
 // @Tags			seeker
 // @Accept			json
 // @Produce		json
-// @Param			sort_by		query		string	false	"Sort"
-// @Param			sort_order	query		string	false	"Sort"
-// @Param			animal_type	query		string	false	"Animal type"
-// @Param			location	query		string	false	"Location"
-// @Param			price		query		int		false	"Price"
-// @Param			have_car	query		bool	false	"Have car"
-// @Param			limit		query		int		false	"Limit"		default(10)
-// @Param			offset		query		int		false	"Offset"	default(0)
-// @Success		200			{object}	model.Response{data=seeker.ResponseSeekers}
-// @Failure		400			{object}	model.Response
-// @Failure		500			{object}	model.Response
+// @Param			sort_by					query		string	false	"Sort"
+// @Param			sort_order				query		string	false	"Sort"
+// @Param			animal_type				query		string	false	"Animal type"
+// @Param			location				query		string	false	"Location"
+// @Param			min_equipment_rental	query		int		false	"Equipment rental"
+// @Param			max_equipment_rental	query		int		false	"Equipment rental"
+// @Param			have_metal_cage			query		bool	false	"Have metal cage"
+// @Param			have_plastic_cage		query		bool	false	"Have plastic cage"
+// @Param			have_net				query		bool	false	"Have net"
+// @Param			have_ladder				query		bool	false	"Have ladder"
+// @Param			have_other				query		string	false	"Have other"
+// @Param			min_price				query		int		false	"Price"
+// @Param			max_price				query		int		false	"Price"
+// @Param			have_car				query		bool	false	"Have car"
+// @Param			limit					query		int		false	"Limit"		default(10)
+// @Param			offset					query		int		false	"Offset"	default(0)
+// @Success		200						{object}	model.Response{data=seeker.ResponseSeekers}
+// @Failure		400						{object}	model.Response
+// @Failure		500						{object}	model.Response
 // @Router			/seekers [get]
 func (r *Router) getSeekers(ctx *fiber.Ctx) error {
 	var params seeker.GetAllSeekerParams

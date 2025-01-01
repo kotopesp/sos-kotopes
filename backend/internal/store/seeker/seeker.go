@@ -18,7 +18,7 @@ func New(pg *postgres.Postgres) core.SeekersStore {
 	return &store{pg}
 }
 
-func (s *store) CreateSeeker(ctx context.Context, seeker core.Seeker, equipment core.Equipment) (core.Seeker, error) {
+func (s *store) CreateSeeker(ctx context.Context, seeker core.Seeker) (core.Seeker, error) {
 	tx := s.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -31,17 +31,10 @@ func (s *store) CreateSeeker(ctx context.Context, seeker core.Seeker, equipment 
 		return core.Seeker{}, err
 	}
 
-	err := tx.WithContext(ctx).Table("equipments").Create(&equipment).Error
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.Seeker{}, err
-	}
-
 	seeker.CreatedAt = time.Now()
 	seeker.UpdatedAt = time.Now()
-	seeker.EquipmentID = equipment.ID
 
-	err = tx.WithContext(ctx).Table("seekers").Create(&seeker).Error
+	err := tx.WithContext(ctx).Table("seekers").Create(&seeker).Error
 	if err != nil {
 		tx.Rollback()
 		logger.Log().Error(ctx, err.Error())
@@ -130,18 +123,40 @@ func (s *store) GetAllSeekers(ctx context.Context, params core.GetAllSeekersPara
 		query = query.Where("location = ?", *params.Location)
 	}
 
-	if params.Price != nil {
-		if *params.Price < 0 {
-			query = query.Where("price < 0")
-		}
+	if params.MinPrice != nil {
+		query = query.Where("price > ?", *params.MinPrice)
+	}
 
-		if *params.Price == 0 {
-			query = query.Where("price == 0")
-		}
+	if params.MaxPrice != nil {
+		query = query.Where("price < ?", *params.MaxPrice)
+	}
 
-		if *params.Price > 0 {
-			query = query.Where("price > 0")
-		}
+	if params.MinEquipmentRental != nil {
+		query = query.Where("equipment_rental > ?", params.MinEquipmentRental)
+	}
+
+	if params.MaxEquipmentRental != nil {
+		query = query.Where("equipment_rental < ?", params.MaxEquipmentRental)
+	}
+
+	if params.HaveMetalCage != nil {
+		query = query.Where("have_metal_cage = ?", *params.HaveMetalCage)
+	}
+
+	if params.HavePlasticCage != nil {
+		query = query.Where("have_plastic_cage = ?", *params.HavePlasticCage)
+	}
+
+	if params.HaveNet != nil {
+		query = query.Where("have_net = ?", *params.HaveNet)
+	}
+
+	if params.HaveLadder != nil {
+		query = query.Where("have_ladder = ?", *params.HaveLadder)
+	}
+
+	if params.HaveOther != nil {
+		query = query.Where("have_other != ''")
 	}
 
 	if params.HaveCar != nil {
