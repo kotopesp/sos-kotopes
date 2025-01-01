@@ -72,19 +72,19 @@ func (k *CreateKeeper) ToCoreKeeper() core.Keeper {
 	}
 }
 
-func (k *UpdateKeeper) ToCoreUpdateKeeper() core.UpdateKeeper {
+func (k *UpdateKeeper) ToCoreUpdateKeeper() core.Keeper {
 	if k == nil {
-		return core.UpdateKeeper{}
+		return core.Keeper{}
 	}
-	return core.UpdateKeeper{
+	return core.Keeper{
 		Description:          k.Description,
 		Price:                k.Price,
 		LocationID:           k.LocationID,
-		HasCage:              k.HasCage,
-		BoardingDuration:     k.BoardingDuration,
-		BoardingCompensation: k.BoardingCompensation,
-		AnimalAcceptance:     k.AnimalAcceptance,
-		AnimalCategory:       k.AnimalCategory,
+		HasCage:              *k.HasCage,
+		BoardingDuration:     *k.BoardingDuration,
+		BoardingCompensation: *k.BoardingCompensation,
+		AnimalAcceptance:     *k.AnimalAcceptance,
+		AnimalCategory:       *k.AnimalCategory,
 	}
 }
 

@@ -234,7 +234,7 @@ func (_c *MockKeeperReviewStore_GetReviewByID_Call) RunAndReturn(run func(contex
 }
 
 // UpdateReview provides a mock function with given fields: ctx, id, review
-func (_m *MockKeeperReviewStore) UpdateReview(ctx context.Context, id int, review core.UpdateKeeperReview) (core.KeeperReview, error) {
+func (_m *MockKeeperReviewStore) UpdateReview(ctx context.Context, id int, review core.KeeperReview) (core.KeeperReview, error) {
 	ret := _m.Called(ctx, id, review)
 
 	if len(ret) == 0 {
@@ -243,16 +243,16 @@ func (_m *MockKeeperReviewStore) UpdateReview(ctx context.Context, id int, revie
 
 	var r0 core.KeeperReview
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, core.UpdateKeeperReview) (core.KeeperReview, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.KeeperReview) (core.KeeperReview, error)); ok {
 		return rf(ctx, id, review)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, core.UpdateKeeperReview) core.KeeperReview); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.KeeperReview) core.KeeperReview); ok {
 		r0 = rf(ctx, id, review)
 	} else {
 		r0 = ret.Get(0).(core.KeeperReview)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, core.UpdateKeeperReview) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, int, core.KeeperReview) error); ok {
 		r1 = rf(ctx, id, review)
 	} else {
 		r1 = ret.Error(1)
@@ -269,14 +269,14 @@ type MockKeeperReviewStore_UpdateReview_Call struct {
 // UpdateReview is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int
-//   - review core.UpdateKeeperReview
+//   - review core.KeeperReview
 func (_e *MockKeeperReviewStore_Expecter) UpdateReview(ctx interface{}, id interface{}, review interface{}) *MockKeeperReviewStore_UpdateReview_Call {
 	return &MockKeeperReviewStore_UpdateReview_Call{Call: _e.mock.On("UpdateReview", ctx, id, review)}
 }
 
-func (_c *MockKeeperReviewStore_UpdateReview_Call) Run(run func(ctx context.Context, id int, review core.UpdateKeeperReview)) *MockKeeperReviewStore_UpdateReview_Call {
+func (_c *MockKeeperReviewStore_UpdateReview_Call) Run(run func(ctx context.Context, id int, review core.KeeperReview)) *MockKeeperReviewStore_UpdateReview_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(core.UpdateKeeperReview))
+		run(args[0].(context.Context), args[1].(int), args[2].(core.KeeperReview))
 	})
 	return _c
 }
@@ -286,7 +286,7 @@ func (_c *MockKeeperReviewStore_UpdateReview_Call) Return(data core.KeeperReview
 	return _c
 }
 
-func (_c *MockKeeperReviewStore_UpdateReview_Call) RunAndReturn(run func(context.Context, int, core.UpdateKeeperReview) (core.KeeperReview, error)) *MockKeeperReviewStore_UpdateReview_Call {
+func (_c *MockKeeperReviewStore_UpdateReview_Call) RunAndReturn(run func(context.Context, int, core.KeeperReview) (core.KeeperReview, error)) *MockKeeperReviewStore_UpdateReview_Call {
 	_c.Call.Return(run)
 	return _c
 }

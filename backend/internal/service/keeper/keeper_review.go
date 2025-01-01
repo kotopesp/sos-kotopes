@@ -52,7 +52,7 @@ func (s *service) DeleteReview(ctx context.Context, id, userID int) error {
 	return s.keeperReviewStore.DeleteReview(ctx, id)
 }
 
-func (s *service) UpdateReview(ctx context.Context, id, userID int, review core.UpdateKeeperReview) (data core.KeeperReview, err error) {
+func (s *service) UpdateReview(ctx context.Context, id, userID int, review core.KeeperReview) (data core.KeeperReview, err error) {
 	storedReview, err := s.keeperReviewStore.GetReviewByID(ctx, id)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())

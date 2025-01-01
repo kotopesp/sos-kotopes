@@ -33,9 +33,9 @@ func (k *CreateKeeperReview) ToCoreKeeperReview() core.KeeperReview {
 	}
 }
 
-func (k *UpdateKeeperReview) ToCoreUpdateKeeperReview() core.UpdateKeeperReview {
-	return core.UpdateKeeperReview{
-		Grade:   k.Grade,
+func (k *UpdateKeeperReview) ToCoreUpdateKeeperReview() core.KeeperReview {
+	return core.KeeperReview{
+		Grade:   *k.Grade,
 		Content: k.Content,
 	}
 }

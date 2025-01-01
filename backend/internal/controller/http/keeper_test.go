@@ -27,7 +27,7 @@ func TestUpdateKeeper(t *testing.T) {
 		UserID        int
 		token         string
 		keeper        keeper.UpdateKeeper
-		mockBehaviour func(keeper.UpdateKeeper) core.UpdateKeeper
+		mockBehaviour func(keeper.UpdateKeeper) core.Keeper
 		wantCode      int
 	}{
 		{

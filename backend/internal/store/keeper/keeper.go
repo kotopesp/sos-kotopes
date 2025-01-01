@@ -44,7 +44,7 @@ func (s *store) DeleteKeeper(ctx context.Context, id int) error {
 	return err
 }
 
-func (s *store) UpdateKeeper(ctx context.Context, id int, keeper core.UpdateKeeper) (core.Keeper, error) {
+func (s *store) UpdateKeeper(ctx context.Context, id int, keeper core.Keeper) (core.Keeper, error) {
 	var updatedKeeper core.Keeper
 	updatedKeeper.UpdatedAt = time.Now()
 

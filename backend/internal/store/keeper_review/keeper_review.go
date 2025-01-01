@@ -32,7 +32,7 @@ func (s *store) DeleteReview(ctx context.Context, id int) error {
 	return err
 }
 
-func (s *store) UpdateReview(ctx context.Context, id int, review core.UpdateKeeperReview) (data core.KeeperReview, err error) {
+func (s *store) UpdateReview(ctx context.Context, id int, review core.KeeperReview) (data core.KeeperReview, err error) {
 	var updatedReview core.KeeperReview
 	updatedReview.UpdatedAt = time.Now()
 

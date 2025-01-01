@@ -19,10 +19,10 @@ type KeeperReview struct {
 	UpdatedAt time.Time  `gorm:"autoUpdateTime;column:updated_at"`
 }
 
-type UpdateKeeperReview struct {
-	Content *string `gorm:"column:content"`
-	Grade   *int    `gorm:"column:grade"`
-}
+// type UpdateKeeperReview struct {
+// 	Content *string `gorm:"column:content"`
+// 	Grade   *int    `gorm:"column:grade"`
+// }
 
 type GetAllKeeperReviewsParams struct {
 	Limit  *int
@@ -34,14 +34,14 @@ type KeeperReviewStore interface {
 	GetReviewByID(ctx context.Context, id int) (KeeperReview, error)
 	CreateReview(ctx context.Context, review KeeperReview) error
 	DeleteReview(ctx context.Context, id int) error
-	UpdateReview(ctx context.Context, id int, review UpdateKeeperReview) (data KeeperReview, err error)
+	UpdateReview(ctx context.Context, id int, review KeeperReview) (data KeeperReview, err error)
 }
 
 type KeeperReviewService interface {
 	GetAllReviews(ctx context.Context, keeperID int, params GetAllKeeperReviewsParams) (data []KeeperReview, err error)
 	CreateReview(ctx context.Context, review KeeperReview) (data KeeperReview, err error)
 	DeleteReview(ctx context.Context, id int, userID int) error
-	UpdateReview(ctx context.Context, id int, userID int, review UpdateKeeperReview) (data KeeperReview, err error)
+	UpdateReview(ctx context.Context, id int, userID int, review KeeperReview) (data KeeperReview, err error)
 }
 
 // TableName table name in db for gorm

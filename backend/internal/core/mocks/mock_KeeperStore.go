@@ -23,21 +23,31 @@ func (_m *MockKeeperStore) EXPECT() *MockKeeperStore_Expecter {
 }
 
 // CreateKeeper provides a mock function with given fields: ctx, keeper
-func (_m *MockKeeperStore) CreateKeeper(ctx context.Context, keeper core.Keeper) error {
+func (_m *MockKeeperStore) CreateKeeper(ctx context.Context, keeper core.Keeper) (core.Keeper, error) {
 	ret := _m.Called(ctx, keeper)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateKeeper")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, core.Keeper) error); ok {
+	var r0 core.Keeper
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.Keeper) (core.Keeper, error)); ok {
+		return rf(ctx, keeper)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.Keeper) core.Keeper); ok {
 		r0 = rf(ctx, keeper)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(core.Keeper)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, core.Keeper) error); ok {
+		r1 = rf(ctx, keeper)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // MockKeeperStore_CreateKeeper_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateKeeper'
@@ -59,12 +69,12 @@ func (_c *MockKeeperStore_CreateKeeper_Call) Run(run func(ctx context.Context, k
 	return _c
 }
 
-func (_c *MockKeeperStore_CreateKeeper_Call) Return(_a0 error) *MockKeeperStore_CreateKeeper_Call {
-	_c.Call.Return(_a0)
+func (_c *MockKeeperStore_CreateKeeper_Call) Return(data core.Keeper, err error) *MockKeeperStore_CreateKeeper_Call {
+	_c.Call.Return(data, err)
 	return _c
 }
 
-func (_c *MockKeeperStore_CreateKeeper_Call) RunAndReturn(run func(context.Context, core.Keeper) error) *MockKeeperStore_CreateKeeper_Call {
+func (_c *MockKeeperStore_CreateKeeper_Call) RunAndReturn(run func(context.Context, core.Keeper) (core.Keeper, error)) *MockKeeperStore_CreateKeeper_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -233,7 +243,7 @@ func (_c *MockKeeperStore_GetKeeperByID_Call) RunAndReturn(run func(context.Cont
 }
 
 // UpdateKeeper provides a mock function with given fields: ctx, id, keeper
-func (_m *MockKeeperStore) UpdateKeeper(ctx context.Context, id int, keeper core.UpdateKeeper) (core.Keeper, error) {
+func (_m *MockKeeperStore) UpdateKeeper(ctx context.Context, id int, keeper core.Keeper) (core.Keeper, error) {
 	ret := _m.Called(ctx, id, keeper)
 
 	if len(ret) == 0 {
@@ -242,16 +252,16 @@ func (_m *MockKeeperStore) UpdateKeeper(ctx context.Context, id int, keeper core
 
 	var r0 core.Keeper
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, core.UpdateKeeper) (core.Keeper, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.Keeper) (core.Keeper, error)); ok {
 		return rf(ctx, id, keeper)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int, core.UpdateKeeper) core.Keeper); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int, core.Keeper) core.Keeper); ok {
 		r0 = rf(ctx, id, keeper)
 	} else {
 		r0 = ret.Get(0).(core.Keeper)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int, core.UpdateKeeper) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, int, core.Keeper) error); ok {
 		r1 = rf(ctx, id, keeper)
 	} else {
 		r1 = ret.Error(1)
@@ -268,14 +278,14 @@ type MockKeeperStore_UpdateKeeper_Call struct {
 // UpdateKeeper is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int
-//   - keeper core.UpdateKeeper
+//   - keeper core.Keeper
 func (_e *MockKeeperStore_Expecter) UpdateKeeper(ctx interface{}, id interface{}, keeper interface{}) *MockKeeperStore_UpdateKeeper_Call {
 	return &MockKeeperStore_UpdateKeeper_Call{Call: _e.mock.On("UpdateKeeper", ctx, id, keeper)}
 }
 
-func (_c *MockKeeperStore_UpdateKeeper_Call) Run(run func(ctx context.Context, id int, keeper core.UpdateKeeper)) *MockKeeperStore_UpdateKeeper_Call {
+func (_c *MockKeeperStore_UpdateKeeper_Call) Run(run func(ctx context.Context, id int, keeper core.Keeper)) *MockKeeperStore_UpdateKeeper_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(core.UpdateKeeper))
+		run(args[0].(context.Context), args[1].(int), args[2].(core.Keeper))
 	})
 	return _c
 }
@@ -285,7 +295,7 @@ func (_c *MockKeeperStore_UpdateKeeper_Call) Return(_a0 core.Keeper, _a1 error) 
 	return _c
 }
 
-func (_c *MockKeeperStore_UpdateKeeper_Call) RunAndReturn(run func(context.Context, int, core.UpdateKeeper) (core.Keeper, error)) *MockKeeperStore_UpdateKeeper_Call {
+func (_c *MockKeeperStore_UpdateKeeper_Call) RunAndReturn(run func(context.Context, int, core.Keeper) (core.Keeper, error)) *MockKeeperStore_UpdateKeeper_Call {
 	_c.Call.Return(run)
 	return _c
 }

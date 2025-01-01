@@ -77,7 +77,7 @@ func (s *service) DeleteKeeper(ctx context.Context, id, userID int) error {
 	return s.keeperStore.DeleteKeeper(ctx, id)
 }
 
-func (s *service) UpdateKeeper(ctx context.Context, id, userID int, keeper core.UpdateKeeper) (core.Keeper, error) {
+func (s *service) UpdateKeeper(ctx context.Context, id, userID int, keeper core.Keeper) (core.Keeper, error) {
 	storedKeeper, err := s.keeperStore.GetKeeperByID(ctx, id)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
