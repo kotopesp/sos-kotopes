@@ -15,13 +15,13 @@ func New(seekersStore core.SeekersStore) core.SeekersService {
 	return &service{seekersStore: seekersStore}
 }
 
-func (s *service) CreateSeeker(ctx context.Context, seeker core.Seeker, equipment core.Equipment) (core.Seeker, error) {
+func (s *service) CreateSeeker(ctx context.Context, seeker core.Seeker) (core.Seeker, error) {
 	if _, err := s.GetSeeker(ctx, seeker.UserID); !errors.Is(err, core.ErrSeekerNotFound) {
 		logger.Log().Error(ctx, core.ErrSeekerExists.Error())
 		return core.Seeker{}, core.ErrSeekerExists
 	}
 
-	return s.seekersStore.CreateSeeker(ctx, seeker, equipment)
+	return s.seekersStore.CreateSeeker(ctx, seeker)
 }
 
 func (s *service) GetSeeker(ctx context.Context, id int) (core.Seeker, error) {
@@ -56,6 +56,26 @@ func (s *service) UpdateSeeker(ctx context.Context, updateSeeker core.UpdateSeek
 
 	if updateSeeker.EquipmentRental != nil {
 		updates["equipment_rental"] = *updateSeeker.EquipmentRental
+	}
+
+	if updateSeeker.HaveMetalCage != nil {
+		updates["have_metal_cage"] = *updateSeeker.HaveMetalCage
+	}
+
+	if updateSeeker.HavePlasticCage != nil {
+		updates["have_plastic_cage"] = *updateSeeker.HavePlasticCage
+	}
+
+	if updateSeeker.HaveNet != nil {
+		updates["have_net"] = *updateSeeker.HaveNet
+	}
+
+	if updateSeeker.HaveLadder != nil {
+		updates["have_ladder"] = *updateSeeker.HaveLadder
+	}
+
+	if updateSeeker.HaveOther != nil {
+		updates["have_other"] = *updateSeeker.HaveOther
 	}
 
 	if updateSeeker.Price != nil {
