@@ -76,16 +76,35 @@ func (k *UpdateKeeper) ToCoreUpdateKeeper() core.Keeper {
 	if k == nil {
 		return core.Keeper{}
 	}
-	return core.Keeper{
-		Description:          k.Description,
-		Price:                k.Price,
-		LocationID:           k.LocationID,
-		HasCage:              *k.HasCage,
-		BoardingDuration:     *k.BoardingDuration,
-		BoardingCompensation: *k.BoardingCompensation,
-		AnimalAcceptance:     *k.AnimalAcceptance,
-		AnimalCategory:       *k.AnimalCategory,
+
+	uk := core.Keeper{}
+
+	if k.Description != nil {
+		uk.Description = k.Description
 	}
+	if k.Price != nil {
+		uk.Price = k.Price
+	}
+	if k.LocationID != nil {
+		uk.LocationID = k.LocationID
+	}
+	if k.HasCage != nil {
+		uk.HasCage = *k.HasCage
+	}
+	if k.BoardingDuration != nil {
+		uk.BoardingDuration = *k.BoardingDuration
+	}
+	if k.BoardingCompensation != nil {
+		uk.BoardingCompensation = *k.BoardingCompensation
+	}
+	if k.AnimalAcceptance != nil {
+		uk.AnimalAcceptance = *k.AnimalAcceptance
+	}
+	if k.AnimalCategory != nil {
+		uk.AnimalCategory = *k.AnimalCategory
+	}
+
+	return uk
 }
 
 func ToModelResponseKeepers(meta pagination.Pagination, coreKeepers []core.Keeper) ResponseKeepers {

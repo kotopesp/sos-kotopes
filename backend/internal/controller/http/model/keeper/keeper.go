@@ -22,14 +22,14 @@ type CreateKeeper struct {
 
 // KeepersUpdate represents the data to update an existing keeper.
 type UpdateKeeper struct {
-	Description          *string  `form:"description" validate:"notblank,max=600"`
-	Price                *float64 `form:"price" validate:"min=0"`
-	LocationID           *int     `form:"location_id"`
-	HasCage              *bool    `form:"has_cage" validate:"boolean"`
-	BoardingDuration     *string  `form:"boarding_duration" validate:"oneof=hours days weeks months depends"`
-	BoardingCompensation *string  `form:"boarding_compensation" validate:"oneof=paid free depends"`
-	AnimalAcceptance     *string  `form:"animal_acceptance" validate:"oneof=homeless home homeless-hadhome depends"`
-	AnimalCategory       *string  `form:"animal_category" validate:"oneof=dog cat both"`
+	Description          *string  `form:"description" validate:"omitempty,notblank,max=600"`
+	Price                *float64 `form:"price" validate:"omitempty,min=0"`
+	LocationID           *int     `form:"location_id" validate:"omitempty"`
+	HasCage              *bool    `form:"has_cage" validate:"omitempty,boolean"`
+	BoardingDuration     *string  `form:"boarding_duration" validate:"omitempty,oneof=hours days weeks months depends"`
+	BoardingCompensation *string  `form:"boarding_compensation" validate:"omitempty,oneof=paid free depends"`
+	AnimalAcceptance     *string  `form:"animal_acceptance" validate:"omitempty,oneof=homeless home homeless-hadhome depends"`
+	AnimalCategory       *string  `form:"animal_category" validate:"omitempty,oneof=dog cat both"`
 }
 
 // KeepersResponse represents the response keeper entity.
