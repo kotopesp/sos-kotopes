@@ -23,17 +23,6 @@ type Keeper struct {
 	DeletedAt            *time.Time `gorm:"column:deleted_at"`
 }
 
-// type UpdateKeeper struct {
-// 	Description          *string  `gorm:"column:description"`
-// 	Price                *float64 `gorm:"column:price"`
-// 	LocationID           *int     `gorm:"column:location_id"`
-// 	HasCage              *bool    `gorm:"column:has_cage"`
-// 	BoardingDuration     *string  `gorm:"column:boarding_duration"`
-// 	BoardingCompensation *string  `gorm:"column:boarding_compensation"`
-// 	AnimalAcceptance     *string  `gorm:"column:animal_acceptance"`
-// 	AnimalCategory       *string  `gorm:"column:animal_category"`
-// }
-
 type GetAllKeepersParams struct {
 	SortBy               *string
 	SortOrder            *string

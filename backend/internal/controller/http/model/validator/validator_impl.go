@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/keeper"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
@@ -77,7 +76,7 @@ func customValidationOptions(ctx context.Context, validator *validatorPkg.Valida
 			"asc":  true,
 			"desc": true,
 		}
-		if _, ok := validOrders[strings.ToLower(sortOrder)]; !ok {
+		if _, ok := validOrders[sortOrder]; !ok {
 			return false
 		}
 

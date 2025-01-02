@@ -19,11 +19,6 @@ type KeeperReview struct {
 	UpdatedAt time.Time  `gorm:"autoUpdateTime;column:updated_at"`
 }
 
-// type UpdateKeeperReview struct {
-// 	Content *string `gorm:"column:content"`
-// 	Grade   *int    `gorm:"column:grade"`
-// }
-
 type GetAllKeeperReviewsParams struct {
 	Limit  *int
 	Offset *int

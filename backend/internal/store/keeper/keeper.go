@@ -69,14 +69,14 @@ func (s *store) UpdateKeeper(ctx context.Context, id int, keeper core.Keeper) (c
 
 func (s *store) GetAllKeepers(ctx context.Context, params core.GetAllKeepersParams) (data []core.Keeper, err error) {
 	var keepersExist core.Keeper
-	if err := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("is_deleted = ?", false).First(&keepersExist).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("keepers.is_deleted = ?", false).First(&keepersExist).Error; err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		print(err.Error())
 		return []core.Keeper{}, nil
 	}
 
 	var keepers []core.Keeper
-	query := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("is_deleted = ?", false)
+	query := s.DB.WithContext(ctx).Model(&core.Keeper{}).Where("keepers.is_deleted = ?", false)
 
 	if params.MinPrice != nil {
 		query = query.Where("price >= ?", *params.MinPrice)
@@ -85,8 +85,8 @@ func (s *store) GetAllKeepers(ctx context.Context, params core.GetAllKeepersPara
 		query = query.Where("price <= ?", *params.MaxPrice)
 	}
 
-	query = query.Select("keepers.id, AVG(keeper_reviews.grade) as avg_grade").
-		Joins("left join keeper_reviews on keeper_reviews.keeper_id = keepers.id").
+	query = query.Select("keepers.*, AVG(keeper_reviews.grade) as avg_grade").
+		Joins("LEFT JOIN keeper_reviews ON keeper_reviews.keeper_id = keepers.id").
 		Group("keepers.id")
 
 	if params.MinRating != nil {
