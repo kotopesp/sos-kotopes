@@ -9,15 +9,15 @@ import (
 // KeeperReviewsCreate represents the data required to create a new keeper review.
 type CreateKeeperReview struct {
 	// AuthorID int     `form:"author_id" validate:"required,min=1"`
-	Content *string `form:"content" validate:"max=2000"`
+	Content *string `form:"content" validate:"omitempty,max=2000"`
 	Grade   int     `form:"grade" validate:"required,numeric,min=1,max=5"`
 	// KeeperID int     `form:"keeper_id" validate:"required,min=1"`
 }
 
 // KeeperReviewsUpdate represents the data to update an existing keeper review.
 type UpdateKeeperReview struct {
-	Content *string `form:"content" validate:"notblank,max=2000"`
-	Grade   *int    `form:"grade" validate:"numeric,min=1,max=5"`
+	Content *string `form:"content" validate:"omitempty,notblank,max=2000"`
+	Grade   *int    `form:"grade" validate:"omitempty,numeric,min=1,max=5"`
 }
 
 // KeeperReviewsResponse represents the data to send keeper review back to client.

@@ -34,10 +34,16 @@ func (k *CreateKeeperReview) ToCoreKeeperReview() core.KeeperReview {
 }
 
 func (k *UpdateKeeperReview) ToCoreUpdateKeeperReview() core.KeeperReview {
-	return core.KeeperReview{
-		Grade:   *k.Grade,
-		Content: k.Content,
+	ukr := core.KeeperReview{}
+
+	if k.Content != nil {
+		ukr.Content = k.Content
 	}
+	if k.Grade != nil {
+		ukr.Grade = *k.Grade
+	}
+
+	return ukr
 }
 
 func ToModelResponseKeeperReview(k core.KeeperReview) ResponseKeeperReview {

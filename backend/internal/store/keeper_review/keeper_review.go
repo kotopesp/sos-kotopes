@@ -41,12 +41,13 @@ func (s *store) UpdateReview(ctx context.Context, id int, review core.KeeperRevi
 	var updatedReview core.KeeperReview
 	updatedReview.UpdatedAt = time.Now()
 
-	if err := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Preload("Author").Where("id = ? AND is_deleted = ?", id, false).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Preload("Author").Where("id = ? AND is_deleted = ?", id, false).First(&updatedReview).Error; err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return core.KeeperReview{}, err
 	}
 
-	if err := s.DB.WithContext(ctx).Updates(review).First(&updatedReview).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&updatedReview).
+		Updates(review).First(&updatedReview).Error; err != nil {
 		switch {
 		case errors.Is(err, core.ErrRecordNotFound):
 			logger.Log().Debug(ctx, core.ErrRecordNotFound.Error())

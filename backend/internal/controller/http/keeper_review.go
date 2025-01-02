@@ -136,8 +136,9 @@ func (r *Router) updateKeeperReview(ctx *fiber.Ctx) error {
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
-
+	print(45)
 	updatedReview, err := r.keeperService.UpdateReview(ctx.UserContext(), id, userID, updateReview.ToCoreUpdateKeeperReview())
+	print(23)
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrRecordNotFound):
