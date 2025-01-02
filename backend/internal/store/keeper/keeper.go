@@ -21,17 +21,17 @@ func New(pg *postgres.Postgres) core.KeeperStore {
 func (s *store) CreateKeeper(ctx context.Context, keeper core.Keeper) (data core.Keeper, err error) {
 	keeperExist := false
 	if err := s.DB.WithContext(ctx).Table(keeper.TableName()).Select("1").Where("user_id = ? AND is_deleted = ?", keeper.UserID, false).Limit(1).Find(&keeperExist).Error; err != nil {
-		return core.Keeper{}, err
+		return keeper, err
 	}
 	if keeperExist {
-		return core.Keeper{}, core.ErrKeeperUserAlreadyKeeper
+		return keeper, core.ErrKeeperUserAlreadyKeeper
 	}
 	if err := s.DB.WithContext(ctx).Create(&keeper).Error; err != nil {
-		return core.Keeper{}, err
+		return keeper, err
 	}
 
 	if err := s.DB.WithContext(ctx).Preload("User").First(&keeper).Error; err != nil {
-		return core.Keeper{}, err
+		return keeper, err
 	}
 
 	return keeper, nil

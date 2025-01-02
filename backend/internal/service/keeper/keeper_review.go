@@ -21,17 +21,7 @@ func (s *service) GetAllReviews(ctx context.Context, keeperID int, params core.G
 func (s *service) CreateReview(ctx context.Context, review core.KeeperReview) (data core.KeeperReview, err error) {
 	review.CreatedAt = time.Now()
 
-	if review.Grade < 1 || review.Grade > 5 {
-		logger.Log().Debug(ctx, core.ErrReviewGradeBounds.Error())
-		return core.KeeperReview{}, core.ErrReviewGradeBounds
-	}
-
-	if err := s.keeperReviewStore.CreateReview(ctx, review); err != nil {
-		logger.Log().Debug(ctx, err.Error())
-		return core.KeeperReview{}, err
-	}
-
-	return review, nil
+	return s.keeperReviewStore.CreateReview(ctx, review)
 }
 
 func (s *service) DeleteReview(ctx context.Context, id, userID int) error {

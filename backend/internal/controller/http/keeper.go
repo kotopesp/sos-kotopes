@@ -158,17 +158,16 @@ func (r *Router) updateKeeper(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}
-	print(45)
+
 	var updateKeeper keeper.UpdateKeeper
-	print(98)
+
 	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &updateKeeper)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
-	print(12)
+
 	updatedKeeper, err := r.keeperService.UpdateKeeper(ctx.UserContext(), id, userID, updateKeeper.ToCoreUpdateKeeper())
 	if err != nil {
-		print(23)
 		switch {
 		case errors.Is(err, core.ErrRecordNotFound):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
@@ -181,7 +180,7 @@ func (r *Router) updateKeeper(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 		}
 	}
-	print(232)
+
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse(keeper.ToModelResponseKeeper(updatedKeeper)))
 }
 

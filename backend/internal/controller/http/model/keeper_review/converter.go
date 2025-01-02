@@ -26,10 +26,10 @@ func (k *CreateKeeperReview) ToCoreKeeperReview() core.KeeperReview {
 	}
 
 	return core.KeeperReview{
-		AuthorID: k.AuthorID,
-		Content:  k.Content,
-		Grade:    k.Grade,
-		KeeperID: k.KeeperID,
+		// AuthorID: k.AuthorID,
+		Content: k.Content,
+		Grade:   k.Grade,
+		// KeeperID: k.KeeperID,
 	}
 }
 

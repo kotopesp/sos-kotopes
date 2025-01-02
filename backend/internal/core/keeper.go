@@ -11,7 +11,7 @@ type Keeper struct {
 	User                 User       `gorm:"foreignKey:UserID;references:ID"`
 	Description          *string    `gorm:"column:description"`
 	Price                *float64   `gorm:"column:price"`
-	LocationID           *int       `gorm:"column:location_id"`
+	LocationID           int        `gorm:"column:location_id"`
 	HasCage              bool       `gorm:"column:has_cage"`
 	BoardingDuration     string     `gorm:"column:boarding_duration"`
 	BoardingCompensation string     `gorm:"column:boarding_compensation"`

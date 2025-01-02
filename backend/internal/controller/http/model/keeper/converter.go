@@ -86,7 +86,7 @@ func (k *UpdateKeeper) ToCoreUpdateKeeper() core.Keeper {
 		uk.Price = k.Price
 	}
 	if k.LocationID != nil {
-		uk.LocationID = k.LocationID
+		uk.LocationID = *k.LocationID
 	}
 	if k.HasCage != nil {
 		uk.HasCage = *k.HasCage

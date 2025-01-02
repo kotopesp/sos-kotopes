@@ -18,11 +18,16 @@ func New(pg *postgres.Postgres) core.KeeperReviewStore {
 	return &store{pg}
 }
 
-func (s *store) CreateReview(ctx context.Context, review core.KeeperReview) error {
+func (s *store) CreateReview(ctx context.Context, review core.KeeperReview) (data core.KeeperReview, err error) {
 	if err := s.DB.WithContext(ctx).Create(&review).Error; err != nil {
-		return err
+		return review, err
 	}
-	return nil
+
+	if err := s.DB.WithContext(ctx).Preload("Author").First(&review).Error; err != nil {
+		return review, err
+	}
+
+	return review, nil
 }
 
 func (s *store) DeleteReview(ctx context.Context, id int) error {
@@ -36,7 +41,7 @@ func (s *store) UpdateReview(ctx context.Context, id int, review core.KeeperRevi
 	var updatedReview core.KeeperReview
 	updatedReview.UpdatedAt = time.Now()
 
-	if err := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Preload("Author").Preload("User").Where("id = ? AND is_deleted = ?", id, false).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Preload("Author").Where("id = ? AND is_deleted = ?", id, false).Error; err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return core.KeeperReview{}, err
 	}
@@ -58,7 +63,7 @@ func (s *store) UpdateReview(ctx context.Context, id int, review core.KeeperRevi
 func (s *store) GetAllReviews(ctx context.Context, keeperID int, params core.GetAllKeeperReviewsParams) (data []core.KeeperReview, err error) {
 	var reviews []core.KeeperReview
 
-	query := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Where("is_deleted = ? AND keeper_id", false, keeperID).Preload("Author").Preload("Keeper")
+	query := s.DB.WithContext(ctx).Model(&core.KeeperReview{}).Where("is_deleted = ? AND keeper_id = ?", false, keeperID).Preload("Author").Preload("Keeper")
 
 	if params.Limit != nil {
 		query = query.Limit(*params.Limit)
@@ -78,7 +83,7 @@ func (s *store) GetReviewByID(ctx context.Context, id int) (core.KeeperReview, e
 	var review = core.KeeperReview{ID: id}
 
 	if err := s.DB.WithContext(ctx).Preload("Author").Preload("Keeper").First(&review).Error; err != nil {
-		return core.KeeperReview{}, err
+		return review, err
 	}
 
 	return review, nil

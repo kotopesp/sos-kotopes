@@ -12,7 +12,7 @@ type CreateKeeper struct {
 	UserID               int      `form:"user_id" validate:"required,min=1"`
 	Description          *string  `form:"description" validate:"notblank,max=600"`
 	Price                *float64 `form:"price" validate:"min=0"`
-	LocationID           *int     `form:"location_id"`
+	LocationID           int      `form:"location_id" validate:"required,min=1,max=18"`
 	HasCage              bool     `form:"has_cage" validate:"required,boolean"`
 	BoardingDuration     string   `form:"boarding_duration" validate:"required,oneof=hours days weeks months depends"`
 	BoardingCompensation string   `form:"boarding_compensation" validate:"required,oneof=paid free depends"`
@@ -24,7 +24,7 @@ type CreateKeeper struct {
 type UpdateKeeper struct {
 	Description          *string  `form:"description" validate:"omitempty,notblank,max=600"`
 	Price                *float64 `form:"price" validate:"omitempty,min=0"`
-	LocationID           *int     `form:"location_id" validate:"omitempty"`
+	LocationID           *int     `form:"location_id" validate:"omitempty,min=1,max=18"`
 	HasCage              *bool    `form:"has_cage" validate:"omitempty,boolean"`
 	BoardingDuration     *string  `form:"boarding_duration" validate:"omitempty,oneof=hours days weeks months depends"`
 	BoardingCompensation *string  `form:"boarding_compensation" validate:"omitempty,oneof=paid free depends"`
@@ -39,7 +39,7 @@ type ResponseKeeper struct {
 	User                 user.ResponseUser `json:"user"`
 	Description          *string           `json:"description"`
 	Price                *float64          `json:"price"`
-	LocationID           *int              `json:"location_id"`
+	LocationID           int               `json:"location_id"`
 	HasCage              bool              `json:"has_cage"`
 	BoardingDuration     string            `json:"boarding_duration"`
 	BoardingCompensation string            `json:"boarding_compensation"`

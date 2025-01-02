@@ -27,7 +27,7 @@ type GetAllKeeperReviewsParams struct {
 type KeeperReviewStore interface {
 	GetAllReviews(ctx context.Context, keeperID int, params GetAllKeeperReviewsParams) (data []KeeperReview, err error)
 	GetReviewByID(ctx context.Context, id int) (KeeperReview, error)
-	CreateReview(ctx context.Context, review KeeperReview) error
+	CreateReview(ctx context.Context, review KeeperReview) (data KeeperReview, err error)
 	DeleteReview(ctx context.Context, id int) error
 	UpdateReview(ctx context.Context, id int, review KeeperReview) (data KeeperReview, err error)
 }

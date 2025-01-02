@@ -82,10 +82,12 @@ func (r *Router) createKeeperReview(ctx *fiber.Ctx) error {
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
 	}
-	newReview.AuthorID = userID
-	newReview.KeeperID = id
 
-	createdReview, err := r.keeperService.CreateReview(ctx.UserContext(), newReview.ToCoreKeeperReview())
+	coreNewReview := newReview.ToCoreKeeperReview()
+	coreNewReview.AuthorID = userID
+	coreNewReview.KeeperID = id
+
+	createdReview, err := r.keeperService.CreateReview(ctx.UserContext(), coreNewReview)
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrKeeperReviewToItself):

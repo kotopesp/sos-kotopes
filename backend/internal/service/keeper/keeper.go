@@ -78,13 +78,11 @@ func (s *service) DeleteKeeper(ctx context.Context, id, userID int) error {
 }
 
 func (s *service) UpdateKeeper(ctx context.Context, id, userID int, keeper core.Keeper) (core.Keeper, error) {
-	print("enterd")
 	storedKeeper, err := s.keeperStore.GetKeeperByID(ctx, id)
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 		return core.Keeper{}, err
 	}
-	print("heet")
 
 	if storedKeeper.UserID != userID {
 		logger.Log().Debug(ctx, core.ErrKeeperUserIDMissmatch.Error())
