@@ -13,15 +13,20 @@ import (
 	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
 	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 
+	keeperservice "github.com/kotopesp/sos-kotopes/internal/service/keeper"
+
+	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/internal/service/auth"
+
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	keeperstore "github.com/kotopesp/sos-kotopes/internal/store/keeper"
+	keeperreviewstore "github.com/kotopesp/sos-kotopes/internal/store/keeper_review"
 
 	"github.com/kotopesp/sos-kotopes/config"
-	v1 "github.com/kotopesp/sos-kotopes/internal/controller/http"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/internal/service/auth"
 	"github.com/kotopesp/sos-kotopes/internal/store/user"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
@@ -59,6 +64,8 @@ func Run(cfg *config.Config) {
 	commentStore := commentstore.New(pg)
 	roleStore := rolesStore.New(pg)
 	favouriteUserStore := userFavouriteStore.New(pg)
+	keepersStore := keeperstore.New(pg)
+	keeperReviewsStore := keeperreviewstore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
@@ -71,6 +78,7 @@ func Run(cfg *config.Config) {
 	)
 	roleService := rolesService.New(roleStore, userStore)
 	userService := usersService.New(userStore, favouriteUserStore)
+	keeperService := keeperservice.New(keepersStore, keeperReviewsStore, userStore)
 	authService := auth.New(
 		userStore,
 		refreshSessionStore,
@@ -108,6 +116,7 @@ func Run(cfg *config.Config) {
 		postService,
 		userService,
 		roleService,
+		keeperService,
 		formValidator,
 	)
 

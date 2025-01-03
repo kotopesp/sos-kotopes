@@ -6,18 +6,18 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+
 	"path/filepath"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 
 	"io"
 	"mime/multipart"
-
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/pagination"
 )
 
 const MaxFileSize = 1 * 1024 * 1024
@@ -198,4 +198,12 @@ func openAndValidatePhoto(ctx *fiber.Ctx) (photoBytes *[]byte, err error) {
 		}
 	}
 	return photoBytes, nil
+}
+
+func Map[T, V any](ts []T, fn func(T) V) []V {
+	result := make([]V, len(ts))
+	for i, t := range ts {
+		result[i] = fn(t)
+	}
+	return result
 }

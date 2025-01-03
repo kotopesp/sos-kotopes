@@ -143,9 +143,7 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
-                        "schema": {
-                            "type": "object"
-                        }
+                        "schema": {}
                     },
                     "400": {
                         "description": "Bad Request",
@@ -197,6 +195,655 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/keeper_reviews/{id}": {
+            "delete": {
+                "description": "Deletes the keeper review",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper review"
+                ],
+                "summary": "Delete keeper review",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or request body",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates the keeper review details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper review"
+                ],
+                "summary": "Update keeper review",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated keeper review",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/keeperreview.UpdateKeeperReview"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeperreview.ResponseKeeperReview"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or request body",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/keepers": {
+            "get": {
+                "description": "Fetch a list of keepers based on optional filters and pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper"
+                ],
+                "summary": "get keepers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum rating",
+                        "name": "min_rating",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum rating",
+                        "name": "max_rating",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum price",
+                        "name": "min_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum price",
+                        "name": "max_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Has cage",
+                        "name": "has_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Boarding duration",
+                        "name": "boarding_duration",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Boarding compensation",
+                        "name": "boarding_compensation",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Animal acceptance",
+                        "name": "animal_acceptance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Animal category",
+                        "name": "animal_category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeper.ResponseKeepers"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a keeper",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper"
+                ],
+                "summary": "create keeper",
+                "parameters": [
+                    {
+                        "description": "Create keeper",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/keeper.CreateKeeper"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeper.ResponseKeeper"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/keepers/{id}": {
+            "get": {
+                "description": "Retrieves the details of a keeper by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper"
+                ],
+                "summary": "Get keeper",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeper.ResponseKeeper"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Keeper not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a keeper by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper"
+                ],
+                "summary": "Delete keeper",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully deleted",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Keeper not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates the keeper details such as description, price, location, etc.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper"
+                ],
+                "summary": "Update keeper",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated keeper",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/keeper.UpdateKeeper"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeper.ResponseKeeper"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or request body",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Keeper not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/keepers/{id}/keeper_reviews": {
+            "get": {
+                "description": "Fetch reviews of a keeper based on optional pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper review"
+                ],
+                "summary": "get keeper reviews",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/keeperreview.ResponseKeeperReview"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create review on a keeper",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "keeper review"
+                ],
+                "summary": "create keeper review",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Keeper ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Create keeper review",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/keeperreview.CreateKeeperReview"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/keeperreview.ResponseKeeperReview"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -2215,6 +2862,250 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "Jack_Vorobey123"
+                }
+            }
+        },
+        "keeper.CreateKeeper": {
+            "type": "object",
+            "required": [
+                "animal_acceptance",
+                "animal_category",
+                "boarding_compensation",
+                "boarding_duration",
+                "has_cage",
+                "location_id",
+                "user_id"
+            ],
+            "properties": {
+                "animal_acceptance": {
+                    "type": "string",
+                    "enum": [
+                        "homeless",
+                        "home",
+                        "homeless-hadhome",
+                        "depends"
+                    ]
+                },
+                "animal_category": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
+                "boarding_compensation": {
+                    "type": "string",
+                    "enum": [
+                        "paid",
+                        "free",
+                        "depends"
+                    ]
+                },
+                "boarding_duration": {
+                    "type": "string",
+                    "enum": [
+                        "hours",
+                        "days",
+                        "weeks",
+                        "months",
+                        "depends"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 600
+                },
+                "has_cage": {
+                    "type": "boolean"
+                },
+                "location_id": {
+                    "type": "integer",
+                    "maximum": 18,
+                    "minimum": 1
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0
+                },
+                "user_id": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "keeper.ResponseKeeper": {
+            "type": "object",
+            "properties": {
+                "animal_acceptance": {
+                    "type": "string"
+                },
+                "animal_category": {
+                    "type": "string"
+                },
+                "boarding_compensation": {
+                    "type": "string"
+                },
+                "boarding_duration": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "has_cage": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location_id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/user.ResponseUser"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "keeper.ResponseKeepers": {
+            "type": "object",
+            "properties": {
+                "meta": {
+                    "$ref": "#/definitions/pagination.Pagination"
+                },
+                "payload": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/keeper.ResponseKeeper"
+                    }
+                }
+            }
+        },
+        "keeper.UpdateKeeper": {
+            "type": "object",
+            "properties": {
+                "animal_acceptance": {
+                    "type": "string",
+                    "enum": [
+                        "homeless",
+                        "home",
+                        "homeless-hadhome",
+                        "depends"
+                    ]
+                },
+                "animal_category": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
+                "boarding_compensation": {
+                    "type": "string",
+                    "enum": [
+                        "paid",
+                        "free",
+                        "depends"
+                    ]
+                },
+                "boarding_duration": {
+                    "type": "string",
+                    "enum": [
+                        "hours",
+                        "days",
+                        "weeks",
+                        "months",
+                        "depends"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 600
+                },
+                "has_cage": {
+                    "type": "boolean"
+                },
+                "location_id": {
+                    "type": "integer",
+                    "maximum": 18,
+                    "minimum": 1
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0
+                }
+            }
+        },
+        "keeperreview.CreateKeeperReview": {
+            "type": "object",
+            "required": [
+                "grade"
+            ],
+            "properties": {
+                "content": {
+                    "description": "AuthorID int     ` + "`" + `form:\"author_id\" validate:\"required,min=1\"` + "`" + `",
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "grade": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                }
+            }
+        },
+        "keeperreview.ResponseKeeperReview": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/user.ResponseUser"
+                },
+                "author_id": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "keeper_id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "keeperreview.UpdateKeeperReview": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "grade": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
                 }
             }
         },
