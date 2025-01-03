@@ -2873,8 +2873,7 @@ const docTemplate = `{
                 "boarding_compensation",
                 "boarding_duration",
                 "has_cage",
-                "location",
-                "price",
+                "location_id",
                 "user_id"
             ],
             "properties": {
@@ -2883,6 +2882,7 @@ const docTemplate = `{
                     "enum": [
                         "homeless",
                         "home",
+                        "homeless-hadhome",
                         "depends"
                     ]
                 },
@@ -2919,8 +2919,10 @@ const docTemplate = `{
                 "has_cage": {
                     "type": "boolean"
                 },
-                "location": {
-                    "type": "string"
+                "location_id": {
+                    "type": "integer",
+                    "maximum": 18,
+                    "minimum": 1
                 },
                 "price": {
                     "type": "number",
@@ -2928,7 +2930,7 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer",
-                    "minimum": 0
+                    "minimum": 1
                 }
             }
         },
@@ -2959,8 +2961,8 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "location": {
-                    "type": "string"
+                "location_id": {
+                    "type": "integer"
                 },
                 "price": {
                     "type": "number"
@@ -2998,6 +3000,7 @@ const docTemplate = `{
                     "enum": [
                         "homeless",
                         "home",
+                        "homeless-hadhome",
                         "depends"
                     ]
                 },
@@ -3034,8 +3037,10 @@ const docTemplate = `{
                 "has_cage": {
                     "type": "boolean"
                 },
-                "location": {
-                    "type": "string"
+                "location_id": {
+                    "type": "integer",
+                    "maximum": 18,
+                    "minimum": 1
                 },
                 "price": {
                     "type": "number",
@@ -3046,16 +3051,11 @@ const docTemplate = `{
         "keeperreview.CreateKeeperReview": {
             "type": "object",
             "required": [
-                "author_id",
-                "grade",
-                "keeper_id"
+                "grade"
             ],
             "properties": {
-                "author_id": {
-                    "type": "integer",
-                    "minimum": 0
-                },
                 "content": {
+                    "description": "AuthorID int     ` + "`" + `form:\"author_id\" validate:\"required,min=1\"` + "`" + `",
                     "type": "string",
                     "maxLength": 2000
                 },
@@ -3063,10 +3063,6 @@ const docTemplate = `{
                     "type": "integer",
                     "maximum": 5,
                     "minimum": 1
-                },
-                "keeper_id": {
-                    "type": "integer",
-                    "minimum": 0
                 }
             }
         },

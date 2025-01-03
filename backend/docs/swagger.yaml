@@ -75,6 +75,7 @@ definitions:
         enum:
         - homeless
         - home
+        - homeless-hadhome
         - depends
         type: string
       animal_category:
@@ -102,13 +103,15 @@ definitions:
         type: string
       has_cage:
         type: boolean
-      location:
-        type: string
+      location_id:
+        maximum: 18
+        minimum: 1
+        type: integer
       price:
         minimum: 0
         type: number
       user_id:
-        minimum: 0
+        minimum: 1
         type: integer
     required:
     - animal_acceptance
@@ -116,8 +119,7 @@ definitions:
     - boarding_compensation
     - boarding_duration
     - has_cage
-    - location
-    - price
+    - location_id
     - user_id
     type: object
   keeper.ResponseKeeper:
@@ -138,8 +140,8 @@ definitions:
         type: boolean
       id:
         type: integer
-      location:
-        type: string
+      location_id:
+        type: integer
       price:
         type: number
       updated_at:
@@ -164,6 +166,7 @@ definitions:
         enum:
         - homeless
         - home
+        - homeless-hadhome
         - depends
         type: string
       animal_category:
@@ -191,31 +194,26 @@ definitions:
         type: string
       has_cage:
         type: boolean
-      location:
-        type: string
+      location_id:
+        maximum: 18
+        minimum: 1
+        type: integer
       price:
         minimum: 0
         type: number
     type: object
   keeperreview.CreateKeeperReview:
     properties:
-      author_id:
-        minimum: 0
-        type: integer
       content:
+        description: AuthorID int     `form:"author_id" validate:"required,min=1"`
         maxLength: 2000
         type: string
       grade:
         maximum: 5
         minimum: 1
         type: integer
-      keeper_id:
-        minimum: 0
-        type: integer
     required:
-    - author_id
     - grade
-    - keeper_id
     type: object
   keeperreview.ResponseKeeperReview:
     properties:

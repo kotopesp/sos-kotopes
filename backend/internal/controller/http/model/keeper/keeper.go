@@ -7,7 +7,6 @@ import (
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/user"
 )
 
-// KeepersCreate represents the data required to create a new keeper.
 type CreateKeeper struct {
 	UserID               int      `form:"user_id" validate:"required,min=1"`
 	Description          *string  `form:"description" validate:"notblank,max=600"`
@@ -20,7 +19,6 @@ type CreateKeeper struct {
 	AnimalCategory       string   `form:"animal_category" validate:"required,oneof=dog cat both"`
 }
 
-// KeepersUpdate represents the data to update an existing keeper.
 type UpdateKeeper struct {
 	Description          *string  `form:"description" validate:"omitempty,notblank,max=600"`
 	Price                *float64 `form:"price" validate:"omitempty,min=0"`
@@ -32,7 +30,6 @@ type UpdateKeeper struct {
 	AnimalCategory       *string  `form:"animal_category" validate:"omitempty,oneof=dog cat both"`
 }
 
-// KeepersResponse represents the response keeper entity.
 type ResponseKeeper struct {
 	ID                   int               `json:"id"`
 	UserID               int               `json:"user_id"`
@@ -49,13 +46,11 @@ type ResponseKeeper struct {
 	UpdatedAt            time.Time         `json:"updated_at"`
 }
 
-// KeepersResponseWithMeta represents the respose keeper entity with meta information.
 type ResponseKeepers struct {
 	Meta pagination.Pagination `json:"meta"`
 	Data []ResponseKeeper      `json:"payload"`
 }
 
-// GetAllKeepersParams represents the query parameters for filtering and sorting keepers.
 type GetAllKeepersParams struct {
 	Sort                 *string  `query:"sort" validate:"omitempty,sort_keeper"`
 	LocationID           *int     `query:"location_id" validate:"omitempty"`
