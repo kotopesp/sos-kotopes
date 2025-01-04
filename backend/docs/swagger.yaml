@@ -192,6 +192,50 @@ definitions:
     required:
     - name
     type: object
+  seeker.ResponseSeeker:
+    properties:
+      animal_type:
+        type: string
+      description:
+        type: string
+      equipment_rental:
+        type: integer
+      have_car:
+        type: boolean
+      have_ladder:
+        type: boolean
+      have_metal_cage:
+        type: boolean
+      have_net:
+        type: boolean
+      have_other:
+        type: string
+      have_plastic_cage:
+        type: boolean
+      id:
+        type: integer
+      location:
+        type: string
+      price:
+        type: integer
+      user_id:
+        type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
+    required:
+    - willingness_carry
+    type: object
+  seeker.ResponseSeekers:
+    properties:
+      payload:
+        items:
+          $ref: '#/definitions/seeker.ResponseSeeker'
+        type: array
+    type: object
   user.Login:
     properties:
       password:
@@ -336,8 +380,7 @@ paths:
       responses:
         "201":
           description: Created
-          schema:
-            type: object
+          schema: {}
         "400":
           description: Bad Request
           schema:
@@ -1163,6 +1206,326 @@ paths:
       summary: Get favourite posts of user by id
       tags:
       - post
+  /seekers:
+    get:
+      consumes:
+      - application/json
+      description: Get seekers
+      parameters:
+      - description: Sort
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort
+        in: query
+        name: sort_order
+        type: string
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      - description: Equipment rental
+        in: query
+        name: min_equipment_rental
+        type: integer
+      - description: Equipment rental
+        in: query
+        name: max_equipment_rental
+        type: integer
+      - description: Have metal cage
+        in: query
+        name: have_metal_cage
+        type: boolean
+      - description: Have plastic cage
+        in: query
+        name: have_plastic_cage
+        type: boolean
+      - description: Have net
+        in: query
+        name: have_net
+        type: boolean
+      - description: Have ladder
+        in: query
+        name: have_ladder
+        type: boolean
+      - description: Have other
+        in: query
+        name: have_other
+        type: string
+      - description: Price
+        in: query
+        name: min_price
+        type: integer
+      - description: Price
+        in: query
+        name: max_price
+        type: integer
+      - description: Have car
+        in: query
+        name: have_car
+        type: boolean
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeekers'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: get seekers
+      tags:
+      - seeker
+    post:
+      consumes:
+      - application/json
+      description: Create a seeker
+      operationId: create-seeker
+      parameters:
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Description
+        in: query
+        name: description
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      - description: Equipment rental
+        in: query
+        name: equipment_rental
+        type: integer
+      - description: Have metal cage
+        in: query
+        name: have_metal_cage
+        type: boolean
+      - description: Have plastic cage
+        in: query
+        name: have_plastic_cage
+        type: boolean
+      - description: Have net
+        in: query
+        name: have_net
+        type: boolean
+      - description: Have ladder
+        in: query
+        name: have_ladder
+        type: boolean
+      - description: Have other
+        in: query
+        name: have_other
+        type: string
+      - description: Have car
+        in: query
+        name: have_car
+        type: boolean
+      - description: Price
+        in: query
+        name: price
+        type: integer
+      - description: Price
+        in: query
+        name: willingness_carry
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Create a seeker
+      tags:
+      - seeker
+  /seekers/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete seeker
+      operationId: delete-seeker
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete seeker
+      tags:
+      - seeker
+    get:
+      consumes:
+      - application/json
+      description: Get seeker by id
+      operationId: get-seeker
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Get seeker
+      tags:
+      - seeker
+    patch:
+      consumes:
+      - application/json
+      description: Update a seeker
+      operationId: update-seeker
+      parameters:
+      - description: Animal type
+        in: query
+        name: animal_type
+        type: string
+      - description: Description
+        in: query
+        name: description
+        type: string
+      - description: Location
+        in: query
+        name: location
+        type: string
+      - description: Equipment rental
+        in: query
+        name: equipment_rental
+        type: integer
+      - description: Have metal cage
+        in: query
+        name: have_metal_cage
+        type: boolean
+      - description: Have plastic cage
+        in: query
+        name: have_plastic_cage
+        type: boolean
+      - description: Have net
+        in: query
+        name: have_net
+        type: boolean
+      - description: Have ladder
+        in: query
+        name: have_ladder
+        type: boolean
+      - description: Have other
+        in: query
+        name: have_other
+        type: string
+      - description: Have car
+        in: query
+        name: have_car
+        type: boolean
+      - description: Price
+        in: query
+        name: price
+        type: integer
+      - description: Price
+        in: query
+        name: willingness_carry
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Update a seeker
+      tags:
+      - seeker
   /user/{id}/posts:
     get:
       consumes:

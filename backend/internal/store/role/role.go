@@ -40,7 +40,7 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.Given
 
 	var tableName string
 	switch givenRole.Name {
-	case core.Seeker:
+	case core.Seek:
 		tableName = "seekers"
 	case core.Keeper:
 		tableName = "keepers"
@@ -81,7 +81,7 @@ func (s *store) GetUserRoles(ctx context.Context, id int) (roles map[string]core
 	}()
 
 	tableNames := []string{"seekers", "keepers", "vets"}
-	roleNames := []string{core.Seeker, core.Keeper, core.Vet}
+	roleNames := []string{core.Seek, core.Keeper, core.Vet}
 
 	for i, name := range tableNames {
 		var role core.Role
@@ -128,7 +128,7 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole core.Upda
 	roleName := updateRole.Name
 	var tableName string
 	switch roleName {
-	case core.Seeker:
+	case core.Seek:
 		tableName = "seekers"
 	case core.Keeper:
 
@@ -178,7 +178,7 @@ func (s *store) DeleteUserRole(ctx context.Context, id int, roleName string) (er
 
 	var role core.Role
 	switch roleName {
-	case core.Seeker:
+	case core.Seek:
 		err = tx.Table("seekers").Where("user_id = ?", id).Delete(role).Error
 	case core.Keeper:
 		err = tx.Table("keepers").Where("user_id = ?", id).Delete(role).Error
