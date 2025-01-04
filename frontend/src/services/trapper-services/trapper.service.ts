@@ -1,6 +1,7 @@
-import { inject, Injectable } from '@angular/core';
+
 import { TrapperProfileService } from './trapper-profile-service/trapper-profile.service';
 import { Trapper } from '../../model/trapper';
+import { inject, Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'

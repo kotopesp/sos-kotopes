@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
 import { Trapper } from '../../../../model/trapper';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-trapper-cost-status',
@@ -18,20 +18,20 @@ export class TrapperCostStatusComponent {
   trapperCostStatus = ""
   divLabel = ""
   setFlagClass() {
-    switch(this.trapper.cost) {
-      case "deal": {
+    switch(this.trapper.price) {
+      case -1: {
         this.divLabel = "₽ По ситуации"
         this.trapperCostStatus = "deal"
         break
       }
 
-      case "free": {
+      case 0: {
         this.divLabel = "₽ Бесплатно"
         this.trapperCostStatus = "free"
         break
       }
 
-      case "pay": {
+      default: {
         this.divLabel = "₽ Платно"
         this.trapperCostStatus = "pay"
         break

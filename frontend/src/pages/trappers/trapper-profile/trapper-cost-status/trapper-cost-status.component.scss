@@ -10,14 +10,14 @@
   }
   
   .deal {
-    @include container__post__status(var(--orange-active-button-bg));
+    @include container__trapper__status(var(--orange-active-button-bg));
   }
   
   .pay {
-    @include container__post__status(var(--red-active-button-bg));
+    @include container__trapper__status(var(--red-active-button-bg));
   }
   
   .free {
-    @include container__post__status(var(--green-active-button-bg));
+    @include container__trapper__status(var(--green-active-button-bg));
   }
   
