@@ -1,30 +1,54 @@
-<main class="main_page">
-  <div class="cat-with-buttons-and-dog">
+<main class="main_page container mx-auto">
+  <div class="cat-with-buttons-and-dog px-10 py-5 bg-cover bg-[left_-3rem_top] sm:bg-left-top bg-no-repeat">
     <div>
       <div class="animals-text">
-        <p class="ft48 roboto fw600 lh64">Помоги бездомному животному</p>
-        <p class="ft24 fw400">Животные ждут твоей помощи</p>
+        <p class="roboto text-4xl lg:text-5xl font-bold pt-7 sm:pt-20 lg:pt-30">Помоги бездомному животному</p>
+        <p class="pt-3">Животные ждут твоей помощи</p>
       </div>
-      <div class="ptbold ft24 fw700 animals__buttons ">
-        <a class="animals__button animals__button__hide">Я потерял питомца</a>
-        <a class="animals__button animals__button__find">Я нашёл питомца</a>
-        <a class="animals__button animals__button__looking-for-home">Я ищу дом питомцу</a>
+      <div class="ptbold animals__buttons grid grid-cols-1 lg:grid-cols-2 gap-4 pt-4 justify-start">
+        <a class="animals__button animals__button__hide rounded-lg text-center p-2 sm:max-w-80">Я потерял питомца</a>
+        <a class="animals__button animals__button__find rounded-lg text-center p-2 sm:max-w-80">Я нашёл питомца</a>
+        <a class="animals__button animals__button__looking-for-home rounded-lg text-center p-2 sm:max-w-80">Я ищу дом
+          питомцу</a>
       </div>
     </div>
   </div>
-  <div class="stickers">
-    <app-sticker
-      *ngFor="let stickerItem of stickerItems"
-      [stickerItem]="stickerItem" />
+  <div class="stickers bg-right-top bg-no-repeat bg-contain columns-1 md:columns-2 gap-10 p-10 md:px-20 lg:px-50">
+    <app-sticker classEl="pb-10" classColor="yellow-color" title="Потеряшка"
+      subtitle1="Нашли бездомное или потеряли домашнее животное?"
+      subtitle2="Здесь вы найдете подробные инструкции и контакты для связи с отловщиками, 
+    частными ветеринарами и службами передержки. Мы поможем вам обеспечить безопасность и защиту для каждого найденного или пропавшего питомца" icon="paw-icon.svg" />
+
+    <app-sticker classEl="pb-10" classColor="purple-color" title="Отловщики"
+      subtitle1="Нужен отлов улов улёт? жду когда Ангелина придумает текст" subtitle2="Если вы готовы рассказать о нас, 
+      предоставить ночлег для животного или вы частный ветеринар, или отловщик,
+    то смело нажимайте сюда и присоединяйтесь к нашей команде!" icon="net-icon.svg" />
+
+    <app-sticker classEl="pb-10" classColor="green-color" title="Ветеринарные клиники"
+      subtitle1="Ищете ближайшую ветеринарную клинику?" subtitle2="Здесь вы найдете список ближайших ветеринарных 
+    клиник с указанием стоимости 
+  услуг и льготных условий. Мы стремимся сделать ветеринарную помощь доступной для каждого животного. 
+  Быстрая и качественная помощь – залог здоровья наших питомцев" icon="cross-icon.svg" />
+
+    <!-- <img class="object-contain h-52 p-10" src="./assets/images/steps-up.png" alt=""/> -->
+
+    <app-sticker classEl="pb-10 lg:pt-52 md:pt-32" classColor="pink-color" title="Передержка"
+      subtitle1="Нужен ночлег или помощь?" subtitle2="Если вы готовы рассказать о нас, предоставить ночлег для животного или вы частный ветеринар, или  отловщик, то смело нажимайте сюда и присоединяйтесь к нашей команде!" icon="hand-icon.svg" />
+
+    <app-sticker classEl="pb-10" classColor="blue-color" title="Правовые Вопросы"
+      subtitle1="Не знаете, что можно и чего нельзя делать?"
+      subtitle2="Мы поможем вам разобраться 
+      в правовых аспектах и взаимодействии с органами власти. Узнайте, как действовать в рамках закона, что делать в случае жестокого обращения с животными и как взаимодействовать с ЖКХ и районными администрациями. Получите ответы на все важные вопросы и защитите права животных"
+      icon="lawyer-icon.svg" />
+
+    <!-- <img class="object-contain h-52 p-10" src="./assets/images/steps-down.png" alt=""/> -->
+
   </div>
   <div class="block__faq">
     <div class="questions">
       <p class="ft48 roboto fw600">Вопросы</p>
     </div>
-    <app-question
-      *ngFor="let questionItem of questionItems"
-      [questionItem]="questionItem"
-    />
+    <app-question *ngFor="let questionItem of questionItems" [questionItem]="questionItem" />
   </div>
   <div class="block__about-us">
     <div class="text__about-us">

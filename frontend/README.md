@@ -1,5 +1,31 @@
 # Frontend
 
+Single page application (SPA) сайта sos-kotopes.
+
+# Установка зависимостей
+
+Запустите `npm ci` для скачивания зависимостей из package-lock.json
+
+package-lock.json используется для повторяемой сборки.
+
+При каждом добавлении зависимости нужно коммитить package.json и package-lock.json
+
+# Запуск в режиме разработки
+
+`npm run start`
+
+Откройте `http://localhost:4200/` для просмотра сайта
+
+# Мобильная верстка
+
+При верстке используется подход Moblie first. Т.е. сначала верстка делается под мобильные устройства с небольшим разрешением, а потом адаптируется под планшеты, десктопы.
+
+Для верстки используется css утилиты https://tailwindcss.com/ 
+
+Основные концепции https://tailwindcss.ru/docs/utility-first/
+
+# Angular
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.1.0.
 
 ## Development server
