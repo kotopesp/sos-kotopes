@@ -61,7 +61,6 @@ type VetStore interface {
 	UpdateByUserID(ctx context.Context, update UpdateVets) (updatedVet Vets, err error)
 	GetAll(ctx context.Context, params GetAllVetParams) ([]Vets, error)
 	GetByUserID(ctx context.Context, userID int) (vet Vets, err error)
-	GetByOrgName(ctx context.Context, orgName string) (vet Vets, err error)
 	Create(ctx context.Context, vet Vets) error
 	DeleteByUserID(ctx context.Context, userID int) error
 }
@@ -70,7 +69,6 @@ type VetService interface {
 	UpdateByUserID(ctx context.Context, vet UpdateVets) (VetsDetails, error)
 	GetAll(ctx context.Context, params GetAllVetParams) ([]VetsDetails, error)
 	GetByUserID(ctx context.Context, userID int) (vet VetsDetails, err error)
-	GetByOrgName(ctx context.Context, orgName string) (vet VetsDetails, err error)
 	Create(ctx context.Context, vet Vets) error
 	DeleteByUserID(ctx context.Context, userID int) error
 

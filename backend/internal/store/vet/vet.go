@@ -115,19 +115,3 @@ func (s *store) GetByUserID(ctx context.Context, userID int) (core.Vets, error) 
 	}
 	return vet, nil
 }
-
-func (s *store) GetByOrgName(ctx context.Context, orgName string) (core.Vets, error) {
-	var vet core.Vets
-
-	if err := s.DB.WithContext(ctx).Where("org_name = ?", orgName).First(&vet).Error; err != nil {
-		if errors.Is(err, core.ErrRecordNotFound) {
-			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.Vets{}, core.ErrRecordNotFound
-		}
-
-		logger.Log().Error(ctx, err.Error())
-		return core.Vets{}, err
-	}
-
-	return vet, nil
-}
