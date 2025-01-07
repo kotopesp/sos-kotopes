@@ -111,7 +111,7 @@ func (r *Router) initRoutes() {
 	// vet reviews
 	v1.Get("/vets/:id/vet_reviews", r.getVetReviews)
 	v1.Post("/vets/:id/vet_reviews", r.protectedMiddleware(), r.createVetReview)
-	v1.Put("/vet_reviews/:id", r.protectedMiddleware(), r.updateVetReview)
+	v1.Patch("/vet_reviews/:id", r.protectedMiddleware(), r.updateVetReview)
 	v1.Delete("/vet_reviews/:id", r.protectedMiddleware(), r.deleteVetReview)
 }
 

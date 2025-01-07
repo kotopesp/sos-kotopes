@@ -27,9 +27,9 @@ var (
 	ErrUnauthorized                      = errors.New("unauthorized")
 	ErrInvalidUpdateRefreshSessionParams = errors.New("invalid UpdateRefreshSession params")
 
-	// keeper review errors
+	// vet review errors
 	ErrReviewGradeBounds       = errors.New("grade must be between 1 and 5")
-	ErrVetReviewUserIDMismatch = errors.New("keeper's review id mismatch with the review's author")
+	ErrVetReviewUserIDMismatch = errors.New("vet's review id mismatch with the review's author")
 
 	// vet errors
 	ErrVetUserIDMismatch          = errors.New("vet user ID mismatch")

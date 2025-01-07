@@ -10,7 +10,18 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
-// Get Vet Reviews
+// @Summary		get vet reviews
+// @Description	Fetch reviews of a vet based on optional pagination
+// @Tags			vet review
+// @Accept			json
+// @Produce		json
+// @Param			limit	query		int	false	"Limit"		default(10)
+// @Param			offset	query		int	false	"Offset"	default(0)
+// @Param			id		path		int	true	"Vet ID"
+// @Success		200		{object}	model.Response{data=[]vet_review.VetReviewsResponse}
+// @Failure		400		{object}	model.Response
+// @Failure		500		{object}	model.Response
+// @Router			/vets/{id}/vet_reviews [get]
 func (r *Router) getVetReviews(ctx *fiber.Ctx) error {
 	var params vetreview.GetAllVetReviewsParams
 
@@ -34,6 +45,24 @@ func (r *Router) getVetReviews(ctx *fiber.Ctx) error {
 }
 
 // Create Vet Review
+//
+//	@Summary		create vet review
+//	@Description	Create review on a vet
+//
+//	@Tags			vet review
+//
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			body	body		vet_review.VetReviewsCreate		true	"Create vet review"
+//	@Success		201		{object}	vet_review.VetReviewsResponse	"Success response"
+//	@Failure		400		{object}	model.Response
+//	@Failure		401		{object}	model.Response
+//	@Failure		500		{object}	model.Response
+//
+//	@Security		ApiKeyAuthBasic
+//
+//	@Router			/vets/{id}/vet_reviews [post]
 func (r *Router) createVetReview(ctx *fiber.Ctx) error {
 	var newReview vetreview.VetReviewsCreate
 
@@ -61,6 +90,25 @@ func (r *Router) createVetReview(ctx *fiber.Ctx) error {
 }
 
 // Update Vet Review
+//
+//	@Summary		Update vet review
+//	@Description	Updates the vet review details
+//	@Tags			vet review
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			id		path		int													true	"Vet ID"
+//	@Param			body	body		vet_review.VetReviewsUpdate							true	"Create vet review"
+//	@Success		200		{object}	model.Response{data=vet_review.VetReviewsResponse}	"Success response"
+//	@Failure		400		{object}	model.Response										"Invalid ID or request body"
+//	@Failure		404		{object}	model.Response										"Review not found"
+//
+//	@Failure		401		{object}	model.Response
+//	@Failure		500		{object}	model.Response
+//
+//	@Security		ApiKeyAuthBasic
+//
+//	@Router			/vet_reviews/{id} [patch]
 func (r *Router) updateVetReview(ctx *fiber.Ctx) error {
 	// Get ID
 	id, err := ctx.ParamsInt("id")
@@ -100,6 +148,20 @@ func (r *Router) updateVetReview(ctx *fiber.Ctx) error {
 }
 
 // Delete Vet Review
+
+// @Summary		Delete vet review
+// @Description	Deletes the vet review
+// @Tags			vet review
+// @Accept			json
+// @Produce		json
+// @Param			id	path		int	true	"Review ID"
+// @Success		204	{object}	model.Response
+// @Failure		400	{object}	model.Response	"Invalid ID or request body"
+// @Failure		404	{object}	model.Response	"Review not found"
+// @Failure		401	{object}	model.Response
+// @Failure		500	{object}	model.Response
+// @Security		ApiKeyAuthBasic
+// @Router			/vet_reviews/{id} [delete]
 func (r *Router) deleteVetReview(ctx *fiber.Ctx) error {
 	// Get ID
 	id, err := ctx.ParamsInt("id")

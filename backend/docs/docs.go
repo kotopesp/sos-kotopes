@@ -2116,6 +2116,147 @@ const docTemplate = `{
                 }
             }
         },
+        "/vet_reviews/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Deletes the vet review",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vet review"
+                ],
+                "summary": "Delete vet review",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Review ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or request body",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Updates the vet review details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vet review"
+                ],
+                "summary": "Update vet review",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Vet ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Create vet review",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vet_review.VetReviewsUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/vet_review.VetReviewsResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID or request body",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/vets": {
             "get": {
                 "description": "Get all vets",
@@ -2278,6 +2419,134 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/vets/{id}/vet_reviews": {
+            "get": {
+                "description": "Fetch reviews of a vet based on optional pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vet review"
+                ],
+                "summary": "get vet reviews",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Vet ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/vet_review.VetReviewsResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Create review on a vet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "vet review"
+                ],
+                "summary": "create vet review",
+                "parameters": [
+                    {
+                        "description": "Create vet review",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/vet_review.VetReviewsCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success response",
+                        "schema": {
+                            "$ref": "#/definitions/vet_review.VetReviewsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -3018,6 +3287,94 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "vet_review.VetReviewsCreate": {
+            "type": "object",
+            "required": [
+                "author_id",
+                "grade",
+                "vet_id"
+            ],
+            "properties": {
+                "author_id": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "content": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "grade": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "vet_id": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "vet_review.VetReviewsResponse": {
+            "type": "object",
+            "required": [
+                "author_id",
+                "content",
+                "grade",
+                "vet_id"
+            ],
+            "properties": {
+                "author_id": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "content": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "vet_id": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "vet_review.VetReviewsUpdate": {
+            "type": "object",
+            "required": [
+                "author_id"
+            ],
+            "properties": {
+                "author_id": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "content": {
+                    "type": "string",
+                    "maxLength": 2000
+                },
+                "grade": {
+                    "type": "integer",
+                    "maximum": 5,
+                    "minimum": 1
+                },
+                "id": {
                     "type": "integer"
                 }
             }
