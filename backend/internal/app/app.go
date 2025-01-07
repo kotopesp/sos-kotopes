@@ -104,6 +104,7 @@ func Run(cfg *config.Config) {
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:     cfg.CORS.AllowedOrigins,
 		AllowCredentials: true,
+		AllowHeaders:     "*",
 	}))
 
 	v1.NewRouter(
