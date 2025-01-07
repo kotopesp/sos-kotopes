@@ -37,7 +37,7 @@
             <p class="property-name ptbold">Район/Метро</p>
             <div class="search_container">
                 <img src="../../assets/icons/lens-icon.svg" alt="icon">
-                <input class="search-input fw400 ft20" type="text" placeholder="Поиск">
+                <input id="location" class="search-input fw400 ft20" (keyup)="changeLocation($event)" type="text" placeholder="Поиск">
             </div>
         </div>
         <div class="filter__container">

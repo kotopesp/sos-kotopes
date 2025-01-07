@@ -1,6 +1,7 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { NgClass } from "@angular/common";
-import { TrapperService } from '../../../services/trapper-services/trapper.service';
+import { TrapperFilterService } from '../../../services/trapper-services/trapper-filter-service/trapper-filter.service';
+
 
 @Component({
   selector: 'app-trapper-filter-bar',
@@ -10,78 +11,79 @@ import { TrapperService } from '../../../services/trapper-services/trapper.servi
   styleUrl: './trapper-filter-bar.component.scss'
 })
 export class TrapperFilterBarComponent {
-  trappersService = inject(TrapperService)
-  static getAllFlags: boolean[];
+
+  constructor(private filterService: TrapperFilterService){}
+
   isPressedCat = false
+  changeLocation(event: any) {
+    var inputLocation = event.target.value; 
+    this.filterService.chagneLocation(inputLocation)
+  }
   pressButtonCat() {
     this.isPressedCat = !this.isPressedCat
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isCat', this.isPressedCat)
   }
-  isPressedDog= false
+  isPressedDog= false 
   pressButtonDog() {
     this.isPressedDog = !this.isPressedDog
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isDog', this.isPressedDog)
   }
 
   isPressedCadog = false
   pressButtonCadog() {
     this.isPressedCadog = !this.isPressedCadog
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isCadog', this.isPressedCadog)
   }
   isPressedCostFree = false
   pressButtonCostFree() {
     this.isPressedCostFree = !this.isPressedCostFree
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isFree', this.isPressedCostFree)
   }
   isPressedCostPay = false
   pressButtonCostPay() {
     this.isPressedCostPay = !this.isPressedCostPay
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isPay', this.isPressedCostPay)
   }
   isPressedCostDeal = false
   pressButtonCostDeal() {
     this.isPressedCostDeal = !this.isPressedCostDeal
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isDeal', this.isPressedCostDeal)
   }
   isPressedMetallCatNap = false
   pressButtonMetallCatNap() {
     this.isPressedMetallCatNap = !this.isPressedMetallCatNap
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isMetallNap', this.isPressedMetallCatNap)
   }
   isPressedPlasticCatNap = false
   pressButtonPlasticCatNap() {
     this.isPressedPlasticCatNap = !this.isPressedPlasticCatNap
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isPlasticNap', this.isPressedPlasticCatNap)
   }
   isPressedNet = false
   pressButtonNet() {
     this.isPressedNet = !this.isPressedNet
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isNet', this.isPressedNet)
   }
   isPressedLadder= false
   pressButtonLadder() {
     this.isPressedLadder = !this.isPressedLadder
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isLadder', this.isPressedLadder)
   }
   isPressedOther= false
   pressButtonOther() {
     this.isPressedOther = !this.isPressedOther  
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.filterService.addTag('isOther', this.isPressedOther)
   }
-  isPressedHaveCar= false
+  isPressedHaveCar = false
   pressButtonHaveCar() {
-    this.isPressedHaveCar = !this.isPressedHaveCar
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.isPressedHaveCar = !this.isPressedHaveCar  
+    this.filterService.addTag('haveCar', this.isPressedHaveCar)
   }
-  isPressedHaventCar= false
+  isPressedHaventCar = false
   pressButtonHaventCar() {
-    this.isPressedHaventCar = !this.isPressedHaventCar
-    this.trappersService.updateTrappersData(this.getAllFlags())
+    this.isPressedHaventCar = !this.isPressedHaveCar  
+    this.filterService.addTag('haveCar', this.isPressedHaventCar)
   }
 
-  getAllFlags(){
-    return [this.isPressedCat, this.isPressedDog, this.isPressedCadog, this.isPressedCostFree,
-    this.isPressedCostPay, this.isPressedCostDeal, this.isPressedMetallCatNap, this.isPressedPlasticCatNap,
-    this.isPressedNet, this.isPressedLadder, this.isPressedOther, this.isPressedHaveCar, this.isPressedHaventCar]
-  }
+  /**/
 }
