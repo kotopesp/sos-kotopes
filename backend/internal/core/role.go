@@ -52,7 +52,6 @@ type (
 var (
 	ErrInvalidRole      = errors.New("invalid role name")
 	ErrUserRoleNotFound = errors.New("user does not have the specified role")
-
 	ErrNoFieldsToUpdate = errors.New("no fields to update")
 )
 

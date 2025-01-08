@@ -17,6 +17,7 @@ type Router struct {
 	postService          core.PostService
 	userService          core.UserService
 	roleService          core.RoleService
+	vetService           core.VetService
 	userFavouriteService core.UserFavouriteService
 }
 
@@ -27,6 +28,7 @@ func NewRouter(
 	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
+	vetService core.VetService,
 	formValidator validator.FormValidatorService,
 ) {
 	router := &Router{
@@ -36,6 +38,7 @@ func NewRouter(
 		postService:    postService,
 		userService:    userService,
 		roleService:    roleService,
+		vetService:     vetService,
 		commentService: commentService,
 	}
 
@@ -97,6 +100,19 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
+
+	// vets
+	v1.Get("/vets", r.getVets)
+	v1.Get("/vets/:userID", r.getVetByUserID)
+	v1.Post("/vets", r.protectedMiddleware(), r.createVet)
+	v1.Patch("/vets/:userID", r.protectedMiddleware(), r.updateVetByUserID)
+	v1.Delete("/vets/:userID", r.protectedMiddleware(), r.deleteVetByUserID)
+
+	// vet reviews
+	v1.Get("/vets/:id/vet_reviews", r.getVetReviews)
+	v1.Post("/vets/:id/vet_reviews", r.protectedMiddleware(), r.createVetReview)
+	v1.Patch("/vet_reviews/:id", r.protectedMiddleware(), r.updateVetReview)
+	v1.Delete("/vet_reviews/:id", r.protectedMiddleware(), r.deleteVetReview)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

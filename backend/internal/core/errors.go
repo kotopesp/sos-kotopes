@@ -27,6 +27,14 @@ var (
 	ErrUnauthorized                      = errors.New("unauthorized")
 	ErrInvalidUpdateRefreshSessionParams = errors.New("invalid UpdateRefreshSession params")
 
+	// vet review errors
+	ErrReviewGradeBounds       = errors.New("grade must be between 1 and 5")
+	ErrVetReviewUserIDMismatch = errors.New("vet's review id mismatch with the review's author")
+
+	// vet errors
+	ErrVetUserIDMismatch          = errors.New("vet user ID mismatch")
+	ErrFailedToGetUserIDFromToken = errors.New("failed to get user ID from token")
+
 	// comment errors
 	ErrCommentAuthorIDMismatch     = errors.New("your user_id and db author_id mismatch")
 	ErrCommentPostIDMismatch       = errors.New("your posts_id and db posts_id mismatch")

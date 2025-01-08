@@ -59,7 +59,7 @@ func NewConfig() (*Config, error) {
 	vkCallback := flag.String("vk_callback", "https://59bf-91-223-89-38.ngrok-free.app/api/v1/auth/login/vk/callback", "callback for vk auth")
 	accessTokenLifetime := flag.Int("access_token_lifetime", 10, "access token lifetime in minutes")
 	refreshTokenLifetime := flag.Int("refresh_token_lifetime", 43800, "refresh token lifetime in minutes")
-	frontendOrigins := flag.String("frontend_allowed_origins", "http://localhost:4200", "comma separated list of origins for the frontend")
+	frontendOrigins := flag.String("frontend_allowed_origins", "http://localhost:4200,http://127.0.0.1:8080", "comma separated list of origins for the frontend")
 
 	flag.Parse()
 
