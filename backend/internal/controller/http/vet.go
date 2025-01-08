@@ -11,12 +11,19 @@ import (
 
 // @Summary		Get all vets
 // @Tags			vets
-// @Description	Get all vets
-// @ID				get-vets
-// @Accept			json
-// @Produce		json
-// @Success		200	{object}	model.Response{data=core.Vets}
-// @Failure		500	{object}	model.Response
+// @Description	Get all vets with optional filtering, pagination, and sorting
+// @Param			Location	query		string	false	"Location"
+// @Param			MinRating	query		float64	false	"Minimum rating"
+// @Param			MaxRating	query		float64	false	"Maximum rating"
+// @Param			MinPrice	query		float64	false	"Minimum price"
+// @Param			MaxPrice	query		float64	false	"Maximum price"
+// @Param			SortBy		query		string	false	"Sort by field (name, rating, price)"
+// @Param			SortOrder	query		string	false	"Sort order (asc, desc)"
+// @Param			Limit		query		int		false	"Limit"		default(10)
+// @Param			Offset		query		int		false	"Offset"	default(0)
+// @Success		200			{object}	model.Response{data=core.Vets}
+// @Failure		400			{object}	model.Response
+// @Failure		500			{object}	model.Response
 // @Router			/vets [get]
 func (r *Router) getVets(c *fiber.Ctx) error {
 	params := core.GetAllVetParams{}

@@ -58,50 +58,50 @@ func (s *store) UpdateByUserID(ctx context.Context, vet core.UpdateVets) (core.V
 
 func (s *store) GetAll(ctx context.Context, params core.GetAllVetParams) ([]core.Vets, error) {
 	var vets []core.Vets
-	query := s.DB.WithContext(ctx).Model(&core.Vets{})
 
-	// Filter by price range
+	query := s.DB.WithContext(ctx).Model(&core.Vets{}).Where("vets.is_deleted = ?", false)
+
 	if params.MinPrice != nil {
 		query = query.Where("price >= ?", *params.MinPrice)
 	}
+	logger.Log().Debug(ctx, "params", params)
+
 	if params.MaxPrice != nil {
 		query = query.Where("price <= ?", *params.MaxPrice)
 	}
 
-	// Add optional filters for ratings
-	//if params.MinRating != nil {
-	//	query = query.Having("AVG(vet_reviews.grade) >= ?", *params.MinRating)
-	//}
-	//if params.MaxRating != nil {
-	//	query = query.Having("AVG(vet_reviews.grade) <= ?", *params.MaxRating)
-	//}
+	logger.Log().Debug(ctx, "after price query:", query.Statement.SQL.String())
 
-	// Add optional location filter
+	if params.MinRating != nil {
+		query = query.Having("AVG(vet_reviews.grade) >= ?", *params.MinRating)
+	}
+	if params.MaxRating != nil {
+		query = query.Having("AVG(vet_reviews.grade) <= ?", *params.MaxRating)
+	}
+
 	if params.Location != nil {
 		query = query.Where("location = ?", *params.Location)
 	}
 
-	// Select and join to calculate the average grade
-	//query = query.Select("vets.*, AVG(vet_reviews.grade) as avg_grade"). // Изменено на vets
-	//	Joins("left join vet_reviews on vet_reviews.vet_id = vets.id").  // Изменено на vets
-	//	Group("vets.id") // Изменено на vets
+	query = query.Select("vets.*, AVG(vet_reviews.grade) as avg_grade").
+		Joins("LEFT JOIN vet_reviews ON vet_reviews.vet_id = vets.id").
+		Group("vets.id")
 
-	//if params.SortBy != nil && params.SortOrder != nil {
-	//	query = query.Order(*params.SortBy + " " + *params.SortOrder)
-	//}
+	if params.SortBy != nil && params.SortOrder != nil {
+		query = query.Order(*params.SortBy + " " + *params.SortOrder)
+	}
 
-	//if params.Limit != nil {
-	//	query = query.Limit(*params.Limit)
-	//}
-	//if params.Offset != nil {
-	//	query = query.Offset(*params.Offset)
-	//}
+	if params.Limit != nil {
+		query = query.Limit(*params.Limit)
+	}
+	if params.Offset != nil {
+		query = query.Offset(*params.Offset)
+	}
 
 	if err := query.Find(&vets).Error; err != nil {
 		logger.Log().Debug(ctx, err.Error())
-		return nil, err
+		return []core.Vets{}, nil
 	}
-
 	return vets, nil
 }
 
