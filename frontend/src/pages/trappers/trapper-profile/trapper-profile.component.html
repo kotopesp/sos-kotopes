@@ -5,9 +5,9 @@
       <app-favorites-button/>
     </div>
     <div class="info-under-photo__container">
-      <img class="trapper_type"  [src] = "trapper.animal_type | trapperType" >
+      <img class="trapper_type"  [src] = "trapper.animal_type | trapperType" alt="animal_type">
       <app-trapper-cost-status/>
-      <img class="car_info" [src] = "trapper.have_car ? '../../assets/icons/car.png' : '../../assets/icons/nocar.png'" >
+      <img class="car_info" [src] = "trapper.have_car ? '../../assets/icons/car.png' : '../../assets/icons/nocar.png'" alt="car_photo">
     </div>
     <div class="trapper-description__container ft20 fw400"> {{trapper.description}} </div>
     <div class="place__container ft20 fw400">{{trapper.location}}</div>

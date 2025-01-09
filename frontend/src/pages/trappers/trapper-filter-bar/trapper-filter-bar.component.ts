@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, } from '@angular/core';
 import { NgClass } from "@angular/common";
 import { TrapperFilterService } from '../../../services/trapper-services/trapper-filter-service/trapper-filter.service';
 
@@ -15,9 +15,9 @@ export class TrapperFilterBarComponent {
   constructor(private filterService: TrapperFilterService){}
 
   isPressedCat = false
-  changeLocation(event: any) {
-    var inputLocation = event.target.value; 
-    this.filterService.chagneLocation(inputLocation)
+  changeLocation(event: Event) {
+      let inputLocation = (event.target as HTMLInputElement).value
+      this.filterService.chagneLocation(inputLocation)
   }
   pressButtonCat() {
     this.isPressedCat = !this.isPressedCat

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TrapperFilterService {
-  public location = new BehaviorSubject("");
+  public location = new BehaviorSubject('');
   public filterTags = new BehaviorSubject(this.getInitionalFilter());
 
 
   addTag(key: string, flag: boolean){
-    var changedFilter = this.filterTags.getValue()
+    let changedFilter = this.filterTags.getValue()
     changedFilter[key] = flag
     this.filterTags.next(changedFilter)
   }
@@ -19,7 +19,7 @@ export class TrapperFilterService {
   }
 
   getInitionalFilter(){
-    let flags: { [key: string]: boolean } = {};
+    const flags: Record<string, boolean> = {}
     flags['isCat'] = false
     flags['isDog'] = false
     flags['isCadog'] = false
@@ -36,7 +36,7 @@ export class TrapperFilterService {
   }
 
   isFilterEmpty(){
-    var checker = false
+    let checker = false
     for (const key in this.filterTags) {
       checker = checker || this.filterTags.getValue()[key]
     }

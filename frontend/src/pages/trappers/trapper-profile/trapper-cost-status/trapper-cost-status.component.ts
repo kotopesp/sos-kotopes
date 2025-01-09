@@ -14,9 +14,8 @@ export class TrapperCostStatusComponent {
   ngOnInit() {
     this.setFlagClass();
   }
-
   trapperCostStatus = ""
-  divLabel = ""
+  divLabel = "" 
   setFlagClass() {
     switch(this.trapper.price) {
       case -1: {
@@ -24,13 +23,11 @@ export class TrapperCostStatusComponent {
         this.trapperCostStatus = "deal"
         break
       }
-
       case 0: {
         this.divLabel = "₽ Бесплатно"
         this.trapperCostStatus = "free"
         break
       }
-
       default: {
         this.divLabel = "₽ Платно"
         this.trapperCostStatus = "pay"

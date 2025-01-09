@@ -19,13 +19,13 @@ export class TrapperService {
   constructor(private http: HttpClient, private filterService: TrapperFilterService) { }
 
   getTrappersProfile() {    
-    var filterTags = this.filterService.getTags()
-    var location = this.filterService.getLocation()
+    const filterTags = this.filterService.getTags()
+    const location = this.filterService.getLocation()
     const params = new HttpParams()
     .set("limit", this.limit || "10")
     .set("offset", this.offset || "0")
     if (this.filterService.isFilterEmpty()){
-      params.set("animal_type", this.getAnimalType(filterTags))
+      params.set("animal_type", this.getAnimalType())
           .set("location ", location)
           .set("have_metal_cage", filterTags['isMetallCage'])
           .set("have_plastic_cage", filterTags['isPlasticCage'])
@@ -42,7 +42,7 @@ export class TrapperService {
   }
 
   createTrapper(payload: FormData) {
-    return this.http.post<any>(`${environment.apiUrl}seekers`, payload).subscribe(
+    return this.http.post<TrapperResponse>(`${environment.apiUrl}seekers`, payload).subscribe(
       {
         next: () => {
           console.log('success') // TO DO: add routing to form with registration
@@ -60,7 +60,7 @@ export class TrapperService {
   deleteTrapper(user_id: number): Observable<TrapperResponse> {
     return this.http.delete<TrapperResponse>(`${environment.apiUrl}seekers/${user_id.toString()}`,)
   }
-  patchTrapper(updatedTrapper: Trapper): Observable<TrapperResponse> {
+  updateTrapper(updatedTrapper: Trapper): Observable<TrapperResponse> {
     const params = new HttpParams()
     params.set("animal_type", updatedTrapper.animal_type)
       .set("description", updatedTrapper.description)
@@ -78,8 +78,8 @@ export class TrapperService {
     return this.http.patch<TrapperResponse>(`${this.apiUrl}/seekers/${updatedTrapper.user_id.toString()}`, {params})
   }
 
-  getAnimalType(filterTags: { [key: string]: boolean }){
-    if (filterTags["isCat"] == true){
+  getAnimalType(){
+    if (this.filterService.getTags()["isCat"] == true){
       return 'cat'
     }
     return "dog"

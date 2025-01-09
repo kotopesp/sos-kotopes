@@ -3,7 +3,7 @@ import { TrapperProfileComponent } from "./trapper-profile/trapper-profile.compo
 import { TrapperFilterBarComponent } from "./trapper-filter-bar/trapper-filter-bar.component";
 import { Meta, Trapper } from '../../model/trapper';
 import { TrapperService } from '../../services/trapper-services/trapper.service';
-import { Component, inject } from "@angular/core";
+import { Component, } from "@angular/core";
 import { TrapperFilterService } from "../../services/trapper-services/trapper-filter-service/trapper-filter.service";
 
 
