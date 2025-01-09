@@ -16,7 +16,7 @@ export class TrapperFilterBarComponent {
 
   isPressedCat = false
   changeLocation(event: Event) {
-      let inputLocation = (event.target as HTMLInputElement).value
+      const inputLocation = (event.target as HTMLInputElement).value
       this.filterService.chagneLocation(inputLocation)
   }
   pressButtonCat() {

@@ -10,7 +10,7 @@ export class TrapperFilterService {
 
 
   addTag(key: string, flag: boolean){
-    let changedFilter = this.filterTags.getValue()
+    const changedFilter = this.filterTags.getValue()
     changedFilter[key] = flag
     this.filterTags.next(changedFilter)
   }
