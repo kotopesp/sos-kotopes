@@ -1,9 +1,36 @@
 <div class="container__message">
   <div class="block__message" [class]="answer ? 'answer' : ''">
     <span *ngIf="!(name === '')" class="sender-name">{{ name }}</span>
-    <span class="message" id="message__content">
+    <span class="message" id="message__content" *ngIf="!isAudio">
       {{ messageContent }}
     </span>
+
+    <div class="message" id="audio_message__content" *ngIf="isAudio">
+
+      <div class="audio-container">
+        <div id="play-pause-button-container">
+          <button class="play-pause-button" (click)="playAudio()">
+            @if (!audioPlaying) {
+              <div class="play-polygon"></div>
+            } @else {
+              <div class="pause-polygon"></div>
+            }
+          </button>
+        </div>
+        <div id="wavesurfer-container">
+          <div #wave class="wave-container" *ngIf="isAudio"></div>
+        </div>
+      </div>
+
+      <div class="speed-buttons-container">
+        <button class="speed-up-button" (click)="speedUp()">+</button>
+        <button class="speed-down-button" (click)="speedDown()">-</button>
+        <button class="reset-button" (click)="resetPlaybackRate()">1x</button>
+        <span class="current-playback-rate-info">{{ this.currentPlaybackRate }}x</span>
+      </div>
+    </div>
+
+
     <div class="message__time">
       {{ messageTime }}
     </div>

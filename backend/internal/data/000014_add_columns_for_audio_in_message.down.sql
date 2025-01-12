@@ -1,0 +1,3 @@
+ALTER TABLE IF EXISTS messages
+    DROP COLUMN IF EXISTS is_audio,
+    DROP COLUMN IF EXISTS audio_bytes;

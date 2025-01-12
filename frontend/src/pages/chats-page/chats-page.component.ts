@@ -1,21 +1,21 @@
-import {AfterViewChecked, Component, ElementRef, signal, ViewChild, OnInit, OnDestroy} from '@angular/core';
+import {AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, signal, ViewChild} from '@angular/core';
 import {AppChatTypeButtonComponent} from "../../entities/chat-type-button/app-chat-type-button.component";
 import {Button} from "../../model/button";
-import {NgClass, NgForOf, NgIf, NgStyle, NgSwitch, NgSwitchCase} from "@angular/common";
+import {NgClass, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {ChatComponent} from "./ui/chat/chat.component";
 import {MessageComponent} from "./ui/message/message.component";
 import {PostAnswerComponent} from "./ui/post-answer/post-answer.component";
 import {AddToChatComponent} from "./ui/add-to-chat/add-to-chat.component";
 import {ToggleActiveDirective} from "./toggle-active.directive";
-import { WebsocketService } from '../../services/websocket-service/websocket.service';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule  } from '@angular/forms';
-import { map, switchMap } from 'rxjs';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import {WebsocketService} from '../../services/websocket-service/websocket.service';
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {map, switchMap} from 'rxjs';
+import {ActivatedRoute, Params, Router} from '@angular/router';
 import {ChatService} from '../../services/chat-service/chat.service';
-import { HttpClient } from '@angular/common/http';
-import { Chat } from '../../model/chat.interface';
-import { Message } from '../../model/message.interface';
-import { AuthService } from '../../services/auth-service/auth.service';
+import {Chat} from '../../model/chat.interface';
+import {Message} from '../../model/message.interface';
+import {AuthService} from '../../services/auth-service/auth.service';
+import {AudioService} from "../../services/audio-services/audio.service";
 
 @Component({
   selector: 'app-chats-page',
@@ -28,8 +28,6 @@ import { AuthService } from '../../services/auth-service/auth.service';
     MessageComponent,
     PostAnswerComponent,
     AddToChatComponent,
-    NgSwitch,
-    NgSwitchCase,
     NgStyle,
     ToggleActiveDirective,
     NgClass,
@@ -39,11 +37,11 @@ import { AuthService } from '../../services/auth-service/auth.service';
   styleUrl: './chats-page.component.scss'
 })
 export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
-  currentChat: Chat = { id: -1, title: '', chat_type: 'other', unread_count: 0 , users: [], created_at: new Date};
+  currentChat: Chat = {id: -1, title: '', chat_type: 'other', unread_count: 0, users: [], created_at: new Date};
   createChat = false;
 
   countInArray = signal<number>(0);
-  @ViewChild('scrollableContainer', { static: false }) private scrollableContainer?: ElementRef;
+  @ViewChild('scrollableContainer', {static: false}) private scrollableContainer?: ElementRef;
 
   buttons: Button[] = [
     {label: "Все чаты", color: "#352B1A", iconName: "allChats.svg"},
@@ -54,8 +52,8 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
     {label: "Другие чаты", color: "#21190B", iconName: "other.svg"},
   ]
 
-  sendMsgForm : FormGroup = new FormGroup({
-    "msgText": new FormControl("", [Validators.required,]) 
+  sendMsgForm: FormGroup = new FormGroup({
+    "msgText": new FormControl("", [Validators.required,])
   });
 
   private previousMessageCount = 0;
@@ -76,34 +74,42 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
 
   public messages: Message[] = [];
   public messageText = '';
-  public favusers: { id: number, username: string}[] = [];
+  public favusers: { id: number, username: string }[] = [];
   public chatList: Chat[] = [];
   public userId = -1;
   private refreshInterval!: NodeJS.Timeout;
-  
-  constructor(private router: Router, private authService: AuthService, private activatedRoute: ActivatedRoute, private chatService: ChatService, private websocketService: WebsocketService, private http: HttpClient) {}
-  
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute,
+    private chatService: ChatService,
+    private websocketService: WebsocketService,
+    private audioService: AudioService
+  ) {
+  }
+
   ngOnInit(): void {
     this.activatedRoute.params.pipe(
       map((params: Params) => parseInt(params['id'], 10)),
       switchMap((chatId: number) => this.chatService.getById(chatId))
     );
-    
+
     this.websocketService.getMessages().subscribe((msg: string) => {
       const message = JSON.parse(msg)[0] as Message;
       this.chatService.updateChat(message, this.currentChat);
       this.messages.push(message);
     });
-    
+
     this.userId = this.authService.getIdFromToken;
     this.chatService.getFavUsers().subscribe(
       (users) => {
         this.favusers = users;
       }
     );
-    
+
     this.chatService.getAllChats(this.userId);
-    
+
     this.chatService.chats$.subscribe(chats => {
       this.chatList = chats;
     });
@@ -128,7 +134,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
       clearInterval(this.refreshInterval);
     }
   }
-  
+
   // Отправляем сообщение через вебсокет
   onSubmit(event?: Event) {
     if (event) {
@@ -137,18 +143,19 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
     this.messageText = this.sendMsgForm.controls['msgText'].value;
     this.sendMsgForm.reset();
     if (this.messageText && this.messageText.trim()) {
-      const msgToSend = { 
+      const msgToSend = {
         message_content: this.messageText,
         user_id: this.userId,
         chat_id: this.currentChat.id,
-        } as Message;
+        is_audio: false,
+      } as Message;
       this.websocketService.sendMessage(JSON.stringify([msgToSend]));
       this.messageText = '';
     }
   }
 
   formatTime(createdAt: Date): string {
-    return new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return new Date(createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
   }
 
   selectedUserIds: number[] = [];
@@ -200,9 +207,9 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
     this.chatService.getChatById(chatId).subscribe({
       next: (chat: Chat) => {
         this.selectChat({
-          ...chat, 
+          ...chat,
           title: this.chatService.getTitle(chat.users, this.userId),
-          });
+        });
         this.loadMessages(chatId);
       },
       error: (err) => {
@@ -210,7 +217,7 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
       }
     });
   }
-  
+
   loadMessages(chatId: number): void {
     this.chatService.getMessagesByChatId(chatId).subscribe({
       next: (messages: Message[]) => {
@@ -219,6 +226,24 @@ export class ChatsPageComponent implements AfterViewChecked, OnInit, OnDestroy {
       error: (err) => {
         console.error('Ошибка при загрузке сообщений:', err);
       }
+    });
+  }
+
+  isMsgTextEmpty(): boolean {
+    if (this.sendMsgForm.controls['msgText'].value !== null) {
+      return this.sendMsgForm.controls['msgText'].value.length === 0;
+    }
+    return this.messageText.length === 0;
+  }
+
+  handleAudioMouseDown() {
+    this.audioService.startRecording();
+  }
+
+  handleAudioMouseUp() {
+    this.audioService.stopRecording((blob: Blob) => {
+      this.websocketService.sendAudioMessage(blob, this.userId, this.currentChat.id);
+      this.messageText = '';
     });
   }
 }

@@ -4,6 +4,7 @@
   .block__message {
     width: fit-content;
     max-width: 547px;
+    min-width: 200px;
     height: fit-content;
     line-height: 24px;
     border-radius: 20px;
@@ -32,6 +33,78 @@
       padding-right: 15px;
       padding-bottom: 5px;
     }
+
+    .play-pause-button {
+      background-color: var(--brown-button-color);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      position: relative;
+      margin-right: 10px;
+    }
+
+    .play-polygon {
+      width: 20px;
+      height: 20px;
+      display: inline;
+
+      border-top: 10px solid var(--brown-button-color);
+      border-bottom: 10px solid var(--brown-button-color);
+      border-left: 19px solid white;
+
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-40%, -50%);
+    }
+
+    .pause-polygon {
+      width: 16px;
+      height: 20px;
+
+      border-style: solid;
+      border-width: 0px 5px 0px 5px;
+      border-color: white;
+
+      /*Centering*/
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .audio-container {
+    display: flex;
+    width: 100%;
+  }
+
+  #play-pause-button-container {
+    display: flex;
+    align-items: center;
+    flex: 0.25;
+  }
+
+  #wavesurfer-container {
+    flex: 0.75;
+  }
+
+  .wave-container {
+    white-space: normal; // prevent waveform stretching horizontally, because of spaces
+  }
+
+  .speed-buttons-container {
+    button {
+      background-color: var(--brown-button-color);
+      margin: 2px;
+      padding: 5px;
+    }
+
+    .current-playback-rate-info {
+      margin-left: 5px;
+    }
   }
 
   .answer {
@@ -43,4 +116,5 @@
       color: var(--gray-message-color);
     }
   }
+
 }
