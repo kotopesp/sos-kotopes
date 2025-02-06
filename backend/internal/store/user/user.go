@@ -138,8 +138,7 @@ func (s *store) AddUser(ctx context.Context, user core.User) (userID int, err er
 	return user.ID, err
 }
 
-func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (data core.ExternalUser, err error) {
-	var user core.ExternalUser
+func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (user core.ExternalUser, err error) {
 	err = s.DB.WithContext(ctx).First(&user, "external_id=?", externalID).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, core.ErrNoSuchUser
