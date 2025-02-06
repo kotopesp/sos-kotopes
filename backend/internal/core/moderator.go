@@ -12,6 +12,7 @@ type (
 		Username     string     `gorm:"column:username"`
 		Firstname    *string    `gorm:"column:firstname"`
 		Lastname     *string    `gorm:"column:lastname"`
+		Photo        *[]byte    `gorm:"column:photo"`
 		PasswordHash string     `gorm:"column:password_hash"`
 		Description  *string    `gorm:"column:description"`
 		IsDeleted    bool       `gorm:"column:is_deleted"`
@@ -21,10 +22,11 @@ type (
 		LastLoginAt  *time.Time `gorm:"column:last_login_at"`
 	}
 	UpdateModerator struct {
-		Name         *string `gorm:"column:username"`
+		Username     *string `gorm:"column:username"`
 		Firstname    *string `gorm:"column:firstname"`
 		Lastname     *string `gorm:"column:lastname"`
 		Description  *string `gorm:"column:description"`
+		Photo        *[]byte `gorm:"column:photo"`
 		PasswordHash *string `gorm:"column:password"`
 		Role         *string `gorm:"column:role"`
 	}
