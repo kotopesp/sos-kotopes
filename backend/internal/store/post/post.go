@@ -11,18 +11,19 @@ import (
 )
 
 type store struct {
-	*postgres.Postgres
+	posts         *postgres.Postgres
+	reportedPosts *postgres.Postgres
 }
 
 func New(pg *postgres.Postgres) core.PostStore {
-	return &store{pg}
+	return &store{pg, pg}
 }
 
 // GetAllPosts retrieves all posts from the database based on the GetAllPostsParams
 func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.Post, int, error) {
 	var posts []core.Post
 
-	query := s.DB.WithContext(ctx).Model(&core.Post{}).
+	query := s.posts.DB.WithContext(ctx).Model(&core.Post{}).
 		Joins("JOIN animals ON posts.animal_id = animals.id").
 		Where("posts.is_deleted = ?", false)
 
@@ -67,7 +68,7 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 
 // GetUserPosts retrieves all posts from the database based on the given user ID
 func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, count int, err error) {
-	err = s.DB.WithContext(ctx).
+	err = s.posts.DB.WithContext(ctx).
 		Where("author_id = ?", id).
 		Order("created_at DESC").
 		Find(&posts).Error
@@ -87,7 +88,7 @@ func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, co
 func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 	var post core.Post
 
-	if err := s.DB.WithContext(ctx).Where("id = ? AND is_deleted = ?", id, false).First(&post).Error; err != nil {
+	if err := s.posts.DB.WithContext(ctx).Where("id = ? AND is_deleted = ?", id, false).First(&post).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
@@ -107,7 +108,7 @@ func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, erro
 
 	var createdPost core.Post
 
-	if err := s.DB.WithContext(ctx).Create(&post).First(&createdPost, post.ID).Error; err != nil {
+	if err := s.posts.DB.WithContext(ctx).Create(&post).First(&createdPost, post.ID).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.Post{}, err
 	}
@@ -121,7 +122,7 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 
 	var updatedPost core.Post
 
-	if err := s.DB.WithContext(ctx).Save(&post).First(&updatedPost, post.ID).Error; err != nil {
+	if err := s.posts.DB.WithContext(ctx).Save(&post).First(&updatedPost, post.ID).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
@@ -141,7 +142,7 @@ func (s *store) DeletePost(ctx context.Context, id int) error {
 		"deleted_at": time.Now(),
 	}
 
-	result := s.DB.WithContext(ctx).Model(&core.Post{}).Where("id = ?", id).Updates(updates)
+	result := s.posts.DB.WithContext(ctx).Model(&core.Post{}).Where("id = ?", id).Updates(updates)
 	if result.Error != nil {
 		if errors.Is(result.Error, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
@@ -157,4 +158,49 @@ func (s *store) DeletePost(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+// SendToModeration - метод, для сохранения постов с определенным числом репортов, в отдельную таблицу.
+func (s *store) SendToModeration(ctx context.Context, post core.Post) (err error) {
+	reportedPost := core.ReportedPost{
+		Post:             post,
+		SentToModeration: time.Now(),
+	}
+
+	if err = s.reportedPosts.DB.WithContext(ctx).Create(reportedPost).First(post.ID).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (s *store) ReportPost(ctx context.Context, post core.Post, reason string) (reportedPost core.Post, err error) {
+	err = s.posts.DB.WithContext(ctx).Model(&reportedPost).Where("id = ?", post.ID).Error
+	if err != nil {
+		if errors.Is(err, core.ErrRecordNotFound) {
+			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+			return core.Post{}, core.ErrPostNotFound
+		}
+		logger.Log().Error(ctx, err.Error())
+		return core.Post{}, err
+	}
+
+	reportedPost.Reports.Number++
+	reportedPost.Reports.Reasons = append(reportedPost.Reports.Reasons, reason)
+	reportedPost.LastReportedAt = time.Now()
+	// some threshold meaning we use, to decide about moderation
+	if reportedPost.Reports.Number > 15 {
+		err = s.SendToModeration(ctx, reportedPost)
+		if err != nil {
+			return core.Post{}, err
+		}
+	}
+
+	if err = s.posts.DB.WithContext(ctx).Save(&reportedPost).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.Post{}, err
+	}
+
+	return reportedPost, err
 }
