@@ -166,3 +166,19 @@ func (s *service) DeletePost(ctx context.Context, post core.Post) error {
 
 	return nil
 }
+
+// ReportPost - reports post.
+func (s *service) ReportPost(ctx context.Context, post core.Post, reason string) (err error) {
+	dbPost, err := s.postStore.GetPostByID(ctx, post.ID)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return core.ErrPostNotFound
+	}
+
+	err = s.ReportPost(ctx, dbPost, reason)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

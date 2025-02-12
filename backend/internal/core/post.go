@@ -86,7 +86,7 @@ type (
 		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
-		ReportPost(ctx context.Context, post Post, reason string) PostDetails
+		ReportPost(ctx context.Context, post Post, reason string) (err error)
 		PostFavouriteService
 	}
 )
