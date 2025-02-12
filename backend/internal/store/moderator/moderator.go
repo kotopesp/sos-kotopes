@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lib/pq"
 
 	"gorm.io/gorm"
 	"time"
@@ -21,6 +22,7 @@ func New(pg *postgres.Postgres) core.ModeratorStore {
 	return &store{pg}
 }
 
+// GetModerator - получение структуры модератора по его id.
 func (s *store) GetModerator(ctx context.Context, id int) (moderator core.Moderator, err error) {
 	err = s.DB.WithContext(ctx).
 		Table(moderator.TableName()).
@@ -41,6 +43,7 @@ func (s *store) GetModerator(ctx context.Context, id int) (moderator core.Modera
 	return moderator, nil
 }
 
+// GetModeratorByUsername - получение структуры модератора по юзернейму.
 func (s *store) GetModeratorByUsername(ctx context.Context, username string) (moderator core.Moderator, err error) {
 	err = s.DB.WithContext(ctx).
 		Table(moderator.TableName()).
@@ -59,6 +62,8 @@ func (s *store) GetModeratorByUsername(ctx context.Context, username string) (mo
 	return moderator, nil
 }
 
+// UpdateModerator - метод позволяет обновить информацию о модераторе, получая его id, а так же структуру
+// core.UpdateModerator, создает транзакцию, проверяет что поменялось, и обновляет, в противном случае ловит ошибку или панику, и откатывает транзакцию
 func (s *store) UpdateModerator(ctx context.Context, id int, update core.UpdateModerator) (updatedModerator core.Moderator, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 
@@ -127,21 +132,13 @@ func (s *store) UpdateModerator(ctx context.Context, id int, update core.UpdateM
 }
 
 func (s *store) AddModerator(ctx context.Context, moderator core.Moderator) (moderatorID int, err error) {
-	var count int64
-	err = s.DB.WithContext(ctx).Model(&core.Moderator{}).
-		Where("username = ?", moderator.Username).
-		Count(&count).Error
+	err = s.DB.Create(&moderator).Error
 	if err != nil {
+		var pgErr *pq.Error
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return 0, core.ErrNotUniqueUsername
+		}
 		return 0, err
 	}
-	if count > 0 {
-		return 0, core.ErrNotUniqueUsername
-	}
-
-	err = s.DB.WithContext(ctx).Create(&moderator).Error
-	if err != nil {
-		return 0, err
-	}
-
 	return moderator.ID, nil
 }
