@@ -22,7 +22,7 @@ func New(pg *postgres.Postgres) core.ModeratorStore {
 	return &store{pg}
 }
 
-// GetModerator - получение структуры модератора по его id.
+// GetModerator - retrieves the moderator structure by their id.
 func (s *store) GetModerator(ctx context.Context, id int) (moderator core.Moderator, err error) {
 	err = s.DB.WithContext(ctx).
 		Table(moderator.TableName()).
@@ -43,7 +43,7 @@ func (s *store) GetModerator(ctx context.Context, id int) (moderator core.Modera
 	return moderator, nil
 }
 
-// GetModeratorByUsername - получение структуры модератора по юзернейму.
+// GetModeratorByUsername - retrieves the moderator structure by username.
 func (s *store) GetModeratorByUsername(ctx context.Context, username string) (moderator core.Moderator, err error) {
 	err = s.DB.WithContext(ctx).
 		Table(moderator.TableName()).
@@ -62,8 +62,8 @@ func (s *store) GetModeratorByUsername(ctx context.Context, username string) (mo
 	return moderator, nil
 }
 
-// UpdateModerator - метод позволяет обновить информацию о модераторе, получая его id, а так же структуру
-// core.UpdateModerator, создает транзакцию, проверяет что поменялось, и обновляет, в противном случае ловит ошибку или панику, и откатывает транзакцию
+// UpdateModerator - method that allows updating moderator information by receiving their id and the core.UpdateModerator structure.
+// It creates a transaction, checks what has changed, and updates the information. If nothing has changed, it catches an error or panic and rolls back the transaction.
 func (s *store) UpdateModerator(ctx context.Context, id int, update core.UpdateModerator) (updatedModerator core.Moderator, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 

@@ -190,11 +190,14 @@ func (s *store) ReportPost(ctx context.Context, post core.Post, reason string) (
 	reportedPost.Reports.Reasons = append(reportedPost.Reports.Reasons, reason)
 	reportedPost.LastReportedAt = time.Now()
 	// some threshold meaning we use, to decide about moderation
-	if reportedPost.Reports.Number > 15 {
+	// also checking if post is already on moderation
+	if reportedPost.Reports.Number > 15 && !reportedPost.WaitingForModeration {
 		err = s.SendToModeration(ctx, reportedPost)
 		if err != nil {
 			return core.Post{}, err
 		}
+
+		reportedPost.WaitingForModeration = true
 	}
 
 	if err = s.posts.DB.WithContext(ctx).Save(&reportedPost).Error; err != nil {

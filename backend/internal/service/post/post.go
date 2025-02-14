@@ -175,7 +175,7 @@ func (s *service) ReportPost(ctx context.Context, post core.Post, reason string)
 		return core.ErrPostNotFound
 	}
 
-	err = s.ReportPost(ctx, dbPost, reason)
+	post, err = s.postStore.ReportPost(ctx, dbPost, reason)
 	if err != nil {
 		return err
 	}
