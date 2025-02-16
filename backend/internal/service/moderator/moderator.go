@@ -3,6 +3,7 @@ package moderator
 import (
 	"context"
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type service struct {
@@ -13,10 +14,14 @@ func New(store core.ModeratorStore) core.ModeratorService {
 	return &service{}
 }
 
-func (s *service) GetModerator(ctx context.Context, id int) (core.Moderator, error) {
-	return core.Moderator{}, nil
-}
+// GetModerator - returns moderator struct by its id.
+func (s *service) GetModerator(ctx context.Context, id int) (moderator core.Moderator, err error) {
+	moderator, err = s.moderatorStore.GetModeratorByID(ctx, id)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
 
-func (s *service) UpdateModerator(ctx context.Context, id int, update core.UpdateModerator) (core.Moderator, error) {
-	return core.Moderator{}, nil
+		return core.Moderator{}, err
+	}
+
+	return moderator, nil
 }

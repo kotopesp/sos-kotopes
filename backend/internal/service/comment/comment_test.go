@@ -96,8 +96,7 @@ func generateTestPost() core.Post {
 		Content:   "This is the content of the test post. It discusses various interesting topics.",
 		AuthorID:  1,
 		AnimalID:  101,
-		IsDeleted: false,
-		DeletedAt: time.Time{}, // Zero value means it is not deleted
+		Status:    core.Published,
 		CreatedAt: twoDaysAgo,
 		UpdatedAt: now,
 		Photo:     photo,

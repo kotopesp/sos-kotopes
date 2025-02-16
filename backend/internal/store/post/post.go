@@ -11,12 +11,11 @@ import (
 )
 
 type store struct {
-	posts         *postgres.Postgres
-	reportedPosts *postgres.Postgres
+	posts *postgres.Postgres
 }
 
 func New(pg *postgres.Postgres) core.PostStore {
-	return &store{pg, pg}
+	return &store{pg}
 }
 
 // GetAllPosts retrieves all posts from the database based on the GetAllPostsParams
@@ -88,7 +87,7 @@ func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, co
 func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 	var post core.Post
 
-	if err := s.posts.DB.WithContext(ctx).Where("id = ? AND is_deleted = ?", id, false).First(&post).Error; err != nil {
+	if err := s.posts.DB.WithContext(ctx).Where("id = ? AND status = ?", id, core.Published).First(&post).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
@@ -105,7 +104,7 @@ func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	post.CreatedAt = time.Now()
 	post.UpdatedAt = time.Now()
-
+	post.Status = core.Published
 	var createdPost core.Post
 
 	if err := s.posts.DB.WithContext(ctx).Create(&post).First(&createdPost, post.ID).Error; err != nil {
@@ -135,11 +134,11 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 	return updatedPost, nil
 }
 
-// DeletePost marks a post as deleted in the database by updating the is_deleted flag and setting the deleted_at timestamp
+// DeletePost marks a post as deleted in the database by updating the status flag and setting the updated_at timestamp
 func (s *store) DeletePost(ctx context.Context, id int) error {
 	updates := map[string]interface{}{
-		"is_deleted": true,
-		"deleted_at": time.Now(),
+		"status":     core.Deleted,
+		"updated_at": time.Now(),
 	}
 
 	result := s.posts.DB.WithContext(ctx).Model(&core.Post{}).Where("id = ?", id).Updates(updates)
@@ -160,50 +159,76 @@ func (s *store) DeletePost(ctx context.Context, id int) error {
 	return nil
 }
 
-// SendToModeration - метод, для сохранения постов с определенным числом репортов, в отдельную таблицу.
-func (s *store) SendToModeration(ctx context.Context, post core.Post) (err error) {
-	reportedPost := core.ReportedPost{
-		Post:             post,
-		SentToModeration: time.Now(),
+// ReportPost - creates report record for post.
+func (s *store) ReportPost(ctx context.Context, report core.Report) (int, error) {
+	report.ReportedAt = time.Now()
+
+	err := s.posts.DB.WithContext(ctx).Create(&report).Error
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return 0, err
 	}
 
-	if err = s.reportedPosts.DB.WithContext(ctx).Create(reportedPost).First(post.ID).Error; err != nil {
+	var reportCount int64
+	err = s.posts.DB.WithContext(ctx).
+		Model(&core.Report{}).
+		Where("post_id = ?", report.PostID).
+		Count(&reportCount).Error
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return 0, err
+	}
+
+	return int(reportCount), nil
+}
+
+func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
+	var count int64
+
+	err = s.posts.DB.WithContext(ctx).
+		Model(&core.Post{}).
+		Where("id = ? AND status = ?", postID, core.OnModeration).
+		Count(&count).Error
+
+	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err
 	}
 
+	// means post is already on moderation
+	if count > 0 {
+		return nil
+	}
+
+	update := map[string]interface{}{
+		"status":     core.OnModeration,
+		"updated_at": time.Now(),
+	}
+
+	err = s.posts.DB.WithContext(ctx).
+		Model(&core.Post{}).
+		Where("id = ?", postID).
+		Updates(update).Error
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
 	return nil
 }
 
-func (s *store) ReportPost(ctx context.Context, post core.Post, reason string) (reportedPost core.Post, err error) {
-	err = s.posts.DB.WithContext(ctx).Model(&reportedPost).Where("id = ?", post.ID).Error
+// GetPostForModeration - takes first record from posts table which status is "on_moderation"
+func (s *store) GetPostForModeration(ctx context.Context) (post core.Post, err error) {
+	err = s.posts.DB.WithContext(ctx).
+		Where("status = ?", core.OnModeration).
+		Order("updated_at ASC").
+		First(&post).Error
+
 	if err != nil {
-		if errors.Is(err, core.ErrRecordNotFound) {
-			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
-			return core.Post{}, core.ErrPostNotFound
-		}
 		logger.Log().Error(ctx, err.Error())
-		return core.Post{}, err
-	}
-
-	reportedPost.Reports.Number++
-	reportedPost.Reports.Reasons = append(reportedPost.Reports.Reasons, reason)
-	reportedPost.LastReportedAt = time.Now()
-	// some threshold meaning we use, to decide about moderation
-	// also checking if post is already on moderation
-	if reportedPost.Reports.Number > 15 && !reportedPost.WaitingForModeration {
-		err = s.SendToModeration(ctx, reportedPost)
-		if err != nil {
-			return core.Post{}, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return core.Post{}, core.ErrNoPostsWaitingForModeration
 		}
-
-		reportedPost.WaitingForModeration = true
 	}
 
-	if err = s.posts.DB.WithContext(ctx).Save(&reportedPost).Error; err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return core.Post{}, err
-	}
-
-	return reportedPost, err
+	return post, nil
 }

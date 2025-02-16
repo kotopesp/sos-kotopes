@@ -14,12 +14,17 @@ type MockPostStore struct {
 	mock.Mock
 }
 
-func (_m *MockPostStore) ReportPost(ctx context.Context, post core.Post, reason string) (reportedPost core.Post, err error) {
+func (_m *MockPostStore) SendToModeration(ctx context.Context, postID int) (err error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (_m *MockPostStore) SendToModeration(ctx context.Context, post core.Post) error {
+func (_m *MockPostStore) ReportPost(ctx context.Context, report core.Report) (reportCount int, err error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (_m *MockPostStore) GetPostForModeration(ctx context.Context) (core.Post, error) {
 	//TODO implement me
 	panic("implement me")
 }

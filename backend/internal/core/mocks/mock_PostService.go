@@ -16,7 +16,12 @@ type MockPostService struct {
 	mock.Mock
 }
 
-func (_m *MockPostService) ReportPost(ctx context.Context, post core.Post, reason string) (err error) {
+func (_m *MockPostService) ReportPost(ctx context.Context, post core.Report) (err error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (_m *MockPostService) GetPostForModeration(ctx context.Context) (core.Post, error) {
 	//TODO implement me
 	panic("implement me")
 }
