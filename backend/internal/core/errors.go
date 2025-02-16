@@ -38,4 +38,7 @@ var (
 	ErrReplyCommentNotFound        = errors.New("reply comment not found")
 	ErrInvalidCommentReplyID       = errors.New("invalid comment reply_id")
 	ErrNullCommentParentID         = errors.New("comment parent id is null")
+
+	// moderator errors
+	ErrNoSuchModerator = errors.New("moderator does not exist")
 )
