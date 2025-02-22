@@ -18,6 +18,11 @@ var (
 	// user errors
 	ErrFailedToGetAuthorIDFromToken = errors.New("failed to get author ID from token")
 
+	// Role errors
+	ErrInvalidRole      = errors.New("invalid role name")
+	ErrUserRoleNotFound = errors.New("user does not have the specified role")
+	ErrNoFieldsToUpdate = errors.New("no fields to update")
+
 	// animal errors
 	ErrAnimalNotFound = errors.New("animal not found")
 

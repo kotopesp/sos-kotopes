@@ -2,16 +2,18 @@ package core
 
 import (
 	"context"
+	"time"
 )
 
 type (
 	Moderator struct {
-		UserID int `gorm:"column:user_id"`
+		UserID    int       `gorm:"column:user_id"`    // Id of user who is moderator
+		CreatedAt time.Time `gorm:"column:created_at"` // TimeStamp shows when this moderator was added
 	}
 
 	ModeratorStore interface {
 		GetModeratorByID(ctx context.Context, id int) (moderator Moderator, err error)
-		AddModerator(ctx context.Context, id int) (err error)
+		CreateModerator(ctx context.Context, moderator Moderator) (err error)
 	}
 	ModeratorService interface {
 		GetModerator(ctx context.Context, id int) (moderator Moderator, err error)

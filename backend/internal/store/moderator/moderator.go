@@ -7,6 +7,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
+	"time"
 )
 
 type store struct {
@@ -36,11 +37,9 @@ func (s *store) GetModeratorByID(ctx context.Context, id int) (moderator core.Mo
 	return moderator, nil
 }
 
-// AddModerator adds moderator
-func (s *store) AddModerator(ctx context.Context, userID int) (err error) {
-	moderator := core.Moderator{
-		UserID: userID,
-	}
+// CreateModerator creates moderator
+func (s *store) CreateModerator(ctx context.Context, moderator core.Moderator) (err error) {
+	moderator.CreatedAt = time.Now().UTC()
 
 	err = s.DB.WithContext(ctx).
 		Create(&moderator).Error

@@ -98,8 +98,7 @@ func (s *store) UpdateComment(ctx context.Context, comment core.Comment) (core.C
 
 func (s *store) DeleteComment(ctx context.Context, comment core.Comment) error {
 	comment.IsDeleted = true
-	now := time.Now()
-	comment.DeletedAt = &now
+	comment.DeletedAt = time.Now().UTC()
 
 	if err := s.DB.WithContext(ctx).Updates(comment).Error; err != nil {
 		return err

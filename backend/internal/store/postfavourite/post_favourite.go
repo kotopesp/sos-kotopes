@@ -73,7 +73,7 @@ func (s *store) AddToFavourites(ctx context.Context, postFavourite core.PostFavo
 		return core.ErrPostAlreadyInFavourites
 	}
 
-	postFavourite.CreatedAt = time.Now()
+	postFavourite.CreatedAt = time.Now().UTC()
 
 	logger.Log().Debug(ctx, fmt.Sprintf("%v", postFavourite))
 	if err := s.DB.WithContext(ctx).Create(&postFavourite).Error; err != nil {

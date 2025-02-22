@@ -11,7 +11,7 @@ import (
 )
 
 type store struct {
-	posts *postgres.Postgres
+	*postgres.Postgres
 }
 
 func New(pg *postgres.Postgres) core.PostStore {
@@ -22,9 +22,9 @@ func New(pg *postgres.Postgres) core.PostStore {
 func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) ([]core.Post, int, error) {
 	var posts []core.Post
 
-	query := s.posts.DB.WithContext(ctx).Model(&core.Post{}).
+	query := s.DB.WithContext(ctx).Model(&core.Post{}).
 		Joins("JOIN animals ON posts.animal_id = animals.id").
-		Where("posts.is_deleted = ?", false)
+		Where("posts.status = ?", string(core.Published))
 
 	// Apply filtering based on the GetAllPostsParams
 	if params.Limit != nil {
@@ -67,7 +67,7 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 
 // GetUserPosts retrieves all posts from the database based on the given user ID
 func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, count int, err error) {
-	err = s.posts.DB.WithContext(ctx).
+	err = s.DB.WithContext(ctx).
 		Where("author_id = ?", id).
 		Order("created_at DESC").
 		Find(&posts).Error
@@ -87,7 +87,7 @@ func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, co
 func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 	var post core.Post
 
-	if err := s.posts.DB.WithContext(ctx).Where("id = ? AND status = ?", id, core.Published).First(&post).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Where("id = ? AND status = ?", id, string(core.Published)).First(&post).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
@@ -102,12 +102,12 @@ func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 
 // CreatePost inserts a new post record into the database
 func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, error) {
-	post.CreatedAt = time.Now()
-	post.UpdatedAt = time.Now()
-	post.Status = core.Published
+	post.CreatedAt = time.Now().UTC()
+	post.UpdatedAt = time.Now().UTC()
+	post.Status = string(core.Published)
 	var createdPost core.Post
 
-	if err := s.posts.DB.WithContext(ctx).Create(&post).First(&createdPost, post.ID).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Create(&post).First(&createdPost, post.ID).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return core.Post{}, err
 	}
@@ -117,11 +117,11 @@ func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, erro
 
 // UpdatePost updates an existing post record in the database
 func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, error) {
-	post.UpdatedAt = time.Now()
+	post.UpdatedAt = time.Now().UTC()
 
 	var updatedPost core.Post
 
-	if err := s.posts.DB.WithContext(ctx).Save(&post).First(&updatedPost, post.ID).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Save(&post).First(&updatedPost, post.ID).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
@@ -137,11 +137,11 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 // DeletePost marks a post as deleted in the database by updating the status flag and setting the updated_at timestamp
 func (s *store) DeletePost(ctx context.Context, id int) error {
 	updates := map[string]interface{}{
-		"status":     core.Deleted,
-		"updated_at": time.Now(),
+		"status":     string(core.Deleted),
+		"deleted_at": time.Now().UTC(),
 	}
 
-	result := s.posts.DB.WithContext(ctx).Model(&core.Post{}).Where("id = ?", id).Updates(updates)
+	result := s.DB.WithContext(ctx).Model(&core.Post{}).Where("id = ?", id).Updates(updates)
 	if result.Error != nil {
 		if errors.Is(result.Error, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
@@ -159,35 +159,12 @@ func (s *store) DeletePost(ctx context.Context, id int) error {
 	return nil
 }
 
-// ReportPost - creates report record for post.
-func (s *store) ReportPost(ctx context.Context, report core.Report) (int, error) {
-	report.ReportedAt = time.Now()
-
-	err := s.posts.DB.WithContext(ctx).Create(&report).Error
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return 0, err
-	}
-
-	var reportCount int64
-	err = s.posts.DB.WithContext(ctx).
-		Model(&core.Report{}).
-		Where("post_id = ?", report.PostID).
-		Count(&reportCount).Error
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return 0, err
-	}
-
-	return int(reportCount), nil
-}
-
 func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
 	var count int64
 
-	err = s.posts.DB.WithContext(ctx).
+	err = s.DB.WithContext(ctx).
 		Model(&core.Post{}).
-		Where("id = ? AND status = ?", postID, core.OnModeration).
+		Where("id = ? AND status = ?", postID, string(core.OnModeration)).
 		Count(&count).Error
 
 	if err != nil {
@@ -201,11 +178,11 @@ func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
 	}
 
 	update := map[string]interface{}{
-		"status":     core.OnModeration,
-		"updated_at": time.Now(),
+		"status":     string(core.OnModeration),
+		"updated_at": time.Now().UTC(),
 	}
 
-	err = s.posts.DB.WithContext(ctx).
+	err = s.DB.WithContext(ctx).
 		Model(&core.Post{}).
 		Where("id = ?", postID).
 		Updates(update).Error
@@ -216,19 +193,20 @@ func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
 	return nil
 }
 
-// GetPostForModeration - takes first record from posts table which status is "on_moderation"
-func (s *store) GetPostForModeration(ctx context.Context) (post core.Post, err error) {
-	err = s.posts.DB.WithContext(ctx).
-		Where("status = ?", core.OnModeration).
+// GetPostsForModeration - takes first 10 records from posts table which status is "on_moderation"
+func (s *store) GetPostsForModeration(ctx context.Context) (posts []core.Post, err error) {
+	err = s.DB.WithContext(ctx).
+		Where("status = ?", string(core.OnModeration)).
 		Order("updated_at ASC").
-		First(&post).Error
+		Limit(core.AmountOfPostsForModeration).
+		Find(&posts).Error
 
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return core.Post{}, core.ErrNoPostsWaitingForModeration
+			return []core.Post{}, core.ErrNoPostsWaitingForModeration
 		}
 	}
 
-	return post, nil
+	return posts, nil
 }

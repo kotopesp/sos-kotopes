@@ -83,7 +83,7 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 		logger.Log().Error(ctx, core.ErrEmptyUpdateRequest.Error())
 		return core.User{}, core.ErrEmptyUpdateRequest
 	} else {
-		updates["updated_at"] = time.Now()
+		updates["updated_at"] = time.Now().UTC()
 	}
 
 	err = tx.WithContext(ctx).Table("users").Where("id = ?", id).Updates(updates).Error
@@ -128,7 +128,7 @@ func (s *store) GetUserByID(ctx context.Context, id int) (data core.User, err er
 	return user, err
 }
 
-func (s *store) AddUser(ctx context.Context, user core.User) (userID int, err error) {
+func (s *store) CreateUser(ctx context.Context, user core.User) (userID int, err error) {
 	err = s.DB.WithContext(ctx).Create(&user).Error
 	if err != nil {
 		if strings.Contains(err.Error(), "users_username_key") { // here I need to somehow catch the error of unique constraint violation
@@ -146,7 +146,7 @@ func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (user c
 	return user, err
 }
 
-func (s *store) AddExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
+func (s *store) CreateExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 
 	defer func() {

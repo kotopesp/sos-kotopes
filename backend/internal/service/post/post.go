@@ -119,7 +119,7 @@ func (s *service) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateR
 
 	if dbPost.Post.AuthorID != *postUpdateRequest.AuthorID {
 		return core.PostDetails{}, core.ErrPostAuthorIDMismatch
-	} else if dbPost.Post.Status == core.Deleted {
+	} else if dbPost.Post.Status == string(core.Deleted) {
 		return core.PostDetails{}, core.ErrPostIsDeleted
 	}
 
@@ -154,7 +154,7 @@ func (s *service) DeletePost(ctx context.Context, post core.Post) error {
 
 	if dbPost.AuthorID != post.AuthorID {
 		return core.ErrPostAuthorIDMismatch
-	} else if dbPost.Status == core.Deleted {
+	} else if dbPost.Status == string(core.Deleted) {
 		return core.ErrPostIsDeleted
 	}
 
@@ -167,32 +167,13 @@ func (s *service) DeletePost(ctx context.Context, post core.Post) error {
 	return nil
 }
 
-// ReportPost - creates Report record in special table.
-func (s *service) ReportPost(ctx context.Context, report core.Report) (err error) {
-	reportCount, err := s.postStore.ReportPost(ctx, report)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return err
-	}
-
-	// 15 here is a magic number, i decided that if every reported post will go on moderation someone may abuse it ^_^
-	if reportCount >= 15 {
-		err = s.postStore.SendToModeration(ctx, report.PostID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// GetPostForModeration - returns one post which was the earliest to be reported and waiting for moderation now
-func (s *service) GetPostForModeration(ctx context.Context) (post core.Post, err error) {
-	post, err = s.postStore.GetPostForModeration(ctx)
+// GetPostsForModeration - returns one post which was the earliest to be reported and waiting for moderation now
+func (s *service) GetPostsForModeration(ctx context.Context) (post []core.Post, err error) {
+	post, err = s.postStore.GetPostsForModeration(ctx)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 
-		return core.Post{}, err
+		return []core.Post{}, err
 	}
 
 	return post, nil

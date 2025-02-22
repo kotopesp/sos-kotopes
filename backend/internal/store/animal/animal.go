@@ -22,8 +22,8 @@ func New(pg *postgres.Postgres) core.AnimalStore {
 // CreateAnimal inserts a new animal record into the database
 func (s *store) CreateAnimal(ctx context.Context, animal core.Animal) (core.Animal, error) {
 	// Set the creation and update timestamps
-	animal.CreatedAt = time.Now()
-	animal.UpdatedAt = time.Now()
+	animal.CreatedAt = time.Now().UTC()
+	animal.UpdatedAt = time.Now().UTC()
 
 	if err := s.DB.WithContext(ctx).Create(&animal).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
@@ -53,7 +53,7 @@ func (s *store) GetAnimalByID(ctx context.Context, id int) (core.Animal, error) 
 // UpdateAnimal updates an existing animal record in the database
 func (s *store) UpdateAnimal(ctx context.Context, animal core.Animal) (core.Animal, error) {
 	// Set the update timestamp
-	animal.UpdatedAt = time.Now()
+	animal.UpdatedAt = time.Now().UTC()
 
 	var updateAnimal core.Animal
 

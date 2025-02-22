@@ -13,10 +13,11 @@ type (
 		AnimalID  int       `gorm:"column:animal_id"`     // ID of the associated animal
 		Title     string    `gorm:"column:title"`         // Title of the post
 		Content   string    `gorm:"column:content"`       // Content of the post
-		CreatedAt time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
-		UpdatedAt time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
 		Photo     []byte    `gorm:"column:photo"`         // Photo animal
 		Status    string    `gorm:"column:status"`        // Status shows current status of post e.g. Deleted | Published | OnModeration
+		CreatedAt time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
+		DeletedAt time.Time `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
+		UpdatedAt time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
 	}
 
 	// PostDetails Post Details joins post, animal, username
@@ -24,15 +25,6 @@ type (
 		Post     Post
 		Animal   Animal
 		Username string
-	}
-
-	// Report consists of counter for report amount and reasons why post was reported.
-	Report struct {
-		ID         int       `gorm:"column:id;primaryKey"`
-		PostID     int       `gorm:"column:post_id"`
-		ReportedAt time.Time `gorm:"column:reported_at"`
-		Reason     string    `gorm:"column:reason"`
-		UserID     int       `gorm:"column:user_id"`
 	}
 
 	// UpdateRequestBodyPost represents the request body for updating a post.
@@ -68,9 +60,8 @@ type (
 		CreatePost(ctx context.Context, post Post) (Post, error)
 		UpdatePost(ctx context.Context, post Post) (Post, error)
 		DeletePost(ctx context.Context, id int) error
-		ReportPost(ctx context.Context, report Report) (reportCount int, err error)
 		SendToModeration(ctx context.Context, postID int) (err error)
-		GetPostForModeration(ctx context.Context) (Post, error)
+		GetPostsForModeration(ctx context.Context) ([]Post, error)
 	}
 
 	PostService interface {
@@ -80,18 +71,13 @@ type (
 		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
-		ReportPost(ctx context.Context, post Report) (err error)
-		GetPostForModeration(ctx context.Context) (Post, error)
+		GetPostsForModeration(ctx context.Context) ([]Post, error)
 		PostFavouriteService
 	}
 )
 
+const AmountOfPostsForModeration = 10
+
 func (Post) TableName() string {
 	return "posts"
 }
-
-func (Report) TableName() string { return "reports" }
-
-const Published = "published"
-const Deleted = "deleted"
-const OnModeration = "on_moderation"
