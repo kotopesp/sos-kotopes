@@ -108,7 +108,7 @@ func (s *service) SignupBasic(ctx context.Context, user core.User) error {
 
 	user.PasswordHash = string(hashedPassword)
 
-	if _, err := s.userStore.AddUser(ctx, user); err != nil {
+	if _, err := s.userStore.CreateUser(ctx, user); err != nil {
 		return err
 	}
 
@@ -172,7 +172,7 @@ func (s *service) signupVK(ctx context.Context, user core.User, externalUserID i
 	}
 
 	user.PasswordHash = string(hashedPassword)
-	userID, err = s.userStore.AddExternalUser(ctx, user, externalUserID, authProvider)
+	userID, err = s.userStore.CreateExternalUser(ctx, user, externalUserID, authProvider)
 	if err != nil {
 		return 0, err
 	}

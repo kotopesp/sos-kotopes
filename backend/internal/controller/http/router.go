@@ -17,6 +17,7 @@ type Router struct {
 	postService          core.PostService
 	userService          core.UserService
 	roleService          core.RoleService
+	reportService        core.ReportService
 	userFavouriteService core.UserFavouriteService
 }
 
@@ -27,6 +28,7 @@ func NewRouter(
 	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
+	reportService core.ReportService,
 	formValidator validator.FormValidatorService,
 ) {
 	router := &Router{
@@ -37,6 +39,7 @@ func NewRouter(
 		userService:    userService,
 		roleService:    roleService,
 		commentService: commentService,
+		reportService:  reportService,
 	}
 
 	router.initRequestMiddlewares()
@@ -97,6 +100,9 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
+
+	// reports
+	v1.Post("/reports", r.protectedMiddleware(), r.createReport)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

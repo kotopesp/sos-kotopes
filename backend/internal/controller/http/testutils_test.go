@@ -31,6 +31,7 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	mockCommentService := mocks.NewMockCommentService(t)
 	mockRoleService := mocks.NewMockRoleService(t)
 	mockUserService := mocks.NewMockUserService(t)
+	mockReportService := mocks.NewMockReportService(t)
 	formValidatorService := validator.New(ctx, baseValidator.New())
 
 	mockAuthService.On("GetJWTSecret").Return(secret)
@@ -43,6 +44,7 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 		mockPostService,
 		mockUserService,
 		mockRoleService,
+		mockReportService,
 		formValidatorService,
 	)
 

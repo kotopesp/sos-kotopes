@@ -18,20 +18,41 @@ func New(db *postgres.Postgres) core.ReportStore {
 
 // CreateReport - creates report record for post.
 func (s *store) CreateReport(ctx context.Context, report core.Report) (int, error) {
-	report.ReportedAt = time.Now().UTC()
+	tx := s.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
 
-	err := s.DB.WithContext(ctx).Create(&report).Error
-	if err != nil {
+	// here i checking if posts exists
+	var postExists int64
+	if err := tx.Model(&core.Post{}).
+		Where("id = ? AND status = ?", report.PostID, string(core.Published)).
+		Count(&postExists).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
+
+		return 0, err
+	}
+
+	if postExists == 0 {
+		logger.Log().Error(ctx, core.ErrPostNotFound.Error())
+
+		return 0, core.ErrPostNotFound
+	}
+
+	report.ReportedAt = time.Now().UTC()
+	if err := tx.Create(&report).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+
 		return 0, err
 	}
 
 	var reportCount int64
-	err = s.DB.WithContext(ctx).
-		Model(&core.Report{}).
+	if err := tx.Model(&core.Report{}).
 		Where("post_id = ?", report.PostID).
-		Count(&reportCount).Error
-	if err != nil {
+		Count(&reportCount).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return 0, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return 0, err
 	}

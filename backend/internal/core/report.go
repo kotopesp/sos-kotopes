@@ -20,7 +20,7 @@ type (
 	}
 
 	ReportService interface {
-		CreateReport(ctx context.Context, post Report) (err error)
+		CreateReport(ctx context.Context, report Report) (err error)
 	}
 )
 
