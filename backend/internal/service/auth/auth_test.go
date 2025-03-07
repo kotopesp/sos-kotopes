@@ -275,7 +275,7 @@ func TestSignupBasic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.invokeAddUser {
 				mockUserStore.On(
-					"AddUser",
+					"CreateUser",
 					ctx,
 					mock.MatchedBy(func(user core.User) bool {
 						return user.Username == tt.addUserArg2.Username &&
