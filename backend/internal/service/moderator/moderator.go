@@ -25,3 +25,15 @@ func (s *service) GetModerator(ctx context.Context, id int) (moderator core.Mode
 
 	return moderator, nil
 }
+
+// GetPostsForModeration - returns one post which was the earliest to be reported and waiting for moderation now
+func (s *service) GetPostsForModeration(ctx context.Context) (post []core.Post, err error) {
+	post, err = s.moderatorStore.GetPostsForModeration(ctx)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+
+		return []core.Post{}, err
+	}
+
+	return post, nil
+}

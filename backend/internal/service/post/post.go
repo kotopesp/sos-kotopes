@@ -166,15 +166,3 @@ func (s *service) DeletePost(ctx context.Context, post core.Post) error {
 
 	return nil
 }
-
-// GetPostsForModeration - returns one post which was the earliest to be reported and waiting for moderation now
-func (s *service) GetPostsForModeration(ctx context.Context) (post []core.Post, err error) {
-	post, err = s.postStore.GetPostsForModeration(ctx)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-
-		return []core.Post{}, err
-	}
-
-	return post, nil
-}

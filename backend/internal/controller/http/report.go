@@ -34,6 +34,11 @@ func (r *Router) createReport(ctx *fiber.Ctx) error {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(core.ErrPostNotFound.Error()))
 		}
 
+		if errors.Is(err, core.ErrDuplicateReport) {
+			logger.Log().Error(ctx.UserContext(), core.ErrDuplicateReport.Error())
+			return ctx.Status(fiber.StatusConflict).JSON(model.ErrorResponse(core.ErrDuplicateReport.Error()))
+		}
+
 		logger.Log().Error(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}

@@ -61,7 +61,6 @@ type (
 		UpdatePost(ctx context.Context, post Post) (Post, error)
 		DeletePost(ctx context.Context, id int) error
 		SendToModeration(ctx context.Context, postID int) (err error)
-		GetPostsForModeration(ctx context.Context) ([]Post, error)
 	}
 
 	PostService interface {
@@ -71,7 +70,6 @@ type (
 		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
-		GetPostsForModeration(ctx context.Context) ([]Post, error)
 		PostFavouriteService
 	}
 )

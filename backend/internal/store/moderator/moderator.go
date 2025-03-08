@@ -50,3 +50,21 @@ func (s *store) CreateModerator(ctx context.Context, moderator core.Moderator) (
 
 	return nil
 }
+
+// GetPostsForModeration - takes first 10 records from posts table which status is "on_moderation"
+func (s *store) GetPostsForModeration(ctx context.Context) (posts []core.Post, err error) {
+	err = s.DB.WithContext(ctx).
+		Where("status = ?", string(core.OnModeration)).
+		Order("updated_at ASC").
+		Limit(core.AmountOfPostsForModeration).
+		Find(&posts).Error
+
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return []core.Post{}, core.ErrNoPostsWaitingForModeration
+		}
+	}
+
+	return posts, nil
+}

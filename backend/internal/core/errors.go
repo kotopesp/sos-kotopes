@@ -47,5 +47,8 @@ var (
 
 	// moderator errors
 	ErrNoSuchModerator = errors.New("moderator does not exist")
+
+	// report errors
 	ErrToCreateReport  = errors.New("error creating report")
+	ErrDuplicateReport = errors.New("duplicate report")
 )
