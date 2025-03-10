@@ -51,6 +51,21 @@ func (s *store) CreateModerator(ctx context.Context, moderator core.Moderator) (
 	return nil
 }
 
+// GetReasonsForReportedPost returns list of reasons why post was banned.
+func (s *store) GetReasonsForReportedPost(ctx context.Context, postID int) (reasons []string, err error) {
+	err = s.DB.WithContext(ctx).
+		Table(core.Report{}.TableName()).
+		Where("post_id = ?", postID).
+		Pluck("reason", &reasons).Error
+	if err != nil {
+		logger.Log().Debug(ctx, err.Error())
+
+		return nil, core.ErrGettingReportResponse
+	}
+
+	return reasons, nil
+}
+
 // GetPostsForModeration - takes first 10 records from posts table which status is "on_moderation"
 func (s *store) GetPostsForModeration(ctx context.Context) (posts []core.Post, err error) {
 	err = s.DB.WithContext(ctx).

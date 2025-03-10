@@ -42,6 +42,12 @@ type (
 		Status      *string
 	}
 
+	// PostForModeration structure that holds post and list of reasons why this post was reported.
+	PostForModeration struct {
+		Post    Post
+		Reasons []string
+	}
+
 	// GetAllPostsParams are needed for processing posts in the database
 	GetAllPostsParams struct {
 		Limit      *int    // Limit on the number of posts to retrieve

@@ -41,7 +41,7 @@ func (s *store) CreateReport(ctx context.Context, report core.Report) (int, erro
 	if err := tx.Create(&report).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 
-		return 0, err
+		return 0, core.ErrToCreateReport
 	}
 
 	var reportCount int64
