@@ -138,6 +138,15 @@ definitions:
           $ref: '#/definitions/post.PostResponse'
         type: array
     type: object
+  report.CreateRequestBodyReport:
+    properties:
+      post_id:
+        type: integer
+      reason:
+        type: string
+      user_id:
+        type: integer
+    type: object
   role.DeleteRole:
     properties:
       name:
@@ -336,8 +345,7 @@ paths:
       responses:
         "201":
           description: Created
-          schema:
-            type: object
+          schema: {}
         "400":
           description: Bad Request
           schema:
@@ -1163,6 +1171,59 @@ paths:
       summary: Get favourite posts of user by id
       tags:
       - post
+  /reports:
+    post:
+      consumes:
+      - application/json
+      description: Create a report for a specific post
+      parameters:
+      - description: Report data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/report.CreateRequestBodyReport'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Report created successfully
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Invalid request body or validation error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: 'Unauthorized: Invalid or missing token'
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Post not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "409":
+          description: 'Conflict: Report already exists'
+          schema:
+            $ref: '#/definitions/model.Response'
+        "422":
+          description: 'Unprocessable entity: Validation error'
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a report
+      tags:
+      - reports
   /user/{id}/posts:
     get:
       consumes:

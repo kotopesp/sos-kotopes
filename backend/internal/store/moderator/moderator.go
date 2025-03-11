@@ -67,8 +67,9 @@ func (s *store) GetReasonsForReportedPost(ctx context.Context, postID int) (reas
 }
 
 // GetPostsForModeration - takes first 10 records from posts table which status is "on_moderation"
-func (s *store) GetPostsForModeration(ctx context.Context) (posts []core.Post, err error) {
-	err = s.DB.WithContext(ctx).
+func (s *store) GetPostsForModeration(ctx context.Context) ([]core.PostForModeration, error) {
+	var posts []core.Post
+	err := s.DB.WithContext(ctx).
 		Where("status = ?", string(core.OnModeration)).
 		Order("updated_at ASC").
 		Limit(core.AmountOfPostsForModeration).
@@ -77,9 +78,26 @@ func (s *store) GetPostsForModeration(ctx context.Context) (posts []core.Post, e
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return []core.Post{}, core.ErrNoPostsWaitingForModeration
+			return nil, core.ErrNoPostsWaitingForModeration
 		}
+		return nil, err
 	}
 
-	return posts, nil
+	var postsForModeration []core.PostForModeration
+
+	for _, post := range posts {
+		reasons, err := s.GetReasonsForReportedPost(ctx, post.ID)
+		if err != nil {
+			logger.Log().Error(ctx, err.Error())
+
+			continue
+		}
+
+		postsForModeration = append(postsForModeration, core.PostForModeration{
+			Post:    post,
+			Reasons: reasons,
+		})
+	}
+
+	return postsForModeration, nil
 }

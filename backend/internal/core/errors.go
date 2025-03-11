@@ -46,7 +46,8 @@ var (
 	ErrNullCommentParentID         = errors.New("comment parent id is null")
 
 	// moderator errors
-	ErrNoSuchModerator = errors.New("moderator does not exist")
+	ErrNoSuchModerator      = errors.New("moderator does not exist")
+	ErrGettingReportReasons = errors.New("error getting report reasons")
 
 	// report errors
 	ErrToCreateReport        = errors.New("error creating report")
