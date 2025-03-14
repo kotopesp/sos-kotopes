@@ -66,7 +66,8 @@ func (s *store) GetReasonsForReportedPost(ctx context.Context, postID int) (reas
 	return reasons, nil
 }
 
-// GetPostsForModeration - takes first 10 records from posts table which status is "on_moderation"
+// GetPostsForModeration - takes amount of records limited by the constant core.AmountOfPostsForModeration
+// from posts table which status is "on_moderation"
 func (s *store) GetPostsForModeration(ctx context.Context) ([]core.PostForModeration, error) {
 	var posts []core.Post
 	err := s.DB.WithContext(ctx).

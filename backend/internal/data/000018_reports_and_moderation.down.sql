@@ -1,8 +1,16 @@
-DROP TABLE IF EXISTS reports CASCADE;
-DROP TABLE IF EXISTS moderators CASCADE;
-
 ALTER TABLE IF EXISTS posts
-    DROP COLUMN IF EXISTS status,
     ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE;
 
+UPDATE posts
+SET is_deleted = CASE
+                     WHEN status = 'deleted' THEN TRUE
+                     ELSE FALSE
+    END;
+
+ALTER TABLE IF EXISTS posts
+DROP COLUMN IF EXISTS status;
+
 DROP TYPE IF EXISTS post_status;
+
+DROP TABLE IF EXISTS reports;
+DROP TABLE IF EXISTS moderators;

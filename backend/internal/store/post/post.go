@@ -24,7 +24,7 @@ func (s *store) GetAllPosts(ctx context.Context, params core.GetAllPostsParams) 
 
 	query := s.DB.WithContext(ctx).Model(&core.Post{}).
 		Joins("JOIN animals ON posts.animal_id = animals.id").
-		Where("posts.status = ?", string(core.Published))
+		Where("posts.status = ?", core.Published)
 
 	// Apply filtering based on the GetAllPostsParams
 	if params.Limit != nil {
@@ -87,7 +87,7 @@ func (s *store) GetUserPosts(ctx context.Context, id int) (posts []core.Post, co
 func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 	var post core.Post
 
-	if err := s.DB.WithContext(ctx).Where("id = ? AND status = ?", id, string(core.Published)).First(&post).Error; err != nil {
+	if err := s.DB.WithContext(ctx).Where("id = ? AND status = ?", id, core.Published).First(&post).Error; err != nil {
 		if errors.Is(err, core.ErrRecordNotFound) {
 			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
 			return core.Post{}, core.ErrPostNotFound
@@ -104,7 +104,7 @@ func (s *store) GetPostByID(ctx context.Context, id int) (core.Post, error) {
 func (s *store) CreatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	post.CreatedAt = time.Now().UTC()
 	post.UpdatedAt = time.Now().UTC()
-	post.Status = string(core.Published)
+	post.Status = core.Published
 	var createdPost core.Post
 
 	if err := s.DB.WithContext(ctx).Create(&post).First(&createdPost, post.ID).Error; err != nil {
@@ -137,7 +137,7 @@ func (s *store) UpdatePost(ctx context.Context, post core.Post) (core.Post, erro
 // DeletePost marks a post as deleted in the database by updating the status flag and setting the updated_at timestamp
 func (s *store) DeletePost(ctx context.Context, id int) error {
 	updates := map[string]interface{}{
-		"status":     string(core.Deleted),
+		"status":     core.Deleted,
 		"deleted_at": time.Now().UTC(),
 	}
 
@@ -164,7 +164,7 @@ func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
 
 	err = s.DB.WithContext(ctx).
 		Model(&core.Post{}).
-		Where("id = ? AND status = ?", postID, string(core.OnModeration)).
+		Where("id = ? AND status = ?", postID, core.OnModeration).
 		Count(&count).Error
 
 	if err != nil {
@@ -178,7 +178,7 @@ func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
 	}
 
 	update := map[string]interface{}{
-		"status":     string(core.OnModeration),
+		"status":     core.OnModeration,
 		"updated_at": time.Now().UTC(),
 	}
 

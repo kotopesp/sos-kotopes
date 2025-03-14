@@ -11,7 +11,7 @@ type service struct {
 }
 
 func New(store core.ModeratorStore) core.ModeratorService {
-	return &service{}
+	return &service{moderatorStore: store}
 }
 
 // GetModerator - returns moderator struct by its id.

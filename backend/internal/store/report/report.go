@@ -37,7 +37,7 @@ func (s *store) CreateReport(ctx context.Context, report core.Report) (int, erro
 		return 0, core.ErrPostNotFound
 	}
 
-	report.ReportedAt = time.Now().UTC()
+	report.CreatedAt = time.Now().UTC()
 	if err := tx.Create(&report).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 
