@@ -16,7 +16,8 @@ type (
 	}
 
 	ReportStore interface {
-		CreateReport(ctx context.Context, report Report) (reportCount int, err error)
+		CreateReport(ctx context.Context, report Report) (err error)
+		GetReportsCount(ctx context.Context, postID int) (int, error)
 	}
 
 	ReportService interface {

@@ -17,7 +17,23 @@ func NewReportService(reportStore core.ReportStore, postStore core.PostStore) co
 
 // CreateReport - creates Report record in special table.
 func (s *service) CreateReport(ctx context.Context, report core.Report) (err error) {
-	reportCount, err := s.reportStore.CreateReport(ctx, report)
+	post, err := s.postStore.GetPostByID(ctx, report.PostID)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	// post already on moderation
+	if post.Status == core.OnModeration {
+		return nil
+	}
+
+	if err = s.reportStore.CreateReport(ctx, report); err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	reportCount, err := s.reportStore.GetReportsCount(ctx, report.PostID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 		return err

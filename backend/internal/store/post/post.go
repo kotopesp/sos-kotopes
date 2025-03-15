@@ -160,35 +160,19 @@ func (s *store) DeletePost(ctx context.Context, id int) error {
 }
 
 func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
-	var count int64
-
-	err = s.DB.WithContext(ctx).
-		Model(&core.Post{}).
-		Where("id = ? AND status = ?", postID, core.OnModeration).
-		Count(&count).Error
-
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return err
-	}
-
-	// means post is already on moderation
-	if count > 0 {
-		return nil
-	}
-
 	update := map[string]interface{}{
 		"status":     core.OnModeration,
 		"updated_at": time.Now().UTC(),
 	}
 
-	err = s.DB.WithContext(ctx).
+	if err = s.DB.WithContext(ctx).
 		Model(&core.Post{}).
 		Where("id = ?", postID).
-		Updates(update).Error
-	if err != nil {
+		Updates(update).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
+
 		return err
 	}
+
 	return nil
 }

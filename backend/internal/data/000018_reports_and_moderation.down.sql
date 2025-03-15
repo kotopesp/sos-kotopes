@@ -12,5 +12,7 @@ DROP COLUMN IF EXISTS status;
 
 DROP TYPE IF EXISTS post_status;
 
+DROP INDEX IF EXISTS idx_unique_post_user;
+
 DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS moderators;

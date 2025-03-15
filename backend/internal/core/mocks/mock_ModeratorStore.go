@@ -126,6 +126,64 @@ func (_c *MockModeratorStore_GetModeratorByID_Call) RunAndReturn(run func(contex
 	return _c
 }
 
+// GetPostsForModeration provides a mock function with given fields: ctx
+func (_m *MockModeratorStore) GetPostsForModeration(ctx context.Context) ([]core.PostForModeration, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetPostsForModeration")
+	}
+
+	var r0 []core.PostForModeration
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) ([]core.PostForModeration, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) []core.PostForModeration); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.PostForModeration)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockModeratorStore_GetPostsForModeration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPostsForModeration'
+type MockModeratorStore_GetPostsForModeration_Call struct {
+	*mock.Call
+}
+
+// GetPostsForModeration is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockModeratorStore_Expecter) GetPostsForModeration(ctx interface{}) *MockModeratorStore_GetPostsForModeration_Call {
+	return &MockModeratorStore_GetPostsForModeration_Call{Call: _e.mock.On("GetPostsForModeration", ctx)}
+}
+
+func (_c *MockModeratorStore_GetPostsForModeration_Call) Run(run func(ctx context.Context)) *MockModeratorStore_GetPostsForModeration_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context))
+	})
+	return _c
+}
+
+func (_c *MockModeratorStore_GetPostsForModeration_Call) Return(posts []core.PostForModeration, err error) *MockModeratorStore_GetPostsForModeration_Call {
+	_c.Call.Return(posts, err)
+	return _c
+}
+
+func (_c *MockModeratorStore_GetPostsForModeration_Call) RunAndReturn(run func(context.Context) ([]core.PostForModeration, error)) *MockModeratorStore_GetPostsForModeration_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewMockModeratorStore creates a new instance of MockModeratorStore. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockModeratorStore(t interface {
