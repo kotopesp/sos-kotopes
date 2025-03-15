@@ -1220,7 +1220,7 @@ paths:
           schema:
             $ref: '#/definitions/model.Response'
       security:
-      - ApiKeyAuth: []
+      - ApiKeyAuthBasic: []
       summary: Create a report
       tags:
       - reports

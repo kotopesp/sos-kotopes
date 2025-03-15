@@ -17,7 +17,6 @@ import (
 // @Tags			reports
 // @Accept			json
 // @Produce		json
-// @Security		ApiKeyAuth
 //
 // @Param			post_id	path	int								true	"Post ID"		minimum(1)
 // @Param			body	body	report.CreateRequestBodyReport	true	"Report data"	"Report data"
@@ -29,6 +28,7 @@ import (
 // @Failure		409		{object}	model.Response							"Conflict: Report already exists"
 // @Failure		422		{object}	model.Response{data=validator.Response}	"Validation error"
 // @Failure		500		{object}	model.Response							"Internal server error"
+// @Security		ApiKeyAuthBasic
 // @Router			/reports/{post_id} [post]
 func (r *Router) createReport(ctx *fiber.Ctx) error {
 	var pathParams postModel.PathParams

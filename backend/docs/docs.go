@@ -1479,7 +1479,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "ApiKeyAuthBasic": []
                     }
                 ],
                 "description": "Create a report for a specific post",
