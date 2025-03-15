@@ -79,9 +79,9 @@ func (_c *MockModeratorService_GetModerator_Call) RunAndReturn(run func(context.
 	return _c
 }
 
-// GetPostsForModeration provides a mock function with given fields: ctx
-func (_m *MockModeratorService) GetPostsForModeration(ctx context.Context) ([]core.PostForModeration, error) {
-	ret := _m.Called(ctx)
+// GetPostsForModeration provides a mock function with given fields: ctx, filter
+func (_m *MockModeratorService) GetPostsForModeration(ctx context.Context, filter core.Filter) ([]core.PostForModeration, error) {
+	ret := _m.Called(ctx, filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetPostsForModeration")
@@ -89,19 +89,19 @@ func (_m *MockModeratorService) GetPostsForModeration(ctx context.Context) ([]co
 
 	var r0 []core.PostForModeration
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]core.PostForModeration, error)); ok {
-		return rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) ([]core.PostForModeration, error)); ok {
+		return rf(ctx, filter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []core.PostForModeration); ok {
-		r0 = rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) []core.PostForModeration); ok {
+		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]core.PostForModeration)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = rf(ctx)
+	if rf, ok := ret.Get(1).(func(context.Context, core.Filter) error); ok {
+		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -116,13 +116,14 @@ type MockModeratorService_GetPostsForModeration_Call struct {
 
 // GetPostsForModeration is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockModeratorService_Expecter) GetPostsForModeration(ctx interface{}) *MockModeratorService_GetPostsForModeration_Call {
-	return &MockModeratorService_GetPostsForModeration_Call{Call: _e.mock.On("GetPostsForModeration", ctx)}
+//   - filter core.Filter
+func (_e *MockModeratorService_Expecter) GetPostsForModeration(ctx interface{}, filter interface{}) *MockModeratorService_GetPostsForModeration_Call {
+	return &MockModeratorService_GetPostsForModeration_Call{Call: _e.mock.On("GetPostsForModeration", ctx, filter)}
 }
 
-func (_c *MockModeratorService_GetPostsForModeration_Call) Run(run func(ctx context.Context)) *MockModeratorService_GetPostsForModeration_Call {
+func (_c *MockModeratorService_GetPostsForModeration_Call) Run(run func(ctx context.Context, filter core.Filter)) *MockModeratorService_GetPostsForModeration_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context))
+		run(args[0].(context.Context), args[1].(core.Filter))
 	})
 	return _c
 }
@@ -132,7 +133,7 @@ func (_c *MockModeratorService_GetPostsForModeration_Call) Return(posts []core.P
 	return _c
 }
 
-func (_c *MockModeratorService_GetPostsForModeration_Call) RunAndReturn(run func(context.Context) ([]core.PostForModeration, error)) *MockModeratorService_GetPostsForModeration_Call {
+func (_c *MockModeratorService_GetPostsForModeration_Call) RunAndReturn(run func(context.Context, core.Filter) ([]core.PostForModeration, error)) *MockModeratorService_GetPostsForModeration_Call {
 	_c.Call.Return(run)
 	return _c
 }

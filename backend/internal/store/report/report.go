@@ -3,11 +3,13 @@ package report
 import (
 	"context"
 	"errors"
+	"time"
+
+	"gorm.io/gorm"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-	"gorm.io/gorm"
-	"time"
 )
 
 type store struct {
@@ -48,4 +50,19 @@ func (s *store) GetReportsCount(ctx context.Context, postID int) (int, error) {
 	}
 
 	return int(reportCount), nil
+}
+
+// GetReportReasonsForPost returns list of reasons why post was banned.
+func (s *store) GetReportReasonsForPost(ctx context.Context, postID int) (reasons []string, err error) {
+	err = s.DB.WithContext(ctx).
+		Table(core.Report{}.TableName()).
+		Where("post_id = ?", postID).
+		Pluck("reason", &reasons).Error
+	if err != nil {
+		logger.Log().Debug(ctx, err.Error())
+
+		return nil, core.ErrGettingReportReasons
+	}
+
+	return reasons, nil
 }

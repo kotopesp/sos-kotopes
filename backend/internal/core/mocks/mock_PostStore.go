@@ -249,6 +249,65 @@ func (_c *MockPostStore_GetPostByID_Call) RunAndReturn(run func(context.Context,
 	return _c
 }
 
+// GetPostsForModeration provides a mock function with given fields: ctx, filter
+func (_m *MockPostStore) GetPostsForModeration(ctx context.Context, filter core.Filter) ([]core.Post, error) {
+	ret := _m.Called(ctx, filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetPostsForModeration")
+	}
+
+	var r0 []core.Post
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) ([]core.Post, error)); ok {
+		return rf(ctx, filter)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) []core.Post); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Post)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, core.Filter) error); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockPostStore_GetPostsForModeration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPostsForModeration'
+type MockPostStore_GetPostsForModeration_Call struct {
+	*mock.Call
+}
+
+// GetPostsForModeration is a helper method to define mock.On call
+//   - ctx context.Context
+//   - filter core.Filter
+func (_e *MockPostStore_Expecter) GetPostsForModeration(ctx interface{}, filter interface{}) *MockPostStore_GetPostsForModeration_Call {
+	return &MockPostStore_GetPostsForModeration_Call{Call: _e.mock.On("GetPostsForModeration", ctx, filter)}
+}
+
+func (_c *MockPostStore_GetPostsForModeration_Call) Run(run func(ctx context.Context, filter core.Filter)) *MockPostStore_GetPostsForModeration_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.Filter))
+	})
+	return _c
+}
+
+func (_c *MockPostStore_GetPostsForModeration_Call) Return(posts []core.Post, err error) *MockPostStore_GetPostsForModeration_Call {
+	_c.Call.Return(posts, err)
+	return _c
+}
+
+func (_c *MockPostStore_GetPostsForModeration_Call) RunAndReturn(run func(context.Context, core.Filter) ([]core.Post, error)) *MockPostStore_GetPostsForModeration_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetUserPosts provides a mock function with given fields: ctx, id
 func (_m *MockPostStore) GetUserPosts(ctx context.Context, id int) ([]core.Post, int, error) {
 	ret := _m.Called(ctx, id)

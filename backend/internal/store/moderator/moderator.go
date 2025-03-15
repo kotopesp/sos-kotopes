@@ -3,11 +3,13 @@ package moderator
 import (
 	"context"
 	"errors"
+	"time"
+
+	"gorm.io/gorm"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-	"gorm.io/gorm"
-	"time"
 )
 
 type store struct {
@@ -49,56 +51,4 @@ func (s *store) CreateModerator(ctx context.Context, moderator core.Moderator) (
 	}
 
 	return nil
-}
-
-// GetReasonsForReportedPost returns list of reasons why post was banned.
-func (s *store) GetReasonsForReportedPost(ctx context.Context, postID int) (reasons []string, err error) {
-	err = s.DB.WithContext(ctx).
-		Table(core.Report{}.TableName()).
-		Where("post_id = ?", postID).
-		Pluck("reason", &reasons).Error
-	if err != nil {
-		logger.Log().Debug(ctx, err.Error())
-
-		return nil, core.ErrGettingReportResponse
-	}
-
-	return reasons, nil
-}
-
-// GetPostsForModeration - takes amount of records limited by the constant core.AmountOfPostsForModeration
-// from posts table which status is "on_moderation"
-func (s *store) GetPostsForModeration(ctx context.Context) ([]core.PostForModeration, error) {
-	var posts []core.Post
-	err := s.DB.WithContext(ctx).
-		Where("status = ?", string(core.OnModeration)).
-		Order("updated_at ASC").
-		Limit(core.AmountOfPostsForModeration).
-		Find(&posts).Error
-
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, core.ErrNoPostsWaitingForModeration
-		}
-		return nil, err
-	}
-
-	var postsForModeration []core.PostForModeration
-
-	for _, post := range posts {
-		reasons, err := s.GetReasonsForReportedPost(ctx, post.ID)
-		if err != nil {
-			logger.Log().Error(ctx, err.Error())
-
-			continue
-		}
-
-		postsForModeration = append(postsForModeration, core.PostForModeration{
-			Post:    post,
-			Reasons: reasons,
-		})
-	}
-
-	return postsForModeration, nil
 }

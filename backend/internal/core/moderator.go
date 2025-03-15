@@ -14,12 +14,11 @@ type (
 	ModeratorStore interface {
 		GetModeratorByID(ctx context.Context, id int) (moderator Moderator, err error)
 		CreateModerator(ctx context.Context, moderator Moderator) (err error)
-		GetPostsForModeration(ctx context.Context) (posts []PostForModeration, err error)
 	}
 
 	ModeratorService interface {
 		GetModerator(ctx context.Context, id int) (moderator Moderator, err error)
-		GetPostsForModeration(ctx context.Context) (posts []PostForModeration, err error)
+		GetPostsForModeration(ctx context.Context, filter Filter) (posts []PostForModeration, err error)
 	}
 )
 

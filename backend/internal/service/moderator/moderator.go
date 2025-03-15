@@ -2,16 +2,19 @@ package moderator
 
 import (
 	"context"
+	"fmt"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type service struct {
 	moderatorStore core.ModeratorStore
+	postStore      core.PostStore
+	reportStore    core.ReportStore
 }
 
-func New(store core.ModeratorStore) core.ModeratorService {
-	return &service{moderatorStore: store}
+func New(moderatorStore core.ModeratorStore, postStore core.PostStore, reportStore core.ReportStore) core.ModeratorService {
+	return &service{moderatorStore: moderatorStore, postStore: postStore, reportStore: reportStore}
 }
 
 // GetModerator - returns moderator struct by its id.
@@ -27,13 +30,29 @@ func (s *service) GetModerator(ctx context.Context, id int) (moderator core.Mode
 }
 
 // GetPostsForModeration - returns one post which was the earliest to be reported and waiting for moderation now
-func (s *service) GetPostsForModeration(ctx context.Context) (post []core.PostForModeration, err error) {
-	post, err = s.moderatorStore.GetPostsForModeration(ctx)
+func (s *service) GetPostsForModeration(ctx context.Context, filter core.Filter) (moderationPosts []core.PostForModeration, err error) {
+	posts, err := s.postStore.GetPostsForModeration(ctx, filter)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())
 
 		return nil, err
 	}
 
-	return post, nil
+	for _, post := range posts {
+		reasons, err := s.reportStore.GetReportReasonsForPost(ctx, post.ID)
+		if err != nil {
+			logger.Log().Error(ctx, fmt.Sprintf("Error getting report reasons for, %d: ", post.ID)+err.Error())
+
+			continue
+		}
+
+		postWithReasons := core.PostForModeration{
+			Post:    post,
+			Reasons: reasons,
+		}
+
+		moderationPosts = append(moderationPosts, postWithReasons)
+	}
+
+	return moderationPosts, nil
 }

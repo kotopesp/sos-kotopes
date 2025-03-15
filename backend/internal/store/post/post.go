@@ -3,11 +3,13 @@ package poststore
 import (
 	"context"
 	"errors"
+	"time"
+
+	"gorm.io/gorm"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
-	"gorm.io/gorm"
-	"time"
 )
 
 type store struct {
@@ -159,6 +161,7 @@ func (s *store) DeletePost(ctx context.Context, id int) error {
 	return nil
 }
 
+// SendToModeration - updates status of post to core.OnModeration.
 func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
 	update := map[string]interface{}{
 		"status":     core.OnModeration,
@@ -175,4 +178,25 @@ func (s *store) SendToModeration(ctx context.Context, postID int) (err error) {
 	}
 
 	return nil
+}
+
+// GetPostsForModeration - takes amount of records limited by the constant core.AmountOfPostsForModeration
+// from posts table which status is "on_moderation"
+func (s *store) GetPostsForModeration(ctx context.Context, filter core.Filter) ([]core.Post, error) {
+	var posts []core.Post
+	err := s.DB.WithContext(ctx).
+		Where("status = ?", string(core.OnModeration)).
+		Order("updated_at " + filter).
+		Limit(core.AmountOfPostsForModeration).
+		Find(&posts).Error
+
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, core.ErrNoPostsWaitingForModeration
+		}
+		return nil, err
+	}
+
+	return posts, nil
 }

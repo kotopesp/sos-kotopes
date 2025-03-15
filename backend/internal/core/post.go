@@ -67,6 +67,7 @@ type (
 		UpdatePost(ctx context.Context, post Post) (Post, error)
 		DeletePost(ctx context.Context, id int) error
 		SendToModeration(ctx context.Context, postID int) (err error)
+		GetPostsForModeration(ctx context.Context, filter Filter) (posts []Post, err error)
 	}
 
 	PostService interface {
