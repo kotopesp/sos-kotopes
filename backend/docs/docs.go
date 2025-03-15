@@ -1475,7 +1475,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/reports": {
+        "/reports/{post_id}": {
             "post": {
                 "security": [
                     {
@@ -1495,6 +1495,14 @@ const docTemplate = `{
                 "summary": "Create a report",
                 "parameters": [
                     {
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Post ID",
+                        "name": "post_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Report data",
                         "name": "body",
                         "in": "body",
@@ -1506,13 +1514,10 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Report created successfully",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
+                        "description": "Report created successfully"
                     },
                     "400": {
-                        "description": "Invalid request body or validation error",
+                        "description": "Invalid request body",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -1536,7 +1541,7 @@ const docTemplate = `{
                         }
                     },
                     "422": {
-                        "description": "Unprocessable entity: Validation error",
+                        "description": "Validation error",
                         "schema": {
                             "allOf": [
                                 {
@@ -2408,14 +2413,8 @@ const docTemplate = `{
         "report.CreateRequestBodyReport": {
             "type": "object",
             "properties": {
-                "post_id": {
-                    "type": "integer"
-                },
                 "reason": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
                 }
             }
         },

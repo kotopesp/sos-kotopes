@@ -140,12 +140,8 @@ definitions:
     type: object
   report.CreateRequestBodyReport:
     properties:
-      post_id:
-        type: integer
       reason:
         type: string
-      user_id:
-        type: integer
     type: object
   role.DeleteRole:
     properties:
@@ -1171,12 +1167,18 @@ paths:
       summary: Get favourite posts of user by id
       tags:
       - post
-  /reports:
+  /reports/{post_id}:
     post:
       consumes:
       - application/json
       description: Create a report for a specific post
       parameters:
+      - description: Post ID
+        in: path
+        minimum: 1
+        name: post_id
+        required: true
+        type: integer
       - description: Report data
         in: body
         name: body
@@ -1188,10 +1190,8 @@ paths:
       responses:
         "201":
           description: Report created successfully
-          schema:
-            $ref: '#/definitions/model.Response'
         "400":
-          description: Invalid request body or validation error
+          description: Invalid request body
           schema:
             $ref: '#/definitions/model.Response'
         "401":
@@ -1207,7 +1207,7 @@ paths:
           schema:
             $ref: '#/definitions/model.Response'
         "422":
-          description: 'Unprocessable entity: Validation error'
+          description: Validation error
           schema:
             allOf:
             - $ref: '#/definitions/model.Response'

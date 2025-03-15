@@ -1,9 +1,8 @@
 package report
 
 type (
+	// CreateRequestBodyReport - represent body of create report request.
 	CreateRequestBodyReport struct {
-		UserID int    `json:"user_id"`
-		PostID int    `json:"post_id"`
 		Reason string `json:"reason"`
 	}
 )

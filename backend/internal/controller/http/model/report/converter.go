@@ -2,13 +2,14 @@ package report
 
 import "github.com/kotopesp/sos-kotopes/internal/core"
 
-func (r *CreateRequestBodyReport) ToCoreReport() core.Report {
+// ToCoreReport - converts CreateRequestBodyReport to core.Report structure.
+func (r *CreateRequestBodyReport) ToCoreReport(userID, postID int) core.Report {
 	if r == nil {
 		return core.Report{}
 	}
 	return core.Report{
-		PostID: r.PostID,
-		UserID: r.UserID,
+		UserID: userID,
+		PostID: postID,
 		Reason: r.Reason,
 	}
 }
