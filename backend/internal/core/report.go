@@ -8,11 +8,11 @@ import (
 // Report consists of counter for report amount and reasons why post was reported.
 type (
 	Report struct {
-		ID        int       `gorm:"column:id;primaryKey"`
-		PostID    int       `gorm:"column:post_id"`
-		UserID    int       `gorm:"column:user_id"`
-		Reason    string    `gorm:"column:reason"`
-		CreatedAt time.Time `gorm:"column:created_at"`
+		ID        int          `gorm:"column:id;primaryKey"`
+		PostID    int          `gorm:"column:post_id"`
+		UserID    int          `gorm:"column:user_id"`
+		Reason    ReportReason `gorm:"column:reason"`
+		CreatedAt time.Time    `gorm:"column:created_at"`
 	}
 
 	ReportStore interface {
@@ -24,6 +24,14 @@ type (
 	ReportService interface {
 		CreateReport(ctx context.Context, report Report) (err error)
 	}
+)
+
+// ReportReason is custom type that represents values that can be used for report reasons.
+type ReportReason string
+
+const (
+	Spam           ReportReason = "spam"
+	ViolentContent ReportReason = "violent_content"
 )
 
 // ReportAmountThreshold defines the maximum number of reports a post can receive before it is moved to moderation.

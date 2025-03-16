@@ -10,6 +10,6 @@ func (r *CreateRequestBodyReport) ToCoreReport(userID, postID int) core.Report {
 	return core.Report{
 		UserID: userID,
 		PostID: postID,
-		Reason: r.Reason,
+		Reason: core.ReportReason(r.Reason),
 	}
 }
