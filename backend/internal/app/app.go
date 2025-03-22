@@ -8,6 +8,7 @@ import (
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/migrate"
+	moderatorsService "github.com/kotopesp/sos-kotopes/internal/service/moderator"
 	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	reportservice "github.com/kotopesp/sos-kotopes/internal/service/report"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
@@ -29,11 +30,12 @@ import (
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
+	moderatorstore "github.com/kotopesp/sos-kotopes/internal/store/moderator"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 	reportstore "github.com/kotopesp/sos-kotopes/internal/store/report"
-	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	rolesstore "github.com/kotopesp/sos-kotopes/internal/store/role"
 	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 )
 
@@ -59,14 +61,14 @@ func Run(cfg *config.Config) {
 	// Stores
 	userStore := user.New(pg)
 	commentStore := commentstore.New(pg)
-	roleStore := rolesStore.New(pg)
+	roleStore := rolesstore.New(pg)
 	favouriteUserStore := userFavouriteStore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 	refreshSessionStore := refreshsessionstore.New(pg)
 	reportStore := reportstore.New(pg)
-
+	moderatorStore := moderatorstore.New(pg)
 	// Services
 	commentService := commentservice.New(
 		commentStore,
@@ -75,6 +77,7 @@ func Run(cfg *config.Config) {
 	roleService := rolesService.New(roleStore, userStore)
 	reportService := reportservice.NewReportService(reportStore, postStore)
 	userService := usersService.New(userStore, favouriteUserStore)
+	moderatorService := moderatorsService.New(moderatorStore, postStore, reportStore)
 	authService := auth.New(
 		userStore,
 		refreshSessionStore,
@@ -113,6 +116,7 @@ func Run(cfg *config.Config) {
 		userService,
 		roleService,
 		reportService,
+		moderatorService,
 		formValidator,
 	)
 

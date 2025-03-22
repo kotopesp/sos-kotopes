@@ -1,9 +1,11 @@
+CREATE TYPE report_reason AS ENUM ('spam','violent_content','violent_speech');
+
 CREATE TABLE IF NOT EXISTS reports
 (
     id SERIAL PRIMARY KEY,
     user_id INTEGER   NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     post_id INTEGER NOT NULL REFERENCES posts (id) ON DELETE CASCADE,
-    reason 	     VARCHAR(255) NOT NULL,
+    reason 	     report_reason NOT NULL,
     created_at    TIMESTAMP      NOT NULL DEFAULT NOW()
 );
 

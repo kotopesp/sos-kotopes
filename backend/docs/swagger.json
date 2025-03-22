@@ -208,6 +208,262 @@
                 }
             }
         },
+        "/moderation/posts": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Returns a list of posts awaiting moderation along with the reasons they were reported",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "moderation"
+                ],
+                "summary": "Get posts for moderation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sorting by update time",
+                        "name": "filter",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/moderator.PostsForModerationResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "204": {
+                        "description": "No posts waiting for moderation",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "User is not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/moderation/posts/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Deletes a post",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "moderation"
+                ],
+                "summary": "Delete a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the post to delete",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post successfully deleted"
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "User is not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Approves a post and removes all associated reports",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "moderation"
+                ],
+                "summary": "Approve a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the post to approve",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post successfully approved"
+                    },
+                    "400": {
+                        "description": "Invalid request parameters",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "User is not authorized",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/validator.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/posts": {
             "get": {
                 "description": "Get all posts",
@@ -2322,6 +2578,20 @@
                 "err"
             ]
         },
+        "moderator.PostsForModerationResponse": {
+            "type": "object",
+            "properties": {
+                "post": {
+                    "$ref": "#/definitions/post.PostResponse"
+                },
+                "reasons": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "pagination.Pagination": {
             "type": "object",
             "properties": {
@@ -2406,9 +2676,17 @@
         },
         "report.CreateRequestBodyReport": {
             "type": "object",
+            "required": [
+                "reason"
+            ],
             "properties": {
                 "reason": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "spam",
+                        "violent_speech",
+                        "violent_content"
+                    ]
                 }
             }
         },

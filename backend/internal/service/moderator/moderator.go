@@ -29,7 +29,7 @@ func (s *service) GetModerator(ctx context.Context, id int) (moderator core.Mode
 	return moderator, nil
 }
 
-// GetPostsForModeration - returns one post which was the earliest to be reported and waiting for moderation now
+// GetPostsForModeration - returns a list of posts that were sorted by the time of the report in order core.Filter.
 func (s *service) GetPostsForModeration(ctx context.Context, filter core.Filter) (moderationPosts []core.PostForModeration, err error) {
 	posts, err := s.postStore.GetPostsForModeration(ctx, filter)
 	if err != nil {
@@ -55,4 +55,25 @@ func (s *service) GetPostsForModeration(ctx context.Context, filter core.Filter)
 	}
 
 	return moderationPosts, nil
+}
+
+// DeletePost - method that allows moderator to delete posts.
+func (s *service) DeletePost(ctx context.Context, id int) (err error) {
+	err = s.postStore.DeletePost(ctx, id)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) ApprovePost(ctx context.Context, postID int) (err error) {
+	err = s.reportStore.DeleteAllReportsForPost(ctx, postID)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	return nil
 }

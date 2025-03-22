@@ -83,6 +83,15 @@ definitions:
     x-enum-varnames:
     - success
     - err
+  moderator.PostsForModerationResponse:
+    properties:
+      post:
+        $ref: '#/definitions/post.PostResponse'
+      reasons:
+        items:
+          type: string
+        type: array
+    type: object
   pagination.Pagination:
     properties:
       current_page:
@@ -141,7 +150,13 @@ definitions:
   report.CreateRequestBodyReport:
     properties:
       reason:
+        enum:
+        - spam
+        - violent_speech
+        - violent_content
         type: string
+    required:
+    - reason
     type: object
   role.DeleteRole:
     properties:
@@ -386,6 +401,161 @@ paths:
       summary: Refresh token
       tags:
       - auth
+  /moderation/posts:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of posts awaiting moderation along with the reasons
+        they were reported
+      parameters:
+      - description: Sorting by update time
+        in: query
+        name: filter
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/moderator.PostsForModerationResponse'
+                  type: array
+              type: object
+        "204":
+          description: No posts waiting for moderation
+          schema:
+            $ref: '#/definitions/model.Response'
+        "400":
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: User is not authorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Access denied
+          schema:
+            $ref: '#/definitions/model.Response'
+        "422":
+          description: Validation error
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Get posts for moderation
+      tags:
+      - moderation
+  /moderation/posts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a post
+      parameters:
+      - description: ID of the post to delete
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Post successfully deleted
+        "400":
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: User is not authorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Access denied
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Post not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "422":
+          description: Validation error
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete a post
+      tags:
+      - moderation
+    patch:
+      consumes:
+      - application/json
+      description: Approves a post and removes all associated reports
+      parameters:
+      - description: ID of the post to approve
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Post successfully approved
+        "400":
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: User is not authorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Access denied
+          schema:
+            $ref: '#/definitions/model.Response'
+        "422":
+          description: Validation error
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Approve a post
+      tags:
+      - moderation
   /posts:
     get:
       consumes:

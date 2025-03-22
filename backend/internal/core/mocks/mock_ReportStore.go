@@ -69,6 +69,53 @@ func (_c *MockReportStore_CreateReport_Call) RunAndReturn(run func(context.Conte
 	return _c
 }
 
+// DeleteAllReportsForPost provides a mock function with given fields: ctx, postID
+func (_m *MockReportStore) DeleteAllReportsForPost(ctx context.Context, postID int) error {
+	ret := _m.Called(ctx, postID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteAllReportsForPost")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, postID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockReportStore_DeleteAllReportsForPost_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteAllReportsForPost'
+type MockReportStore_DeleteAllReportsForPost_Call struct {
+	*mock.Call
+}
+
+// DeleteAllReportsForPost is a helper method to define mock.On call
+//   - ctx context.Context
+//   - postID int
+func (_e *MockReportStore_Expecter) DeleteAllReportsForPost(ctx interface{}, postID interface{}) *MockReportStore_DeleteAllReportsForPost_Call {
+	return &MockReportStore_DeleteAllReportsForPost_Call{Call: _e.mock.On("DeleteAllReportsForPost", ctx, postID)}
+}
+
+func (_c *MockReportStore_DeleteAllReportsForPost_Call) Run(run func(ctx context.Context, postID int)) *MockReportStore_DeleteAllReportsForPost_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int))
+	})
+	return _c
+}
+
+func (_c *MockReportStore_DeleteAllReportsForPost_Call) Return(err error) *MockReportStore_DeleteAllReportsForPost_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockReportStore_DeleteAllReportsForPost_Call) RunAndReturn(run func(context.Context, int) error) *MockReportStore_DeleteAllReportsForPost_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetReportReasonsForPost provides a mock function with given fields: ctx, postID
 func (_m *MockReportStore) GetReportReasonsForPost(ctx context.Context, postID int) ([]string, error) {
 	ret := _m.Called(ctx, postID)

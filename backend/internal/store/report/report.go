@@ -61,8 +61,21 @@ func (s *store) GetReportReasonsForPost(ctx context.Context, postID int) (reason
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
 
-		return nil, core.ErrGettingReportReasons
+		return []string{}, core.ErrGettingReportReasons
 	}
 
 	return reasons, nil
+}
+
+// DeleteAllReportsForPost - delete all report records that has specific post ID.
+func (s *store) DeleteAllReportsForPost(ctx context.Context, postID int) (err error) {
+	if err = s.DB.WithContext(ctx).
+		Where("post_id = ?", postID).
+		Delete(&core.Report{}).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+
+		return core.ErrDeleteReports
+	}
+
+	return nil
 }

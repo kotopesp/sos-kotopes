@@ -50,7 +50,7 @@ var (
 	ErrGettingReportReasons = errors.New("error getting report reasons")
 
 	// report errors
-	ErrToCreateReport        = errors.New("error creating report")
-	ErrDuplicateReport       = errors.New("duplicate report")
-	ErrGettingReportResponse = errors.New("error getting report response")
+	ErrToCreateReport  = errors.New("error creating report")
+	ErrDuplicateReport = errors.New("duplicate report")
+	ErrDeleteReports   = errors.New("error deleting reports")
 )

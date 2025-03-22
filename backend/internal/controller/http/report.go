@@ -46,7 +46,7 @@ func (r *Router) createReport(ctx *fiber.Ctx) error {
 
 	var createReport report.CreateRequestBodyReport
 
-	fiberError, parseOrValidationError = parseQueryAndValidate(ctx, r.formValidator, &createReport)
+	fiberError, parseOrValidationError = parseBodyAndValidate(ctx, r.formValidator, &createReport)
 	if fiberError != nil || parseOrValidationError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError

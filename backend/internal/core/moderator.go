@@ -19,6 +19,8 @@ type (
 	ModeratorService interface {
 		GetModerator(ctx context.Context, id int) (moderator Moderator, err error)
 		GetPostsForModeration(ctx context.Context, filter Filter) (posts []PostForModeration, err error)
+		DeletePost(ctx context.Context, id int) (err error)
+		ApprovePost(ctx context.Context, postID int) (err error)
 	}
 )
 

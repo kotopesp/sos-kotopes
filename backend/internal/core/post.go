@@ -77,6 +77,7 @@ type (
 		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
+		BuildPostDetailsList(ctx context.Context, posts []Post, total int) ([]PostDetails, error)
 		PostFavouriteService
 	}
 )

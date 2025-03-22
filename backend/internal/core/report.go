@@ -19,6 +19,7 @@ type (
 		CreateReport(ctx context.Context, report Report) (err error)
 		GetReportsCount(ctx context.Context, postID int) (int, error)
 		GetReportReasonsForPost(ctx context.Context, postID int) ([]string, error)
+		DeleteAllReportsForPost(ctx context.Context, postID int) (err error)
 	}
 
 	ReportService interface {
@@ -32,6 +33,7 @@ type ReportReason string
 const (
 	Spam           ReportReason = "spam"
 	ViolentContent ReportReason = "violent_content"
+	ViolentSpeech  ReportReason = "violent_speech"
 )
 
 // ReportAmountThreshold defines the maximum number of reports a post can receive before it is moved to moderation.

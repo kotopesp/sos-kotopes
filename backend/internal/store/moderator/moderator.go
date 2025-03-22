@@ -20,7 +20,7 @@ func New(pg *postgres.Postgres) core.ModeratorStore {
 	return &store{pg}
 }
 
-// GetModeratorByID - retrieves the moderator structure by their id.
+// GetModeratorByID - returns the moderator structure by their id.
 func (s *store) GetModeratorByID(ctx context.Context, id int) (moderator core.Moderator, err error) {
 	err = s.DB.WithContext(ctx).
 		Table(moderator.TableName()).
@@ -39,7 +39,7 @@ func (s *store) GetModeratorByID(ctx context.Context, id int) (moderator core.Mo
 	return moderator, nil
 }
 
-// CreateModerator creates moderator
+// CreateModerator creates moderator.
 func (s *store) CreateModerator(ctx context.Context, moderator core.Moderator) (err error) {
 	moderator.CreatedAt = time.Now().UTC()
 

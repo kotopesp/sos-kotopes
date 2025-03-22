@@ -18,6 +18,7 @@ type Router struct {
 	userService          core.UserService
 	roleService          core.RoleService
 	reportService        core.ReportService
+	moderatorService     core.ModeratorService
 	userFavouriteService core.UserFavouriteService
 }
 
@@ -29,17 +30,20 @@ func NewRouter(
 	userService core.UserService,
 	roleService core.RoleService,
 	reportService core.ReportService,
+	moderatorService core.ModeratorService,
 	formValidator validator.FormValidatorService,
+
 ) {
 	router := &Router{
-		app:            app,
-		formValidator:  formValidator,
-		authService:    authService,
-		postService:    postService,
-		userService:    userService,
-		roleService:    roleService,
-		commentService: commentService,
-		reportService:  reportService,
+		app:              app,
+		formValidator:    formValidator,
+		authService:      authService,
+		postService:      postService,
+		userService:      userService,
+		roleService:      roleService,
+		commentService:   commentService,
+		moderatorService: moderatorService,
+		reportService:    reportService,
 	}
 
 	router.initRequestMiddlewares()
@@ -103,6 +107,11 @@ func (r *Router) initRoutes() {
 
 	// reports
 	v1.Post("/reports/:post_id", r.protectedMiddleware(), r.createReport)
+
+	// moderators
+	v1.Get("/moderation/posts", r.protectedMiddleware(), r.getReportedPosts)
+	v1.Delete("/moderators/posts/{id}", r.protectedMiddleware(), r.deletePostByModerator)
+	v1.Patch("/moderators/posts/{id}", r.protectedMiddleware(), r.approvePostByModerator)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests
