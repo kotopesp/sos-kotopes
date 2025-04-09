@@ -106,12 +106,12 @@ func (r *Router) initRoutes() {
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
 
 	// reports
-	v1.Post("/reports/:post_id", r.protectedMiddleware(), r.createReport)
+	v1.Post("/reports/:id", r.protectedMiddleware(), r.createReport)
 
 	// moderators
 	v1.Get("/moderation/posts", r.protectedMiddleware(), r.getReportedPosts)
-	v1.Delete("/moderators/posts/{id}", r.protectedMiddleware(), r.deletePostByModerator)
-	v1.Patch("/moderators/posts/{id}", r.protectedMiddleware(), r.approvePostByModerator)
+	v1.Delete("/moderation/posts/:id", r.protectedMiddleware(), r.deletePostByModerator)
+	v1.Patch("/moderation/posts/:id", r.protectedMiddleware(), r.approvePostByModerator)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

@@ -47,9 +47,16 @@ func (r *Router) getReportedPosts(ctx *fiber.Ctx) error {
 
 	var postsRequest moderator.GetPostsForModerationRequest
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &postsRequest)
+
 	if fiberError != nil || parseOrValidationError != nil {
-		logger.Log().Error(ctx.UserContext(), fiberError.Error())
-		return fiberError
+		if fiberError != nil {
+			logger.Log().Error(ctx.UserContext(), fiberError.Error())
+			return fiberError
+		}
+
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid query parameters"))
+
 	}
 
 	postAndReasons, err := r.moderatorService.GetPostsForModeration(ctx.UserContext(), core.Filter(postsRequest.Filter))

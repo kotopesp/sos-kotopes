@@ -1337,7 +1337,7 @@ paths:
       summary: Get favourite posts of user by id
       tags:
       - post
-  /reports/{post_id}:
+  /reports/{id}:
     post:
       consumes:
       - application/json
@@ -1346,7 +1346,7 @@ paths:
       - description: Post ID
         in: path
         minimum: 1
-        name: post_id
+        name: id
         required: true
         type: integer
       - description: Report data

@@ -24,7 +24,7 @@ func New(pg *postgres.Postgres) core.ModeratorStore {
 func (s *store) GetModeratorByID(ctx context.Context, id int) (moderator core.Moderator, err error) {
 	err = s.DB.WithContext(ctx).
 		Table(moderator.TableName()).
-		Where("id = ?", id).
+		Where("user_id = ?", id).
 		First(&moderator).Error
 
 	if err != nil {

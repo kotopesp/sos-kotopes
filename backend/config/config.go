@@ -50,7 +50,7 @@ type (
 func NewConfig() (*Config, error) {
 	port := flag.String("port", "localhost:8080", "port")
 	logLevel := flag.String("log_level", string(logger.InfoLevel), "logger level")
-	dbURL := flag.String("db_url", "", "url for connection to database")
+	dbURL := flag.String("db_url", "host=localhost port=5432 user=postgres password=Dabzelosiqqq123 ", "url for connection to database")
 	tlsCert := flag.String("tls_cert", "./tls/cert.pem", "path to tls certificate")
 	tlsKey := flag.String("tls_key", "./tls/key.pem", "path to tls key")
 	jwtSecret := flag.String("jwt_secret", "secret", "key that used to sign jwt")

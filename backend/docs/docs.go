@@ -1731,7 +1731,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/reports/{post_id}": {
+        "/reports/{id}": {
             "post": {
                 "security": [
                     {
@@ -1754,7 +1754,7 @@ const docTemplate = `{
                         "minimum": 1,
                         "type": "integer",
                         "description": "Post ID",
-                        "name": "post_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
