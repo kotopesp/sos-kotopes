@@ -69,6 +69,12 @@ func (s *service) DeletePost(ctx context.Context, id int) (err error) {
 }
 
 func (s *service) ApprovePost(ctx context.Context, postID int) (err error) {
+	err = s.postStore.ApprovePostFromModeration(ctx, postID)
+	if err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
 	err = s.reportStore.DeleteAllReportsForPost(ctx, postID)
 	if err != nil {
 		logger.Log().Error(ctx, err.Error())

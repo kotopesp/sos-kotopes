@@ -200,3 +200,21 @@ func (s *store) GetPostsForModeration(ctx context.Context, filter core.Filter) (
 
 	return posts, nil
 }
+
+func (s *store) ApprovePostFromModeration(ctx context.Context, postID int) (err error) {
+	update := map[string]interface{}{
+		"status":     core.Published,
+		"updated_at": time.Now().UTC(),
+	}
+
+	if err = s.DB.WithContext(ctx).
+		Model(&core.Post{}).
+		Where("id = ?", postID).
+		Updates(update).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+
+		return err
+	}
+
+	return nil
+}

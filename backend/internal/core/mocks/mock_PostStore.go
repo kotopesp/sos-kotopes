@@ -22,6 +22,53 @@ func (_m *MockPostStore) EXPECT() *MockPostStore_Expecter {
 	return &MockPostStore_Expecter{mock: &_m.Mock}
 }
 
+// ApprovePostFromModeration provides a mock function with given fields: ctx, postID
+func (_m *MockPostStore) ApprovePostFromModeration(ctx context.Context, postID int) error {
+	ret := _m.Called(ctx, postID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ApprovePostFromModeration")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, postID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockPostStore_ApprovePostFromModeration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ApprovePostFromModeration'
+type MockPostStore_ApprovePostFromModeration_Call struct {
+	*mock.Call
+}
+
+// ApprovePostFromModeration is a helper method to define mock.On call
+//   - ctx context.Context
+//   - postID int
+func (_e *MockPostStore_Expecter) ApprovePostFromModeration(ctx interface{}, postID interface{}) *MockPostStore_ApprovePostFromModeration_Call {
+	return &MockPostStore_ApprovePostFromModeration_Call{Call: _e.mock.On("ApprovePostFromModeration", ctx, postID)}
+}
+
+func (_c *MockPostStore_ApprovePostFromModeration_Call) Run(run func(ctx context.Context, postID int)) *MockPostStore_ApprovePostFromModeration_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int))
+	})
+	return _c
+}
+
+func (_c *MockPostStore_ApprovePostFromModeration_Call) Return(err error) *MockPostStore_ApprovePostFromModeration_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockPostStore_ApprovePostFromModeration_Call) RunAndReturn(run func(context.Context, int) error) *MockPostStore_ApprovePostFromModeration_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreatePost provides a mock function with given fields: ctx, post
 func (_m *MockPostStore) CreatePost(ctx context.Context, post core.Post) (core.Post, error) {
 	ret := _m.Called(ctx, post)
