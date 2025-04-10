@@ -39,7 +39,6 @@ func TestGetModerator_Failure(t *testing.T) {
 	mockMod.AssertExpectations(t)
 }
 
-// Testing that some
 func TestGetPostsForModeration_Success(t *testing.T) {
 	ctx := context.TODO()
 	mockPosts := new(mocks.MockPostStore)

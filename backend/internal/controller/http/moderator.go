@@ -47,16 +47,16 @@ func (r *Router) getReportedPosts(ctx *fiber.Ctx) error {
 
 	var postsRequest moderator.GetPostsForModerationRequest
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &postsRequest)
+	if fiberError != nil {
+		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 
-	if fiberError != nil || parseOrValidationError != nil {
-		if fiberError != nil {
-			logger.Log().Error(ctx.UserContext(), fiberError.Error())
-			return fiberError
-		}
+		return fiberError
+	}
 
+	if parseOrValidationError != nil {
 		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
-		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse("Invalid query parameters"))
 
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse("Invalid query parameters"))
 	}
 
 	postAndReasons, err := r.moderatorService.GetPostsForModeration(ctx.UserContext(), core.Filter(postsRequest.Filter))
@@ -118,10 +118,16 @@ func (r *Router) deletePostByModerator(ctx *fiber.Ctx) error {
 
 	var deleteRequest moderator.ModeratedPostRequest
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &deleteRequest)
-	if fiberError != nil || parseOrValidationError != nil {
+	if fiberError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 
 		return fiberError
+	}
+
+	if parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
+
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse("Invalid query parameters"))
 	}
 
 	err = r.moderatorService.DeletePost(ctx.UserContext(), deleteRequest.PostID)
@@ -169,16 +175,23 @@ func (r *Router) approvePostByModerator(ctx *fiber.Ctx) error {
 
 	var approveRequest moderator.ModeratedPostRequest
 	fiberError, parseOrValidationError := parseParamsAndValidate(ctx, r.formValidator, &approveRequest)
-	if fiberError != nil || parseOrValidationError != nil {
+	if fiberError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 
 		return fiberError
 	}
 
+	if parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
+
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse("Invalid query parameters"))
+	}
 	err = r.moderatorService.ApprovePost(ctx.UserContext(), approveRequest.PostID)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-
+		if errors.Is(err, core.ErrPostNotFound) {
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		}
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 

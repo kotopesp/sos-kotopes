@@ -12,9 +12,11 @@ import (
 
 type (
 	appDependencies struct {
-		authService    *mocks.MockAuthService
-		postService    *mocks.MockPostService
-		commentService *mocks.MockCommentService
+		authService      *mocks.MockAuthService
+		postService      *mocks.MockPostService
+		commentService   *mocks.MockCommentService
+		moderatorService *mocks.MockModeratorService
+		reportService    *mocks.MockReportService
 	}
 )
 
@@ -51,8 +53,10 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	)
 
 	return app, appDependencies{
-		authService:    mockAuthService,
-		postService:    mockPostService,
-		commentService: mockCommentService,
+		authService:      mockAuthService,
+		postService:      mockPostService,
+		commentService:   mockCommentService,
+		moderatorService: mockModeratorService,
+		reportService:    mockReportService,
 	}
 }

@@ -47,9 +47,16 @@ func (r *Router) createReport(ctx *fiber.Ctx) error {
 	var createReport report.CreateRequestBodyReport
 
 	fiberError, parseOrValidationError = parseBodyAndValidate(ctx, r.formValidator, &createReport)
-	if fiberError != nil || parseOrValidationError != nil {
+	if fiberError != nil {
 		logger.Log().Error(ctx.UserContext(), fiberError.Error())
+
 		return fiberError
+	}
+
+	if parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
+
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse("Invalid query parameters"))
 	}
 
 	coreReport := createReport.ToCoreReport(userID, pathParams.PostID)

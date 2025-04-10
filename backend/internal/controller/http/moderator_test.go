@@ -1,0 +1,438 @@
+package http
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func TestGetReportedPosts(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const baseRoute = "/api/v1/moderation/posts"
+
+	tests := []struct {
+		name          string
+		token         string
+		queryParams   string
+		mockBehaviour func()
+		wantCode      int
+		wantResponse  bool
+	}{
+		{
+			name:        "success with ASC filter",
+			token:       token,
+			queryParams: "filter=ASC",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					GetPostsForModeration(mock.Anything, core.Filter("ASC")).
+					Return([]core.PostForModeration{
+						{Post: core.Post{ID: 1}, Reasons: []string{"spam"}},
+					}, nil).Once()
+
+				dependencies.postService.EXPECT().
+					BuildPostDetailsList(mock.Anything, mock.Anything, mock.Anything).
+					Return([]core.PostDetails{{Post: core.Post{ID: 1}}}, nil).Once()
+			},
+			wantCode:     http.StatusOK,
+			wantResponse: true,
+		},
+		{
+			name:        "success with DESC filter",
+			token:       token,
+			queryParams: "filter=DESC",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					GetPostsForModeration(mock.Anything, core.Filter("DESC")).
+					Return([]core.PostForModeration{}, nil).Once()
+
+				dependencies.postService.EXPECT().
+					BuildPostDetailsList(mock.Anything, mock.Anything, mock.Anything).
+					Return([]core.PostDetails{}, nil).Once()
+			},
+			wantCode:     http.StatusOK,
+			wantResponse: true,
+		},
+		{
+			name:          "unauthorized - missing token",
+			token:         "",
+			queryParams:   "filter=ASC",
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnauthorized,
+		},
+		{
+			name:        "forbidden - not a moderator",
+			token:       token,
+			queryParams: "filter=ASC",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, core.ErrNoSuchModerator).Once()
+			},
+			wantCode: http.StatusForbidden,
+		},
+		{
+			name:        "validation error - missing filter",
+			token:       token,
+			queryParams: "",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:        "validation error - invalid filter value",
+			token:       token,
+			queryParams: "filter=INVALID",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:        "bad request - malformed query params",
+			token:       token,
+			queryParams: "%%%",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:        "no content - no posts waiting",
+			token:       token,
+			queryParams: "filter=ASC",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					GetPostsForModeration(mock.Anything, core.Filter("ASC")).
+					Return(nil, core.ErrNoPostsWaitingForModeration).Once()
+			},
+			wantCode: http.StatusNoContent,
+		},
+		{
+			name:        "internal error - get posts failed",
+			token:       token,
+			queryParams: "filter=ASC",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					GetPostsForModeration(mock.Anything, core.Filter("ASC")).
+					Return(nil, errors.New("db error")).Once()
+			},
+			wantCode: http.StatusInternalServerError,
+		},
+		{
+			name:        "internal error - build details failed",
+			token:       token,
+			queryParams: "filter=ASC",
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					GetPostsForModeration(mock.Anything, core.Filter("ASC")).
+					Return([]core.PostForModeration{{Post: core.Post{ID: 1}}}, nil).Once()
+
+				dependencies.postService.EXPECT().
+					BuildPostDetailsList(mock.Anything, mock.Anything, mock.Anything).
+					Return(nil, errors.New("build error")).Once()
+			},
+			wantCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.mockBehaviour()
+
+			url := baseRoute
+			if tt.queryParams != "" {
+				url = fmt.Sprintf("%s?%s", baseRoute, tt.queryParams)
+			}
+
+			req := httptest.NewRequest(http.MethodGet, url, http.NoBody)
+			if tt.token != "" {
+				req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tt.token))
+			}
+
+			resp, err := app.Test(req)
+			require.NoError(t, err)
+
+			body, err := io.ReadAll(resp.Body)
+			require.NoError(t, err)
+			_ = resp.Body.Close()
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+
+			if tt.wantCode == http.StatusOK {
+				var data model.Response
+				err = json.Unmarshal(body, &data)
+				require.NoError(t, err)
+
+			}
+		})
+	}
+}
+func TestDeletePostByModerator(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const route = "/api/v1/moderation/posts/%d"
+
+	tests := []struct {
+		name          string
+		token         string
+		postID        int
+		mockBehaviour func()
+		wantCode      int
+	}{
+		{
+			name:   "success",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					DeletePost(mock.Anything, mock.Anything).
+					Return(nil).Once()
+			},
+			wantCode: http.StatusOK,
+		},
+		{
+			name:   "unauthorized",
+			token:  "",
+			postID: 1,
+			mockBehaviour: func() {
+			},
+			wantCode: http.StatusUnauthorized,
+		},
+		{
+			name:   "forbidden",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, core.ErrNoSuchModerator).Once()
+			},
+			wantCode: http.StatusForbidden,
+		},
+		{
+			name:   "validation error",
+			token:  token,
+			postID: -1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:   "post not found",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					DeletePost(mock.Anything, mock.Anything).
+					Return(core.ErrPostNotFound).Once()
+			},
+			wantCode: http.StatusNotFound,
+		},
+		{
+			name:   "internal server error",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					DeletePost(mock.Anything, mock.Anything).
+					Return(errors.New("internal server error")).Once()
+			},
+			wantCode: http.StatusInternalServerError,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.mockBehaviour()
+
+			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf(route, tt.postID), http.NoBody)
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tt.token))
+
+			resp, err := app.Test(req, -1)
+			require.NoError(t, err)
+
+			body, err := io.ReadAll(resp.Body)
+			require.NoError(t, err)
+			err = resp.Body.Close()
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+
+			if tt.wantCode != http.StatusOK {
+				var data model.Response
+				err = json.Unmarshal(body, &data)
+				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestApprovePostByModerator(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const route = "/api/v1/moderation/posts/%d"
+
+	tests := []struct {
+		name          string
+		token         string
+		postID        int
+		mockBehaviour func()
+		wantCode      int
+	}{
+		{
+			name:   "success",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					ApprovePost(mock.Anything, mock.Anything).
+					Return(nil).Once()
+			},
+			wantCode: http.StatusOK,
+		},
+		{
+			name:   "unauthorized",
+			token:  "",
+			postID: 1,
+			mockBehaviour: func() {
+			},
+			wantCode: http.StatusUnauthorized,
+		},
+		{
+			name:   "forbidden",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, core.ErrNoSuchModerator).Once()
+			},
+			wantCode: http.StatusForbidden,
+		},
+		{
+			name:   "validation error",
+			token:  token,
+			postID: -1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+			},
+			wantCode: http.StatusUnprocessableEntity,
+		},
+		{
+			name:   "approve post failed",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					ApprovePost(mock.Anything, mock.Anything).
+					Return(errors.New("internal error")).Once()
+			},
+			wantCode: http.StatusInternalServerError,
+		},
+		{
+			name:   "post not found",
+			token:  token,
+			postID: 1,
+			mockBehaviour: func() {
+				dependencies.moderatorService.EXPECT().
+					GetModerator(mock.Anything, mock.Anything).
+					Return(core.Moderator{}, nil).Once()
+
+				dependencies.moderatorService.EXPECT().
+					ApprovePost(mock.Anything, mock.Anything).
+					Return(core.ErrPostNotFound).Once()
+			},
+			wantCode: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.mockBehaviour()
+
+			req := httptest.NewRequest(http.MethodPatch, fmt.Sprintf(route, tt.postID), http.NoBody)
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", tt.token))
+
+			resp, err := app.Test(req, -1)
+			require.NoError(t, err)
+
+			body, err := io.ReadAll(resp.Body)
+			require.NoError(t, err)
+			err = resp.Body.Close()
+			require.NoError(t, err)
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+
+			if tt.wantCode != http.StatusOK {
+				var data model.Response
+				err = json.Unmarshal(body, &data)
+				require.NoError(t, err)
+			}
+		})
+	}
+}
