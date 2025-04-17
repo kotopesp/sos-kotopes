@@ -50,21 +50,10 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 // @ID				create-seeker
 // @Accept			json
 // @Produce		json
-// @Param			animal_type			query		string	false	"Animal type"
-// @Param			description			query		string	false	"Description"
-// @Param			location			query		string	false	"Location"
-// @Param			equipment_rental	query		int		false	"Equipment rental"
-// @Param			have_metal_cage		query		bool	false	"Have metal cage"
-// @Param			have_plastic_cage	query		bool	false	"Have plastic cage"
-// @Param			have_net			query		bool	false	"Have net"
-// @Param			have_ladder			query		bool	false	"Have ladder"
-// @Param			have_other			query		string	false	"Have other"
-// @Param			have_car			query		bool	false	"Have car"
-// @Param			price				query		int		false	"Price"
-// @Param			willingness_carry	query		string	false	"Price"
-// @Success		200					{object}	model.Response{data=seeker.ResponseSeeker}
-// @Failure		400					{object}	model.Response
-// @Failure		500					{object}	model.Response
+// @Param			request	body		seeker.CreateSeeker	false	"Seeker params"
+// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+// @Failure		400		{object}	model.Response
+// @Failure		500		{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/seekers [post]
 func (r *Router) createSeeker(ctx *fiber.Ctx) error {
@@ -75,14 +64,15 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 	}
 
 	var createSeeker seeker.CreateSeeker
-	createSeeker.UserID = userID
 
-	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &createSeeker)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &createSeeker)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
 
-	coreSeeker, err := r.seekerService.CreateSeeker(ctx.UserContext(), createSeeker.ToCoreSeeker())
+	coreSeeker := createSeeker.ToCoreSeeker()
+	coreSeeker.UserID = userID
+	coreSeeker, err = r.seekerService.CreateSeeker(ctx.UserContext(), coreSeeker)
 	if err != nil {
 		switch {
 		case errors.Is(err, core.ErrNoSuchUser):
@@ -104,21 +94,10 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 // @ID				update-seeker
 // @Accept			json
 // @Produce		json
-// @Param			animal_type			query		string	false	"Animal type"
-// @Param			description			query		string	false	"Description"
-// @Param			location			query		string	false	"Location"
-// @Param			equipment_rental	query		int		false	"Equipment rental"
-// @Param			have_metal_cage		query		bool	false	"Have metal cage"
-// @Param			have_plastic_cage	query		bool	false	"Have plastic cage"
-// @Param			have_net			query		bool	false	"Have net"
-// @Param			have_ladder			query		bool	false	"Have ladder"
-// @Param			have_other			query		string	false	"Have other"
-// @Param			have_car			query		bool	false	"Have car"
-// @Param			price				query		int		false	"Price"
-// @Param			willingness_carry	query		string	false	"Price"
-// @Success		200					{object}	model.Response{data=seeker.ResponseSeeker}
-// @Failure		400					{object}	model.Response
-// @Failure		500					{object}	model.Response
+// @Param			update	body		seeker.UpdateSeeker	false	"Update seeker"
+// @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
+// @Failure		400		{object}	model.Response
+// @Failure		500		{object}	model.Response
 // @Security		ApiKeyAuthBasic
 // @Router			/seekers/{user_id}  [patch]
 func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
@@ -129,12 +108,12 @@ func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 	}
 
 	var update seeker.UpdateSeeker
-	update.UserID = &userID
-	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &update)
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &update)
 	if fiberError != nil || parseOrValidationError != nil {
 		return fiberError
 	}
 	coreUpdate := update.ToCoreUpdateSeeker()
+	coreUpdate.UserID = &userID
 
 	updatedSeeker, err := r.seekerService.UpdateSeeker(ctx.UserContext(), coreUpdate)
 	if err != nil {

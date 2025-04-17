@@ -1641,76 +1641,12 @@ const docTemplate = `{
                 "operationId": "create-seeker",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Animal type",
-                        "name": "animal_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Description",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Location",
-                        "name": "location",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Equipment rental",
-                        "name": "equipment_rental",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have metal cage",
-                        "name": "have_metal_cage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have plastic cage",
-                        "name": "have_plastic_cage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have net",
-                        "name": "have_net",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have ladder",
-                        "name": "have_ladder",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Have other",
-                        "name": "have_other",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have car",
-                        "name": "have_car",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Price",
-                        "name": "price",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Price",
-                        "name": "willingness_carry",
-                        "in": "query"
+                        "description": "Seeker params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/seeker.CreateSeeker"
+                        }
                     }
                 ],
                 "responses": {
@@ -1879,76 +1815,12 @@ const docTemplate = `{
                 "operationId": "update-seeker",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Animal type",
-                        "name": "animal_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Description",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Location",
-                        "name": "location",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Equipment rental",
-                        "name": "equipment_rental",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have metal cage",
-                        "name": "have_metal_cage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have plastic cage",
-                        "name": "have_plastic_cage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have net",
-                        "name": "have_net",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have ladder",
-                        "name": "have_ladder",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Have other",
-                        "name": "have_other",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Have car",
-                        "name": "have_car",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Price",
-                        "name": "price",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Price",
-                        "name": "willingness_carry",
-                        "in": "query"
+                        "description": "Update seeker",
+                        "name": "update",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/seeker.UpdateSeeker"
+                        }
                     }
                 ],
                 "responses": {
@@ -2907,6 +2779,66 @@ const docTemplate = `{
                 }
             }
         },
+        "seeker.CreateSeeker": {
+            "type": "object",
+            "required": [
+                "animal_type",
+                "equipment_rental",
+                "location",
+                "willingness_carry"
+            ],
+            "properties": {
+                "animal_type": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "equipment_rental": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "have_car": {
+                    "type": "boolean"
+                },
+                "have_ladder": {
+                    "type": "boolean"
+                },
+                "have_metal_cage": {
+                    "type": "boolean"
+                },
+                "have_net": {
+                    "type": "boolean"
+                },
+                "have_other": {
+                    "type": "string"
+                },
+                "have_plastic_cage": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
+                    ]
+                }
+            }
+        },
         "seeker.ResponseSeeker": {
             "type": "object",
             "required": [
@@ -2970,6 +2902,59 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/seeker.ResponseSeeker"
                     }
+                }
+            }
+        },
+        "seeker.UpdateSeeker": {
+            "type": "object",
+            "properties": {
+                "animal_type": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "equipment_rental": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "have_car": {
+                    "type": "boolean"
+                },
+                "have_ladder": {
+                    "type": "boolean"
+                },
+                "have_metal_cage": {
+                    "type": "boolean"
+                },
+                "have_net": {
+                    "type": "boolean"
+                },
+                "have_other": {
+                    "type": "string"
+                },
+                "have_plastic_cage": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
+                    ]
                 }
             }
         },
