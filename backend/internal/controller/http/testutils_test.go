@@ -15,6 +15,7 @@ type (
 		authService    *mocks.MockAuthService
 		postService    *mocks.MockPostService
 		commentService *mocks.MockCommentService
+		seekerService  *mocks.MockSeekersService
 	}
 )
 
@@ -52,5 +53,6 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 		authService:    mockAuthService,
 		postService:    mockPostService,
 		commentService: mockCommentService,
+		seekerService:  mockSeekerService,
 	}
 }

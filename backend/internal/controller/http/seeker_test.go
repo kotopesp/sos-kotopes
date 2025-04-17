@@ -1,0 +1,251 @@
+package http
+
+import (
+	"bytes"
+	"encoding/json"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/seeker"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+	"net/http"
+	"net/http/httptest"
+	"strconv"
+	"testing"
+)
+
+const (
+	validUserID       = 1
+	nonExistentUserID = 999
+)
+
+var mockSeeker = core.Seeker{
+	UserID:           validUserID,
+	AnimalType:       "cat",
+	Description:      "Test description",
+	Location:         "Moscow",
+	EquipmentRental:  500,
+	HaveMetalCage:    true,
+	HavePlasticCage:  true,
+	HaveNet:          true,
+	HaveLadder:       true,
+	HaveOther:        " ",
+	Price:            100,
+	HaveCar:          true,
+	WillingnessCarry: "yes",
+}
+
+var mockCreateSeeker = seeker.CreateSeeker{
+	AnimalType:       "cat",
+	Description:      "Test description",
+	Location:         "Moscow",
+	EquipmentRental:  500,
+	HaveMetalCage:    true,
+	HavePlasticCage:  true,
+	HaveNet:          true,
+	HaveLadder:       true,
+	HaveOther:        " ",
+	Price:            100,
+	HaveCar:          true,
+	WillingnessCarry: "yes",
+}
+
+func TestHttp_GetSeeker(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const route = "/api/v1/seekers/"
+
+	tests := []struct {
+		name         string
+		userID       int
+		request      core.Seeker
+		requestError error
+		wantCode     int
+	}{
+		{
+			name:         "success",
+			userID:       validUserID,
+			request:      mockSeeker,
+			requestError: nil,
+			wantCode:     http.StatusOK,
+		},
+		{
+			name:         "not found",
+			userID:       nonExistentUserID,
+			request:      core.Seeker{},
+			requestError: core.ErrSeekerNotFound,
+			wantCode:     http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dependencies.seekerService.On(
+				"GetSeeker",
+				mock.Anything,
+				mock.Anything,
+			).Return(mockSeeker, tt.requestError).Once()
+
+			req := httptest.NewRequest(http.MethodGet, route+strconv.Itoa(tt.userID), nil)
+			resp, _ := app.Test(req)
+			defer resp.Body.Close()
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+		})
+	}
+}
+
+func TestHttp_CreateSeeker(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const route = "/api/v1/seekers"
+
+	tests := []struct {
+		name      string
+		request   seeker.CreateSeeker
+		token     string
+		setupMock func()
+		wantCode  int
+	}{
+		{
+			name:    "success",
+			request: mockCreateSeeker,
+			token:   token,
+			setupMock: func() {
+				dependencies.seekerService.On(
+					"CreateSeeker",
+					mock.Anything,
+					mock.Anything,
+				).Return(mockSeeker, nil).Once()
+			},
+			wantCode: http.StatusOK,
+		},
+		{
+			name:      "unprocessable entity",
+			request:   seeker.CreateSeeker{},
+			token:     token,
+			setupMock: func() {},
+			wantCode:  http.StatusUnprocessableEntity,
+		},
+		{
+			name: "missing location",
+			request: func() seeker.CreateSeeker {
+				req := mockCreateSeeker
+				req.Location = ""
+				return req
+			}(),
+			token:     token,
+			setupMock: func() {},
+			wantCode:  http.StatusUnprocessableEntity,
+		},
+		{
+			name: "missing animal type",
+			request: func() seeker.CreateSeeker {
+				req := mockCreateSeeker
+				req.AnimalType = " "
+				return req
+			}(),
+			token:     token,
+			setupMock: func() {},
+			wantCode:  http.StatusUnprocessableEntity,
+		},
+		{
+			name: "missing equipment rental",
+			request: func() seeker.CreateSeeker {
+				req := mockCreateSeeker
+				req.EquipmentRental = -100
+				return req
+			}(),
+			token:     token,
+			setupMock: func() {},
+			wantCode:  http.StatusUnprocessableEntity,
+		},
+		{
+			name: "missing willingness carry",
+			request: func() seeker.CreateSeeker {
+				req := mockCreateSeeker
+				req.WillingnessCarry = " "
+				return req
+			}(),
+			token:     token,
+			setupMock: func() {},
+			wantCode:  http.StatusUnprocessableEntity,
+		},
+		{
+			name: "negative price",
+			request: func() seeker.CreateSeeker {
+				req := mockCreateSeeker
+				req.Price = -100
+				return req
+			}(),
+			token:     token,
+			setupMock: func() {},
+			wantCode:  http.StatusUnprocessableEntity,
+		},
+		{
+			name:      "unauthorized missing token",
+			request:   mockCreateSeeker,
+			token:     "",
+			setupMock: func() {},
+			wantCode:  http.StatusUnauthorized,
+		},
+		{
+			name:      "unauthorized invalid token",
+			request:   mockCreateSeeker,
+			token:     "invalid_token",
+			setupMock: func() {},
+			wantCode:  http.StatusUnauthorized,
+		},
+		{
+			name: "user not found",
+			request: func() seeker.CreateSeeker {
+				req := mockCreateSeeker
+				return req
+			}(),
+			token: token,
+			setupMock: func() {
+				dependencies.seekerService.On(
+					"CreateSeeker",
+					mock.Anything,
+					mock.Anything,
+				).Return(core.Seeker{}, core.ErrNoSuchUser).Once()
+			},
+			wantCode: http.StatusNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.setupMock()
+
+			body, err := json.Marshal(tt.request)
+			require.NoError(t, err, "Failed to marshal request")
+
+			req := httptest.NewRequest(
+				http.MethodPost,
+				route,
+				bytes.NewReader(body),
+			)
+
+			if tt.token != "" {
+				req.Header.Set("Authorization", "Bearer "+tt.token)
+			}
+
+			req.Header.Set("Content-Type", "application/json")
+
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+			defer resp.Body.Close()
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+		})
+	}
+}
+
+func TestHttp_GetSeekers(t *testing.T) {}
+
+func TestHttp_DeleteSeekers(t *testing.T) {}
+
+func TestHttp_UpdateSeekers(t *testing.T) {}
