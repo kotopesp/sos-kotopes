@@ -192,6 +192,49 @@ definitions:
     required:
     - name
     type: object
+  seeker.CreateSeeker:
+    properties:
+      animal_type:
+        enum:
+        - dog
+        - cat
+        - both
+        type: string
+      description:
+        maxLength: 4000
+        type: string
+      equipment_rental:
+        minimum: -1
+        type: integer
+      have_car:
+        type: boolean
+      have_ladder:
+        type: boolean
+      have_metal_cage:
+        type: boolean
+      have_net:
+        type: boolean
+      have_other:
+        type: string
+      have_plastic_cage:
+        type: boolean
+      location:
+        type: string
+      price:
+        minimum: 0
+        type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
+    required:
+    - animal_type
+    - equipment_rental
+    - location
+    - willingness_carry
+    type: object
   seeker.ResponseSeeker:
     properties:
       animal_type:
@@ -235,6 +278,43 @@ definitions:
         items:
           $ref: '#/definitions/seeker.ResponseSeeker'
         type: array
+    type: object
+  seeker.UpdateSeeker:
+    properties:
+      animal_type:
+        enum:
+        - dog
+        - cat
+        - both
+        type: string
+      description:
+        maxLength: 4000
+        type: string
+      equipment_rental:
+        minimum: -1
+        type: integer
+      have_car:
+        type: boolean
+      have_ladder:
+        type: boolean
+      have_metal_cage:
+        type: boolean
+      have_net:
+        type: boolean
+      have_other:
+        type: string
+      have_plastic_cage:
+        type: boolean
+      location:
+        type: string
+      price:
+        type: integer
+      willingness_carry:
+        enum:
+        - "yes"
+        - "no"
+        - situational
+        type: string
     type: object
   user.Login:
     properties:
@@ -1307,54 +1387,11 @@ paths:
       description: Create a seeker
       operationId: create-seeker
       parameters:
-      - description: Animal type
-        in: query
-        name: animal_type
-        type: string
-      - description: Description
-        in: query
-        name: description
-        type: string
-      - description: Location
-        in: query
-        name: location
-        type: string
-      - description: Equipment rental
-        in: query
-        name: equipment_rental
-        type: integer
-      - description: Have metal cage
-        in: query
-        name: have_metal_cage
-        type: boolean
-      - description: Have plastic cage
-        in: query
-        name: have_plastic_cage
-        type: boolean
-      - description: Have net
-        in: query
-        name: have_net
-        type: boolean
-      - description: Have ladder
-        in: query
-        name: have_ladder
-        type: boolean
-      - description: Have other
-        in: query
-        name: have_other
-        type: string
-      - description: Have car
-        in: query
-        name: have_car
-        type: boolean
-      - description: Price
-        in: query
-        name: price
-        type: integer
-      - description: Price
-        in: query
-        name: willingness_carry
-        type: string
+      - description: Seeker params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/seeker.CreateSeeker'
       produces:
       - application/json
       responses:
@@ -1453,54 +1490,11 @@ paths:
       description: Update a seeker
       operationId: update-seeker
       parameters:
-      - description: Animal type
-        in: query
-        name: animal_type
-        type: string
-      - description: Description
-        in: query
-        name: description
-        type: string
-      - description: Location
-        in: query
-        name: location
-        type: string
-      - description: Equipment rental
-        in: query
-        name: equipment_rental
-        type: integer
-      - description: Have metal cage
-        in: query
-        name: have_metal_cage
-        type: boolean
-      - description: Have plastic cage
-        in: query
-        name: have_plastic_cage
-        type: boolean
-      - description: Have net
-        in: query
-        name: have_net
-        type: boolean
-      - description: Have ladder
-        in: query
-        name: have_ladder
-        type: boolean
-      - description: Have other
-        in: query
-        name: have_other
-        type: string
-      - description: Have car
-        in: query
-        name: have_car
-        type: boolean
-      - description: Price
-        in: query
-        name: price
-        type: integer
-      - description: Price
-        in: query
-        name: willingness_carry
-        type: string
+      - description: Update seeker
+        in: body
+        name: update
+        schema:
+          $ref: '#/definitions/seeker.UpdateSeeker'
       produces:
       - application/json
       responses:
