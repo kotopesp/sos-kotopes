@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/seeker"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -33,7 +34,7 @@ var mockSeeker = core.Seeker{
 	HavePlasticCage:  true,
 	HaveNet:          true,
 	HaveLadder:       true,
-	HaveOther:        " ",
+	HaveOther:        "",
 	Price:            100,
 	HaveCar:          true,
 	WillingnessCarry: "yes",
@@ -78,12 +79,7 @@ func TestHttp_GetSeeker(t *testing.T) {
 
 			req := httptest.NewRequest(http.MethodGet, route+strconv.Itoa(tt.userID), nil)
 
-			resp, err := app.Test(req)
-			require.NoError(t, err, "Request failed")
-			defer func(Body io.ReadCloser) {
-				err = Body.Close()
-				require.NoError(t, err, "Close failed")
-			}(resp.Body)
+			resp := getResponse(t, app, req)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -112,17 +108,17 @@ func TestHttp_CreateSeeker(t *testing.T) {
 	const route = "/api/v1/seekers"
 
 	tests := []struct {
-		name      string
-		request   seeker.CreateSeeker
-		token     string
-		setupMock func()
-		wantCode  int
+		name          string
+		request       seeker.CreateSeeker
+		token         string
+		mockBehaviour func()
+		wantCode      int
 	}{
 		{
 			name:    "success",
 			request: mockCreateSeeker,
 			token:   token,
-			setupMock: func() {
+			mockBehaviour: func() {
 				dependencies.seekerService.On(
 					"CreateSeeker",
 					mock.Anything,
@@ -132,11 +128,11 @@ func TestHttp_CreateSeeker(t *testing.T) {
 			wantCode: http.StatusOK,
 		},
 		{
-			name:      "unprocessable entity",
-			request:   seeker.CreateSeeker{},
-			token:     token,
-			setupMock: func() {},
-			wantCode:  http.StatusUnprocessableEntity,
+			name:          "empty request",
+			request:       seeker.CreateSeeker{},
+			token:         token,
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
 			name: "missing location",
@@ -145,9 +141,9 @@ func TestHttp_CreateSeeker(t *testing.T) {
 				req.Location = ""
 				return req
 			}(),
-			token:     token,
-			setupMock: func() {},
-			wantCode:  http.StatusUnprocessableEntity,
+			token:         token,
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
 			name: "missing animal type",
@@ -156,9 +152,9 @@ func TestHttp_CreateSeeker(t *testing.T) {
 				req.AnimalType = " "
 				return req
 			}(),
-			token:     token,
-			setupMock: func() {},
-			wantCode:  http.StatusUnprocessableEntity,
+			token:         token,
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
 			name: "missing equipment rental",
@@ -167,9 +163,9 @@ func TestHttp_CreateSeeker(t *testing.T) {
 				req.EquipmentRental = -100
 				return req
 			}(),
-			token:     token,
-			setupMock: func() {},
-			wantCode:  http.StatusUnprocessableEntity,
+			token:         token,
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
 			name: "missing willingness carry",
@@ -178,9 +174,9 @@ func TestHttp_CreateSeeker(t *testing.T) {
 				req.WillingnessCarry = " "
 				return req
 			}(),
-			token:     token,
-			setupMock: func() {},
-			wantCode:  http.StatusUnprocessableEntity,
+			token:         token,
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
 			name: "negative price",
@@ -189,23 +185,23 @@ func TestHttp_CreateSeeker(t *testing.T) {
 				req.Price = -100
 				return req
 			}(),
-			token:     token,
-			setupMock: func() {},
-			wantCode:  http.StatusUnprocessableEntity,
+			token:         token,
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
-			name:      "unauthorized missing token",
-			request:   mockCreateSeeker,
-			token:     "",
-			setupMock: func() {},
-			wantCode:  http.StatusUnauthorized,
+			name:          "unauthorized missing token",
+			request:       mockCreateSeeker,
+			token:         "",
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnauthorized,
 		},
 		{
-			name:      "unauthorized invalid token",
-			request:   mockCreateSeeker,
-			token:     "invalid_token",
-			setupMock: func() {},
-			wantCode:  http.StatusUnauthorized,
+			name:          "unauthorized invalid token",
+			request:       mockCreateSeeker,
+			token:         "invalid_token",
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnauthorized,
 		},
 		{
 			name: "user not found",
@@ -214,7 +210,7 @@ func TestHttp_CreateSeeker(t *testing.T) {
 				return req
 			}(),
 			token: token,
-			setupMock: func() {
+			mockBehaviour: func() {
 				dependencies.seekerService.On(
 					"CreateSeeker",
 					mock.Anything,
@@ -227,7 +223,7 @@ func TestHttp_CreateSeeker(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.setupMock()
+			tt.mockBehaviour()
 
 			body, err := json.Marshal(tt.request)
 			require.NoError(t, err, "Failed to marshal request")
@@ -244,14 +240,7 @@ func TestHttp_CreateSeeker(t *testing.T) {
 
 			req.Header.Set("Content-Type", "application/json")
 
-			resp, err := app.Test(req)
-			require.NoError(t, err, "Request failed")
-			defer func(Body io.ReadCloser) {
-				err = Body.Close()
-				if err != nil {
-					require.NoError(t, err, "Close failed")
-				}
-			}(resp.Body)
+			resp := getResponse(t, app, req)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -270,17 +259,17 @@ func TestHttp_UpdateSeeker(t *testing.T) {
 	mockSeeker.AnimalType = "dog"
 
 	tests := []struct {
-		name      string
-		request   seeker.UpdateSeeker
-		token     string
-		setupMock func()
-		wantCode  int
+		name          string
+		request       seeker.UpdateSeeker
+		token         string
+		mockBehaviour func()
+		wantCode      int
 	}{
 		{
 			name:    "success",
 			request: mockUpdateSeeker,
 			token:   token,
-			setupMock: func() {
+			mockBehaviour: func() {
 				dependencies.seekerService.On(
 					"UpdateSeeker",
 					mock.Anything,
@@ -289,11 +278,24 @@ func TestHttp_UpdateSeeker(t *testing.T) {
 			},
 			wantCode: http.StatusOK,
 		},
+		{
+			name:    "empty request",
+			request: seeker.UpdateSeeker{},
+			token:   token,
+			mockBehaviour: func() {
+				dependencies.seekerService.On(
+					"UpdateSeeker",
+					mock.Anything,
+					mock.Anything,
+				).Return(core.Seeker{}, core.ErrEmptyUpdateRequest).Once()
+			},
+			wantCode: http.StatusBadRequest,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.setupMock()
+			tt.mockBehaviour()
 
 			body, err := json.Marshal(tt.request)
 			require.NoError(t, err, "Failed to marshal request")
@@ -307,14 +309,7 @@ func TestHttp_UpdateSeeker(t *testing.T) {
 			req.Header.Set("Authorization", "Bearer "+tt.token)
 			req.Header.Set("Content-Type", "application/json")
 
-			resp, err := app.Test(req)
-			require.NoError(t, err, "Request failed")
-			defer func(Body io.ReadCloser) {
-				err = Body.Close()
-				if err != nil {
-					require.NoError(t, err, "Close failed")
-				}
-			}(resp.Body)
+			resp := getResponse(t, app, req)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -328,17 +323,17 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 	const route = "/api/v1/seekers"
 
 	tests := []struct {
-		name      string
-		seekerID  string
-		token     string
-		setupMock func()
-		wantCode  int
+		name          string
+		seekerID      string
+		token         string
+		mockBehaviour func()
+		wantCode      int
 	}{
 		{
 			name:     "success",
 			seekerID: strconv.Itoa(validUserID),
 			token:    token,
-			setupMock: func() {
+			mockBehaviour: func() {
 				dependencies.seekerService.On(
 					"DeleteSeeker",
 					mock.Anything,
@@ -351,7 +346,7 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.setupMock()
+			tt.mockBehaviour()
 
 			req := httptest.NewRequest(
 				http.MethodDelete,
@@ -362,23 +357,13 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 			req.Header.Set("Authorization", "Bearer "+tt.token)
 			req.Header.Set("Content-Type", "application/json")
 
-			resp, err := app.Test(req)
-			require.NoError(t, err, "Request failed")
-			defer func(Body io.ReadCloser) {
-				err = Body.Close()
-				if err != nil {
-					require.NoError(t, err, "Close failed")
-				}
-			}(resp.Body)
+			resp, bodyBytes := getResponseAndBody(t, app, req)
 
-			assert.Equal(t, tt.wantCode, resp.StatusCode)
-
-			bodyBytes, err := io.ReadAll(resp.Body)
-			require.NoError(t, err, "Read response failed")
 			var response model.Response
-			err = json.Unmarshal(bodyBytes, &response)
+			err := json.Unmarshal(bodyBytes, &response)
 			require.NoError(t, err, "Unmarshal failed")
 
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
 			assert.Equal(t, "Delete", response.Data)
 		})
 	}
@@ -451,29 +436,47 @@ func TestHttp_GetSeekers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockBehaviour()
 
-			newRoute := route
-
 			params := url.Values{}
 			for k, v := range tt.queryParams {
 				params.Add(k, v)
 			}
+
+			urlParams := ""
 			if len(params) > 0 {
-				newRoute += "?" + params.Encode()
+				urlParams = "?" + params.Encode()
 			}
 
-			req := httptest.NewRequest(http.MethodGet, newRoute, http.NoBody)
-			t.Logf("Request URL: %s", req.URL)
-			resp, err := app.Test(req)
-			require.NoError(t, err, "Request failed")
-			defer func(Body io.ReadCloser) {
-				err = Body.Close()
-				if err != nil {
-					require.NoError(t, err, "Close failed")
-				}
-			}(resp.Body)
+			req := httptest.NewRequest(http.MethodGet, route+urlParams, http.NoBody)
+
+			resp := getResponse(t, app, req)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
 		})
 	}
+}
+
+func getResponse(t *testing.T, app *fiber.App, request *http.Request) *http.Response {
+	resp, err := app.Test(request)
+	require.NoError(t, err, "Request failed")
+
+	err = resp.Body.Close()
+	if err != nil {
+		require.NoError(t, err, "Failed to close response body")
+	}
+
+	return resp
+}
+
+func getResponseAndBody(t *testing.T, app *fiber.App, req *http.Request) (*http.Response, []byte) {
+	resp, err := app.Test(req)
+	require.NoError(t, err, "Request failed")
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	require.NoError(t, err, "Failed to read response body")
+
+	err = resp.Body.Close()
+	require.NoError(t, err, "Failed to close response body")
+
+	return resp, bodyBytes
 }
