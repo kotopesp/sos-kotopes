@@ -80,7 +80,10 @@ func TestHttp_GetSeeker(t *testing.T) {
 
 			resp, err := app.Test(req)
 			require.NoError(t, err, "Request failed")
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err = Body.Close()
+				require.NoError(t, err, "Close failed")
+			}(resp.Body)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -243,7 +246,12 @@ func TestHttp_CreateSeeker(t *testing.T) {
 
 			resp, err := app.Test(req)
 			require.NoError(t, err, "Request failed")
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err = Body.Close()
+				if err != nil {
+					require.NoError(t, err, "Close failed")
+				}
+			}(resp.Body)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -301,7 +309,12 @@ func TestHttp_UpdateSeeker(t *testing.T) {
 
 			resp, err := app.Test(req)
 			require.NoError(t, err, "Request failed")
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err = Body.Close()
+				if err != nil {
+					require.NoError(t, err, "Close failed")
+				}
+			}(resp.Body)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -351,14 +364,20 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 
 			resp, err := app.Test(req)
 			require.NoError(t, err, "Request failed")
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err = Body.Close()
+				if err != nil {
+					require.NoError(t, err, "Close failed")
+				}
+			}(resp.Body)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
 			bodyBytes, err := io.ReadAll(resp.Body)
 			require.NoError(t, err, "Read response failed")
 			var response model.Response
-			json.Unmarshal(bodyBytes, &response)
+			err = json.Unmarshal(bodyBytes, &response)
+			require.NoError(t, err, "Unmarshal failed")
 
 			assert.Equal(t, "Delete", response.Data)
 		})
@@ -446,7 +465,12 @@ func TestHttp_GetSeekers(t *testing.T) {
 			t.Logf("Request URL: %s", req.URL)
 			resp, err := app.Test(req)
 			require.NoError(t, err, "Request failed")
-			defer resp.Body.Close()
+			defer func(Body io.ReadCloser) {
+				err = Body.Close()
+				if err != nil {
+					require.NoError(t, err, "Close failed")
+				}
+			}(resp.Body)
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
