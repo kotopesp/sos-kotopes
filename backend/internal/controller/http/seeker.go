@@ -89,17 +89,17 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 }
 
 // @Summary		Update a seeker
-// @Tags			seeker
+// @Tags		seeker
 // @Description	Update a seeker
-// @ID				update-seeker
-// @Accept			json
+// @ID			update-seeker
+// @Accept		json
 // @Produce		json
-// @Param			update	body		seeker.UpdateSeeker	false	"Update seeker"
+// @Param		update	body		seeker.UpdateSeeker	false	"Update seeker"
 // @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
 // @Failure		400		{object}	model.Response
 // @Failure		500		{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers/{user_id}  [patch]
+// @Security	ApiKeyAuthBasic
+// @Router		/seekers/{user_id}  [patch]
 func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
@@ -135,16 +135,16 @@ func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 }
 
 // @Summary		Delete seeker
-// @Tags			seeker
+// @Tags		seeker
 // @Description	Delete seeker
-// @ID				delete-seeker
-// @Accept			json
+// @ID			delete-seeker
+// @Accept		json
 // @Produce		json
 // @Success		200	{object}	model.Response{data=seeker.ResponseSeeker}
 // @Failure		400	{object}	model.Response
 // @Failure		500	{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers/{user_id}  [delete]
+// @Security	ApiKeyAuthBasic
+// @Router		/seekers/{user_id}  [delete]
 func (r *Router) deleteSeeker(ctx *fiber.Ctx) error {
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
@@ -166,11 +166,11 @@ func (r *Router) deleteSeeker(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse("Delete"))
 }
 
-// @Summary		get seekers
-// @Description	Get seekers
+// @Summary			get seekers
+// @Description		Get seekers
 // @Tags			seeker
 // @Accept			json
-// @Produce		json
+// @Produce			json
 // @Param			sort_by					query		string	false	"Sort"
 // @Param			sort_order				query		string	false	"Sort"
 // @Param			animal_type				query		string	false	"Animal type"
@@ -187,9 +187,9 @@ func (r *Router) deleteSeeker(ctx *fiber.Ctx) error {
 // @Param			have_car				query		bool	false	"Have car"
 // @Param			limit					query		int		false	"Limit"		default(10)
 // @Param			offset					query		int		false	"Offset"	default(0)
-// @Success		200						{object}	model.Response{data=seeker.ResponseSeekers}
-// @Failure		400						{object}	model.Response
-// @Failure		500						{object}	model.Response
+// @Success			200						{object}	model.Response{data=seeker.ResponseSeekers}
+// @Failure			400						{object}	model.Response
+// @Failure			500						{object}	model.Response
 // @Router			/seekers [get]
 func (r *Router) getSeekers(ctx *fiber.Ctx) error {
 	var params seeker.GetAllSeekerParams
