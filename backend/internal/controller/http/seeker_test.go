@@ -3,11 +3,14 @@ package http
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/seeker"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
@@ -21,21 +24,6 @@ const (
 
 var mockSeeker = core.Seeker{
 	UserID:           validUserID,
-	AnimalType:       "cat",
-	Description:      "Test description",
-	Location:         "Moscow",
-	EquipmentRental:  500,
-	HaveMetalCage:    true,
-	HavePlasticCage:  true,
-	HaveNet:          true,
-	HaveLadder:       true,
-	HaveOther:        " ",
-	Price:            100,
-	HaveCar:          true,
-	WillingnessCarry: "yes",
-}
-
-var mockCreateSeeker = seeker.CreateSeeker{
 	AnimalType:       "cat",
 	Description:      "Test description",
 	Location:         "Moscow",
@@ -94,6 +82,21 @@ func TestHttp_GetSeeker(t *testing.T) {
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
 	}
+}
+
+var mockCreateSeeker = seeker.CreateSeeker{
+	AnimalType:       "cat",
+	Description:      "Test description",
+	Location:         "Moscow",
+	EquipmentRental:  500,
+	HaveMetalCage:    true,
+	HavePlasticCage:  true,
+	HaveNet:          true,
+	HaveLadder:       true,
+	HaveOther:        " ",
+	Price:            100,
+	HaveCar:          true,
+	WillingnessCarry: "yes",
 }
 
 func TestHttp_CreateSeeker(t *testing.T) {
@@ -244,8 +247,118 @@ func TestHttp_CreateSeeker(t *testing.T) {
 	}
 }
 
+var mockUpdateSeeker = seeker.UpdateSeeker{
+	AnimalType: stringPtr("dog"),
+}
+
+func TestHttp_UpdateSeeker(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const route = "/api/v1/seekers"
+	mockSeeker.AnimalType = "dog"
+
+	tests := []struct {
+		name      string
+		request   seeker.UpdateSeeker
+		token     string
+		setupMock func()
+		wantCode  int
+	}{
+		{
+			name:    "success",
+			request: mockUpdateSeeker,
+			token:   token,
+			setupMock: func() {
+				dependencies.seekerService.On(
+					"UpdateSeeker",
+					mock.Anything,
+					mock.Anything,
+				).Return(mockSeeker, nil).Once()
+			},
+			wantCode: http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.setupMock()
+
+			body, err := json.Marshal(tt.request)
+			require.NoError(t, err, "Failed to marshal request")
+
+			req := httptest.NewRequest(
+				http.MethodPatch,
+				route+"/1",
+				bytes.NewReader(body),
+			)
+
+			req.Header.Set("Authorization", "Bearer "+tt.token)
+			req.Header.Set("Content-Type", "application/json")
+
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+			defer resp.Body.Close()
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+		})
+	}
+}
+
+func TestHttp_DeleteSeeker(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const route = "/api/v1/seekers"
+
+	tests := []struct {
+		name      string
+		seekerID  string
+		token     string
+		setupMock func()
+		wantCode  int
+	}{
+		{
+			name:     "success",
+			seekerID: "1",
+			token:    token,
+			setupMock: func() {
+				dependencies.seekerService.On(
+					"DeleteSeeker",
+					mock.Anything,
+					mock.Anything,
+				).Return(nil).Once()
+			},
+			wantCode: http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.setupMock()
+
+			req := httptest.NewRequest(
+				http.MethodDelete,
+				fmt.Sprintf("%s/%s", route, tt.seekerID),
+				nil,
+			)
+
+			req.Header.Set("Authorization", "Bearer "+tt.token)
+			req.Header.Set("Content-Type", "application/json")
+
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+			defer resp.Body.Close()
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+
+			bodyBytes, _ := io.ReadAll(resp.Body)
+			var response model.Response
+			json.Unmarshal(bodyBytes, &response)
+
+			assert.Equal(t, "Delete", response.Data)
+		})
+	}
+}
+
 func TestHttp_GetSeekers(t *testing.T) {}
-
-func TestHttp_DeleteSeekers(t *testing.T) {}
-
-func TestHttp_UpdateSeekers(t *testing.T) {}
