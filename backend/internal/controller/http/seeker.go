@@ -196,7 +196,6 @@ func (r *Router) getSeekers(ctx *fiber.Ctx) error {
 
 	fiberError, parseOrValidationError := parseQueryAndValidate(ctx, r.formValidator, &params)
 	if fiberError != nil || parseOrValidationError != nil {
-		logger.Log().Error(ctx.UserContext(), fiberError.Error())
 		return fiberError
 	}
 
