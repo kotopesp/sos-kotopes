@@ -13,6 +13,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strconv"
 	"testing"
 )
@@ -76,7 +77,9 @@ func TestHttp_GetSeeker(t *testing.T) {
 			).Return(mockSeeker, tt.requestError).Once()
 
 			req := httptest.NewRequest(http.MethodGet, route+strconv.Itoa(tt.userID), nil)
-			resp, _ := app.Test(req)
+
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
 			defer resp.Body.Close()
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
@@ -289,7 +292,7 @@ func TestHttp_UpdateSeeker(t *testing.T) {
 
 			req := httptest.NewRequest(
 				http.MethodPatch,
-				route+"/1",
+				route+"/"+strconv.Itoa(validUserID),
 				bytes.NewReader(body),
 			)
 
@@ -320,7 +323,7 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 	}{
 		{
 			name:     "success",
-			seekerID: "1",
+			seekerID: strconv.Itoa(validUserID),
 			token:    token,
 			setupMock: func() {
 				dependencies.seekerService.On(
@@ -352,7 +355,8 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
-			bodyBytes, _ := io.ReadAll(resp.Body)
+			bodyBytes, err := io.ReadAll(resp.Body)
+			require.NoError(t, err, "Read response failed")
 			var response model.Response
 			json.Unmarshal(bodyBytes, &response)
 
@@ -361,4 +365,91 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 	}
 }
 
-func TestHttp_GetSeekers(t *testing.T) {}
+func TestHttp_GetSeekers(t *testing.T) {
+	t.Parallel()
+	app, dependencies := newTestApp(t)
+
+	const route = "/api/v1/seekers"
+
+	mockSeekers := []core.Seeker{
+		{
+			ID:         validUserID,
+			AnimalType: "dog",
+			Location:   "Moscow",
+			Price:      1000,
+		},
+		{
+			ID:         validUserID + 1,
+			AnimalType: "cat",
+			Location:   "St. Petersburg",
+			Price:      800,
+		},
+	}
+
+	tests := []struct {
+		name          string
+		queryParams   map[string]string
+		mockBehaviour func()
+		wantCode      int
+	}{
+		{
+			name: "success with params",
+			queryParams: map[string]string{
+				"limit":       "10",
+				"offset":      "0",
+				"price_min":   "500",
+				"animal_type": "dog",
+			},
+			mockBehaviour: func() {
+				dependencies.seekerService.On(
+					"GetAllSeekers",
+					mock.Anything,
+					mock.Anything,
+				).Return(mockSeekers, nil).Once()
+
+			},
+			wantCode: http.StatusOK,
+		},
+		{
+			name: "invalid limit",
+			queryParams: map[string]string{
+				"limit": "-1",
+			},
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
+		},
+		{
+			name: "invalid offset",
+			queryParams: map[string]string{
+				"offset": "-1",
+			},
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.mockBehaviour()
+
+			newRoute := route
+
+			params := url.Values{}
+			for k, v := range tt.queryParams {
+				params.Add(k, v)
+			}
+			if len(params) > 0 {
+				newRoute += "?" + params.Encode()
+			}
+
+			req := httptest.NewRequest(http.MethodGet, newRoute, http.NoBody)
+			t.Logf("Request URL: %s", req.URL)
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+			defer resp.Body.Close()
+
+			assert.Equal(t, tt.wantCode, resp.StatusCode)
+
+		})
+	}
+}
