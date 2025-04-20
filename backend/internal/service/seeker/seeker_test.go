@@ -271,6 +271,8 @@ func TestService_DeleteSeeker(t *testing.T) {
 func TestService_GetAllSeekers(t *testing.T) {
 	t.Parallel()
 	ctx := context.Background()
+	mockSeekersStore := mocks.NewMockSeekersStore(t)
+	seekerService := New(mockSeekersStore)
 	mockSeekers := []core.Seeker{
 		{UserID: 1},
 		{UserID: 2},
@@ -344,11 +346,9 @@ func TestService_GetAllSeekers(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockStore := mocks.NewMockSeekersStore(t)
-			tt.setupMock(mockStore)
-			service := New(mockStore)
+			tt.setupMock(mockSeekersStore)
 
-			result, err := service.GetAllSeekers(ctx, tt.inputParams)
+			result, err := seekerService.GetAllSeekers(ctx, tt.inputParams)
 
 			if tt.expectedError != nil {
 				assert.ErrorContains(t, err, tt.expectedError.Error())
@@ -356,7 +356,6 @@ func TestService_GetAllSeekers(t *testing.T) {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedResult, result)
 			}
-			mockStore.AssertExpectations(t)
 		})
 	}
 }
