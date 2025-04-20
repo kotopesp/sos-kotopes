@@ -114,9 +114,17 @@ func (s *service) DeleteSeeker(ctx context.Context, userID int) error {
 }
 
 func (s *service) GetAllSeekers(ctx context.Context, params core.GetAllSeekersParams) ([]core.Seeker, error) {
+	if params.SortBy == nil {
+		params.SortBy = new(string)
+	}
+	if params.SortOrder == nil {
+		params.SortOrder = new(string)
+	}
+
 	if *params.SortBy == "" {
 		*params.SortBy = "created_at"
 	}
+
 	if *params.SortOrder == "" {
 		*params.SortOrder = "desc"
 	}
