@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/seeker"
 	"github.com/kotopesp/sos-kotopes/internal/core"
@@ -20,6 +19,7 @@ import (
 )
 
 const (
+	bearer            = "Bearer "
 	validUserID       = 1
 	nonExistentUserID = 999
 )
@@ -77,9 +77,15 @@ func TestHttp_GetSeeker(t *testing.T) {
 				mock.Anything,
 			).Return(mockSeeker, tt.requestError).Once()
 
-			req := httptest.NewRequest(http.MethodGet, route+strconv.Itoa(tt.userID), nil)
+			req := httptest.NewRequest(http.MethodGet, route+strconv.Itoa(tt.userID), http.NoBody)
 
-			resp := getResponse(t, app, req)
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+
+			err = resp.Body.Close()
+			if err != nil {
+				require.NoError(t, err, "Failed to close response body")
+			}
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -235,12 +241,18 @@ func TestHttp_CreateSeeker(t *testing.T) {
 			)
 
 			if tt.token != "" {
-				req.Header.Set("Authorization", "Bearer "+tt.token)
+				req.Header.Set("Authorization", bearer+tt.token)
 			}
 
 			req.Header.Set("Content-Type", "application/json")
 
-			resp := getResponse(t, app, req)
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+
+			err = resp.Body.Close()
+			if err != nil {
+				require.NoError(t, err, "Failed to close response body")
+			}
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -306,10 +318,16 @@ func TestHttp_UpdateSeeker(t *testing.T) {
 				bytes.NewReader(body),
 			)
 
-			req.Header.Set("Authorization", "Bearer "+tt.token)
+			req.Header.Set("Authorization", bearer+tt.token)
 			req.Header.Set("Content-Type", "application/json")
 
-			resp := getResponse(t, app, req)
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+
+			err = resp.Body.Close()
+			if err != nil {
+				require.NoError(t, err, "Failed to close response body")
+			}
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 		})
@@ -351,16 +369,23 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 			req := httptest.NewRequest(
 				http.MethodDelete,
 				fmt.Sprintf("%s/%s", route, tt.seekerID),
-				nil,
+				http.NoBody,
 			)
 
-			req.Header.Set("Authorization", "Bearer "+tt.token)
+			req.Header.Set("Authorization", bearer+tt.token)
 			req.Header.Set("Content-Type", "application/json")
 
-			resp, bodyBytes := getResponseAndBody(t, app, req)
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+
+			bodyBytes, err := io.ReadAll(resp.Body)
+			require.NoError(t, err, "Failed to read response body")
+
+			err = resp.Body.Close()
+			require.NoError(t, err, "Failed to close response body")
 
 			var response model.Response
-			err := json.Unmarshal(bodyBytes, &response)
+			err = json.Unmarshal(bodyBytes, &response)
 			require.NoError(t, err, "Unmarshal failed")
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
@@ -448,35 +473,16 @@ func TestHttp_GetSeekers(t *testing.T) {
 
 			req := httptest.NewRequest(http.MethodGet, route+urlParams, http.NoBody)
 
-			resp := getResponse(t, app, req)
+			resp, err := app.Test(req)
+			require.NoError(t, err, "Request failed")
+
+			err = resp.Body.Close()
+			if err != nil {
+				require.NoError(t, err, "Failed to close response body")
+			}
 
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
 		})
 	}
-}
-
-func getResponse(t *testing.T, app *fiber.App, request *http.Request) *http.Response {
-	resp, err := app.Test(request)
-	require.NoError(t, err, "Request failed")
-
-	err = resp.Body.Close()
-	if err != nil {
-		require.NoError(t, err, "Failed to close response body")
-	}
-
-	return resp
-}
-
-func getResponseAndBody(t *testing.T, app *fiber.App, req *http.Request) (*http.Response, []byte) {
-	resp, err := app.Test(req)
-	require.NoError(t, err, "Request failed")
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	require.NoError(t, err, "Failed to read response body")
-
-	err = resp.Body.Close()
-	require.NoError(t, err, "Failed to close response body")
-
-	return resp, bodyBytes
 }
