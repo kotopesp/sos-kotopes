@@ -1,35 +1,33 @@
 package seeker
 
 type CreateSeeker struct {
-	UserID           int    `query:"user_id" validate:"required,min=1"`
-	AnimalType       string `query:"animal_type" validate:"required,oneof=dog cat both"`
-	Description      string `query:"description" validate:"omitempty,max=4000"`
-	Location         string `query:"location" validate:"required"`
-	EquipmentRental  int    `query:"equipment_rental" validate:"required,min=-1"`
-	HaveMetalCage    bool   `query:"have_metal_cage"`
-	HavePlasticCage  bool   `query:"have_plastic_cage"`
-	HaveNet          bool   `query:"have_net"`
-	HaveLadder       bool   `query:"have_ladder"`
-	HaveOther        string `query:"have_other"`
-	HaveCar          bool   `query:"have_car"`
-	Price            int    `query:"price" validate:"min=0"`
-	WillingnessCarry string `query:"willingness_carry" validate:"required,oneof=yes no situational"`
+	AnimalType       string `json:"animal_type" validate:"required,oneof=dog cat both"`
+	Description      string `json:"description" validate:"omitempty,max=4000"`
+	Location         string `json:"location" validate:"required"`
+	EquipmentRental  int    `json:"equipment_rental" validate:"required,min=-1"`
+	HaveMetalCage    bool   `json:"have_metal_cage"`
+	HavePlasticCage  bool   `json:"have_plastic_cage"`
+	HaveNet          bool   `json:"have_net"`
+	HaveLadder       bool   `json:"have_ladder"`
+	HaveOther        string `json:"have_other"`
+	HaveCar          bool   `json:"have_car"`
+	Price            int    `json:"price" validate:"min=0"`
+	WillingnessCarry string `json:"willingness_carry" validate:"required,oneof=yes no situational"`
 }
 
 type UpdateSeeker struct {
-	UserID           *int    `query:"user_id" validate:"min=1"`
-	AnimalType       *string `query:"animal_type" validate:"omitempty,oneof=dog cat both"`
-	Description      *string `query:"description" validate:"omitempty,max=4000"`
-	Location         *string `query:"location" validate:"omitempty"`
-	EquipmentRental  *int    `query:"equipment_rental" validate:"omitempty,min=-1"`
-	HaveMetalCage    *bool   `query:"have_metal_cage"`
-	HavePlasticCage  *bool   `query:"have_plastic_cage"`
-	HaveNet          *bool   `query:"have_net"`
-	HaveLadder       *bool   `query:"have_ladder"`
-	HaveOther        *string `query:"have_other"`
-	HaveCar          *bool   `query:"have_car" validate:"omitempty"`
-	Price            *int    `query:"price" validate:"omitempty"`
-	WillingnessCarry *string `query:"willingness_carry" validate:"omitempty,oneof=yes no situational"`
+	AnimalType       *string `json:"animal_type" validate:"omitempty,oneof=dog cat both"`
+	Description      *string `json:"description" validate:"omitempty,max=4000"`
+	Location         *string `json:"location" validate:"omitempty"`
+	EquipmentRental  *int    `json:"equipment_rental" validate:"omitempty,min=-1"`
+	HaveMetalCage    *bool   `json:"have_metal_cage"`
+	HavePlasticCage  *bool   `json:"have_plastic_cage"`
+	HaveNet          *bool   `json:"have_net"`
+	HaveLadder       *bool   `json:"have_ladder"`
+	HaveOther        *string `json:"have_other"`
+	HaveCar          *bool   `json:"have_car" validate:"omitempty"`
+	Price            *int    `json:"price" validate:"omitempty"`
+	WillingnessCarry *string `json:"willingness_carry" validate:"omitempty,oneof=yes no situational"`
 }
 
 type GetAllSeekerParams struct {

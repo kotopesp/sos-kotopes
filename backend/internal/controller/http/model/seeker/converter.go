@@ -6,7 +6,6 @@ import (
 
 func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 	return core.Seeker{
-		UserID:           seeker.UserID,
 		AnimalType:       seeker.AnimalType,
 		Description:      seeker.Description,
 		Location:         seeker.Location,
@@ -24,7 +23,6 @@ func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 
 func (seeker *UpdateSeeker) ToCoreUpdateSeeker() core.UpdateSeeker {
 	return core.UpdateSeeker{
-		UserID:           seeker.UserID,
 		AnimalType:       seeker.AnimalType,
 		Description:      seeker.Description,
 		Location:         seeker.Location,

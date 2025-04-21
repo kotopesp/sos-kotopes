@@ -41,7 +41,7 @@ func (s *store) CreateSeeker(ctx context.Context, seeker core.Seeker) (core.Seek
 		return core.Seeker{}, err
 	}
 
-	if err := tx.Commit().Error; err != nil {
+	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
 		logger.Log().Error(ctx, err.Error())
 		return core.Seeker{}, err
