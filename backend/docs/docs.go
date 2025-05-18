@@ -143,9 +143,7 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
-                        "schema": {
-                            "type": "object"
-                        }
+                        "schema": {}
                     },
                     "400": {
                         "description": "Bad Request",
@@ -1477,6 +1475,388 @@ const docTemplate = `{
                 }
             }
         },
+        "/seekers": {
+            "get": {
+                "description": "Get seekers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "get seekers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sort",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort",
+                        "name": "sort_order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Animal type",
+                        "name": "animal_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location",
+                        "name": "location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Equipment rental",
+                        "name": "min_equipment_rental",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Equipment rental",
+                        "name": "max_equipment_rental",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have metal cage",
+                        "name": "have_metal_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have plastic cage",
+                        "name": "have_plastic_cage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have net",
+                        "name": "have_net",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have ladder",
+                        "name": "have_ladder",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Have other",
+                        "name": "have_other",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Price",
+                        "name": "min_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Price",
+                        "name": "max_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Have car",
+                        "name": "have_car",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeekers"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Create a seeker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "Create a seeker",
+                "operationId": "create-seeker",
+                "parameters": [
+                    {
+                        "description": "Seeker params",
+                        "name": "request",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/seeker.CreateSeeker"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeeker"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seekers/{user_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Get seeker by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "Get seeker",
+                "operationId": "get-seeker",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeeker"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Delete seeker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "Delete seeker",
+                "operationId": "delete-seeker",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeeker"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuthBasic": []
+                    }
+                ],
+                "description": "Update a seeker",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "Update a seeker",
+                "operationId": "update-seeker",
+                "parameters": [
+                    {
+                        "description": "Update seeker",
+                        "name": "update",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/seeker.UpdateSeeker"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeeker"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/{id}/posts": {
             "get": {
                 "description": "Get posts by user ID",
@@ -2395,6 +2775,185 @@ const docTemplate = `{
                         "keeper",
                         "seeker",
                         "vet"
+                    ]
+                }
+            }
+        },
+        "seeker.CreateSeeker": {
+            "type": "object",
+            "required": [
+                "animal_type",
+                "equipment_rental",
+                "location",
+                "willingness_carry"
+            ],
+            "properties": {
+                "animal_type": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "equipment_rental": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "have_car": {
+                    "type": "boolean"
+                },
+                "have_ladder": {
+                    "type": "boolean"
+                },
+                "have_metal_cage": {
+                    "type": "boolean"
+                },
+                "have_net": {
+                    "type": "boolean"
+                },
+                "have_other": {
+                    "type": "string"
+                },
+                "have_plastic_cage": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
+                    ]
+                }
+            }
+        },
+        "seeker.ResponseSeeker": {
+            "type": "object",
+            "required": [
+                "willingness_carry"
+            ],
+            "properties": {
+                "animal_type": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "equipment_rental": {
+                    "type": "integer"
+                },
+                "have_car": {
+                    "type": "boolean"
+                },
+                "have_ladder": {
+                    "type": "boolean"
+                },
+                "have_metal_cage": {
+                    "type": "boolean"
+                },
+                "have_net": {
+                    "type": "boolean"
+                },
+                "have_other": {
+                    "type": "string"
+                },
+                "have_plastic_cage": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
+                    ]
+                }
+            }
+        },
+        "seeker.ResponseSeekers": {
+            "type": "object",
+            "properties": {
+                "payload": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/seeker.ResponseSeeker"
+                    }
+                }
+            }
+        },
+        "seeker.UpdateSeeker": {
+            "type": "object",
+            "properties": {
+                "animal_type": {
+                    "type": "string",
+                    "enum": [
+                        "dog",
+                        "cat",
+                        "both"
+                    ]
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 4000
+                },
+                "equipment_rental": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "have_car": {
+                    "type": "boolean"
+                },
+                "have_ladder": {
+                    "type": "boolean"
+                },
+                "have_metal_cage": {
+                    "type": "boolean"
+                },
+                "have_net": {
+                    "type": "boolean"
+                },
+                "have_other": {
+                    "type": "string"
+                },
+                "have_plastic_cage": {
+                    "type": "boolean"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "willingness_carry": {
+                    "type": "string",
+                    "enum": [
+                        "yes",
+                        "no",
+                        "situational"
                     ]
                 }
             }
