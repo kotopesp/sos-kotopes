@@ -122,7 +122,7 @@
                         transition: stroke 0.3s ease;
                         svg{
                             fill: var(--brown-filter-color);
-                            stroke: none;
+                            stroke-width: 1px;
                             &:hover {
                                 fill: #1C1508;
                                 stroke: var(--yellow-color-bg);
@@ -138,7 +138,8 @@
                         outline: none;
                         align-items: center;
                         transition: stroke 0.3s ease;
-                        svg{
+                        svg{ 
+                            stroke-width: 1px;
                             stroke: var(--black-color);
                             fill: var(--yellow-color-bg);
                         }

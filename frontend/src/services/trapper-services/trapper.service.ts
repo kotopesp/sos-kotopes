@@ -35,10 +35,10 @@ export class TrapperService {
           .set("max_price", Infinity) // TODO (rewrite backend)
           .set("min_price", 0)        // TODO (rewrite backend)
           .set("haveCar", filterTags["haveCar"])
-          return this.http.get<TrapperResponse>(`${this.apiUrl}/seekers`, {params})
+          return this.http.get<TrapperResponse>(`${this.apiUrl}seekers`, {params})
       }
     
-    return this.http.get<TrapperResponse>(`${this.apiUrl}/seekers`, {params}) 
+    return this.http.get<TrapperResponse>(`${this.apiUrl}seekers`, {params}) 
   }
 
   createTrapper(payload: FormData) {
@@ -75,7 +75,7 @@ export class TrapperService {
       .set("price", updatedTrapper.price)
       .set("haveCar", updatedTrapper.have_car)
       .set("willingness_carry", updatedTrapper.willingness_carry)
-    return this.http.patch<TrapperResponse>(`${this.apiUrl}/seekers/${updatedTrapper.user_id.toString()}`, {params})
+    return this.http.patch<TrapperResponse>(`${this.apiUrl}seekers/${updatedTrapper.user_id.toString()}`, {params})
   }
 
   getAnimalType(){

@@ -81,7 +81,7 @@ export class TrapperFilterBarComponent {
   }
   isPressedHaventCar = false
   pressButtonHaventCar() {
-    this.isPressedHaventCar = !this.isPressedHaveCar  
+    this.isPressedHaventCar = !this.isPressedHaventCar  
     this.filterService.addTag('haveCar', this.isPressedHaventCar)
   }
 
