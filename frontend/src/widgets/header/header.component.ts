@@ -54,7 +54,7 @@ export class HeaderComponent implements OnInit {
       className: 'header__overexposure'
     },
     {
-      path: '',
+      path: 'keepers',
       text: 'Передержка',
       className: 'header__ads'
     },

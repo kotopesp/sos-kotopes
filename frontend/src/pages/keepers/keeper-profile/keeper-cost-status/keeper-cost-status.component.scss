@@ -1,0 +1,22 @@
+@mixin container__trapper__status($color) {
+    text-align: center;
+    align-content: center;
+    padding: 6px 18px 6px 18px;
+    height: 38px;
+    width: fit-content;
+    white-space: nowrap;
+    background: var($color);
+    border-radius: 10px;
+  }
+  
+  .deal {
+    @include container__trapper__status(--orange-active-button-bg);
+  }
+  
+  .pay {
+    @include container__trapper__status(--red-active-button-bg);
+  }
+  
+  .free {
+    @include container__trapper__status(--green-active-button-bg);
+  }
