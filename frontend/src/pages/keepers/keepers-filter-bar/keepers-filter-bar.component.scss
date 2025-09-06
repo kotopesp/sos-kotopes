@@ -16,8 +16,8 @@
 
 .filters-bar {
     padding: 65px 24px 0 169px;
-    height: 1068px;
-    max-height: 1068px;
+    height: fit-content;
+    min-height: 1514;
     float: left;
     right: 0;
     overflow: scroll;

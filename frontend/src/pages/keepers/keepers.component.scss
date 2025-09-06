@@ -113,12 +113,51 @@
         .container__info__keepers-displaying {
           margin: 0px 0px 23px 25px;
           display: flex;
+          align-items: center;
   
-          .block__displaying-icons {
+          .block__displaying-switch-icons {
             display: flex;
-  
             img {
               margin-right: 24px;
+              width: 30px;
+              height: 30px;
+            }
+          }
+          .block__displaying-keepers-title{
+            img{
+                width: 26px;
+                height: 26px;
+            }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 202;
+            gap: 14px;
+            margin-left: 9px;
+            font-weight: 700;
+            font-size: 32px;
+            font-style: bold;
+          }
+          .block__displaying-rating_filtr{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 124; 
+            gap: 8px;
+            margin-left: 24px;
+            margin-top: 7px;
+            font-weight: 400;
+            font-size: 20px;
+            font-style: bold;
+            .filter_button{
+              width: 24px;
+              height: 24px;
+              border: none;
+              cursor: pointer;
+              background-image: url(../../../public/assets/icons/filter-button-icon.svg);
+              background-color: transparent;
+              background-position: center;
+              background-repeat: no-repeat;
             }
           }
         }
