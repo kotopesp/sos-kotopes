@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
+import { Keeper } from '../../../../model/keeper';
 
 
 @Component({
@@ -10,15 +11,40 @@ import { Component, Input } from '@angular/core';
   styleUrl: './keeper-cost-status.component.scss'
 })
 export class KeeperCostStatusComponent {
-  @Input() keeper!: any;    // temporaly
-  ngOnInit() {
-    this.setFlagClass();
+  @Input() keeper!: Keeper;
+  
+  keeperCostStatus = "";
+  divLabel = "";
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['seeker'] && this.keeper) {
+      this.setFlagClass();
+    }
   }
-  keeperCostStatus = ""
-  divLabel = ""     
-  setFlagClass() {      //temporaly
-      this.divLabel = "₽ Платно"    
-      this.keeperCostStatus = "pay"
+
+  setFlagClass() {
+    if (!this.keeper) {
+      this.divLabel = "₽ Бесплатно";
+      this.keeperCostStatus = "free";
+      return;
+    }
+    switch(this.keeper.price) {
+      case -1: {
+        this.divLabel = "₽ По ситуации";
+        this.keeperCostStatus = "deal";
+        break;
+      }
+      case 0: {
+        this.divLabel = "₽ Бесплатно";
+        this.keeperCostStatus = "free";
+        break;
+      }
+      default: {
+        this.divLabel = `₽ ${this.keeper.price}`; 
+        this.keeperCostStatus = "pay";
+        break;
+      }
+    }
   }
 } 
 

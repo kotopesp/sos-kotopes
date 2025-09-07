@@ -33,12 +33,9 @@
         </div>
         <div class="container__keepers">
           <div class="keepers">
-              <app-keeper-profile/>
-              <app-keeper-profile/>
-              <app-keeper-profile/>
-              <app-keeper-profile/>
-              <app-keeper-profile/>
-              <app-keeper-profile/>
+            @for (keeper of keepers; track keeper.id){
+              <app-keeper-profile [keeper]="keeper"/>
+            }
         </div>
       </div>
     </div>  
