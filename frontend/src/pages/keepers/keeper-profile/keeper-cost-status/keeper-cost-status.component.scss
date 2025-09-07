@@ -1,4 +1,4 @@
-@mixin container__trapper__status($color) {
+@mixin container__keeper__status($color) {
     text-align: center;
     align-content: center;
     padding: 6px 18px 6px 18px;
@@ -10,13 +10,13 @@
   }
   
   .deal {
-    @include container__trapper__status(--orange-active-button-bg);
+    @include container__keeper__status(--orange-active-button-bg);
   }
   
   .pay {
-    @include container__trapper__status(--red-active-button-bg);
+    @include container__keeper__status(--red-active-button-bg);
   }
   
   .free {
-    @include container__trapper__status(--green-active-button-bg);
+    @include container__keeper__status(--green-active-button-bg);
   }

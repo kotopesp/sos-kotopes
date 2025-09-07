@@ -53,6 +53,7 @@ export class KeeperService {
     }
     if (filterTags['isWeeks']) {
       params = params.set("boarding_duration", 'weeks');
+      console.log("Chose WEEKS!!!!")
     }
     if (filterTags['isMonths']) {
       params = params.set("boarding_duration", 'months');
@@ -62,7 +63,8 @@ export class KeeperService {
     }
     
     if (filterTags['isFree'] && !filterTags['isPay']) {
-      params = params.set("max_price", 1);
+      params = params.set("max_price", 0);
+      
     }
     if (filterTags['isPay'] && !filterTags['isFree']) {
       params = params.set("min_price", 1);
@@ -70,30 +72,21 @@ export class KeeperService {
     if (filterTags['isDeal']) {
       params = params.set("min_price", 0); 
       params = params.set("max_price", 0);
-
-          if (filterTags['isWeeks']) {
-      params = params.set("boarding_duration", 'weeks');
-    }
-    if (filterTags['isMonths']) {
-      params = params.set("boarding_duration", 'months');
-    }
-    if (filterTags['isSituationallyTime']) {
-      params = params.set("boarding_duration", 'depends');
-    }
-    if (filterTags['isWeeks']) {
-      params = params.set("boarding_duration", 'weeks');
     }
     if (filterTags['isStrays']) {
       params = params.set("animal_acceptance", 'homeless');
+      console.log("chose strays!", params.toString());
     }
     if (filterTags['isDomesticatedStrays']) {
       params = params.set("animal_acceptance", 'homeless-hadhome');
+      console.log("chose homeless-hadhome!", params.toString());
     }
     if (filterTags['isSituationallyTaking']) {
       params = params.set("animal_acceptance", 'depends');
-    }
+      console.log("chose depends!", params.toString());
     }
     if (filterTags['hasCage'] && !filterTags['hasntCage']) {
+      console.log("chose CAGE!", params.toString());
       params = params.set("has_cage", "true");
     } else if (!filterTags['hasCage'] && filterTags['hasntCage']) {
       params = params.set("has_cage", "false");

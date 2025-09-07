@@ -17,7 +17,7 @@ export class KeeperCostStatusComponent {
   divLabel = "";
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['seeker'] && this.keeper) {
+    if (changes['keeper'] && this.keeper) {
       this.setFlagClass();
     }
   }

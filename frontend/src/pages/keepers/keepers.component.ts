@@ -44,6 +44,7 @@ export class KeepersComponent implements OnInit, OnDestroy  {
 
   private handleResponse(response: KeeperResponse) {
     if (response && response.data) {
+      console.log("payload:", response.data.payload)
       this.keepers = response.data.payload;
       this.meta = response.data.meta;
       console.log('Получено передержщиков:', this.keepers.length);

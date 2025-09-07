@@ -41,7 +41,7 @@ export class KeepersFilterBarComponent {
   isPressedDay = false 
   pressButtonDay() {
     this.isPressedDay = !this.isPressedDay
-    this.filterService.addTag('isDay', this.isPressedDay)
+    this.filterService.addTag('isHours', this.isPressedDay)
   }
   isPressedDays = false 
   pressButtonDays() {
@@ -66,12 +66,12 @@ export class KeepersFilterBarComponent {
   isPressedCostFree = false
   pressButtonCostFree() {
     this.isPressedCostFree = !this.isPressedCostFree
-    this.filterService.addTag('isPay', this.isPressedCostFree)
+    this.filterService.addTag('isFree', this.isPressedCostFree)
   }
   isPressedCostPay = false
   pressButtonCostPay() {
     this.isPressedCostPay = !this.isPressedCostPay
-    this.filterService.addTag('isFree', this.isPressedCostPay)
+    this.filterService.addTag('isPay', this.isPressedCostPay)
   }
   isPressedCostDeal = false
   pressButtonCostDeal() {
@@ -106,11 +106,11 @@ export class KeepersFilterBarComponent {
   isPressedHaveCage = false
   pressButtonHaveCage() {
     this.isPressedHaveCage = !this.isPressedHaveCage  
-    this.filterService.addTag('isHasCage', this.isPressedHaveCage)
+    this.filterService.addTag('hasCage', this.isPressedHaveCage)
   }
   isPressedHaventCage = false
   pressButtonHaventCage() {
-    this.isPressedHaventCage = !this.isPressedHaveCage
-    this.filterService.addTag('isHasntCage', this.isPressedHaventCage)
+    this.isPressedHaventCage = !this.isPressedHaventCage
+    this.filterService.addTag('hasntCage', this.isPressedHaventCage)
   }
 }

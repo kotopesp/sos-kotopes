@@ -1,175 +1,176 @@
-.trapper__interior_container {
-    width: 421px;
-    max-height: 672px;
-    padding: 44px 20px 20px 20px;
-    gap: 10px;  
-    justify-items: center;
-    align-items: center;
-    border-radius: 20px;
-    z-index: 0;
-  
-    &:hover {
-      background-color: #602F0C;
-      transition: background-color .1s;
-  
-      .trapper__inferior_container {
-        .trapper-bottom__container {
-          .response_button {
-            color: var(--brown-button-color);
-            background-color: var(--white-color);
-            .button-figure{
-              fill: #602F0C;
-            }
-          }
-        }
-      }
-    }
-  
-    .trapper__inferior_container {
-      flex: none;
-      display: grid;
-      gap: 20px;
-      width: 334px;
-      justify-items: center;
-  
-      .photo__container {
-        max-width: 334px;
-        max-height: 352px;
-        position: relative;
-  
-        .trapper_photo {
-          width: 334px;
-          height: 352px;
-          border-top-left-radius: 20px;
-          border-top-right-radius: 20px;
-        }
-  
-        app-favorites-button {
-          position: absolute;
-          left: 266px;
-          top: 18px;
-          z-index: 1;
-        }
-      }
-  
-      .info-under-photo__container {
-        display: grid;
-        grid-template-columns: auto 1fr 1fr;
-        column-gap: 13px;
-        height: hug(38px);
-        width: fixed(334px);
-  
-        .keeper_type {
-            background-size: cover;
-            height: 36px;
-            width: 40px;
-            text-align: center;
-            align-content: center;  
-            border: 1px;
-        }
+.keeper__interior_container {
+  width: 421px;
+  max-height: 672px;
+  padding: 44px 20px 20px 20px;
+  gap: 10px;  
+  justify-items: center;
+  align-items: center;
+  border-radius: 20px;
+  z-index: 0;
 
-        .trapper_cost{
-            text-align: center;
-            align-content: center;
-            padding: 6px 18px 6px 18px;
-            height: 38px;
-            width: 160px;
-            white-space: nowrap;
-            background: #467430;
-            border-radius: 10px;
-        }
+  &:hover {
+    background-color: #602F0C;
+    transition: background-color .1s;
 
-        .rating {
-            display:  flex;
-            background-color: var(--cream-dark-rating-color);
-            height: 38px;
-            width: 87px;
-            border-radius: 10px;
-            padding: 3px 8px 3px 8px;
-            gap: 4px;   
-            align-items: center;
-            justify-content: center;
-
-            .rating-img{
-                height: 32px;
-                width: 32px;
-                vertical-align: top;
-            }
-            .rating-grade{
-                width: 35px;
-                height: 31px;
-                font-weight: 700px;
-                font-style: bold;
-                font-size: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
-  
-      }
-  
-      .trapper-description__container {
-        text-align: left;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        width: 334px;
-      }
-  
-  
-      .place__container {
-        width: 100%;
-        justify-items: start;
-      }
-  
-      .trapper-bottom__container {
-        margin-top: 10px;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-gap: 20px;
-        align-items: center;
-  
-        .author-username__container {
-          white-space: pre;
-          overflow: hidden;
-          text-align: left;
-          text-overflow: ellipsis;
-          min-width: 100px;
-        }
-  
-        .response-button {
-          display: grid;
-          padding: 7px 18px;
-          grid-template-columns: 20px auto;
-          justify-items: center;
-          align-items: center;
-          gap: 10px;
-          cursor: pointer;
-          z-index: 1;
-          text-align: center;
-          border-radius: 10px;
-          border: 1px solid var(--white-color);
-          background-color: rgba(28,28,28,0);
-
-          white-space: nowrap;
-
-          .button-text{
-            font-size: 20px;
-            font-weight: bold;
-          }
-
+    .keeper__inferior_container {
+      .keeper-bottom__container {
+        .response_button {
+          color: var(--brown-button-color);
+          background-color: var(--white-color);
           .button-figure{
-            background: url(../../../../public/assets/icons/message-icon.svg) no-repeat;
-            background-size: cover;
-            height: 18px;
-            width: 20px;
-
+            fill: #602F0C;
           }
         }
       }
     }
   }
-  
+
+  .keeper__inferior_container {
+    flex: none;
+    display: grid;
+    gap: 20px;
+    width: 334px;
+    justify-items: center;
+
+    .photo__container {
+      max-width: 334px;
+      max-height: 352px;
+      position: relative;
+      overflow: hidden; 
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+
+      .keeper_photo {
+        width: 334px;
+        height: 352px;
+        object-fit: cover; 
+      }
+
+      app-favorites-button {
+        position: absolute;
+        left: 266px;
+        top: 18px;
+        z-index: 1;
+      }
+    }
+
+    .info-under-photo__container {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      column-gap: 13px;
+      height: 38px;
+      width: fit-content;
+      margin-right: auto;
+
+      .keeper_type {
+          background-size: cover;
+          height: 36px;
+          width: 40px;
+          text-align: center;
+          align-content: center;  
+          border: 1px;
+      }
+
+      .keeper_cost{
+          text-align: center;
+          align-content: center;
+          padding: 6px 18px 6px 18px;
+          height: 38px;
+          width: 160px;
+          white-space: nowrap;
+          border-radius: 10px;
+      }
+
+      .rating {
+          display:  flex;
+          background-color: var(--cream-dark-rating-color);
+          height: 38px;
+          width: 87px;
+          border-radius: 10px;
+          padding: 3px 8px 3px 8px;
+          gap: 4px;   
+          align-items: center;
+          justify-content: center;
+
+          .rating-img{
+              height: 32px;
+              width: 32px;
+              vertical-align: top;
+          }
+          .rating-grade{
+              width: 35px;
+              height: 31px;
+              font-weight: 700px;
+              font-style: bold;
+              font-size: 24px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+      }
+
+    }
+
+    .keeper-description__container {
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      width: 334px;
+    }
+
+
+    .place__container {
+      width: 100%;
+      justify-items: start;
+    }
+
+    .keeper-bottom__container {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 20px;
+      align-items: center;
+
+      .author-username__container {
+        white-space: pre;
+        overflow: hidden;
+        text-align: left;
+        text-overflow: ellipsis;
+        min-width: 100px;
+      }
+
+      .response-button {
+        display: grid;
+        padding: 7px 18px;
+        grid-template-columns: 20px auto;
+        justify-items: center;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        z-index: 1;
+        text-align: center;
+        border-radius: 10px;
+        border: 1px solid var(--white-color);
+        background-color: rgba(28,28,28,0);
+
+        white-space: nowrap;
+
+        .button-text{
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .button-figure{
+          background: url(../../../../public/assets/icons/message-icon.svg) no-repeat;
+          background-size: cover;
+          height: 18px;
+          width: 20px;
+
+        }
+      }
+    }
+  }
+}
