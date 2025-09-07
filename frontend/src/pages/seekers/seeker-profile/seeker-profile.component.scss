@@ -1,4 +1,4 @@
-.trapper__interior_container {
+.seeker__interior_container {
     width: 421px;
     max-height: max-content;
     padding: 44px 20px 20px 20px;
@@ -12,8 +12,8 @@
       background-color: #261936;
       transition: background-color .1s;
   
-      .trapper__inferior_container {
-        .trapper-bottom__container {
+      .seeker__inferior_container {
+        .seeker-bottom__container {
           .response_button {
             color: var(--brown-button-color);
             background-color: var(--white-color);
@@ -25,7 +25,7 @@
       }
     }
   
-    .trapper__inferior_container {
+    .seeker__inferior_container {
       flex: none;
       display: grid;
       gap: 20px;
@@ -36,12 +36,14 @@
         max-width: 334px;
         max-height: 352px;
         position: relative;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        overflow: hidden; 
   
-        .trapper_photo {
+        .seeker_photo {
           width: 334px;
           height: 352px;
-          border-top-left-radius: 20px;
-          border-top-right-radius: 20px;
+          object-fit: cover; 
         }
   
         app-favorites-button {
@@ -59,8 +61,7 @@
         height: hug(38px);
         width: fixed(334px);
   
-        .trapper_type {
-            background: url(../../../../public/assets/icons/cadog.png) no-repeat;
+        .seeker_type {
             background-size: cover;
             height: 36px;
             width: 40px;
@@ -69,30 +70,28 @@
             border: 1px;
         }
 
-        .trapper_cost{
+        .seeker_cost{
             text-align: center;
             align-content: center;
             padding: 6px 18px 6px 18px;
             height: 38px;
             width: 160px;
             white-space: nowrap;
-            background: #467430;
             border-radius: 10px;
         }
 
         .car_info {
-            background: url(../../../../public/assets/icons/Car.png) no-repeat;
-            background-size: cover;
             height: 38px;
-            width: 76px;
-            padding: 6px 0;
+            width: 87px;
+            border-radius: 10px;
             text-align: center;
             align-content: center;
+            object-fit: cover;
         }
   
       }
   
-      .trapper-description__container {
+      .seeker-description__container {
         text-align: left;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -108,7 +107,7 @@
         justify-items: start;
       }
   
-      .trapper-bottom__container {
+      .seeker-bottom__container {
         margin-top: 10px;
         display: grid;
         grid-template-columns: repeat(2, 1fr);

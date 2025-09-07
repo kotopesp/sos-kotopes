@@ -1,0 +1,25 @@
+<div class="seeker__interior_container">
+  <div class="seeker__inferior_container">
+    <div class="photo__container">
+      <img 
+       class="seeker_photo" 
+       [src]="avatarUrl" 
+       alt="seeker-photo"/>
+      <app-favorites-button/>
+    </div>
+    <div class="info-under-photo__container">
+      <img class="seeker_type"  [src]="seeker.animal_type | seekerType" alt="animal_type">
+      <app-seeker-cost-status [seeker]="seeker"></app-seeker-cost-status>
+      <img class="car_info" [src]="seeker.have_car ? '/assets/icons/car.png' : '/assets/icons/nocar.png'" alt="car_photo">
+    </div>
+    <div class="seeker-description__container ft20 fw400"> {{seeker.description}} </div>
+    <div class="place__container ft20 fw400">{{seeker.location}}</div>
+    <div class="seeker-bottom__container">
+      <div class="author-username__container user_tag">&#64;user_id:{{seeker.user_id}}</div>
+      <a href="#" class="response-button ptbold ft20">
+        <div class="button-figure"></div>
+        <div class="button-text">Сообщение</div>
+      </a>
+    </div>
+  </div>
+</div>

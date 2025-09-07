@@ -5,20 +5,16 @@ export interface Meta {
   total_pages: number;
 }
 
-export interface TrapperResponse {
+export interface SeekerResponse {
   data: {
     meta: Meta
-    trappers: Trapper[];
+    payload: Seeker[];
   };
   status: string;   
 }
 
-export interface TrapperResponse {
-  trappers: Trapper[];
-  meta: Meta;
-}
 
-export interface Trapper {
+export interface Seeker {
   name: string,
   photo: File,
   animal_type: string,

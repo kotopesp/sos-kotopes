@@ -1,18 +1,18 @@
 import { Component, } from '@angular/core';
 import { NgClass } from "@angular/common";
-import { TrapperFilterService } from '../../../services/trapper-services/trapper-filter-service/trapper-filter.service';
+import { SeekerFilterService } from '../../../services/seekers-services/seeker-filter-service/seeker-filter.service';
 
 
 @Component({
-  selector: 'app-trapper-filter-bar',
+  selector: 'app-seeker-filter-bar',
   standalone: true,
   imports: [NgClass],
-  templateUrl: './trapper-filter-bar.component.html',
-  styleUrl: './trapper-filter-bar.component.scss'
+  templateUrl: './seeker-filter-bar.component.html',
+  styleUrl: './seeker-filter-bar.component.scss'
 })
-export class TrapperFilterBarComponent {
+export class SeekerFilterBarComponent {
 
-  constructor(private filterService: TrapperFilterService){}
+  constructor(private filterService: SeekerFilterService){}
 
   isPressedCat = false
   changeLocation(event: Event) {
@@ -29,10 +29,10 @@ export class TrapperFilterBarComponent {
     this.filterService.addTag('isDog', this.isPressedDog)
   }
 
-  isPressedCadog = false
-  pressButtonCadog() {
-    this.isPressedCadog = !this.isPressedCadog
-    this.filterService.addTag('isCadog', this.isPressedCadog)
+  isPressedBoth = false
+  pressButtonBoth() {
+    this.isPressedBoth = !this.isPressedBoth
+    this.filterService.addTag('isBoth', this.isPressedBoth)
   }
   isPressedCostFree = false
   pressButtonCostFree() {
@@ -52,12 +52,12 @@ export class TrapperFilterBarComponent {
   isPressedMetallCatNap = false
   pressButtonMetallCatNap() {
     this.isPressedMetallCatNap = !this.isPressedMetallCatNap
-    this.filterService.addTag('isMetallNap', this.isPressedMetallCatNap)
+    this.filterService.addTag('isMetallCage', this.isPressedMetallCatNap)
   }
   isPressedPlasticCatNap = false
   pressButtonPlasticCatNap() {
     this.isPressedPlasticCatNap = !this.isPressedPlasticCatNap
-    this.filterService.addTag('isPlasticNap', this.isPressedPlasticCatNap)
+    this.filterService.addTag('isPlasticCage', this.isPressedPlasticCatNap)
   }
   isPressedNet = false
   pressButtonNet() {
@@ -82,8 +82,6 @@ export class TrapperFilterBarComponent {
   isPressedHaventCar = false
   pressButtonHaventCar() {
     this.isPressedHaventCar = !this.isPressedHaventCar  
-    this.filterService.addTag('haveCar', this.isPressedHaventCar)
+    this.filterService.addTag('haventCar', this.isPressedHaventCar)
   }
-
-  /**/
 }

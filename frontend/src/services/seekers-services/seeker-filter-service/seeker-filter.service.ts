@@ -4,7 +4,7 @@ import { BehaviorSubject, } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class TrapperFilterService {
+export class SeekerFilterService {
   public location = new BehaviorSubject('');
   public filterTags = new BehaviorSubject(this.getInitionalFilter());
 
@@ -22,7 +22,7 @@ export class TrapperFilterService {
     const flags: Record<string, boolean> = {}
     flags['isCat'] = false
     flags['isDog'] = false
-    flags['isCadog'] = false
+    flags['isBoth'] = false
     flags['isMetallCage'] = false
     flags['isPlasticCage'] = false
     flags['isNet'] = false
@@ -32,15 +32,8 @@ export class TrapperFilterService {
     flags['isFree'] = false
     flags['isDeal'] = false
     flags['haveCar'] = false
+    flags['haventCar'] = false
     return flags
-  }
-
-  isFilterEmpty(){
-    let checker = false
-    for (const key in this.filterTags) {
-      checker = checker || this.filterTags.getValue()[key]
-    }
-    return !checker
   }
 
   chagneLocation(newLocation: string){

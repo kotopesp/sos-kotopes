@@ -1,21 +1,20 @@
 <div class="main__container">
-  <app-trapper-filter-bar/>
-    <div class="container__page__trappers">
+  <app-seeker-filter-bar/>
+    <div class="container__page__seekers">
       <div class="container__upper__menu">
-  
         <div class="container__top-buttons">
-          <div class="trappers__search__bar">
+          <div class="seekers__search__bar">
             <img src="../../assets/icons/lens-icon.svg" alt="icon">
             <span><input class="search-input fw400 ft20 ptitalic" type="text" placeholder="Поиск отловщиков"></span>
           </div>
-          <button class="button_become_trapper" href="#">
+          <button class="button_become_seeker" href="#">
               <div class="button_inside">
                 <div class="button_text">СТАТЬ ОТЛОВЩИКОМ</div>
               </div>
           </button>
         </div>
   
-        <div class="container__info__trappers-displaying">
+        <div class="container__info__seekers-displaying">
           <div class="block__displaying-icons">
             <img src="../../assets/icons/grid-white-icon.svg" alt="icon">
             <img src="../../assets/icons/list-gray-icon.svg" alt="icon">
@@ -24,12 +23,11 @@
         </div>
      
       </div>
-      <div class="container__trappers">
-        <div class="trappers">
-            @for (trapper of trappers; track trapper.id){
-              <app-trapper-profile [trapper] = "trapper"/>
+      <div class="container__seekers">
+        <div class="seekers">
+            @for (seeker of seekers; track seeker.id){
+              <app-seeker-profile [seeker]="seeker"/>
             }
       </div>
     </div>
-  </div>  
-  
+  </div>

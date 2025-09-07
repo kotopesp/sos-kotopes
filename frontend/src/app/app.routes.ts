@@ -4,7 +4,7 @@ import { PostsComponent } from "../pages/posts/ui/posts.component";
 import { StartPageComponent } from "../pages/start-page/ui/start-page.component";
 import { UserPageComponent } from '../pages/user-page/user-page.component';
 import {ChatsPageComponent} from "../pages/chats-page/chats-page.component";
-import {TrappersComponent} from "../pages/trappers/trappers.component";
+import {SeekersComponent} from "../pages/seekers/seekers.component";
 export const routes: Routes = [
   {
     path: '', component: StartPageComponent
@@ -19,6 +19,6 @@ export const routes: Routes = [
     path: 'users/:id', component: UserPageComponent
   },
   {
-    path: 'trappers', component: TrappersComponent
+    path: 'trappers', component: SeekersComponent
   }
 ];
