@@ -1,0 +1,23 @@
+@mixin container__seeker__status($color) {
+    text-align: center;
+    align-content: center;
+    padding: 6px 18px 6px 18px;
+    height: 38px;
+    width: 160px;
+    white-space: nowrap;
+    background: var($color);
+    border-radius: 10px;
+  }
+  
+  .deal {
+    @include container__seeker__status(--orange-active-button-bg);
+  }
+  
+  .pay {
+    @include container__seeker__status(--red-active-button-bg);
+  }
+  
+  .free {
+    @include container__seeker__status(--green-active-button-bg);
+  }
+  

@@ -114,5 +114,30 @@
       border: none;
     }
   }
+
+  .block_registration__roles{
+    margin-top: 40px;
+    width: 411px;
+    display: grid;          
+    grid-template-rows: 1fr 1fr 1fr; 
+    gap: 10px;             
+
+    .two_buttons_grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 15px;
+    }
+
+    .button_style{
+      width: auto;
+      height: 46px;
+      border-radius: 10px;    /* Скругление углов */
+      padding: 8px 18px 8px 18px;    /* Внутренние отступы (верт/гориз) */
+      color: white;          /* Цвет текста */
+      font-size: 20px;       /* Размер шрифта */
+      cursor: pointer;       /* Курсор-указатель */
+      transition: all 0.3s;  /* Плавные анимации */
+    }
+  }
 }
 

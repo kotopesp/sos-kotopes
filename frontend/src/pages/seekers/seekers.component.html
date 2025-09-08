@@ -1,0 +1,33 @@
+<div class="main__container">
+  <app-seeker-filter-bar/>
+    <div class="container__page__seekers">
+      <div class="container__upper__menu">
+        <div class="container__top-buttons">
+          <div class="seekers__search__bar">
+            <img src="../../assets/icons/lens-icon.svg" alt="icon">
+            <span><input class="search-input fw400 ft20 ptitalic" type="text" placeholder="Поиск отловщиков"></span>
+          </div>
+          <button class="button_become_seeker" href="#">
+              <div class="button_inside">
+                <div class="button_text">СТАТЬ ОТЛОВЩИКОМ</div>
+              </div>
+          </button>
+        </div>
+  
+        <div class="container__info__seekers-displaying">
+          <div class="block__displaying-icons">
+            <img src="../../assets/icons/grid-white-icon.svg" alt="icon">
+            <img src="../../assets/icons/list-gray-icon.svg" alt="icon">
+          </div>    
+          <p class="title__search-result fw400 ft20 ptbold">Отловщики</p>
+        </div>
+     
+      </div>
+      <div class="container__seekers">
+        <div class="seekers">
+            @for (seeker of seekers; track seeker.id){
+              <app-seeker-profile [seeker]="seeker"/>
+            }
+      </div>
+    </div>
+  </div>
