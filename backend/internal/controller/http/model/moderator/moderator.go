@@ -18,3 +18,20 @@ type PostsForModerationResponse struct {
 type ModeratedPostRequest struct {
 	PostID int `params:"id" validate:"omitempty,gt=0"`
 }
+
+type GetCommentsForModerationRequest struct {
+	Filter string `query:"filter" validate:"required,oneof=ASC DESC"`
+}
+
+type ModeratedCommentRequest struct {
+	CommentID int `params:"id" validate:"required,min=1"`
+}
+
+type CommentsForModerationResponse struct {
+	CommentID int      `json:"comment_id"`
+	Content   string   `json:"content"`
+	PostID    int      `json:"post_id"`
+	AuthorID  int      `json:"author_id"`
+	CreatedAt string   `json:"created_at"`
+	Reasons   []string `json:"reasons"`
+}

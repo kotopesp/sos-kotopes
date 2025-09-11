@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 )

@@ -39,10 +39,11 @@ func (s *store) CreateReport(ctx context.Context, report core.Report) (err error
 }
 
 // GetReportsCount - returns number of reports for current post by its ID.
-func (s *store) GetReportsCount(ctx context.Context, postID int) (int, error) {
+func (s *store) GetReportsCount(ctx context.Context, reportableID int, reportableType string) (int, error) {
 	var reportCount int64
-	if err := s.DB.WithContext(ctx).Model(&core.Report{}).
-		Where("post_id = ?", postID).
+	if err := s.DB.WithContext(ctx).
+		Model(&core.Report{}).
+		Where("reportable_id = ? AND reportable_type = ?", reportableID, reportableType).
 		Count(&reportCount).Error; err != nil {
 		logger.Log().Error(ctx, err.Error())
 
@@ -52,28 +53,26 @@ func (s *store) GetReportsCount(ctx context.Context, postID int) (int, error) {
 	return int(reportCount), nil
 }
 
-// GetReportReasonsForPost returns list of reasons why post was banned.
-func (s *store) GetReportReasonsForPost(ctx context.Context, postID int) (reasons []string, err error) {
+// GetReportReasons returns list of reasons why reportable entity was reported.
+func (s *store) GetReportReasons(ctx context.Context, reportableID int, reportableType string) (reasons []string, err error) {
 	err = s.DB.WithContext(ctx).
-		Table(core.Report{}.TableName()).
-		Where("post_id = ?", postID).
-		Pluck("reason", &reasons).Error
+		Model(&core.Report{}).
+		Where("reportable_id = ? AND reportable_type = ?", reportableID, reportableType).
+		Pluck("DISTINCT reason", &reasons).Error
 	if err != nil {
-		logger.Log().Debug(ctx, err.Error())
-
-		return []string{}, core.ErrGettingReportReasons
+		logger.Log().Debug(ctx, "Failed to get report reasons: "+err.Error())
+		return nil, core.ErrGettingReportReasons
 	}
 
 	return reasons, nil
 }
 
-// DeleteAllReportsForPost - delete all report records that has specific post ID.
-func (s *store) DeleteAllReportsForPost(ctx context.Context, postID int) (err error) {
-	if err = s.DB.WithContext(ctx).
-		Where("post_id = ?", postID).
+// DeleteAllReports - delete all report records for specific reportable entity.
+func (s *store) DeleteAllReports(ctx context.Context, reportableID int, reportableType string) error {
+	if err := s.DB.WithContext(ctx).
+		Where("reportable_id = ? AND reportable_type = ?", reportableID, reportableType).
 		Delete(&core.Report{}).Error; err != nil {
-		logger.Log().Error(ctx, err.Error())
-
+		logger.Log().Error(ctx, "Failed to delete reports: "+err.Error())
 		return core.ErrDeleteReports
 	}
 

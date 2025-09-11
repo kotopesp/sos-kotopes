@@ -69,17 +69,17 @@ func (_c *MockReportStore_CreateReport_Call) RunAndReturn(run func(context.Conte
 	return _c
 }
 
-// DeleteAllReportsForPost provides a mock function with given fields: ctx, postID
-func (_m *MockReportStore) DeleteAllReportsForPost(ctx context.Context, postID int) error {
-	ret := _m.Called(ctx, postID)
+// DeleteAllReports provides a mock function with given fields: ctx, reportableID, reportableType
+func (_m *MockReportStore) DeleteAllReports(ctx context.Context, reportableID int, reportableType string) error {
+	ret := _m.Called(ctx, reportableID, reportableType)
 
 	if len(ret) == 0 {
-		panic("no return value specified for DeleteAllReportsForPost")
+		panic("no return value specified for DeleteAllReports")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
-		r0 = rf(ctx, postID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, string) error); ok {
+		r0 = rf(ctx, reportableID, reportableType)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -87,58 +87,59 @@ func (_m *MockReportStore) DeleteAllReportsForPost(ctx context.Context, postID i
 	return r0
 }
 
-// MockReportStore_DeleteAllReportsForPost_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteAllReportsForPost'
-type MockReportStore_DeleteAllReportsForPost_Call struct {
+// MockReportStore_DeleteAllReports_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteAllReports'
+type MockReportStore_DeleteAllReports_Call struct {
 	*mock.Call
 }
 
-// DeleteAllReportsForPost is a helper method to define mock.On call
+// DeleteAllReports is a helper method to define mock.On call
 //   - ctx context.Context
-//   - postID int
-func (_e *MockReportStore_Expecter) DeleteAllReportsForPost(ctx interface{}, postID interface{}) *MockReportStore_DeleteAllReportsForPost_Call {
-	return &MockReportStore_DeleteAllReportsForPost_Call{Call: _e.mock.On("DeleteAllReportsForPost", ctx, postID)}
+//   - reportableID int
+//   - reportableType string
+func (_e *MockReportStore_Expecter) DeleteAllReports(ctx interface{}, reportableID interface{}, reportableType interface{}) *MockReportStore_DeleteAllReports_Call {
+	return &MockReportStore_DeleteAllReports_Call{Call: _e.mock.On("DeleteAllReports", ctx, reportableID, reportableType)}
 }
 
-func (_c *MockReportStore_DeleteAllReportsForPost_Call) Run(run func(ctx context.Context, postID int)) *MockReportStore_DeleteAllReportsForPost_Call {
+func (_c *MockReportStore_DeleteAllReports_Call) Run(run func(ctx context.Context, reportableID int, reportableType string)) *MockReportStore_DeleteAllReports_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(string))
 	})
 	return _c
 }
 
-func (_c *MockReportStore_DeleteAllReportsForPost_Call) Return(err error) *MockReportStore_DeleteAllReportsForPost_Call {
+func (_c *MockReportStore_DeleteAllReports_Call) Return(err error) *MockReportStore_DeleteAllReports_Call {
 	_c.Call.Return(err)
 	return _c
 }
 
-func (_c *MockReportStore_DeleteAllReportsForPost_Call) RunAndReturn(run func(context.Context, int) error) *MockReportStore_DeleteAllReportsForPost_Call {
+func (_c *MockReportStore_DeleteAllReports_Call) RunAndReturn(run func(context.Context, int, string) error) *MockReportStore_DeleteAllReports_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetReportReasonsForPost provides a mock function with given fields: ctx, postID
-func (_m *MockReportStore) GetReportReasonsForPost(ctx context.Context, postID int) ([]string, error) {
-	ret := _m.Called(ctx, postID)
+// GetReportReasons provides a mock function with given fields: ctx, reportableID, reportableType
+func (_m *MockReportStore) GetReportReasons(ctx context.Context, reportableID int, reportableType string) ([]string, error) {
+	ret := _m.Called(ctx, reportableID, reportableType)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetReportReasonsForPost")
+		panic("no return value specified for GetReportReasons")
 	}
 
 	var r0 []string
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) ([]string, error)); ok {
-		return rf(ctx, postID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, string) ([]string, error)); ok {
+		return rf(ctx, reportableID, reportableType)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) []string); ok {
-		r0 = rf(ctx, postID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, string) []string); ok {
+		r0 = rf(ctx, reportableID, reportableType)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = rf(ctx, postID)
+	if rf, ok := ret.Get(1).(func(context.Context, int, string) error); ok {
+		r1 = rf(ctx, reportableID, reportableType)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -146,38 +147,39 @@ func (_m *MockReportStore) GetReportReasonsForPost(ctx context.Context, postID i
 	return r0, r1
 }
 
-// MockReportStore_GetReportReasonsForPost_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetReportReasonsForPost'
-type MockReportStore_GetReportReasonsForPost_Call struct {
+// MockReportStore_GetReportReasons_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetReportReasons'
+type MockReportStore_GetReportReasons_Call struct {
 	*mock.Call
 }
 
-// GetReportReasonsForPost is a helper method to define mock.On call
+// GetReportReasons is a helper method to define mock.On call
 //   - ctx context.Context
-//   - postID int
-func (_e *MockReportStore_Expecter) GetReportReasonsForPost(ctx interface{}, postID interface{}) *MockReportStore_GetReportReasonsForPost_Call {
-	return &MockReportStore_GetReportReasonsForPost_Call{Call: _e.mock.On("GetReportReasonsForPost", ctx, postID)}
+//   - reportableID int
+//   - reportableType string
+func (_e *MockReportStore_Expecter) GetReportReasons(ctx interface{}, reportableID interface{}, reportableType interface{}) *MockReportStore_GetReportReasons_Call {
+	return &MockReportStore_GetReportReasons_Call{Call: _e.mock.On("GetReportReasons", ctx, reportableID, reportableType)}
 }
 
-func (_c *MockReportStore_GetReportReasonsForPost_Call) Run(run func(ctx context.Context, postID int)) *MockReportStore_GetReportReasonsForPost_Call {
+func (_c *MockReportStore_GetReportReasons_Call) Run(run func(ctx context.Context, reportableID int, reportableType string)) *MockReportStore_GetReportReasons_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(string))
 	})
 	return _c
 }
 
-func (_c *MockReportStore_GetReportReasonsForPost_Call) Return(_a0 []string, _a1 error) *MockReportStore_GetReportReasonsForPost_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockReportStore_GetReportReasons_Call) Return(reasons []string, err error) *MockReportStore_GetReportReasons_Call {
+	_c.Call.Return(reasons, err)
 	return _c
 }
 
-func (_c *MockReportStore_GetReportReasonsForPost_Call) RunAndReturn(run func(context.Context, int) ([]string, error)) *MockReportStore_GetReportReasonsForPost_Call {
+func (_c *MockReportStore_GetReportReasons_Call) RunAndReturn(run func(context.Context, int, string) ([]string, error)) *MockReportStore_GetReportReasons_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetReportsCount provides a mock function with given fields: ctx, postID
-func (_m *MockReportStore) GetReportsCount(ctx context.Context, postID int) (int, error) {
-	ret := _m.Called(ctx, postID)
+// GetReportsCount provides a mock function with given fields: ctx, reportableID, reportableType
+func (_m *MockReportStore) GetReportsCount(ctx context.Context, reportableID int, reportableType string) (int, error) {
+	ret := _m.Called(ctx, reportableID, reportableType)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetReportsCount")
@@ -185,17 +187,17 @@ func (_m *MockReportStore) GetReportsCount(ctx context.Context, postID int) (int
 
 	var r0 int
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (int, error)); ok {
-		return rf(ctx, postID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, string) (int, error)); ok {
+		return rf(ctx, reportableID, reportableType)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) int); ok {
-		r0 = rf(ctx, postID)
+	if rf, ok := ret.Get(0).(func(context.Context, int, string) int); ok {
+		r0 = rf(ctx, reportableID, reportableType)
 	} else {
 		r0 = ret.Get(0).(int)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
-		r1 = rf(ctx, postID)
+	if rf, ok := ret.Get(1).(func(context.Context, int, string) error); ok {
+		r1 = rf(ctx, reportableID, reportableType)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -210,14 +212,15 @@ type MockReportStore_GetReportsCount_Call struct {
 
 // GetReportsCount is a helper method to define mock.On call
 //   - ctx context.Context
-//   - postID int
-func (_e *MockReportStore_Expecter) GetReportsCount(ctx interface{}, postID interface{}) *MockReportStore_GetReportsCount_Call {
-	return &MockReportStore_GetReportsCount_Call{Call: _e.mock.On("GetReportsCount", ctx, postID)}
+//   - reportableID int
+//   - reportableType string
+func (_e *MockReportStore_Expecter) GetReportsCount(ctx interface{}, reportableID interface{}, reportableType interface{}) *MockReportStore_GetReportsCount_Call {
+	return &MockReportStore_GetReportsCount_Call{Call: _e.mock.On("GetReportsCount", ctx, reportableID, reportableType)}
 }
 
-func (_c *MockReportStore_GetReportsCount_Call) Run(run func(ctx context.Context, postID int)) *MockReportStore_GetReportsCount_Call {
+func (_c *MockReportStore_GetReportsCount_Call) Run(run func(ctx context.Context, reportableID int, reportableType string)) *MockReportStore_GetReportsCount_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
+		run(args[0].(context.Context), args[1].(int), args[2].(string))
 	})
 	return _c
 }
@@ -227,7 +230,7 @@ func (_c *MockReportStore_GetReportsCount_Call) Return(_a0 int, _a1 error) *Mock
 	return _c
 }
 
-func (_c *MockReportStore_GetReportsCount_Call) RunAndReturn(run func(context.Context, int) (int, error)) *MockReportStore_GetReportsCount_Call {
+func (_c *MockReportStore_GetReportsCount_Call) RunAndReturn(run func(context.Context, int, string) (int, error)) *MockReportStore_GetReportsCount_Call {
 	_c.Call.Return(run)
 	return _c
 }

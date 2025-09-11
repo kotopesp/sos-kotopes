@@ -75,7 +75,7 @@ func Run(cfg *config.Config) {
 		postStore,
 	)
 	roleService := rolesService.New(roleStore, userStore)
-	reportService := reportservice.NewReportService(reportStore, postStore)
+	reportService := reportservice.NewReportService(reportStore, postStore, commentStore)
 	userService := usersService.New(userStore, favouriteUserStore)
 	moderatorService := moderatorsService.New(moderatorStore, postStore, reportStore)
 	authService := auth.New(

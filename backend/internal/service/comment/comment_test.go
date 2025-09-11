@@ -32,7 +32,7 @@ func generateTestComments() []core.Comment {
 			AuthorID:  user1.ID,
 			Author:    user1,
 			Content:   "This is the first comment.",
-			IsDeleted: false,
+			Status:    core.Published,
 			DeletedAt: time.Time{},
 			CreatedAt: twoHoursAgo,
 			UpdatedAt: twoHoursAgo,
@@ -45,7 +45,7 @@ func generateTestComments() []core.Comment {
 			AuthorID:  user2.ID,
 			Author:    user2,
 			Content:   "This is a reply to the first comment.",
-			IsDeleted: false,
+			Status:    core.Published,
 			DeletedAt: time.Time{},
 			CreatedAt: oneHourAgo,
 			UpdatedAt: oneHourAgo,
@@ -58,7 +58,7 @@ func generateTestComments() []core.Comment {
 			AuthorID:  user2.ID,
 			Author:    user2,
 			Content:   "This is another comment.",
-			IsDeleted: true, // Deleted comment
+			Status:    core.Deleted,
 			DeletedAt: now,
 			CreatedAt: oneHourAgo,
 			UpdatedAt: now,
@@ -71,7 +71,7 @@ func generateTestComments() []core.Comment {
 			AuthorID:  user1.ID,
 			Author:    user1,
 			Content:   "This is a nested comment.",
-			IsDeleted: false,
+			Status:    core.Published,
 			DeletedAt: time.Time{},
 			CreatedAt: now,
 			UpdatedAt: now,
@@ -514,7 +514,7 @@ func TestUpdateComment(t *testing.T) {
 	commentPostIDMisMatch.PostID = comment.PostID + 1
 
 	// deleted comment
-	commentDeleted.IsDeleted = true
+	commentDeleted.Status = core.Deleted
 
 	commentService := New(
 		commentStore,
@@ -635,7 +635,7 @@ func TestDeleteComment(t *testing.T) {
 	commentPostIDMisMatch.PostID = comment.PostID + 1
 
 	// deleted comment
-	commentDeleted.IsDeleted = true
+	commentDeleted.Status = core.Deleted
 
 	commentService := New(
 		commentStore,

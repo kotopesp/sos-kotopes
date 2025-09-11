@@ -6,3 +6,5 @@
 frontend/dist/
 frontend/node_modules/
 frontend/.angular/
+
+backend/coverage.out

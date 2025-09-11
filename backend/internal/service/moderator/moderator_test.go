@@ -3,8 +3,9 @@ package moderator_test
 import (
 	"context"
 	"errors"
-	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 	"testing"
+
+	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/internal/service/moderator"
@@ -47,8 +48,8 @@ func TestGetPostsForModeration_Success(t *testing.T) {
 	filter := core.FilterDESC
 	posts := []core.Post{{ID: 1}, {ID: 2}}
 	mockPosts.On("GetPostsForModeration", ctx, filter).Return(posts, nil)
-	mockReports.On("GetReportReasonsForPost", ctx, 1).Return([]string{"spam"}, nil)
-	mockReports.On("GetReportReasonsForPost", ctx, 2).Return([]string{"offensive"}, nil)
+	mockReports.On("GetReportReasons", ctx, 1, core.ReportableTypePost).Return([]string{"spam"}, nil)
+	mockReports.On("GetReportReasons", ctx, 2, core.ReportableTypePost).Return([]string{"offensive"}, nil)
 
 	svc := moderator.New(nil, mockPosts, mockReports)
 
@@ -62,7 +63,6 @@ func TestGetPostsForModeration_Success(t *testing.T) {
 	mockReports.AssertExpectations(t)
 }
 
-// Testing that after some error happened extracting report reasons list, extraction continues.
 func TestGetPostsForModeration_ReportFail_Continues(t *testing.T) {
 	ctx := context.TODO()
 	mockPosts := new(mocks.MockPostStore)
@@ -71,8 +71,8 @@ func TestGetPostsForModeration_ReportFail_Continues(t *testing.T) {
 	filter := core.FilterASC
 	posts := []core.Post{{ID: 1}, {ID: 2}}
 	mockPosts.On("GetPostsForModeration", ctx, filter).Return(posts, nil)
-	mockReports.On("GetReportReasonsForPost", ctx, 1).Return(nil, core.ErrGettingReportReasons)
-	mockReports.On("GetReportReasonsForPost", ctx, 2).Return([]string{"spam"}, nil)
+	mockReports.On("GetReportReasons", ctx, 1, core.ReportableTypePost).Return(nil, core.ErrGettingReportReasons)
+	mockReports.On("GetReportReasons", ctx, 2, core.ReportableTypePost).Return([]string{"spam"}, nil)
 
 	svc := moderator.New(nil, mockPosts, mockReports)
 
@@ -132,7 +132,7 @@ func TestApprovePost_Success(t *testing.T) {
 	ctx := context.TODO()
 	mockReports := new(mocks.MockReportStore)
 	mockPosts := new(mocks.MockPostStore)
-	mockReports.On("DeleteAllReportsForPost", ctx, 5).Return(nil)
+	mockReports.On("DeleteAllReports", ctx, 5, core.ReportableTypePost).Return(nil)
 	mockPosts.On("ApprovePostFromModeration", ctx, 5).Return(nil)
 
 	svc := moderator.New(nil, mockPosts, mockReports)
@@ -146,7 +146,7 @@ func TestApprovePost_Failure(t *testing.T) {
 	ctx := context.TODO()
 	mockReports := new(mocks.MockReportStore)
 	mockPosts := new(mocks.MockPostStore)
-	mockReports.On("DeleteAllReportsForPost", ctx, 5).Return(errors.New("fail"))
+	mockReports.On("DeleteAllReports", ctx, 5, core.ReportableTypePost).Return(errors.New("fail"))
 	mockPosts.On("ApprovePostFromModeration", ctx, 5).Return(nil)
 
 	svc := moderator.New(nil, mockPosts, mockReports)
