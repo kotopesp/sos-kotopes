@@ -1,0 +1,3 @@
+0 1 * * * root /opt/sos-kotopes/deployment/scripts/backup-db.sh >> /var/log/sos-kotopes-backup.log 2>&1
+
+0 2 * * 0 root /opt/sos-kotopes/deployment/scripts/clean-backups.sh >> /var/log/sos-kotopes-backup.log 2>&1

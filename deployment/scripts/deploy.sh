@@ -4,7 +4,7 @@ set -e
 echo "=== Starting deployment at $(date) ==="
 
 PROJECT_DIR="/opt/sos-kotopes"
-BACKUP_DIR="/opt/sos-kotopes/backups/$(date +%Y%m%d_%H%M%S)"
+BACKUP_DIR="/opt/backups/$(date +%Y%m%d_%H%M%S)"
 
 cd "$PROJECT_DIR"
 
@@ -18,7 +18,7 @@ echo "Starting new services..."
 docker-compose up -d --remove-orphans
 
 echo "Waiting for services to start..."
-sleep 10
+sleep 50
 
 echo "Checking services status..."
 if ! docker-compose ps | grep -q "Up"; then
