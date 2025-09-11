@@ -38,7 +38,7 @@ fi
 cd /opt || { echo "ERROR: Failed to cd to /opt"; exit 1; }
 
 if [ ! -d "/opt/sos-kotopes" ]; then
-    git clone https://github.com/your-username/sos-kotopes.git
+    git clone https://github.com/kotopesp/sos-kotopes.git
     cd sos-kotopes || { echo "ERROR: Failed to cd to sos-kotopes"; exit 1; }
 else
     echo "Directory /opt/sos-kotopes already exists"
