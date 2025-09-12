@@ -23,11 +23,13 @@ sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPO
 sudo chmod +x /usr/local/bin/docker-compose
 
 echo "5. Configuring firewall..."
+sudo apt install -y ufw
 sudo ufw allow ssh
 sudo ufw allow http
 sudo ufw allow https
 echo "y" | sudo ufw enable
 
+PRODUCTION_BRAHCN='production'
 echo "6. Cloning repository to /opt/..."
 if [ ! -d "/opt" ]; then
     echo "Creating /opt directory..."
@@ -40,6 +42,8 @@ cd /opt || { echo "ERROR: Failed to cd to /opt"; exit 1; }
 if [ ! -d "/opt/sos-kotopes" ]; then
     git clone https://github.com/kotopesp/sos-kotopes.git
     cd sos-kotopes || { echo "ERROR: Failed to cd to sos-kotopes"; exit 1; }
+    echo "Switching to production branch..."
+    git checkout ${PRODUCTION_BRAHCN}
 else
     echo "Directory /opt/sos-kotopes already exists"
     cd sos-kotopes || { echo "ERROR: Failed to cd to sos-kotopes"; exit 1; }
@@ -47,8 +51,10 @@ else
         echo "ERROR: /opt/sos-kotopes exists but is not a git repository!"
         exit 1
     fi
-    echo "Updating existing repository..."
-    git pull
+    echo "Updating existing repository and switching to production branch..."
+    git fetch --all
+    git checkout ${PRODUCTION_BRAHCN}
+    git pull origin ${PRODUCTION_BRAHCN}
 fi
 
 echo "7. Verifying deployment files..."
