@@ -97,11 +97,14 @@ sudo chmod 644 /etc/cron.d/sos-kotopes-backup.cron
 sudo touch /var/log/sos-kotopes-backup.log
 sudo chmod 644 /var/log/sos-kotopes-backup.log
 
+
+
 echo "13. Checking environment configuration..."
 if [ ! -f .env ]; then
+    PASSWORD=$(openssl rand -base64 32)
     cat > .env << 'ENV_EOF'
 POSTGRES_USER=soskot_prod_user
-POSTGRES_PASSWORD=$(openssl rand -base64 32)
+POSTGRES_PASSWORD=${PASSWORD}
 POSTGRES_DB=soskot_production
 LOG_LEVEL=info
 PORT=:8080
