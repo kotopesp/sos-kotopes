@@ -3,7 +3,7 @@ set -e
 
 echo "=== Setting up Nginx reverse proxy ==="
 
-sudo cp /opt/sos-kotopes/deployment/nginx/sos-kotopes.conf /etc/nginx/sites-available/sos-kotopes
+sudo cp /opt/sos-kotopes/deployment/nginx/sos-kotopes-temp.conf /etc/nginx/sites-available/sos-kotopes
 
 sudo ln -sf /etc/nginx/sites-available/sos-kotopes /etc/nginx/sites-enabled/
 

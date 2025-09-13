@@ -11,7 +11,7 @@ sudo apt upgrade -y
 
 echo "2. Installing required packages..."
 sudo apt install -y curl git nginx
-sudo apt install -y python3-certbot-nginx
+sudo apt install -y certbot python3-certbot-nginx
 sudo apt install -y ufw
 
 echo "3. Installing Docker..."
@@ -30,7 +30,7 @@ sudo ufw allow http
 sudo ufw allow https
 echo "y" | sudo ufw enable
 
-PRODUCTION_BRAHCN='production'
+PRODUCTION_BRANCH='production'
 echo "6. Cloning repository to /opt/..."
 if [ ! -d "/opt" ]; then
     echo "Creating /opt directory..."
@@ -44,7 +44,7 @@ if [ ! -d "/opt/sos-kotopes" ]; then
     git clone https://github.com/kotopesp/sos-kotopes.git
     cd sos-kotopes || { echo "ERROR: Failed to cd to sos-kotopes"; exit 1; }
     echo "Switching to production branch..."
-    git checkout ${PRODUCTION_BRAHCN}
+    git checkout ${PRODUCTION_BRANCH}
 else
     echo "Directory /opt/sos-kotopes already exists"
     cd sos-kotopes || { echo "ERROR: Failed to cd to sos-kotopes"; exit 1; }
@@ -54,15 +54,18 @@ else
     fi
     echo "Updating existing repository and switching to production branch..."
     git fetch --all
-    git checkout ${PRODUCTION_BRAHCN}
-    git pull origin ${PRODUCTION_BRAHCN}
+    git checkout ${PRODUCTION_BRANCH}
+    git pull origin ${PRODUCTION_BRANCH}
 fi
 
 echo "7. Verifying deployment files..."
 DEPLOYMENT_FILES=(
-    "deployment/nginx/sos-kotopes.conf"
+    "deployment/nginx/sos-kotopes-temp.conf"
+    "deployment/nginx/sos-kotopes-ssl.conf"
     "deployment/scripts/deploy.sh"
     "deployment/scripts/setup-nginx.sh"
+    "deployment/scripts/setup-ssl.sh"
+    "deployment/scripts/update-nginx-ssl.sh"
     "deployment/scripts/manage.sh"
 )
 
@@ -77,8 +80,14 @@ done
 echo "8. Setting executable permissions..."
 chmod +x deployment/scripts/*.sh
 
-echo "9. Setting up Nginx using deployment/scripts/setup-nginx.sh..."
+echo "9. Setting up temporary Nginx configuration..."
 ./deployment/scripts/setup-nginx.sh
+
+echo "9.5 Obtaining SSL certificates..."
+./deployment/scripts/setup-ssl.sh
+
+echo "9.9 Updating Nginx with final SSL configuration..."
+./deployment/scripts/update-nginx-ssl.sh
 
 echo "10. Creating command symlinks..."
 sudo ln -sf /opt/sos-kotopes/deployment/scripts/deploy.sh /usr/local/bin/sos-deploy
@@ -103,14 +112,14 @@ sudo chmod 644 /var/log/sos-kotopes-backup.log
 echo "13. Checking environment configuration..."
 if [ ! -f .env ]; then
     PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-    cat > .env << 'ENV_EOF'
+    cat > .env << ENV_EOF
 POSTGRES_USER=soskot_prod_user
 POSTGRES_PASSWORD=${PASSWORD}
 POSTGRES_DB=soskot_production
 LOG_LEVEL=info
 PORT=:8080
-VK_CLIENT_ID=52010687
-VK_CLIENT_SECRET=M6SWkM8KmIIJA60hTVx1
+VK_CLIENT_ID=secret
+VK_CLIENT_SECRET=secret
 ENV_EOF
     chmod 600 .env
     echo ".env file created with secure passwords"
@@ -121,12 +130,9 @@ fi
 echo "14. Running initial deployment using deployment/scripts/deploy.sh..."
 ./deployment/scripts/deploy.sh
 
-echo "15 Enable HTTPS"
-sudo certbot --nginx -d sos-kotopes.ru
-
-echo "16. Final verification..."
+echo "15. Final verification..."
 echo "Waiting for services to start..."
-sleep 5
+sleep 10
 
 echo "=== INSTALLATION COMPLETE ==="
 echo ""
@@ -142,7 +148,7 @@ echo "  sudo nginx -t      - Test nginx configuration"
 echo "  sudo systemctl reload nginx - Reload nginx"
 echo ""
 echo "Application URLs:"
-echo "  Frontend: http://localhost:4200"
-echo "  Backend:  http://localhost:8080"
-echo "  Nginx:    http://localhost"
+echo "  HTTPS Frontend: https://sos-kotopes.ru"
+echo "  HTTPS Backend:  https://sos-kotopes.ru/api/"
+echo "  Local Backend:  http://localhost:8080"
 echo "========================================"
