@@ -11,6 +11,8 @@ sudo apt upgrade -y
 
 echo "2. Installing required packages..."
 sudo apt install -y curl git nginx
+sudo apt install -y python3-certbot-nginx
+sudo apt install -y ufw
 
 echo "3. Installing Docker..."
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -23,7 +25,6 @@ sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPO
 sudo chmod +x /usr/local/bin/docker-compose
 
 echo "5. Configuring firewall..."
-sudo apt install -y ufw
 sudo ufw allow ssh
 sudo ufw allow http
 sudo ufw allow https
@@ -101,7 +102,7 @@ sudo chmod 644 /var/log/sos-kotopes-backup.log
 
 echo "13. Checking environment configuration..."
 if [ ! -f .env ]; then
-    PASSWORD=$(openssl rand -base64 32)
+    PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
     cat > .env << 'ENV_EOF'
 POSTGRES_USER=soskot_prod_user
 POSTGRES_PASSWORD=${PASSWORD}
@@ -120,7 +121,10 @@ fi
 echo "14. Running initial deployment using deployment/scripts/deploy.sh..."
 ./deployment/scripts/deploy.sh
 
-echo "15. Final verification..."
+echo "15 Enable HTTPS"
+sudo certbot --nginx -d sos-kotopes.ru
+
+echo "16. Final verification..."
 echo "Waiting for services to start..."
 sleep 5
 
@@ -141,8 +145,4 @@ echo "Application URLs:"
 echo "  Frontend: http://localhost:4200"
 echo "  Backend:  http://localhost:8080"
 echo "  Nginx:    http://localhost"
-echo ""
-echo "To enable HTTPS:"
-echo "  sudo certbot --nginx -d sos-kotopes.ru"
-echo ""
 echo "========================================"
