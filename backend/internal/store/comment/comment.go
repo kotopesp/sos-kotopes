@@ -24,11 +24,12 @@ func New(pg *postgres.Postgres) core.CommentStore {
 func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comment, error) {
 	var comment core.Comment
 	if err := s.DB.WithContext(ctx).
-		First(&comment, "id=?", commentID).Error; err != nil {
+		First(&comment).
+		Where("id = ?", commentID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return comment, core.ErrNoSuchComment
 		}
-		return comment, err
+		return core.Comment{}, err
 	}
 
 	return comment, nil

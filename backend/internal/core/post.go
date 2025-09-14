@@ -8,16 +8,16 @@ import (
 
 type (
 	Post struct {
-		ID        int           `gorm:"column:id;primaryKey"` // Unique identifier for the post
-		AuthorID  int           `gorm:"column:author_id"`     // ID of the author of the post
-		AnimalID  int           `gorm:"column:animal_id"`     // ID of the associated animal
-		Title     string        `gorm:"column:title"`         // Title of the post
-		Content   string        `gorm:"column:content"`       // Content of the post
-		Photo     []byte        `gorm:"column:photo"`         // Photo animal
-		Status    ContentStatus `gorm:"column:status"`        // Status shows current status of post
-		CreatedAt time.Time     `gorm:"column:created_at"`    // Timestamp when the post was created
-		DeletedAt time.Time     `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
-		UpdatedAt time.Time     `gorm:"column:updated_at"`    // Timestamp when the post was last updated
+		ID        int           `gorm:"column:id;primaryKey"`            // Unique identifier for the post
+		AuthorID  int           `gorm:"column:author_id"`                // ID of the author of the post
+		AnimalID  int           `gorm:"column:animal_id"`                // ID of the associated animal
+		Title     string        `gorm:"column:title"`                    // Title of the post
+		Content   string        `gorm:"column:content"`                  // Content of the post
+		Photo     []byte        `gorm:"column:photo"`                    // Photo animal
+		Status    ContentStatus `gorm:"column:status;default:published"` // Status shows current status of post
+		CreatedAt time.Time     `gorm:"column:created_at"`               // Timestamp when the post was created
+		DeletedAt time.Time     `gorm:"column:deleted_at"`               // Timestamp when the post was deleted
+		UpdatedAt time.Time     `gorm:"column:updated_at"`               // Timestamp when the post was last updated
 	}
 
 	// PostDetails Post Details joins post, animal, username

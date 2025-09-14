@@ -16,8 +16,8 @@ type service struct {
 	userStore      core.UserStore
 }
 
-func New(moderatorStore core.ModeratorStore, postStore core.PostStore, reportStore core.ReportStore, userStore core.UserStore) core.ModeratorService {
-	return &service{moderatorStore: moderatorStore, postStore: postStore, reportStore: reportStore, userStore: userStore}
+func New(moderatorStore core.ModeratorStore, postStore core.PostStore, reportStore core.ReportStore, userStore core.UserStore, commentStore core.CommentStore) core.ModeratorService {
+	return &service{moderatorStore: moderatorStore, postStore: postStore, reportStore: reportStore, userStore: userStore, commentStore: commentStore}
 }
 
 // GetModerator - returns moderator struct by its id.
@@ -115,10 +115,12 @@ func (s *service) GetCommentsForModeration(ctx context.Context, filter core.Filt
 func (s *service) DeleteComment(ctx context.Context, commentID int) error {
 	comment, err := s.commentStore.GetCommentByID(ctx, commentID)
 	if err != nil {
+		logger.Log().Error(ctx, "Failed to get comment for deletion: "+err.Error())
 		return core.ErrNoSuchComment
 	}
 
 	if err := s.commentStore.DeleteComment(ctx, comment); err != nil {
+		logger.Log().Error(ctx, "Failed to delete comment for comment: "+err.Error())
 		return err
 	}
 

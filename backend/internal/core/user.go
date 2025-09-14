@@ -15,7 +15,7 @@ type (
 		Photo        *[]byte    `gorm:"column:photo"`
 		PasswordHash string     `gorm:"column:password_hash"`
 		Description  *string    `gorm:"column:description"`
-		Status       UserStatus `gorm:"status;default:active"`
+		Status       UserStatus `gorm:"column:status;default:active"`
 		CreatedAt    time.Time  `gorm:"column:created_at"`
 		UpdatedAt    time.Time  `gorm:"column:updated_at"`
 	}

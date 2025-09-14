@@ -10,7 +10,7 @@ type Comment struct {
 	ParentID  *int          `gorm:"column:parent_id" fake:"{number:1,100}"`
 	ReplyID   *int          `gorm:"column:reply_id" fake:"{number:1,100}"`
 	PostID    int           `gorm:"column:posts_id" fake:"{number:1,100}"`
-	Status    ContentStatus `gorm:"column:status"`
+	Status    ContentStatus `gorm:"column:status;default:published"`
 	AuthorID  int           `gorm:"column:author_id" fake:"{number:1,100}"`
 	Author    User          `gorm:"foreignKey:AuthorID;references:ID" fake:"skip"`
 	Content   string        `gorm:"column:content" fake:"{sentence:3}"`
