@@ -48,3 +48,11 @@ func ToCommentsForModerationResponse(comments []core.CommentForModeration) []Com
 	}
 	return response
 }
+
+func ToCoreBannedUserRecords(request BanUserRequest, moderatorID int) core.BannedUserRecord {
+	return core.BannedUserRecord{
+		UserID:      request.UserID,
+		ModeratorID: moderatorID,
+		ReportID:    request.ReportID,
+	}
+}

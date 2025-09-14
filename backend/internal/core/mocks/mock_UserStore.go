@@ -22,6 +22,53 @@ func (_m *MockUserStore) EXPECT() *MockUserStore_Expecter {
 	return &MockUserStore_Expecter{mock: &_m.Mock}
 }
 
+// BanUserWithRecord provides a mock function with given fields: ctx, banRecord
+func (_m *MockUserStore) BanUserWithRecord(ctx context.Context, banRecord core.BannedUserRecord) error {
+	ret := _m.Called(ctx, banRecord)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BanUserWithRecord")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.BannedUserRecord) error); ok {
+		r0 = rf(ctx, banRecord)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockUserStore_BanUserWithRecord_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'BanUserWithRecord'
+type MockUserStore_BanUserWithRecord_Call struct {
+	*mock.Call
+}
+
+// BanUserWithRecord is a helper method to define mock.On call
+//   - ctx context.Context
+//   - banRecord core.BannedUserRecord
+func (_e *MockUserStore_Expecter) BanUserWithRecord(ctx interface{}, banRecord interface{}) *MockUserStore_BanUserWithRecord_Call {
+	return &MockUserStore_BanUserWithRecord_Call{Call: _e.mock.On("BanUserWithRecord", ctx, banRecord)}
+}
+
+func (_c *MockUserStore_BanUserWithRecord_Call) Run(run func(ctx context.Context, banRecord core.BannedUserRecord)) *MockUserStore_BanUserWithRecord_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.BannedUserRecord))
+	})
+	return _c
+}
+
+func (_c *MockUserStore_BanUserWithRecord_Call) Return(_a0 error) *MockUserStore_BanUserWithRecord_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockUserStore_BanUserWithRecord_Call) RunAndReturn(run func(context.Context, core.BannedUserRecord) error) *MockUserStore_BanUserWithRecord_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateExternalUser provides a mock function with given fields: ctx, user, externalUserID, authProvider
 func (_m *MockUserStore) CreateExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (int, error) {
 	ret := _m.Called(ctx, user, externalUserID, authProvider)
@@ -134,53 +181,6 @@ func (_c *MockUserStore_CreateUser_Call) Return(userID int, err error) *MockUser
 }
 
 func (_c *MockUserStore_CreateUser_Call) RunAndReturn(run func(context.Context, core.User) (int, error)) *MockUserStore_CreateUser_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// DeleteUser provides a mock function with given fields: ctx, userID
-func (_m *MockUserStore) DeleteUser(ctx context.Context, userID int) error {
-	ret := _m.Called(ctx, userID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for DeleteUser")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
-		r0 = rf(ctx, userID)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// MockUserStore_DeleteUser_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteUser'
-type MockUserStore_DeleteUser_Call struct {
-	*mock.Call
-}
-
-// DeleteUser is a helper method to define mock.On call
-//   - ctx context.Context
-//   - userID int
-func (_e *MockUserStore_Expecter) DeleteUser(ctx interface{}, userID interface{}) *MockUserStore_DeleteUser_Call {
-	return &MockUserStore_DeleteUser_Call{Call: _e.mock.On("DeleteUser", ctx, userID)}
-}
-
-func (_c *MockUserStore_DeleteUser_Call) Run(run func(ctx context.Context, userID int)) *MockUserStore_DeleteUser_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int))
-	})
-	return _c
-}
-
-func (_c *MockUserStore_DeleteUser_Call) Return(_a0 error) *MockUserStore_DeleteUser_Call {
-	_c.Call.Return(_a0)
-	return _c
-}
-
-func (_c *MockUserStore_DeleteUser_Call) RunAndReturn(run func(context.Context, int) error) *MockUserStore_DeleteUser_Call {
 	_c.Call.Return(run)
 	return _c
 }

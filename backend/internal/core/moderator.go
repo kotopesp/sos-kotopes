@@ -28,7 +28,7 @@ type (
 		DeleteComment(ctx context.Context, commentID int) error
 		ApproveComment(ctx context.Context, commentID int) error
 		GetCommentsForModeration(ctx context.Context, filter Filter) ([]CommentForModeration, error)
-		BanUser(ctx context.Context, userID int, reportID int) error
+		BanUser(ctx context.Context, banRecord BannedUserRecord) error
 	}
 )
 

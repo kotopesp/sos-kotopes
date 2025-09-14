@@ -208,6 +208,15 @@ func TestLoginBasic(t *testing.T) {
 			loginBasicRet3: core.ErrInvalidCredentials,
 			wantCode:       http.StatusUnauthorized,
 		},
+		{
+			name: "user is banned",
+			loginBasicArg2: user.User{
+				Username: correctUsername,
+				Password: correctPassword,
+			},
+			loginBasicRet3: core.ErrUserIsBanned,
+			wantCode:       http.StatusForbidden,
+		},
 	}
 
 	for _, tt := range tests {

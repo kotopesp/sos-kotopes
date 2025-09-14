@@ -116,17 +116,17 @@ func (_c *MockModeratorService_ApprovePost_Call) RunAndReturn(run func(context.C
 	return _c
 }
 
-// BanUser provides a mock function with given fields: ctx, userID, reportID
-func (_m *MockModeratorService) BanUser(ctx context.Context, userID int, reportID int) error {
-	ret := _m.Called(ctx, userID, reportID)
+// BanUser provides a mock function with given fields: ctx, banRecord
+func (_m *MockModeratorService) BanUser(ctx context.Context, banRecord core.BannedUserRecord) error {
+	ret := _m.Called(ctx, banRecord)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BanUser")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
-		r0 = rf(ctx, userID, reportID)
+	if rf, ok := ret.Get(0).(func(context.Context, core.BannedUserRecord) error); ok {
+		r0 = rf(ctx, banRecord)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -141,15 +141,14 @@ type MockModeratorService_BanUser_Call struct {
 
 // BanUser is a helper method to define mock.On call
 //   - ctx context.Context
-//   - userID int
-//   - reportID int
-func (_e *MockModeratorService_Expecter) BanUser(ctx interface{}, userID interface{}, reportID interface{}) *MockModeratorService_BanUser_Call {
-	return &MockModeratorService_BanUser_Call{Call: _e.mock.On("BanUser", ctx, userID, reportID)}
+//   - banRecord core.BannedUserRecord
+func (_e *MockModeratorService_Expecter) BanUser(ctx interface{}, banRecord interface{}) *MockModeratorService_BanUser_Call {
+	return &MockModeratorService_BanUser_Call{Call: _e.mock.On("BanUser", ctx, banRecord)}
 }
 
-func (_c *MockModeratorService_BanUser_Call) Run(run func(ctx context.Context, userID int, reportID int)) *MockModeratorService_BanUser_Call {
+func (_c *MockModeratorService_BanUser_Call) Run(run func(ctx context.Context, banRecord core.BannedUserRecord)) *MockModeratorService_BanUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(int), args[2].(int))
+		run(args[0].(context.Context), args[1].(core.BannedUserRecord))
 	})
 	return _c
 }
@@ -159,7 +158,7 @@ func (_c *MockModeratorService_BanUser_Call) Return(_a0 error) *MockModeratorSer
 	return _c
 }
 
-func (_c *MockModeratorService_BanUser_Call) RunAndReturn(run func(context.Context, int, int) error) *MockModeratorService_BanUser_Call {
+func (_c *MockModeratorService_BanUser_Call) RunAndReturn(run func(context.Context, core.BannedUserRecord) error) *MockModeratorService_BanUser_Call {
 	_c.Call.Return(run)
 	return _c
 }

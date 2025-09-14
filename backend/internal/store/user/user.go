@@ -171,3 +171,51 @@ func (s *store) CreateExternalUser(ctx context.Context, user core.User, external
 
 	return user.ID, tx.Commit().Error
 }
+
+func (s *store) BanUserWithRecord(ctx context.Context, banRecord core.BannedUserRecord) error {
+	tx := s.DB.WithContext(ctx).Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	updates := map[string]interface{}{
+		"status":     core.UserBanned,
+		"updated_at": time.Now().UTC(),
+	}
+
+	result := tx.Model(&core.User{}).Where("id = ?", banRecord.UserID).Updates(updates)
+	if result.Error != nil {
+		tx.Rollback()
+		if errors.Is(result.Error, core.ErrRecordNotFound) {
+			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+			return core.ErrNoSuchUser
+		}
+		logger.Log().Error(ctx, result.Error.Error())
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		tx.Rollback()
+		return core.ErrNoSuchUser
+	}
+
+	if err := tx.Create(&banRecord).Error; err != nil {
+		tx.Rollback()
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	return nil
+}

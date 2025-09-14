@@ -16,8 +16,8 @@ type service struct {
 	userStore      core.UserStore
 }
 
-func New(moderatorStore core.ModeratorStore, postStore core.PostStore, reportStore core.ReportStore) core.ModeratorService {
-	return &service{moderatorStore: moderatorStore, postStore: postStore, reportStore: reportStore}
+func New(moderatorStore core.ModeratorStore, postStore core.PostStore, reportStore core.ReportStore, userStore core.UserStore) core.ModeratorService {
+	return &service{moderatorStore: moderatorStore, postStore: postStore, reportStore: reportStore, userStore: userStore}
 }
 
 // GetModerator - returns moderator struct by its id.
@@ -122,10 +122,6 @@ func (s *service) DeleteComment(ctx context.Context, commentID int) error {
 		return err
 	}
 
-	if err := s.reportStore.DeleteAllReports(ctx, commentID, core.ReportableTypeComment); err != nil {
-		logger.Log().Error(ctx, "Failed to delete reports for comment: "+err.Error())
-	}
-
 	return nil
 }
 
@@ -141,15 +137,27 @@ func (s *service) ApproveComment(ctx context.Context, commentID int) error {
 
 	if err := s.reportStore.DeleteAllReports(ctx, commentID, core.ReportableTypeComment); err != nil {
 		logger.Log().Error(ctx, "Failed to delete reports for comment: "+err.Error())
+
+		return err
 	}
 
 	return nil
 }
 
-func (s *service) BanUser(ctx context.Context, userID, reportID int) error {
-	_, err := s.userStore.GetUserByID(ctx, userID)
+func (s *service) BanUser(ctx context.Context, banRecord core.BannedUserRecord) error {
+	user, err := s.userStore.GetUserByID(ctx, banRecord.UserID)
 	if err != nil {
 		return core.ErrNoSuchUser
+	}
+
+	if user.Status == core.UserBanned {
+		return core.ErrUserAlreadyBanned
+	}
+
+	err = s.userStore.BanUserWithRecord(ctx, banRecord)
+	if err != nil {
+		logger.Log().Error(ctx, "Failed to banUser : "+err.Error())
+		return err
 	}
 
 	return nil

@@ -50,7 +50,7 @@ var (
 	// moderator errors
 	ErrNoSuchModerator      = errors.New("moderator does not exist")
 	ErrGettingReportReasons = errors.New("error getting report reasons")
-
+	ErrUserAlreadyBanned    = errors.New("user already banned")
 	// report errors
 	ErrToCreateReport  = errors.New("error creating report")
 	ErrDuplicateReport = errors.New("duplicate report")

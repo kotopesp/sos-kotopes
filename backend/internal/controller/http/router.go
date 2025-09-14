@@ -115,6 +115,7 @@ func (r *Router) initRoutes() {
 	v1.Get("/moderation/comments", r.protectedMiddleware(), r.getReportedComments)
 	v1.Delete("/moderation/comments/:id", r.protectedMiddleware(), r.deleteCommentByModerator)
 	v1.Patch("/moderation/comments/:id", r.protectedMiddleware(), r.approveCommentByModerator)
+	v1.Post("/moderation/users/ban", r.protectedMiddleware(), r.banUser)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

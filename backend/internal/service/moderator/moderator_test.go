@@ -16,7 +16,7 @@ import (
 func TestGetModerator_Success(t *testing.T) {
 	ctx := context.TODO()
 	mockMod := new(mocks.MockModeratorStore)
-	svc := moderator.New(mockMod, nil, nil)
+	svc := moderator.New(mockMod, nil, nil, nil)
 
 	expected := core.Moderator{UserID: 1}
 	mockMod.On("GetModeratorByID", ctx, 1).Return(expected, nil)
@@ -30,7 +30,7 @@ func TestGetModerator_Success(t *testing.T) {
 func TestGetModerator_Failure(t *testing.T) {
 	ctx := context.TODO()
 	mockMod := new(mocks.MockModeratorStore)
-	svc := moderator.New(mockMod, nil, nil)
+	svc := moderator.New(mockMod, nil, nil, nil)
 
 	mockMod.On("GetModeratorByID", ctx, 2).Return(core.Moderator{}, core.ErrNoSuchModerator)
 
@@ -51,7 +51,7 @@ func TestGetPostsForModeration_Success(t *testing.T) {
 	mockReports.On("GetReportReasons", ctx, 1, core.ReportableTypePost).Return([]string{"spam"}, nil)
 	mockReports.On("GetReportReasons", ctx, 2, core.ReportableTypePost).Return([]string{"offensive"}, nil)
 
-	svc := moderator.New(nil, mockPosts, mockReports)
+	svc := moderator.New(nil, mockPosts, mockReports, nil)
 
 	result, err := svc.GetPostsForModeration(ctx, filter)
 	assert.NoError(t, err)
@@ -74,7 +74,7 @@ func TestGetPostsForModeration_ReportFail_Continues(t *testing.T) {
 	mockReports.On("GetReportReasons", ctx, 1, core.ReportableTypePost).Return(nil, core.ErrGettingReportReasons)
 	mockReports.On("GetReportReasons", ctx, 2, core.ReportableTypePost).Return([]string{"spam"}, nil)
 
-	svc := moderator.New(nil, mockPosts, mockReports)
+	svc := moderator.New(nil, mockPosts, mockReports, nil)
 
 	result, err := svc.GetPostsForModeration(ctx, filter)
 	assert.NoError(t, err)
@@ -94,7 +94,7 @@ func TestGetPostsForModeration_NoPostsForModeration(t *testing.T) {
 	filter := core.Filter("asc")
 	mockPosts.On("GetPostsForModeration", ctx, filter).Return(nil, core.ErrNoPostsWaitingForModeration)
 
-	svc := moderator.New(nil, mockPosts, mockReports)
+	svc := moderator.New(nil, mockPosts, mockReports, nil)
 
 	listOfPosts, err := svc.GetPostsForModeration(ctx, filter)
 	assert.Error(t, err)
@@ -108,7 +108,7 @@ func TestDeletePost_Success(t *testing.T) {
 	mockPosts := new(mocks.MockPostStore)
 	mockPosts.On("DeletePost", ctx, 10).Return(nil)
 
-	svc := moderator.New(nil, mockPosts, nil)
+	svc := moderator.New(nil, mockPosts, nil, nil)
 	err := svc.DeletePost(ctx, 10)
 
 	assert.NoError(t, err)
@@ -120,7 +120,7 @@ func TestDeletePost_Failure(t *testing.T) {
 	mockPosts := new(mocks.MockPostStore)
 	mockPosts.On("DeletePost", ctx, 99).Return(core.ErrPostNotFound)
 
-	svc := moderator.New(nil, mockPosts, nil)
+	svc := moderator.New(nil, mockPosts, nil, nil)
 	err := svc.DeletePost(ctx, 99)
 
 	assert.Error(t, err)
@@ -135,7 +135,7 @@ func TestApprovePost_Success(t *testing.T) {
 	mockReports.On("DeleteAllReports", ctx, 5, core.ReportableTypePost).Return(nil)
 	mockPosts.On("ApprovePostFromModeration", ctx, 5).Return(nil)
 
-	svc := moderator.New(nil, mockPosts, mockReports)
+	svc := moderator.New(nil, mockPosts, mockReports, nil)
 	err := svc.ApprovePost(ctx, 5)
 
 	assert.NoError(t, err)
@@ -149,7 +149,7 @@ func TestApprovePost_Failure(t *testing.T) {
 	mockReports.On("DeleteAllReports", ctx, 5, core.ReportableTypePost).Return(errors.New("fail"))
 	mockPosts.On("ApprovePostFromModeration", ctx, 5).Return(nil)
 
-	svc := moderator.New(nil, mockPosts, mockReports)
+	svc := moderator.New(nil, mockPosts, mockReports, nil)
 	err := svc.ApprovePost(ctx, 5)
 
 	assert.Error(t, err)
@@ -163,11 +163,186 @@ func TestApprovePost_Failure_ApprovePostFromModeration(t *testing.T) {
 
 	mockPosts.On("ApprovePostFromModeration", ctx, 5).Return(errors.New("approve failed"))
 
-	svc := moderator.New(nil, mockPosts, mockReports)
+	svc := moderator.New(nil, mockPosts, mockReports, nil)
 	err := svc.ApprovePost(ctx, 5)
 
 	assert.Error(t, err)
 	assert.EqualError(t, err, "approve failed")
 	mockPosts.AssertExpectations(t)
 	mockReports.AssertNotCalled(t, "DeleteAllReportsForPost", ctx, 5)
+}
+
+func TestBanUser_Success(t *testing.T) {
+	ctx := context.TODO()
+	mockUserStore := new(mocks.MockUserStore)
+	mockModStore := new(mocks.MockModeratorStore)
+
+	svc := moderator.New(mockModStore, nil, nil, mockUserStore)
+
+	banRecord := core.BannedUserRecord{
+		UserID:      1,
+		ModeratorID: 2,
+		ReportID:    func() *int { i := 5; return &i }(),
+	}
+
+	activeUser := core.User{
+		ID:     1,
+		Status: core.Active,
+	}
+
+	mockUserStore.On("GetUserByID", ctx, 1).Return(activeUser, nil)
+	mockUserStore.On("BanUserWithRecord", ctx, banRecord).Return(nil)
+
+	err := svc.BanUser(ctx, banRecord)
+
+	assert.NoError(t, err)
+	mockUserStore.AssertExpectations(t)
+}
+
+func TestBanUser_UserNotFound(t *testing.T) {
+	ctx := context.TODO()
+	mockUserStore := new(mocks.MockUserStore)
+	mockModStore := new(mocks.MockModeratorStore)
+
+	svc := moderator.New(mockModStore, nil, nil, mockUserStore)
+
+	banRecord := core.BannedUserRecord{UserID: 999}
+
+	mockUserStore.On("GetUserByID", ctx, 999).Return(core.User{}, core.ErrNoSuchUser)
+
+	err := svc.BanUser(ctx, banRecord)
+
+	assert.Error(t, err)
+	assert.Equal(t, core.ErrNoSuchUser, err)
+	mockUserStore.AssertExpectations(t)
+	mockUserStore.AssertNotCalled(t, "BanUserWithRecord")
+}
+
+func TestBanUser_UserAlreadyBanned(t *testing.T) {
+	ctx := context.TODO()
+	mockUserStore := new(mocks.MockUserStore)
+	mockModStore := new(mocks.MockModeratorStore)
+
+	svc := moderator.New(mockModStore, nil, nil, mockUserStore)
+
+	banRecord := core.BannedUserRecord{UserID: 1}
+
+	bannedUser := core.User{
+		ID:     1,
+		Status: core.UserBanned,
+	}
+
+	mockUserStore.On("GetUserByID", ctx, 1).Return(bannedUser, nil)
+
+	err := svc.BanUser(ctx, banRecord)
+
+	assert.Error(t, err)
+	assert.Equal(t, core.ErrUserAlreadyBanned, err)
+	mockUserStore.AssertExpectations(t)
+	mockUserStore.AssertNotCalled(t, "BanUserWithRecord")
+}
+
+func TestBanUser_StoreErrorOnGetUser(t *testing.T) {
+	ctx := context.TODO()
+	mockUserStore := new(mocks.MockUserStore)
+	mockModStore := new(mocks.MockModeratorStore)
+
+	svc := moderator.New(mockModStore, nil, nil, mockUserStore)
+
+	banRecord := core.BannedUserRecord{UserID: 1}
+
+	mockUserStore.On("GetUserByID", ctx, 1).Return(core.User{}, core.ErrNoSuchUser)
+
+	err := svc.BanUser(ctx, banRecord)
+
+	assert.Error(t, err)
+	assert.EqualError(t, err, core.ErrNoSuchUser.Error())
+	mockUserStore.AssertExpectations(t)
+	mockUserStore.AssertNotCalled(t, "BanUserWithRecord")
+}
+
+// here i check some spicific database error
+func TestBanUser_StoreErrorOnBan(t *testing.T) {
+	ctx := context.TODO()
+	mockUserStore := new(mocks.MockUserStore)
+	mockModStore := new(mocks.MockModeratorStore)
+
+	svc := moderator.New(mockModStore, nil, nil, mockUserStore)
+
+	banRecord := core.BannedUserRecord{UserID: 1}
+
+	activeUser := core.User{
+		ID:     1,
+		Status: core.Active,
+	}
+
+	mockUserStore.On("GetUserByID", ctx, 1).Return(activeUser, nil)
+	mockUserStore.On("BanUserWithRecord", ctx, banRecord).Return(errors.New("ban failed"))
+
+	err := svc.BanUser(ctx, banRecord)
+
+	assert.Error(t, err)
+	assert.EqualError(t, err, "ban failed")
+	mockUserStore.AssertExpectations(t)
+}
+
+func TestBanUser_WithNilReportID(t *testing.T) {
+	ctx := context.TODO()
+	mockUserStore := new(mocks.MockUserStore)
+	mockModStore := new(mocks.MockModeratorStore)
+
+	svc := moderator.New(mockModStore, nil, nil, mockUserStore)
+
+	banRecord := core.BannedUserRecord{
+		UserID:      1,
+		ModeratorID: 2,
+		ReportID:    nil,
+	}
+
+	activeUser := core.User{
+		ID:     1,
+		Status: core.Active,
+	}
+
+	mockUserStore.On("GetUserByID", ctx, 1).Return(activeUser, nil)
+	mockUserStore.On("BanUserWithRecord", ctx, banRecord).Return(nil)
+
+	err := svc.BanUser(ctx, banRecord)
+
+	assert.NoError(t, err)
+	mockUserStore.AssertExpectations(t)
+}
+
+func TestBanUser_ConcurrentCalls(t *testing.T) {
+	ctx := context.TODO()
+	mockUserStore := new(mocks.MockUserStore)
+	mockModStore := new(mocks.MockModeratorStore)
+
+	svc := moderator.New(mockModStore, nil, nil, mockUserStore)
+
+	banRecord := core.BannedUserRecord{UserID: 1}
+
+	activeUser := core.User{
+		ID:     1,
+		Status: core.Active,
+	}
+
+	bannedUser := core.User{
+		ID:     1,
+		Status: core.UserBanned,
+	}
+
+	mockUserStore.On("GetUserByID", ctx, 1).Return(activeUser, nil).Once()
+	mockUserStore.On("BanUserWithRecord", ctx, banRecord).Return(nil).Once()
+
+	mockUserStore.On("GetUserByID", ctx, 1).Return(bannedUser, nil).Once()
+
+	err := svc.BanUser(ctx, banRecord)
+	assert.NoError(t, err)
+
+	err = svc.BanUser(ctx, banRecord)
+	assert.Error(t, err)
+	assert.Equal(t, core.ErrUserAlreadyBanned, err)
+
+	mockUserStore.AssertExpectations(t)
 }

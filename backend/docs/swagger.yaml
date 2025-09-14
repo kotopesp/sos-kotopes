@@ -83,6 +83,15 @@ definitions:
     x-enum-varnames:
     - success
     - err
+  moderator.BanUserRequest:
+    properties:
+      report_id:
+        type: integer
+      user_id:
+        type: integer
+    required:
+    - user_id
+    type: object
   moderator.CommentsForModerationResponse:
     properties:
       author_id:
@@ -327,6 +336,10 @@ paths:
             $ref: '#/definitions/model.Response'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/model.Response'
         "422":
@@ -736,6 +749,56 @@ paths:
       security:
       - ApiKeyAuthBasic: []
       summary: Approve a post
+      tags:
+      - moderation
+  /moderation/users/ban:
+    post:
+      consumes:
+      - application/json
+      description: Bans a user by specified moderator. Requires moderator privileges.
+      parameters:
+      - description: Ban request details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/moderator.BanUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User banned successfully
+        "400":
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: User is not authorized
+          schema:
+            $ref: '#/definitions/model.Response'
+        "403":
+          description: Access denied - not a moderator
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "409":
+          description: User already banned
+          schema:
+            $ref: '#/definitions/model.Response'
+        "422":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Ban user
       tags:
       - moderation
   /posts:

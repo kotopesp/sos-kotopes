@@ -353,3 +353,62 @@ func (r *Router) approveCommentByModerator(ctx *fiber.Ctx) error {
 
 	return ctx.SendStatus(fiber.StatusOK)
 }
+
+// @Summary		Ban user
+// @Description	Bans a user by specified moderator. Requires moderator privileges.
+// @Tags			moderation
+// @Accept			json
+// @Produce		json
+// @Param			request	body	moderator.BanUserRequest	true	"Ban request details"
+// @Success		200		"User banned successfully"
+// @Failure		400		{object}	model.Response	"Invalid request parameters"
+// @Failure		401		{object}	model.Response	"User is not authorized"
+// @Failure		403		{object}	model.Response	"Access denied - not a moderator"
+// @Failure		404		{object}	model.Response	"User not found"
+// @Failure		409		{object}	model.Response	"User already banned"
+// @Failure		422		{object}	model.Response	"Validation error"
+// @Failure		500		{object}	model.Response	"Internal server error"
+// @Security		ApiKeyAuthBasic
+// @Router			/moderation/users/ban [post]
+func (r *Router) banUser(ctx *fiber.Ctx) error {
+	moderatorID, err := getIDFromToken(ctx)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+	}
+	_, err = r.moderatorService.GetModerator(ctx.UserContext(), moderatorID)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+		return ctx.Status(fiber.StatusForbidden).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	var banRequest moderator.BanUserRequest
+	fiberError, parseOrValidationError := parseBodyAndValidate(ctx, r.formValidator, &banRequest)
+	if fiberError != nil {
+		logger.Log().Error(ctx.UserContext(), fiberError.Error())
+		return fiberError
+	}
+
+	if parseOrValidationError != nil {
+		logger.Log().Error(ctx.UserContext(), parseOrValidationError.Error())
+		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(model.ErrorResponse("Invalid request body"))
+	}
+
+	coreBanRequest := moderator.ToCoreBannedUserRecords(banRequest, moderatorID)
+
+	err = r.moderatorService.BanUser(ctx.UserContext(), coreBanRequest)
+	if err != nil {
+		logger.Log().Error(ctx.UserContext(), err.Error())
+
+		if errors.Is(err, core.ErrNoSuchUser) {
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		}
+		if errors.Is(err, core.ErrUserAlreadyBanned) {
+			return ctx.Status(fiber.StatusConflict).JSON(model.ErrorResponse(err.Error()))
+		}
+
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
+	}
+
+	return ctx.SendStatus(fiber.StatusOK)
+}

@@ -35,3 +35,8 @@ type CommentsForModerationResponse struct {
 	CreatedAt string   `json:"created_at"`
 	Reasons   []string `json:"reasons"`
 }
+
+type BanUserRequest struct {
+	UserID   int  `json:"user_id" validate:"required,gt=0"`
+	ReportID *int `json:"report_id" validate:"omitempty,gt=0"`
+}
