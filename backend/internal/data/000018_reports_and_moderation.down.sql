@@ -5,37 +5,41 @@ ALTER TABLE IF EXISTS users
     ADD COLUMN deleted_at TIMESTAMP;
 
 UPDATE users 
-SET 
-    is_deleted = CASE WHEN status IN ('deleted', 'banned') THEN TRUE ELSE FALSE END,
-    deleted_at = CASE WHEN status IN ('deleted', 'banned') THEN NOW() ELSE NULL END;
+    SET is_deleted = CASE 
+        WHEN status = 'deleted' THEN TRUE 
+        ELSE FALSE 
+    END;
 
-ALTER TABLE IF EXISTS users 
-    DROP COLUMN IF EXISTS status;
+ALTER TABLE users DROP COLUMN status;
 
 DROP TYPE IF EXISTS user_status;
 
 DROP TABLE IF EXISTS moderators;
 
-DROP INDEX IF EXISTS idx_posts_status;
-DROP INDEX IF EXISTS idx_comments_status;
-
-ALTER TABLE IF EXISTS posts 
+ALTER TABLE posts 
     ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
 
 UPDATE posts 
-SET is_deleted = CASE WHEN status = 'deleted' THEN TRUE ELSE FALSE END;
+    SET is_deleted = CASE 
+        WHEN status = 'deleted' THEN TRUE 
+        ELSE FALSE 
+    END;
 
-ALTER TABLE IF EXISTS posts 
-    DROP COLUMN IF EXISTS status;
-	
-ALTER TABLE IF EXISTS comments 
+DROP INDEX IF EXISTS idx_posts_status;
+DROP INDEX IF EXISTS idx_comments_status;
+
+ALTER TABLE posts DROP COLUMN status;
+
+ALTER TABLE comments 
     ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
 
 UPDATE comments 
-SET is_deleted = CASE WHEN status = 'deleted' THEN TRUE ELSE FALSE END;
+    SET is_deleted = CASE 
+        WHEN status = 'deleted' THEN TRUE 
+        ELSE FALSE 
+    END;
 
-ALTER TABLE IF EXISTS comments 
-    DROP COLUMN IF EXISTS status;
+ALTER TABLE comments DROP COLUMN status;
 
 DROP TYPE IF EXISTS status;
 

@@ -120,7 +120,7 @@ func (s *service) DeleteComment(ctx context.Context, commentID int) error {
 	}
 
 	if err := s.commentStore.DeleteComment(ctx, comment); err != nil {
-		logger.Log().Error(ctx, "Failed to delete comment for comment: "+err.Error())
+		logger.Log().Error(ctx, "Failed to delete comment for deletion: "+err.Error())
 		return err
 	}
 
