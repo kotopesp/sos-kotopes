@@ -66,7 +66,7 @@ type UserStatus = string
 const (
 	UserBanned UserStatus = "banned"
 	UserDelete UserStatus = "deleted"
-	Active     UserStatus = "active"
+	UserActive UserStatus = "active"
 )
 
 // errors

@@ -187,7 +187,7 @@ func TestBanUser_Success(t *testing.T) {
 
 	activeUser := core.User{
 		ID:     1,
-		Status: core.Active,
+		Status: core.UserActive,
 	}
 
 	mockUserStore.On("GetUserByID", ctx, 1).Return(activeUser, nil)
@@ -273,7 +273,7 @@ func TestBanUser_StoreErrorOnBan(t *testing.T) {
 
 	activeUser := core.User{
 		ID:     1,
-		Status: core.Active,
+		Status: core.UserActive,
 	}
 
 	mockUserStore.On("GetUserByID", ctx, 1).Return(activeUser, nil)
@@ -301,7 +301,7 @@ func TestBanUser_WithNilReportID(t *testing.T) {
 
 	activeUser := core.User{
 		ID:     1,
-		Status: core.Active,
+		Status: core.UserActive,
 	}
 
 	mockUserStore.On("GetUserByID", ctx, 1).Return(activeUser, nil)
@@ -324,7 +324,7 @@ func TestBanUser_ConcurrentCalls(t *testing.T) {
 
 	activeUser := core.User{
 		ID:     1,
-		Status: core.Active,
+		Status: core.UserActive,
 	}
 
 	bannedUser := core.User{
@@ -387,8 +387,7 @@ func TestGetCommentsForModeration_NoComments(t *testing.T) {
 	svc := moderator.New(nil, nil, mockReportStore, nil, mockCommentStore)
 
 	result, err := svc.GetCommentsForModeration(ctx, filter)
-	assert.Error(t, err)
-	assert.Equal(t, core.ErrNoCommentsWaitingForModeration, err)
+	assert.NoError(t, err)
 	assert.Nil(t, result)
 
 	mockCommentStore.AssertExpectations(t)

@@ -92,9 +92,6 @@ func (s *service) GetCommentsForModeration(ctx context.Context, filter core.Filt
 	if err != nil {
 		return nil, err
 	}
-	if len(comments) == 0 {
-		return nil, core.ErrNoCommentsWaitingForModeration
-	}
 
 	var result []core.CommentForModeration
 	for _, comment := range comments {

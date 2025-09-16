@@ -241,9 +241,6 @@ func (r *Router) getReportedComments(ctx *fiber.Ctx) error {
 	commentAndReasons, err := r.moderatorService.GetCommentsForModeration(ctx.UserContext(), core.Filter(commentsRequest.Filter))
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
-		if errors.Is(err, core.ErrNoCommentsWaitingForModeration) {
-			return ctx.Status(fiber.StatusNoContent).JSON(model.OKResponse(err.Error()))
-		}
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
@@ -351,7 +348,7 @@ func (r *Router) approveCommentByModerator(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.SendStatus(fiber.StatusOK)
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse("Comment successfully deleted"))
 }
 
 // @Summary		Ban user
@@ -410,5 +407,5 @@ func (r *Router) banUser(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
 	}
 
-	return ctx.SendStatus(fiber.StatusOK)
+	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse("User banned successfully"))
 }

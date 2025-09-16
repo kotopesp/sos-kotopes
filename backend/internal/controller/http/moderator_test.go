@@ -551,9 +551,9 @@ func TestGetReportedComments(t *testing.T) {
 
 				dependencies.moderatorService.EXPECT().
 					GetCommentsForModeration(mock.Anything, core.Filter("ASC")).
-					Return(nil, core.ErrNoCommentsWaitingForModeration).Once()
+					Return(nil, nil).Once()
 			},
-			wantCode: http.StatusNoContent,
+			wantCode: http.StatusOK,
 		},
 		{
 			name:        "internal error - get comments failed",
