@@ -3,120 +3,241 @@ package report_test
 import (
 	"context"
 	"errors"
-	"github.com/stretchr/testify/mock"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 	"github.com/kotopesp/sos-kotopes/internal/service/report"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateReport_PostAlreadyOnModeration(t *testing.T) {
-	// Проверяет, что жалоба не создается, если пост уже на модерации.
 	ctx := context.TODO()
 	mockPosts := new(mocks.MockPostStore)
 	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
 
 	post := core.Post{ID: 1, Status: core.OnModeration}
 	mockPosts.On("GetPostByID", ctx, 1).Return(post, nil)
 
-	svc := report.NewReportService(mockReports, mockPosts)
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
 
-	err := svc.CreateReport(ctx, core.Report{PostID: 1})
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   1,
+		ReportableType: core.ReportableTypePost,
+	})
 	assert.NoError(t, err)
+
 	mockPosts.AssertExpectations(t)
+	mockReports.AssertNotCalled(t, "GetReportsCount", ctx, mock.Anything, mock.Anything)
 	mockReports.AssertNotCalled(t, "CreateReport", ctx, mock.Anything)
+	mockComments.AssertNotCalled(t, "GetCommentByID", ctx, mock.Anything)
 }
 
-func TestCreateReport_Success(t *testing.T) {
-	// Проверяет полный путь успешного создания жалобы и отправки на модерацию.
+func TestCreateReport_CommentAlreadyOnModeration(t *testing.T) {
 	ctx := context.TODO()
 	mockPosts := new(mocks.MockPostStore)
 	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
+
+	comment := core.Comment{ID: 1, Status: core.OnModeration}
+	mockComments.On("GetCommentByID", ctx, 1).Return(comment, nil)
+
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
+
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   1,
+		ReportableType: core.ReportableTypeComment,
+	})
+	assert.NoError(t, err)
+
+	mockComments.AssertExpectations(t)
+	mockReports.AssertNotCalled(t, "CreateReport", ctx, mock.Anything)
+	mockPosts.AssertNotCalled(t, "GetPostByID", ctx, mock.Anything)
+}
+
+func TestCreateReport_PostSuccess(t *testing.T) {
+	ctx := context.TODO()
+	mockPosts := new(mocks.MockPostStore)
+	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
 
 	post := core.Post{ID: 2, Status: core.Published}
 	mockPosts.On("GetPostByID", ctx, 2).Return(post, nil)
 	mockReports.On("CreateReport", ctx, mock.Anything).Return(nil)
-	mockReports.On("GetReportsCount", ctx, 2).Return(core.ReportAmountThreshold, nil)
+	mockReports.On("GetReportsCount", ctx, 2, core.ReportableTypePost).Return(core.ReportAmountThreshold, nil)
 	mockPosts.On("SendToModeration", ctx, 2).Return(nil)
 
-	svc := report.NewReportService(mockReports, mockPosts)
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
 
-	err := svc.CreateReport(ctx, core.Report{PostID: 2})
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   2,
+		ReportableType: core.ReportableTypePost,
+	})
 	assert.NoError(t, err)
+
 	mockPosts.AssertExpectations(t)
 	mockReports.AssertExpectations(t)
+	mockComments.AssertNotCalled(t, "GetCommentByID", ctx, mock.Anything)
 }
 
-func TestCreateReport_GetPostFails(t *testing.T) {
-	// Проверяет, что ошибка получения поста приводит к возврату ошибки.
+func TestCreateReport_CommentSuccess(t *testing.T) {
 	ctx := context.TODO()
 	mockPosts := new(mocks.MockPostStore)
 	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
 
-	mockPosts.On("GetPostByID", ctx, 3).Return(core.Post{}, errors.New("not found"))
-
-	svc := report.NewReportService(mockReports, mockPosts)
-
-	err := svc.CreateReport(ctx, core.Report{PostID: 3})
-	assert.Error(t, err)
-	mockPosts.AssertExpectations(t)
-}
-
-func TestCreateReport_CreateReportFails(t *testing.T) {
-	// Проверяет, что ошибка при создании жалобы возвращается корректно.
-	ctx := context.TODO()
-	mockPosts := new(mocks.MockPostStore)
-	mockReports := new(mocks.MockReportStore)
-
-	post := core.Post{ID: 4, Status: core.Deleted}
-	mockPosts.On("GetPostByID", ctx, 4).Return(post, nil)
-	mockReports.On("CreateReport", ctx, mock.Anything).Return(errors.New("create error"))
-
-	svc := report.NewReportService(mockReports, mockPosts)
-
-	err := svc.CreateReport(ctx, core.Report{PostID: 4})
-	assert.Error(t, err)
-	mockPosts.AssertExpectations(t)
-	mockReports.AssertExpectations(t)
-}
-
-func TestCreateReport_GetReportsCountFails(t *testing.T) {
-	// Проверяет, что ошибка при подсчете жалоб обрабатывается корректно.
-	ctx := context.TODO()
-	mockPosts := new(mocks.MockPostStore)
-	mockReports := new(mocks.MockReportStore)
-
-	post := core.Post{ID: 5, Status: core.Published}
-	mockPosts.On("GetPostByID", ctx, 5).Return(post, nil)
+	comment := core.Comment{ID: 3, Status: core.Published}
+	mockComments.On("GetCommentByID", ctx, 3).Return(comment, nil)
 	mockReports.On("CreateReport", ctx, mock.Anything).Return(nil)
-	mockReports.On("GetReportsCount", ctx, 5).Return(0, errors.New("count db error"))
+	mockReports.On("GetReportsCount", ctx, 3, core.ReportableTypeComment).Return(core.ReportAmountThreshold, nil)
+	mockComments.On("SendToModeration", ctx, 3).Return(nil)
 
-	svc := report.NewReportService(mockReports, mockPosts)
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
 
-	err := svc.CreateReport(ctx, core.Report{PostID: 5})
-	assert.Error(t, err)
-	mockPosts.AssertExpectations(t)
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   3,
+		ReportableType: core.ReportableTypeComment,
+	})
+	assert.NoError(t, err)
+
+	mockComments.AssertExpectations(t)
 	mockReports.AssertExpectations(t)
+	mockPosts.AssertNotCalled(t, "GetPostByID", ctx, mock.Anything)
 }
 
-func TestCreateReport_SendToModerationFails(t *testing.T) {
-	// Проверяет, что ошибка при отправке поста на модерацию корректно возвращается.
+func TestCreateReport_InvalidReportableType(t *testing.T) {
 	ctx := context.TODO()
 	mockPosts := new(mocks.MockPostStore)
 	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
+
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
+
+	mockComments.On("GetReportsCount")
+
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   1,
+		ReportableType: "invalid_type",
+	})
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, core.ErrInvalidReportableType))
+
+	mockPosts.AssertNotCalled(t, "GetPostByID", ctx, mock.Anything)
+	mockComments.AssertNotCalled(t, "GetCommentByID", ctx, mock.Anything)
+	mockReports.AssertNotCalled(t, "CreateReport", ctx, mock.Anything)
+}
+
+func TestCreateReport_PostNotFound(t *testing.T) {
+	ctx := context.TODO()
+	mockPosts := new(mocks.MockPostStore)
+	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
+
+	mockPosts.On("GetPostByID", ctx, 4).Return(core.Post{}, errors.New("not found"))
+
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
+
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   4,
+		ReportableType: core.ReportableTypePost,
+	})
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, core.ErrTargetNotFound))
+
+	mockPosts.AssertExpectations(t)
+	mockReports.AssertNotCalled(t, "CreateReport", ctx, mock.Anything)
+}
+
+func TestCreateReport_CommentNotFound(t *testing.T) {
+	ctx := context.TODO()
+	mockPosts := new(mocks.MockPostStore)
+	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
+
+	mockComments.On("GetCommentByID", ctx, 5).Return(core.Comment{}, errors.New("not found"))
+
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
+
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   5,
+		ReportableType: core.ReportableTypeComment,
+	})
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, core.ErrTargetNotFound))
+
+	mockComments.AssertExpectations(t)
+	mockReports.AssertNotCalled(t, "CreateReport", ctx, mock.Anything)
+}
+
+func TestCreatePostReport_DuplicateReport(t *testing.T) {
+	ctx := context.TODO()
+	mockPosts := new(mocks.MockPostStore)
+	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
 
 	post := core.Post{ID: 6, Status: core.Published}
 	mockPosts.On("GetPostByID", ctx, 6).Return(post, nil)
-	mockReports.On("CreateReport", ctx, mock.Anything).Return(nil)
-	mockReports.On("GetReportsCount", ctx, 6).Return(core.ReportAmountThreshold, nil)
-	mockPosts.On("SendToModeration", ctx, 6).Return(errors.New("send fail"))
+	mockReports.On("CreateReport", ctx, mock.Anything).Return(core.ErrDuplicateReport)
+	mockReports.On("GetReportsCount", ctx, 6, core.ReportableTypePost).Return(1, nil)
 
-	svc := report.NewReportService(mockReports, mockPosts)
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
 
-	err := svc.CreateReport(ctx, core.Report{PostID: 6})
-	assert.Error(t, err)
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   6,
+		ReportableType: core.ReportableTypePost,
+	})
+	assert.NoError(t, err)
+
 	mockPosts.AssertExpectations(t)
 	mockReports.AssertExpectations(t)
+}
+
+func TestCreateCommentReport_DuplicateReport(t *testing.T) {
+	ctx := context.TODO()
+	mockPosts := new(mocks.MockPostStore)
+	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
+
+	comment := core.Comment{ID: 6, Status: core.Published}
+	mockComments.On("GetCommentByID", ctx, 6).Return(comment, nil)
+	mockReports.On("CreateReport", ctx, mock.Anything).Return(core.ErrDuplicateReport)
+	mockReports.On("GetReportsCount", ctx, 6, core.ReportableTypeComment).Return(1, nil)
+
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
+
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   6,
+		ReportableType: core.ReportableTypeComment,
+	})
+	assert.NoError(t, err)
+
+	mockPosts.AssertExpectations(t)
+	mockReports.AssertExpectations(t)
+}
+
+func TestCreateReport_BelowThreshold(t *testing.T) {
+	ctx := context.TODO()
+	mockPosts := new(mocks.MockPostStore)
+	mockReports := new(mocks.MockReportStore)
+	mockComments := new(mocks.MockCommentStore)
+
+	post := core.Post{ID: 7, Status: core.Published}
+	mockPosts.On("GetPostByID", ctx, 7).Return(post, nil)
+	mockReports.On("CreateReport", ctx, mock.Anything).Return(nil)
+	mockReports.On("GetReportsCount", ctx, 7, core.ReportableTypePost).Return(5, nil)
+
+	svc := report.NewReportService(mockReports, mockPosts, mockComments)
+
+	err := svc.CreateReport(ctx, core.Report{
+		ReportableID:   7,
+		ReportableType: core.ReportableTypePost,
+	})
+	assert.NoError(t, err)
+
+	mockPosts.AssertExpectations(t)
+	mockReports.AssertExpectations(t)
+	mockPosts.AssertNotCalled(t, "SendToModeration", ctx, mock.Anything)
 }

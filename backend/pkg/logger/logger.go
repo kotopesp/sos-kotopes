@@ -2,11 +2,12 @@ package logger
 
 import (
 	"context"
-	"github.com/rs/zerolog"
-	gormLogger "gorm.io/gorm/logger"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog"
+	gormLogger "gorm.io/gorm/logger"
 )
 
 type Logger interface {

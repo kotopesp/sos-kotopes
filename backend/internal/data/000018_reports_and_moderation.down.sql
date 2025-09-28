@@ -1,19 +1,50 @@
-ALTER TABLE IF EXISTS posts
-    ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE;
+DROP TABLE IF EXISTS banned_users;
 
-UPDATE posts
-SET is_deleted = CASE
-                     WHEN status = 'deleted' THEN TRUE
-                     ELSE FALSE
+ALTER TABLE IF EXISTS users 
+    ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE,
+    ADD COLUMN deleted_at TIMESTAMP;
+
+UPDATE users 
+    SET is_deleted = CASE 
+        WHEN status = 'deleted' THEN TRUE 
+        ELSE FALSE 
     END;
 
-ALTER TABLE IF EXISTS posts
-DROP COLUMN IF EXISTS status;
+ALTER TABLE users DROP COLUMN status;
 
-DROP TYPE IF EXISTS post_status;
-DROP TYPE IF EXISTS report_reason;
+DROP TYPE IF EXISTS user_status;
 
-DROP INDEX IF EXISTS idx_unique_post_user;
+DROP TABLE IF EXISTS moderators;
+
+ALTER TABLE posts 
+    ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+
+UPDATE posts 
+    SET is_deleted = CASE 
+        WHEN status = 'deleted' THEN TRUE 
+        ELSE FALSE 
+    END;
+
+DROP INDEX IF EXISTS idx_posts_status;
+DROP INDEX IF EXISTS idx_comments_status;
+
+ALTER TABLE posts DROP COLUMN status;
+
+ALTER TABLE comments 
+    ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;
+
+UPDATE comments 
+    SET is_deleted = CASE 
+        WHEN status = 'deleted' THEN TRUE 
+        ELSE FALSE 
+    END;
+
+ALTER TABLE comments DROP COLUMN status;
+
+DROP TYPE IF EXISTS status;
+
+DROP INDEX IF EXISTS idx_reports_reportable;
 
 DROP TABLE IF EXISTS reports;
-DROP TABLE IF EXISTS moderators;
+
+DROP TYPE IF EXISTS report_reason;

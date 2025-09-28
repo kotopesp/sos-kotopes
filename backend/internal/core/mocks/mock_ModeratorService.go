@@ -22,6 +22,53 @@ func (_m *MockModeratorService) EXPECT() *MockModeratorService_Expecter {
 	return &MockModeratorService_Expecter{mock: &_m.Mock}
 }
 
+// ApproveComment provides a mock function with given fields: ctx, commentID
+func (_m *MockModeratorService) ApproveComment(ctx context.Context, commentID int) error {
+	ret := _m.Called(ctx, commentID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ApproveComment")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, commentID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockModeratorService_ApproveComment_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ApproveComment'
+type MockModeratorService_ApproveComment_Call struct {
+	*mock.Call
+}
+
+// ApproveComment is a helper method to define mock.On call
+//   - ctx context.Context
+//   - commentID int
+func (_e *MockModeratorService_Expecter) ApproveComment(ctx interface{}, commentID interface{}) *MockModeratorService_ApproveComment_Call {
+	return &MockModeratorService_ApproveComment_Call{Call: _e.mock.On("ApproveComment", ctx, commentID)}
+}
+
+func (_c *MockModeratorService_ApproveComment_Call) Run(run func(ctx context.Context, commentID int)) *MockModeratorService_ApproveComment_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int))
+	})
+	return _c
+}
+
+func (_c *MockModeratorService_ApproveComment_Call) Return(_a0 error) *MockModeratorService_ApproveComment_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockModeratorService_ApproveComment_Call) RunAndReturn(run func(context.Context, int) error) *MockModeratorService_ApproveComment_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ApprovePost provides a mock function with given fields: ctx, postID
 func (_m *MockModeratorService) ApprovePost(ctx context.Context, postID int) error {
 	ret := _m.Called(ctx, postID)
@@ -69,9 +116,103 @@ func (_c *MockModeratorService_ApprovePost_Call) RunAndReturn(run func(context.C
 	return _c
 }
 
-// DeletePost provides a mock function with given fields: ctx, id
-func (_m *MockModeratorService) DeletePost(ctx context.Context, id int) error {
-	ret := _m.Called(ctx, id)
+// BanUser provides a mock function with given fields: ctx, banRecord
+func (_m *MockModeratorService) BanUser(ctx context.Context, banRecord core.BannedUserRecord) error {
+	ret := _m.Called(ctx, banRecord)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BanUser")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.BannedUserRecord) error); ok {
+		r0 = rf(ctx, banRecord)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockModeratorService_BanUser_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'BanUser'
+type MockModeratorService_BanUser_Call struct {
+	*mock.Call
+}
+
+// BanUser is a helper method to define mock.On call
+//   - ctx context.Context
+//   - banRecord core.BannedUserRecord
+func (_e *MockModeratorService_Expecter) BanUser(ctx interface{}, banRecord interface{}) *MockModeratorService_BanUser_Call {
+	return &MockModeratorService_BanUser_Call{Call: _e.mock.On("BanUser", ctx, banRecord)}
+}
+
+func (_c *MockModeratorService_BanUser_Call) Run(run func(ctx context.Context, banRecord core.BannedUserRecord)) *MockModeratorService_BanUser_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.BannedUserRecord))
+	})
+	return _c
+}
+
+func (_c *MockModeratorService_BanUser_Call) Return(_a0 error) *MockModeratorService_BanUser_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockModeratorService_BanUser_Call) RunAndReturn(run func(context.Context, core.BannedUserRecord) error) *MockModeratorService_BanUser_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DeleteComment provides a mock function with given fields: ctx, commentID
+func (_m *MockModeratorService) DeleteComment(ctx context.Context, commentID int) error {
+	ret := _m.Called(ctx, commentID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteComment")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, commentID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockModeratorService_DeleteComment_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteComment'
+type MockModeratorService_DeleteComment_Call struct {
+	*mock.Call
+}
+
+// DeleteComment is a helper method to define mock.On call
+//   - ctx context.Context
+//   - commentID int
+func (_e *MockModeratorService_Expecter) DeleteComment(ctx interface{}, commentID interface{}) *MockModeratorService_DeleteComment_Call {
+	return &MockModeratorService_DeleteComment_Call{Call: _e.mock.On("DeleteComment", ctx, commentID)}
+}
+
+func (_c *MockModeratorService_DeleteComment_Call) Run(run func(ctx context.Context, commentID int)) *MockModeratorService_DeleteComment_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int))
+	})
+	return _c
+}
+
+func (_c *MockModeratorService_DeleteComment_Call) Return(_a0 error) *MockModeratorService_DeleteComment_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockModeratorService_DeleteComment_Call) RunAndReturn(run func(context.Context, int) error) *MockModeratorService_DeleteComment_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DeletePost provides a mock function with given fields: ctx, ID
+func (_m *MockModeratorService) DeletePost(ctx context.Context, ID int) error {
+	ret := _m.Called(ctx, ID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeletePost")
@@ -79,7 +220,7 @@ func (_m *MockModeratorService) DeletePost(ctx context.Context, id int) error {
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
-		r0 = rf(ctx, id)
+		r0 = rf(ctx, ID)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -94,12 +235,12 @@ type MockModeratorService_DeletePost_Call struct {
 
 // DeletePost is a helper method to define mock.On call
 //   - ctx context.Context
-//   - id int
-func (_e *MockModeratorService_Expecter) DeletePost(ctx interface{}, id interface{}) *MockModeratorService_DeletePost_Call {
-	return &MockModeratorService_DeletePost_Call{Call: _e.mock.On("DeletePost", ctx, id)}
+//   - ID int
+func (_e *MockModeratorService_Expecter) DeletePost(ctx interface{}, ID interface{}) *MockModeratorService_DeletePost_Call {
+	return &MockModeratorService_DeletePost_Call{Call: _e.mock.On("DeletePost", ctx, ID)}
 }
 
-func (_c *MockModeratorService_DeletePost_Call) Run(run func(ctx context.Context, id int)) *MockModeratorService_DeletePost_Call {
+func (_c *MockModeratorService_DeletePost_Call) Run(run func(ctx context.Context, ID int)) *MockModeratorService_DeletePost_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(context.Context), args[1].(int))
 	})
@@ -112,6 +253,65 @@ func (_c *MockModeratorService_DeletePost_Call) Return(err error) *MockModerator
 }
 
 func (_c *MockModeratorService_DeletePost_Call) RunAndReturn(run func(context.Context, int) error) *MockModeratorService_DeletePost_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetCommentsForModeration provides a mock function with given fields: ctx, filter
+func (_m *MockModeratorService) GetCommentsForModeration(ctx context.Context, filter core.Filter) ([]core.CommentForModeration, error) {
+	ret := _m.Called(ctx, filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetCommentsForModeration")
+	}
+
+	var r0 []core.CommentForModeration
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) ([]core.CommentForModeration, error)); ok {
+		return rf(ctx, filter)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) []core.CommentForModeration); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.CommentForModeration)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, core.Filter) error); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockModeratorService_GetCommentsForModeration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetCommentsForModeration'
+type MockModeratorService_GetCommentsForModeration_Call struct {
+	*mock.Call
+}
+
+// GetCommentsForModeration is a helper method to define mock.On call
+//   - ctx context.Context
+//   - filter core.Filter
+func (_e *MockModeratorService_Expecter) GetCommentsForModeration(ctx interface{}, filter interface{}) *MockModeratorService_GetCommentsForModeration_Call {
+	return &MockModeratorService_GetCommentsForModeration_Call{Call: _e.mock.On("GetCommentsForModeration", ctx, filter)}
+}
+
+func (_c *MockModeratorService_GetCommentsForModeration_Call) Run(run func(ctx context.Context, filter core.Filter)) *MockModeratorService_GetCommentsForModeration_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.Filter))
+	})
+	return _c
+}
+
+func (_c *MockModeratorService_GetCommentsForModeration_Call) Return(_a0 []core.CommentForModeration, _a1 error) *MockModeratorService_GetCommentsForModeration_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockModeratorService_GetCommentsForModeration_Call) RunAndReturn(run func(context.Context, core.Filter) ([]core.CommentForModeration, error)) *MockModeratorService_GetCommentsForModeration_Call {
 	_c.Call.Return(run)
 	return _c
 }

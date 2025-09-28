@@ -22,6 +22,53 @@ func (_m *MockCommentStore) EXPECT() *MockCommentStore_Expecter {
 	return &MockCommentStore_Expecter{mock: &_m.Mock}
 }
 
+// ApproveCommentFromModeration provides a mock function with given fields: ctx, commentID
+func (_m *MockCommentStore) ApproveCommentFromModeration(ctx context.Context, commentID int) error {
+	ret := _m.Called(ctx, commentID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ApproveCommentFromModeration")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, commentID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockCommentStore_ApproveCommentFromModeration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ApproveCommentFromModeration'
+type MockCommentStore_ApproveCommentFromModeration_Call struct {
+	*mock.Call
+}
+
+// ApproveCommentFromModeration is a helper method to define mock.On call
+//   - ctx context.Context
+//   - commentID int
+func (_e *MockCommentStore_Expecter) ApproveCommentFromModeration(ctx interface{}, commentID interface{}) *MockCommentStore_ApproveCommentFromModeration_Call {
+	return &MockCommentStore_ApproveCommentFromModeration_Call{Call: _e.mock.On("ApproveCommentFromModeration", ctx, commentID)}
+}
+
+func (_c *MockCommentStore_ApproveCommentFromModeration_Call) Run(run func(ctx context.Context, commentID int)) *MockCommentStore_ApproveCommentFromModeration_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int))
+	})
+	return _c
+}
+
+func (_c *MockCommentStore_ApproveCommentFromModeration_Call) Return(_a0 error) *MockCommentStore_ApproveCommentFromModeration_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockCommentStore_ApproveCommentFromModeration_Call) RunAndReturn(run func(context.Context, int) error) *MockCommentStore_ApproveCommentFromModeration_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // CreateComment provides a mock function with given fields: ctx, comment
 func (_m *MockCommentStore) CreateComment(ctx context.Context, comment core.Comment) (core.Comment, error) {
 	ret := _m.Called(ctx, comment)
@@ -245,6 +292,112 @@ func (_c *MockCommentStore_GetCommentByID_Call) Return(data core.Comment, err er
 }
 
 func (_c *MockCommentStore_GetCommentByID_Call) RunAndReturn(run func(context.Context, int) (core.Comment, error)) *MockCommentStore_GetCommentByID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetCommentsForModeration provides a mock function with given fields: ctx, filter
+func (_m *MockCommentStore) GetCommentsForModeration(ctx context.Context, filter core.Filter) ([]core.Comment, error) {
+	ret := _m.Called(ctx, filter)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetCommentsForModeration")
+	}
+
+	var r0 []core.Comment
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) ([]core.Comment, error)); ok {
+		return rf(ctx, filter)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, core.Filter) []core.Comment); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]core.Comment)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, core.Filter) error); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockCommentStore_GetCommentsForModeration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetCommentsForModeration'
+type MockCommentStore_GetCommentsForModeration_Call struct {
+	*mock.Call
+}
+
+// GetCommentsForModeration is a helper method to define mock.On call
+//   - ctx context.Context
+//   - filter core.Filter
+func (_e *MockCommentStore_Expecter) GetCommentsForModeration(ctx interface{}, filter interface{}) *MockCommentStore_GetCommentsForModeration_Call {
+	return &MockCommentStore_GetCommentsForModeration_Call{Call: _e.mock.On("GetCommentsForModeration", ctx, filter)}
+}
+
+func (_c *MockCommentStore_GetCommentsForModeration_Call) Run(run func(ctx context.Context, filter core.Filter)) *MockCommentStore_GetCommentsForModeration_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(core.Filter))
+	})
+	return _c
+}
+
+func (_c *MockCommentStore_GetCommentsForModeration_Call) Return(_a0 []core.Comment, _a1 error) *MockCommentStore_GetCommentsForModeration_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockCommentStore_GetCommentsForModeration_Call) RunAndReturn(run func(context.Context, core.Filter) ([]core.Comment, error)) *MockCommentStore_GetCommentsForModeration_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SendToModeration provides a mock function with given fields: ctx, commentID
+func (_m *MockCommentStore) SendToModeration(ctx context.Context, commentID int) error {
+	ret := _m.Called(ctx, commentID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SendToModeration")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int) error); ok {
+		r0 = rf(ctx, commentID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockCommentStore_SendToModeration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SendToModeration'
+type MockCommentStore_SendToModeration_Call struct {
+	*mock.Call
+}
+
+// SendToModeration is a helper method to define mock.On call
+//   - ctx context.Context
+//   - commentID int
+func (_e *MockCommentStore_Expecter) SendToModeration(ctx interface{}, commentID interface{}) *MockCommentStore_SendToModeration_Call {
+	return &MockCommentStore_SendToModeration_Call{Call: _e.mock.On("SendToModeration", ctx, commentID)}
+}
+
+func (_c *MockCommentStore_SendToModeration_Call) Run(run func(ctx context.Context, commentID int)) *MockCommentStore_SendToModeration_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(int))
+	})
+	return _c
+}
+
+func (_c *MockCommentStore_SendToModeration_Call) Return(_a0 error) *MockCommentStore_SendToModeration_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockCommentStore_SendToModeration_Call) RunAndReturn(run func(context.Context, int) error) *MockCommentStore_SendToModeration_Call {
 	_c.Call.Return(run)
 	return _c
 }

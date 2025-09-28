@@ -5,75 +5,98 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/report"
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"io"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestCreateReport(t *testing.T) {
 	t.Parallel()
 	app, dependencies := newTestApp(t)
 
-	const route = "/api/v1/reports/%d"
+	const route = "/api/v1/reports"
 
 	tests := []struct {
 		name          string
 		token         string
-		postID        int
 		requestBody   interface{}
 		mockBehaviour func()
 		wantCode      int
 	}{
 		{
-			name:   "success",
-			token:  token,
-			postID: 1,
+			name:  "success post report",
+			token: token,
 			requestBody: report.CreateRequestBodyReport{
-				Reason: "spam",
+				TargetID:   1,
+				TargetType: "post",
+				Reason:     "spam",
 			},
 			mockBehaviour: func() {
 				dependencies.reportService.EXPECT().
-					CreateReport(mock.Anything, mock.Anything).
+					CreateReport(mock.Anything, mock.MatchedBy(func(r core.Report) bool {
+						return r.ReportableID == 1 && r.ReportableType == core.ReportableTypePost
+					})).
 					Return(nil).Once()
 			},
 			wantCode: http.StatusCreated,
 		},
 		{
-			name:   "unauthorized",
-			token:  "",
-			postID: 1,
+			name:  "success comment report",
+			token: token,
 			requestBody: report.CreateRequestBodyReport{
-				Reason: "spam",
+				TargetID:   2,
+				TargetType: "comment",
+				Reason:     "violent_content",
+			},
+			mockBehaviour: func() {
+				dependencies.reportService.EXPECT().
+					CreateReport(mock.Anything, mock.MatchedBy(func(r core.Report) bool {
+						return r.ReportableID == 2 && r.ReportableType == core.ReportableTypeComment
+					})).
+					Return(nil).Once()
+			},
+			wantCode: http.StatusCreated,
+		},
+		{
+			name:  "unauthorized",
+			token: "",
+			requestBody: report.CreateRequestBodyReport{
+				TargetID:   1,
+				TargetType: "post",
+				Reason:     "spam",
 			},
 			mockBehaviour: func() {},
 			wantCode:      http.StatusUnauthorized,
 		},
 		{
-			name:   "post not found",
-			token:  token,
-			postID: 1,
+			name:  "target not found",
+			token: token,
 			requestBody: report.CreateRequestBodyReport{
-				Reason: "spam",
+				TargetID:   1,
+				TargetType: "post",
+				Reason:     "spam",
 			},
 			mockBehaviour: func() {
 				dependencies.reportService.EXPECT().
 					CreateReport(mock.Anything, mock.Anything).
-					Return(core.ErrPostNotFound).Once()
+					Return(core.ErrTargetNotFound).Once()
 			},
 			wantCode: http.StatusNotFound,
 		},
 		{
-			name:   "duplicate report",
-			token:  token,
-			postID: 1,
+			name:  "duplicate report",
+			token: token,
 			requestBody: report.CreateRequestBodyReport{
-				Reason: "spam",
+				TargetID:   1,
+				TargetType: "post",
+				Reason:     "spam",
 			},
 			mockBehaviour: func() {
 				dependencies.reportService.EXPECT().
@@ -83,31 +106,65 @@ func TestCreateReport(t *testing.T) {
 			wantCode: http.StatusConflict,
 		},
 		{
-			name:   "validation error - missing reason",
-			token:  token,
-			postID: 1,
+			name:  "invalid reportable type - validation error",
+			token: token,
 			requestBody: report.CreateRequestBodyReport{
-				Reason: "",
+				TargetID:   1,
+				TargetType: "invalid_type",
+				Reason:     "spam",
 			},
 			mockBehaviour: func() {},
 			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
-			name:   "validation error - invalid reason",
-			token:  token,
-			postID: 1,
+			name:  "validation error - missing reason",
+			token: token,
 			requestBody: report.CreateRequestBodyReport{
-				Reason: "invalid_reason",
+				TargetID:   1,
+				TargetType: "post",
+				Reason:     "",
 			},
 			mockBehaviour: func() {},
 			wantCode:      http.StatusUnprocessableEntity,
 		},
 		{
-			name:   "internal server error",
-			token:  token,
-			postID: 1,
+			name:  "validation error - missing target_id",
+			token: token,
+			requestBody: map[string]interface{}{
+				"target_type": "post",
+				"reason":      "spam",
+			},
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
+		},
+		{
+			name:  "validation error - missing target_type",
+			token: token,
+			requestBody: map[string]interface{}{
+				"target_id": 1,
+				"reason":    "spam",
+			},
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
+		},
+		{
+			name:  "validation error - invalid reason",
+			token: token,
 			requestBody: report.CreateRequestBodyReport{
-				Reason: "spam",
+				TargetID:   1,
+				TargetType: "post",
+				Reason:     "invalid_reason",
+			},
+			mockBehaviour: func() {},
+			wantCode:      http.StatusUnprocessableEntity,
+		},
+		{
+			name:  "internal server error",
+			token: token,
+			requestBody: report.CreateRequestBodyReport{
+				TargetID:   1,
+				TargetType: "post",
+				Reason:     "spam",
 			},
 			mockBehaviour: func() {
 				dependencies.reportService.EXPECT().
@@ -120,17 +177,14 @@ func TestCreateReport(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Мокируем поведение в зависимости от теста
 			tt.mockBehaviour()
 
-			// Подготавливаем тело запроса
 			body, err := json.Marshal(tt.requestBody)
 			require.NoError(t, err)
 
-			// Исправлено создание запроса
 			req := httptest.NewRequest(
 				http.MethodPost,
-				fmt.Sprintf(route, tt.postID),
+				route,
 				bytes.NewReader(body),
 			)
 			if tt.token != "" {
@@ -138,15 +192,12 @@ func TestCreateReport(t *testing.T) {
 			}
 			req.Header.Set("Content-Type", "application/json")
 
-			// Выполняем запрос
 			resp, err := app.Test(req)
 			require.NoError(t, err)
 			defer resp.Body.Close()
 
-			// Проверяем статус ответа
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
 
-			// Для ошибок можно дополнительно проверить тело ответа
 			if tt.wantCode != http.StatusCreated {
 				respBody, err := io.ReadAll(resp.Body)
 				require.NoError(t, err)

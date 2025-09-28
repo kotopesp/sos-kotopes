@@ -2,49 +2,96 @@ package report
 
 import (
 	"context"
+	"errors"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
 
 type service struct {
-	reportStore core.ReportStore
-	postStore   core.PostStore
+	reportStore  core.ReportStore
+	postStore    core.PostStore
+	commentStore core.CommentStore
 }
 
-func NewReportService(reportStore core.ReportStore, postStore core.PostStore) core.ReportService {
-	return &service{reportStore: reportStore, postStore: postStore}
+func NewReportService(reportStore core.ReportStore, postStore core.PostStore, commentStore core.CommentStore) core.ReportService {
+	return &service{reportStore: reportStore, postStore: postStore, commentStore: commentStore}
 }
 
-// CreateReport - creates Report record in special table.
-func (s *service) CreateReport(ctx context.Context, report core.Report) (err error) {
-	post, err := s.postStore.GetPostByID(ctx, report.PostID)
-	if err != nil {
-		logger.Log().Error(ctx, err.Error())
+func (s *service) CreateReport(ctx context.Context, report core.Report) error {
+	if err := s.validateTarget(ctx, report); err != nil {
+		if errors.Is(err, core.ErrContentAlreadyOnModeration) {
+			return nil
+		}
+
 		return err
 	}
 
-	// post already on moderation
-	if post.Status == core.OnModeration {
+	if err := s.checkModerationThreshold(ctx, report); err != nil {
+		return err
+	}
+
+	if err := s.createReportRecord(ctx, report); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) validateTarget(ctx context.Context, report core.Report) error {
+	switch report.ReportableType {
+	case core.ReportableTypePost:
+		post, err := s.postStore.GetPostByID(ctx, report.ReportableID)
+		if err != nil {
+			return core.ErrTargetNotFound
+		}
+		if post.Status == core.OnModeration {
+			return core.ErrContentAlreadyOnModeration
+		}
+
+	case core.ReportableTypeComment:
+		comment, err := s.commentStore.GetCommentByID(ctx, report.ReportableID)
+		if err != nil {
+			return core.ErrTargetNotFound
+		}
+		if comment.Status == core.OnModeration {
+			return core.ErrContentAlreadyOnModeration
+		}
+	default:
+		return core.ErrInvalidReportableType
+	}
+
+	return nil
+}
+
+func (s *service) createReportRecord(ctx context.Context, report core.Report) error {
+	err := s.reportStore.CreateReport(ctx, report)
+	if errors.Is(err, core.ErrDuplicateReport) {
 		return nil
 	}
 
-	if err = s.reportStore.CreateReport(ctx, report); err != nil {
-		logger.Log().Error(ctx, err.Error())
-		return err
-	}
+	return err
+}
 
-	reportCount, err := s.reportStore.GetReportsCount(ctx, report.PostID)
+func (s *service) checkModerationThreshold(ctx context.Context, report core.Report) error {
+	reportCount, err := s.reportStore.GetReportsCount(ctx, report.ReportableID, report.ReportableType)
 	if err != nil {
-		logger.Log().Error(ctx, err.Error())
 		return err
 	}
 
 	if reportCount >= core.ReportAmountThreshold {
-		err = s.postStore.SendToModeration(ctx, report.PostID)
-		if err != nil {
-			return err
-		}
+		return s.sendToModeration(ctx, report)
 	}
 
 	return nil
+}
+
+func (s *service) sendToModeration(ctx context.Context, report core.Report) error {
+	switch report.ReportableType {
+	case core.ReportableTypePost:
+		return s.postStore.SendToModeration(ctx, report.ReportableID)
+	case core.ReportableTypeComment:
+		return s.commentStore.SendToModeration(ctx, report.ReportableID)
+	default:
+		return core.ErrInvalidReportableType
+	}
 }

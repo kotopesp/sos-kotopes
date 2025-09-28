@@ -187,6 +187,29 @@ func TestLoginBasic(t *testing.T) {
 			},
 			wantErr: errUpdateRefreshSession,
 		},
+		{
+			name:                  "user is banned",
+			getUserByUsernameArg2: username,
+			getUserByUsernameRet1: core.User{
+				ID:           1,
+				Username:     username,
+				PasswordHash: passwordHash,
+				Status:       core.UserBanned,
+			},
+			invokeGetUserByUsername:      true,
+			countSessionsAndDeleteArg2:   1,
+			invokeCountSessionsAndDelete: false,
+			updateRefreshSessionArg2: core.RefreshSession{
+				UserID:    1,
+				ExpiresAt: time.Now().Add(time.Minute * time.Duration(refreshTokenLifetime)),
+			},
+			invokeUpdateRefreshSession: false,
+			loginBasicArg2: core.User{
+				Username:     username,
+				PasswordHash: password,
+			},
+			wantErr: core.ErrUserIsBanned,
+		},
 	}
 
 	for _, tt := range tests {

@@ -2,6 +2,7 @@ package role
 
 import (
 	"context"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 )
