@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"errors"
 	"time"
 )
 
@@ -46,14 +45,6 @@ type (
 		DeleteUserRole(ctx context.Context, id int, role string) (err error)
 		UpdateUserRole(ctx context.Context, id int, role UpdateRole) (updatedRole Role, err error)
 	}
-)
-
-// errors
-var (
-	ErrInvalidRole      = errors.New("invalid role name")
-	ErrUserRoleNotFound = errors.New("user does not have the specified role")
-
-	ErrNoFieldsToUpdate = errors.New("no fields to update")
 )
 
 const Seeker = "seeker"

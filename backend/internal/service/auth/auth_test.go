@@ -187,6 +187,29 @@ func TestLoginBasic(t *testing.T) {
 			},
 			wantErr: errUpdateRefreshSession,
 		},
+		{
+			name:                  "user is banned",
+			getUserByUsernameArg2: username,
+			getUserByUsernameRet1: core.User{
+				ID:           1,
+				Username:     username,
+				PasswordHash: passwordHash,
+				Status:       core.UserBanned,
+			},
+			invokeGetUserByUsername:      true,
+			countSessionsAndDeleteArg2:   1,
+			invokeCountSessionsAndDelete: false,
+			updateRefreshSessionArg2: core.RefreshSession{
+				UserID:    1,
+				ExpiresAt: time.Now().Add(time.Minute * time.Duration(refreshTokenLifetime)),
+			},
+			invokeUpdateRefreshSession: false,
+			loginBasicArg2: core.User{
+				Username:     username,
+				PasswordHash: password,
+			},
+			wantErr: core.ErrUserIsBanned,
+		},
 	}
 
 	for _, tt := range tests {
@@ -275,7 +298,7 @@ func TestSignupBasic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.invokeAddUser {
 				mockUserStore.On(
-					"AddUser",
+					"CreateUser",
 					ctx,
 					mock.MatchedBy(func(user core.User) bool {
 						return user.Username == tt.addUserArg2.Username &&

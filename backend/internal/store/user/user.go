@@ -83,7 +83,7 @@ func (s *store) UpdateUser(ctx context.Context, id int, update core.UpdateUser) 
 		logger.Log().Error(ctx, core.ErrEmptyUpdateRequest.Error())
 		return core.User{}, core.ErrEmptyUpdateRequest
 	} else {
-		updates["updated_at"] = time.Now()
+		updates["updated_at"] = time.Now().UTC()
 	}
 
 	err = tx.WithContext(ctx).Table("users").Where("id = ?", id).Updates(updates).Error
@@ -128,7 +128,7 @@ func (s *store) GetUserByID(ctx context.Context, id int) (data core.User, err er
 	return user, err
 }
 
-func (s *store) AddUser(ctx context.Context, user core.User) (userID int, err error) {
+func (s *store) CreateUser(ctx context.Context, user core.User) (userID int, err error) {
 	err = s.DB.WithContext(ctx).Create(&user).Error
 	if err != nil {
 		if strings.Contains(err.Error(), "users_username_key") { // here I need to somehow catch the error of unique constraint violation
@@ -138,8 +138,7 @@ func (s *store) AddUser(ctx context.Context, user core.User) (userID int, err er
 	return user.ID, err
 }
 
-func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (data core.ExternalUser, err error) {
-	var user core.ExternalUser
+func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (user core.ExternalUser, err error) {
 	err = s.DB.WithContext(ctx).First(&user, "external_id=?", externalID).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return user, core.ErrNoSuchUser
@@ -147,7 +146,7 @@ func (s *store) GetUserByExternalID(ctx context.Context, externalID int) (data c
 	return user, err
 }
 
-func (s *store) AddExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
+func (s *store) CreateExternalUser(ctx context.Context, user core.User, externalUserID int, authProvider string) (userID int, err error) {
 	tx := s.DB.WithContext(ctx).Begin()
 
 	defer func() {
@@ -171,4 +170,52 @@ func (s *store) AddExternalUser(ctx context.Context, user core.User, externalUse
 	}
 
 	return user.ID, tx.Commit().Error
+}
+
+func (s *store) BanUserWithRecord(ctx context.Context, banRecord core.BannedUserRecord) (err error) {
+	tx := s.DB.WithContext(ctx).Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback().Error; rollbackErr != nil {
+				logger.Log().Error(ctx, "Failed to rollback transaction: "+rollbackErr.Error())
+			}
+		}
+	}()
+
+	updates := map[string]interface{}{
+		"status":     core.UserBanned,
+		"updated_at": time.Now().UTC(),
+	}
+
+	result := tx.Model(&core.User{}).Where("id = ?", banRecord.UserID).Updates(updates)
+	if result.Error != nil {
+		if errors.Is(result.Error, core.ErrRecordNotFound) {
+			logger.Log().Error(ctx, core.ErrRecordNotFound.Error())
+
+			return core.ErrNoSuchUser
+		}
+		logger.Log().Error(ctx, result.Error.Error())
+
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return core.ErrNoSuchUser
+	}
+
+	if err = tx.Create(&banRecord).Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	if err = tx.Commit().Error; err != nil {
+		logger.Log().Error(ctx, err.Error())
+		return err
+	}
+
+	return nil
 }

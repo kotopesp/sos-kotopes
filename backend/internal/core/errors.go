@@ -8,14 +8,21 @@ import (
 
 var (
 	// post errors
-	ErrInvalidPostID        = errors.New("invalid post ID")
-	ErrPostNotFound         = errors.New("post not found")
-	ErrRecordNotFound       = gorm.ErrRecordNotFound
-	ErrPostIsDeleted        = errors.New("post is deleted")
-	ErrPostAuthorIDMismatch = errors.New("your user_id and db author_id mismatch")
+	ErrInvalidPostID               = errors.New("invalid post ID")
+	ErrPostNotFound                = errors.New("post not found")
+	ErrRecordNotFound              = gorm.ErrRecordNotFound
+	ErrPostIsDeleted               = errors.New("post is deleted")
+	ErrPostAuthorIDMismatch        = errors.New("your user_id and db author_id mismatch")
+	ErrNoPostsWaitingForModeration = errors.New("no posts waiting for moderation")
 
 	// user errors
 	ErrFailedToGetAuthorIDFromToken = errors.New("failed to get author ID from token")
+	ErrUserIsBanned                 = errors.New("user is banned")
+
+	// Role errors
+	ErrInvalidRole      = errors.New("invalid role name")
+	ErrUserRoleNotFound = errors.New("user does not have the specified role")
+	ErrNoFieldsToUpdate = errors.New("no fields to update")
 
 	// animal errors
 	ErrAnimalNotFound = errors.New("animal not found")
@@ -28,14 +35,28 @@ var (
 	ErrInvalidUpdateRefreshSessionParams = errors.New("invalid UpdateRefreshSession params")
 
 	// comment errors
-	ErrCommentAuthorIDMismatch     = errors.New("your user_id and db author_id mismatch")
-	ErrCommentPostIDMismatch       = errors.New("your posts_id and db posts_id mismatch")
-	ErrNoSuchComment               = errors.New("no such comment")
-	ErrCommentIsDeleted            = errors.New("comment is deleted")
-	ErrInvalidCommentParentID      = errors.New("invalid comment parent_id")
-	ErrReplyToCommentOfAnotherPost = errors.New("reply to comment of another post")
-	ErrParentCommentNotFound       = errors.New("parent comment not found")
-	ErrReplyCommentNotFound        = errors.New("reply comment not found")
-	ErrInvalidCommentReplyID       = errors.New("invalid comment reply_id")
-	ErrNullCommentParentID         = errors.New("comment parent id is null")
+	ErrCommentAuthorIDMismatch        = errors.New("your user_id and db author_id mismatch")
+	ErrCommentPostIDMismatch          = errors.New("your posts_id and db posts_id mismatch")
+	ErrNoSuchComment                  = errors.New("no such comment")
+	ErrCommentIsDeleted               = errors.New("comment is deleted")
+	ErrInvalidCommentParentID         = errors.New("invalid comment parent_id")
+	ErrReplyToCommentOfAnotherPost    = errors.New("reply to comment of another post")
+	ErrParentCommentNotFound          = errors.New("parent comment not found")
+	ErrReplyCommentNotFound           = errors.New("reply comment not found")
+	ErrInvalidCommentReplyID          = errors.New("invalid comment reply_id")
+	ErrNullCommentParentID            = errors.New("comment parent id is null")
+	ErrNoCommentsWaitingForModeration = errors.New("no comments waiting for moderation")
+
+	// moderator errors
+	ErrNoSuchModerator      = errors.New("moderator does not exist")
+	ErrGettingReportReasons = errors.New("error getting report reasons")
+	ErrUserAlreadyBanned    = errors.New("user already banned")
+	// report errors
+	ErrToCreateReport  = errors.New("error creating report")
+	ErrDuplicateReport = errors.New("duplicate report")
+	ErrDeleteReports   = errors.New("error deleting reports")
+
+	ErrTargetNotFound             = errors.New("target not found")
+	ErrInvalidReportableType      = errors.New("invalid reportable type")
+	ErrContentAlreadyOnModeration = errors.New("content already on moderation")
 )

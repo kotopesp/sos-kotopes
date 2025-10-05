@@ -8,10 +8,11 @@ import (
 
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/validator"
 	"github.com/kotopesp/sos-kotopes/internal/migrate"
+	moderatorsService "github.com/kotopesp/sos-kotopes/internal/service/moderator"
+	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
+	reportservice "github.com/kotopesp/sos-kotopes/internal/service/report"
 	rolesService "github.com/kotopesp/sos-kotopes/internal/service/role"
 	usersService "github.com/kotopesp/sos-kotopes/internal/service/user"
-	rolesStore "github.com/kotopesp/sos-kotopes/internal/store/role"
-	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 
 	baseValidator "github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -27,12 +28,15 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
-	postservice "github.com/kotopesp/sos-kotopes/internal/service/post"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
+	moderatorstore "github.com/kotopesp/sos-kotopes/internal/store/moderator"
 	poststore "github.com/kotopesp/sos-kotopes/internal/store/post"
 	postfavouritestore "github.com/kotopesp/sos-kotopes/internal/store/postfavourite"
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
+	reportstore "github.com/kotopesp/sos-kotopes/internal/store/report"
+	rolesstore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 )
 
 // Run creates objects via constructors.
@@ -57,20 +61,23 @@ func Run(cfg *config.Config) {
 	// Stores
 	userStore := user.New(pg)
 	commentStore := commentstore.New(pg)
-	roleStore := rolesStore.New(pg)
+	roleStore := rolesstore.New(pg)
 	favouriteUserStore := userFavouriteStore.New(pg)
 	postStore := poststore.New(pg)
 	postFavouriteStore := postfavouritestore.New(pg)
 	animalStore := animalstore.New(pg)
 	refreshSessionStore := refreshsessionstore.New(pg)
-
+	reportStore := reportstore.New(pg)
+	moderatorStore := moderatorstore.New(pg)
 	// Services
 	commentService := commentservice.New(
 		commentStore,
 		postStore,
 	)
 	roleService := rolesService.New(roleStore, userStore)
+	reportService := reportservice.NewReportService(reportStore, postStore, commentStore)
 	userService := usersService.New(userStore, favouriteUserStore)
+	moderatorService := moderatorsService.New(moderatorStore, postStore, reportStore, userStore, commentStore)
 	authService := auth.New(
 		userStore,
 		refreshSessionStore,
@@ -108,6 +115,8 @@ func Run(cfg *config.Config) {
 		postService,
 		userService,
 		roleService,
+		reportService,
+		moderatorService,
 		formValidator,
 	)
 

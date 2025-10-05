@@ -17,6 +17,8 @@ type Router struct {
 	postService          core.PostService
 	userService          core.UserService
 	roleService          core.RoleService
+	reportService        core.ReportService
+	moderatorService     core.ModeratorService
 	userFavouriteService core.UserFavouriteService
 }
 
@@ -27,16 +29,21 @@ func NewRouter(
 	postService core.PostService,
 	userService core.UserService,
 	roleService core.RoleService,
+	reportService core.ReportService,
+	moderatorService core.ModeratorService,
 	formValidator validator.FormValidatorService,
+
 ) {
 	router := &Router{
-		app:            app,
-		formValidator:  formValidator,
-		authService:    authService,
-		postService:    postService,
-		userService:    userService,
-		roleService:    roleService,
-		commentService: commentService,
+		app:              app,
+		formValidator:    formValidator,
+		authService:      authService,
+		postService:      postService,
+		userService:      userService,
+		roleService:      roleService,
+		commentService:   commentService,
+		moderatorService: moderatorService,
+		reportService:    reportService,
 	}
 
 	router.initRequestMiddlewares()
@@ -97,6 +104,18 @@ func (r *Router) initRoutes() {
 	// favourites posts
 	v1.Post("/posts/:id/favourites", r.protectedMiddleware(), r.addFavouritePost)
 	v1.Delete("/posts/favourites/:id", r.protectedMiddleware(), r.deleteFavouritePostByID)
+
+	// reports
+	v1.Post("/reports", r.protectedMiddleware(), r.createReport)
+
+	// moderators
+	v1.Get("/moderation/posts", r.protectedMiddleware(), r.getReportedPosts)
+	v1.Delete("/moderation/posts/:id", r.protectedMiddleware(), r.deletePostByModerator)
+	v1.Patch("/moderation/posts/:id", r.protectedMiddleware(), r.approvePostByModerator)
+	v1.Get("/moderation/comments", r.protectedMiddleware(), r.getReportedComments)
+	v1.Delete("/moderation/comments/:id", r.protectedMiddleware(), r.deleteCommentByModerator)
+	v1.Patch("/moderation/comments/:id", r.protectedMiddleware(), r.approveCommentByModerator)
+	v1.Post("/moderation/users/ban", r.protectedMiddleware(), r.banUser)
 }
 
 // initRequestMiddlewares initializes all middlewares for http requests

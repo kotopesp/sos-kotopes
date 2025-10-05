@@ -119,7 +119,7 @@ func (s *service) UpdatePost(ctx context.Context, postUpdateRequest core.UpdateR
 
 	if dbPost.Post.AuthorID != *postUpdateRequest.AuthorID {
 		return core.PostDetails{}, core.ErrPostAuthorIDMismatch
-	} else if dbPost.Post.IsDeleted {
+	} else if dbPost.Post.Status == core.Deleted {
 		return core.PostDetails{}, core.ErrPostIsDeleted
 	}
 
@@ -154,7 +154,7 @@ func (s *service) DeletePost(ctx context.Context, post core.Post) error {
 
 	if dbPost.AuthorID != post.AuthorID {
 		return core.ErrPostAuthorIDMismatch
-	} else if dbPost.IsDeleted {
+	} else if dbPost.Status == core.Deleted {
 		return core.ErrPostIsDeleted
 	}
 

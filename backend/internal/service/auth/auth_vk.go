@@ -3,10 +3,11 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kotopesp/sos-kotopes/internal/core"
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/kotopesp/sos-kotopes/internal/core"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/vk"
