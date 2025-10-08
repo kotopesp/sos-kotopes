@@ -1,0 +1,28 @@
+<div class="keeper__interior_container">
+  <div class="keeper__inferior_container">
+    <div class="photo__container">
+      <img 
+      class="keeper_photo" 
+      [src]="avatarUrl" 
+      alt="keeper-photo"/>
+     <app-favorites-button/>
+    </div>
+    <div class="info-under-photo__container">
+      <img class="keeper_type" [src]="keeper.animal_category | animalType" alt="animal_type">
+      <app-keeper-cost-status [keeper]="keeper"></app-keeper-cost-status>
+      <div class="rating"> 
+          <img class="rating-img" src="../../assets/icons/star.png" alt="rating-icon"/>
+          <div class="rating-grade">4.8</div>
+      </div>
+    </div>
+    <div class="keeper-description__container ft20 fw400"> {{keeper.description}}</div>
+    <div class="place__container ft20 fw400">{{keeper.location_name}}</div>
+    <div class="keeper-bottom__container">
+      <div class="author-username__container user_tag">&#64;{{keeper.user_id}}</div>
+      <a href="#" class="response-button ptbold ft20">
+        <div class="button-figure"></div>
+        <div class="button-text">Сообщение</div>
+      </a>
+    </div>
+  </div>
+</div>

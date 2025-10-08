@@ -1,0 +1,193 @@
+.main__container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    position: absolute;
+  
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      min-width: 100%;
+      height: 100%;
+      background-size: 10%;
+      background: url(../../../public/assets/images/bg-with-steps.svg) repeat center;
+      opacity: 50%;
+      opacity: 1;
+      z-index: -1;
+    }
+  
+  
+    .container__page__keepers {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 180vh;
+      min-width: 1342px;
+      height: fit-content;
+      margin-right: 90px;
+      margin-top: 19px;
+      margin-left: 1px;
+      background-color: #322319;
+      border-radius: 40px;
+
+        
+  
+      .container__upper__menu {
+        margin-left: 60px;
+        height: 218px;
+        display: flex;
+        flex-direction: column;
+  
+        .container__top-buttons {
+          height: 62px;
+          margin: 51px 0px;
+          display: flex;
+          align-items: center;
+          gap: 40px;
+          z-index: 1;
+  
+          .keepers__search__bar {
+            width: max-content;
+            display: flex;
+            align-items: center;
+            justify-items: center;
+            border-radius: 20px;
+            margin-left: 25px;
+            padding: 18px 26px;
+            background: #473930;
+  
+            .search-input {
+              width: 350px;
+              color: var(--white-color);
+              margin-left: 24px;
+              outline: none;
+              border: none;
+              background: #473930;
+            }
+  
+            ::placeholder {
+              color: var(--white-color);
+              opacity: 1;
+            }
+          }
+  
+          .button_become_keeper {
+            position: relative;
+            height: 48px;
+            width: 252px;
+            background-origin:border-box;
+            background-image: linear-gradient(49.16deg, #61492D -3.56%, #553E73 44.07%, #467771 84.67%);
+            border-radius: 10px;
+            border: solid transparent;
+            
+  
+            .button_inside{ 
+              margin-left: 1px;
+              border-radius: 10px;
+              height: 40px;
+              width: 244px;
+              align-content: center;
+              padding: auto;
+              transition: 1s;
+              background-color: #322319;
+  
+              .button_text{
+                text-align:center;
+                font-family: PT Sans Caption;
+                font-size: 20px;
+                font-weight: 400;
+                line-height: 25.88px;
+                }  
+            }
+            .button_inside:hover{
+              background-image: linear-gradient(49.16deg, #61492D -3.56%, #553E73 44.07%, #467771 84.67%);
+            }
+        
+          
+          }
+        }
+  
+        .container__info__keepers-displaying {
+          margin: 0px 0px 23px 25px;
+          display: flex;
+          align-items: center;
+  
+          .block__displaying-switch-icons {
+            display: flex;
+            img {
+              margin-right: 24px;
+              width: 30px;
+              height: 30px;
+            }
+          }
+          .block__displaying-keepers-title{
+            img{
+                width: 26px;
+                height: 26px;
+            }
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 202;
+            gap: 14px;
+            margin-left: 9px;
+            font-weight: 700;
+            font-size: 32px;
+            font-style: bold;
+          }
+          .block__displaying-rating_filtr{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 124; 
+            gap: 8px;
+            margin-left: 24px;
+            margin-top: 7px;
+            font-weight: 400;
+            font-size: 20px;
+            font-style: bold;
+            .filter_button{
+              width: 24px;
+              height: 24px;
+              border: none;
+              cursor: pointer;
+              background-image: url(../../../public/assets/icons/filter-button-icon.svg);
+              background-color: transparent;
+              background-position: center;
+              background-repeat: no-repeat;
+            }
+          }
+        }
+      }
+  
+      .container__keepers {
+        margin-left: 35px;
+        width: 100%;
+  
+        .keepers {
+          height: fit-content;
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
+    }
+    .container__top-buttons::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url(../../../public/assets/images/test-keepers-overlay-smaller.svg);
+        background-repeat: repeat;
+        background-position: center;
+        background-size: 100%;
+        opacity: 0.19;      // взял из потолка, не нашел данных
+        pointer-events: none;
+        z-index: 1;
+        border-radius: 40px;
+    }
+  }
