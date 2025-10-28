@@ -3,11 +3,12 @@ package seeker
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	mocks "github.com/kotopesp/sos-kotopes/internal/core/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func TestService_CreateSeeker(t *testing.T) {
@@ -107,7 +108,7 @@ func TestService_GetSeeker(t *testing.T) {
 					Once()
 			},
 			expectedResult: core.Seeker{},
-			expectedError:  core.ErrSeekerDeleted,
+			expectedError:  core.ErrSeekerNotFound,
 		},
 	}
 
@@ -143,7 +144,11 @@ func TestService_UpdateSeeker(t *testing.T) {
 			input: core.UpdateSeeker{
 				UserID: &userID,
 			},
-			setupMocks:    func(ms *mocks.MockSeekersStore) {},
+			setupMocks: func(ms *mocks.MockSeekersStore) {
+				ms.On("GetSeeker", ctx, userID).
+					Return(baseSeeker, nil).
+					Once()
+			},
 			expectedError: core.ErrEmptyUpdateRequest,
 		},
 		{
@@ -156,7 +161,7 @@ func TestService_UpdateSeeker(t *testing.T) {
 				ms.On("GetSeeker", ctx, userID).
 					Return(baseSeeker, nil).
 					Once()
-				ms.On("UpdateSeeker", ctx, baseSeeker.ID, map[string]interface{}{
+				ms.On("UpdateSeeker", ctx, userID, map[string]interface{}{
 					"animal_type": "dog",
 				}).Return(baseSeeker, nil).
 					Once()
@@ -166,19 +171,19 @@ func TestService_UpdateSeeker(t *testing.T) {
 		{
 			name: "multiple fields update",
 			input: core.UpdateSeeker{
-				UserID:   &userID,
-				Location: ptrString("Moscow"),
-				Price:    ptrInt(1500),
-				HaveCar:  ptrBool(true),
+				UserID:     &userID,
+				LocationId: ptrInt(1),
+				Price:      ptrInt(1500),
+				HaveCar:    ptrBool(true),
 			},
 			setupMocks: func(ms *mocks.MockSeekersStore) {
 				ms.On("GetSeeker", ctx, userID).
 					Return(baseSeeker, nil).
 					Once()
-				ms.On("UpdateSeeker", ctx, baseSeeker.ID, map[string]interface{}{
-					"location": "Moscow",
-					"price":    1500,
-					"have_car": true,
+				ms.On("UpdateSeeker", ctx, userID, map[string]interface{}{
+					"location_id": 1,
+					"price":       1500,
+					"have_car":    true,
 				}).Return(baseSeeker, nil).
 					Once()
 			},
@@ -288,13 +293,17 @@ func TestService_GetAllSeekers(t *testing.T) {
 		{
 			name: "default sorting parameters",
 			inputParams: core.GetAllSeekersParams{
-				SortBy:    ptrString(""),
-				SortOrder: ptrString(""),
+				SortBy:    ptrString("created_at"),
+				SortOrder: ptrString("desc"),
+				Limit:     ptrInt(10),
+				Offset:    ptrInt(0),
 			},
 			setupMock: func(ms *mocks.MockSeekersStore) {
 				expectedParams := core.GetAllSeekersParams{
 					SortBy:    ptrString("created_at"),
 					SortOrder: ptrString("desc"),
+					Limit:     ptrInt(10),
+					Offset:    ptrInt(0),
 				}
 				ms.On("GetAllSeekers", ctx, expectedParams).
 					Return(mockSeekers, nil).
@@ -335,6 +344,8 @@ func TestService_GetAllSeekers(t *testing.T) {
 				expectedParams := core.GetAllSeekersParams{
 					SortBy:    ptrString("created_at"),
 					SortOrder: ptrString("desc"),
+					Limit:     ptrInt(10),
+					Offset:    ptrInt(0),
 				}
 				ms.On("GetAllSeekers", ctx, expectedParams).
 					Return(mockSeekers, nil).
