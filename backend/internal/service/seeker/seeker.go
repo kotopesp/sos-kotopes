@@ -46,8 +46,8 @@ func createMapUpdates(updateSeeker core.UpdateSeeker, seeker core.Seeker) map[st
 		updates["description"] = *updateSeeker.Description
 	}
 
-	if updateSeeker.LocationId != nil && seeker.LocationId != *updateSeeker.LocationId {
-		updates["location_id"] = *updateSeeker.LocationId
+	if updateSeeker.LocationID != nil && seeker.LocationID != *updateSeeker.LocationID {
+		updates["location_id"] = *updateSeeker.LocationID
 	}
 
 	if updateSeeker.EquipmentRental != nil && seeker.EquipmentRental != *updateSeeker.EquipmentRental {

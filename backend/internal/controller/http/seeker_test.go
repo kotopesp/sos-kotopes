@@ -28,7 +28,7 @@ var mockSeeker = core.Seeker{
 	UserID:           validUserID,
 	AnimalType:       "cat",
 	Description:      "Test description",
-	LocationId:       1,
+	LocationID:       1,
 	EquipmentRental:  500,
 	HaveMetalCage:    true,
 	HavePlasticCage:  true,
@@ -395,13 +395,13 @@ func TestHttp_GetSeekers(t *testing.T) {
 		{
 			ID:         validUserID,
 			AnimalType: "dog",
-			LocationId: 1,
+			LocationID: 1,
 			Price:      1000,
 		},
 		{
 			ID:         validUserID + 1,
 			AnimalType: "cat",
-			LocationId: 2,
+			LocationID: 2,
 			Price:      800,
 		},
 	}

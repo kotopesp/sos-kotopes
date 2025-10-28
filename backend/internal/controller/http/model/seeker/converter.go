@@ -8,7 +8,7 @@ func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 	return core.Seeker{
 		AnimalType:       seeker.AnimalType,
 		Description:      seeker.Description,
-		LocationId:       seeker.LocationId,
+		LocationID:       seeker.LocationId,
 		EquipmentRental:  seeker.EquipmentRental,
 		HaveMetalCage:    seeker.HaveMetalCage,
 		HavePlasticCage:  seeker.HavePlasticCage,
@@ -25,7 +25,7 @@ func (seeker *UpdateSeeker) ToCoreUpdateSeeker() core.UpdateSeeker {
 	return core.UpdateSeeker{
 		AnimalType:       seeker.AnimalType,
 		Description:      seeker.Description,
-		LocationId:       seeker.LocationId,
+		LocationID:       seeker.LocationId,
 		EquipmentRental:  seeker.EquipmentRental,
 		HaveMetalCage:    seeker.HaveMetalCage,
 		HavePlasticCage:  seeker.HavePlasticCage,
@@ -43,7 +43,7 @@ func (p *GetAllSeekerParams) ToCoreGetAllSeekersParams() core.GetAllSeekersParam
 		SortBy:             p.SortBy,
 		SortOrder:          p.SortOrder,
 		AnimalType:         p.AnimalType,
-		LocationId:         p.LocationId,
+		LocationID:         p.LocationId,
 		MinPrice:           p.MinPrice,
 		MaxPrice:           p.MaxPrice,
 		MinEquipmentRental: p.MinEquipmentRental,
@@ -77,7 +77,7 @@ func ToResponseSeeker(seeker *core.Seeker) ResponseSeeker {
 	responseSeeker.ID = seeker.ID
 	responseSeeker.UserID = seeker.UserID
 	responseSeeker.AnimalType = seeker.AnimalType
-	responseSeeker.LocationId = seeker.LocationId
+	responseSeeker.LocationId = seeker.LocationID
 	responseSeeker.EquipmentRental = seeker.EquipmentRental
 	responseSeeker.HaveMetalCage = seeker.HaveMetalCage
 	responseSeeker.HavePlasticCage = seeker.HavePlasticCage
@@ -95,8 +95,8 @@ func ToResponseSeeker(seeker *core.Seeker) ResponseSeeker {
 func ToResponseSeekers(coreSeekers []core.Seeker) ResponseSeekers {
 	responseSeekers := make([]ResponseSeeker, len(coreSeekers))
 
-	for i, coreSeeker := range coreSeekers {
-		responseSeekers[i] = ToResponseSeeker(&coreSeeker)
+	for i := range coreSeekers {
+		responseSeekers[i] = ToResponseSeeker(&coreSeekers[i])
 	}
 
 	return ResponseSeekers{

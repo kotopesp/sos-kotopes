@@ -172,7 +172,7 @@ func TestService_UpdateSeeker(t *testing.T) {
 			name: "multiple fields update",
 			input: core.UpdateSeeker{
 				UserID:     &userID,
-				LocationId: ptrInt(1),
+				LocationID: ptrInt(1),
 				Price:      ptrInt(1500),
 				HaveCar:    ptrBool(true),
 			},

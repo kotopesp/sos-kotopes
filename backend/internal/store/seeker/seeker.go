@@ -141,8 +141,8 @@ func createQuery(query *gorm.DB, params core.GetAllSeekersParams) *gorm.DB {
 		query = query.Where("animal_type = ?", *params.AnimalType)
 	}
 
-	if params.LocationId != nil {
-		query = query.Where("location_id = ?", *params.LocationId)
+	if params.LocationID != nil {
+		query = query.Where("location_id = ?", *params.LocationID)
 	}
 
 	if params.MinPrice != nil {

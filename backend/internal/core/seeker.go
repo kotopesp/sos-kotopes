@@ -12,7 +12,7 @@ type (
 		User             User      `gorm:"foreignKey:UserID;references:ID"`
 		AnimalType       string    `gorm:"column:animal_type"`
 		Description      string    `gorm:"column:description"`
-		LocationId       int       `gorm:"column:location_id"`
+		LocationID       int       `gorm:"column:location_id"`
 		EquipmentRental  int       `gorm:"column:equipment_rental"`
 		HaveMetalCage    bool      `gorm:"column:have_metal_cage"`
 		HavePlasticCage  bool      `gorm:"column:have_plastic_cage"`
@@ -33,7 +33,7 @@ type (
 		UserID           *int      `gorm:"column:user_id"`
 		AnimalType       *string   `gorm:"column:animal_type"`
 		Description      *string   `gorm:"column:description"`
-		LocationId       *int      `gorm:"column:location_id"`
+		LocationID       *int      `gorm:"column:location_id"`
 		EquipmentRental  *int      `gorm:"column:equipment_rental"`
 		HaveMetalCage    *bool     `gorm:"column:have_metal_cage"`
 		HavePlasticCage  *bool     `gorm:"column:have_plastic_cage"`
@@ -54,7 +54,7 @@ type (
 		SortBy             *string
 		SortOrder          *string
 		AnimalType         *string
-		LocationId         *int
+		LocationID         *int
 		MinEquipmentRental *int
 		MaxEquipmentRental *int
 		HaveMetalCage      *bool
