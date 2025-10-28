@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
 	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/seeker"
@@ -10,21 +11,21 @@ import (
 )
 
 // @Summary		Get seeker
-// @Tags			seeker
+// @Tags		seeker
 // @Description	Get seeker by id
-// @ID				get-seeker
-// @Accept			json
+// @ID			get-seeker
+// @Accept		json
 // @Produce		json
-// @Param			user_id	path		int	true	"User ID"
+// @Param		user_id	path	int	true	"User ID"
 // @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
 // @Failure		400		{object}	model.Response
+// @Failure		404		{object}	model.Response
 // @Failure		500		{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers/{user_id}  [get]
+// @Router		/seekers/{user_id}  [get]
 func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("user_id")
 	if err != nil {
-		logger.Log().Debug(ctx.Context(), err.Error())
+		logger.Log().Debug(ctx.UserContext(), err.Error())
 		return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 	}
 
@@ -45,17 +46,18 @@ func (r *Router) getSeeker(ctx *fiber.Ctx) error {
 }
 
 // @Summary		Create a seeker
-// @Tags			seeker
+// @Tags		seeker
 // @Description	Create a seeker
-// @ID				create-seeker
-// @Accept			json
+// @ID			create-seeker
+// @Accept		json
 // @Produce		json
-// @Param			request	body		seeker.CreateSeeker	false	"Seeker params"
+// @Param		request	body		seeker.CreateSeeker	false	"Seeker params"
 // @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
 // @Failure		400		{object}	model.Response
+// @Failure		404		{object}	model.Response
 // @Failure		500		{object}	model.Response
-// @Security		ApiKeyAuthBasic
-// @Router			/seekers [post]
+// @Security	ApiKeyAuthBasic
+// @Router		/seekers [post]
 func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
@@ -78,6 +80,9 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 		case errors.Is(err, core.ErrNoSuchUser):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, core.ErrSeekerExists):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
 		default:
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -97,9 +102,10 @@ func (r *Router) createSeeker(ctx *fiber.Ctx) error {
 // @Param		update	body		seeker.UpdateSeeker	false	"Update seeker"
 // @Success		200		{object}	model.Response{data=seeker.ResponseSeeker}
 // @Failure		400		{object}	model.Response
+// @Failure		404		{object}	model.Response
 // @Failure		500		{object}	model.Response
 // @Security	ApiKeyAuthBasic
-// @Router		/seekers/{user_id}  [patch]
+// @Router		/seekers  [patch]
 func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
@@ -124,6 +130,9 @@ func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 		case errors.Is(err, core.ErrEmptyUpdateRequest):
 			logger.Log().Debug(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse(err.Error()))
+		case errors.Is(err, core.ErrSeekerNotFound):
+			logger.Log().Debug(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ErrorResponse(err.Error()))
 		default:
 			logger.Log().Error(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse(err.Error()))
@@ -140,11 +149,12 @@ func (r *Router) updateSeeker(ctx *fiber.Ctx) error {
 // @ID			delete-seeker
 // @Accept		json
 // @Produce		json
-// @Success		200	{object}	model.Response{data=seeker.ResponseSeeker}
+// @Success		204
 // @Failure		400	{object}	model.Response
+// @Failure		404	{object}	model.Response
 // @Failure		500	{object}	model.Response
 // @Security	ApiKeyAuthBasic
-// @Router		/seekers/{user_id}  [delete]
+// @Router		/seekers  [delete]
 func (r *Router) deleteSeeker(ctx *fiber.Ctx) error {
 	userID, err := getIDFromToken(ctx)
 	if err != nil {
@@ -163,34 +173,34 @@ func (r *Router) deleteSeeker(ctx *fiber.Ctx) error {
 		}
 	}
 
-	return ctx.Status(fiber.StatusOK).JSON(model.OKResponse("Delete"))
+	return ctx.SendStatus(fiber.StatusNoContent)
 }
 
-// @Summary			get seekers
-// @Description		Get seekers
-// @Tags			seeker
-// @Accept			json
-// @Produce			json
-// @Param			sort_by					query		string	false	"Sort"
-// @Param			sort_order				query		string	false	"Sort"
-// @Param			animal_type				query		string	false	"Animal type"
-// @Param			location				query		string	false	"Location"
-// @Param			min_equipment_rental	query		int		false	"Equipment rental"
-// @Param			max_equipment_rental	query		int		false	"Equipment rental"
-// @Param			have_metal_cage			query		bool	false	"Have metal cage"
-// @Param			have_plastic_cage		query		bool	false	"Have plastic cage"
-// @Param			have_net				query		bool	false	"Have net"
-// @Param			have_ladder				query		bool	false	"Have ladder"
-// @Param			have_other				query		string	false	"Have other"
-// @Param			min_price				query		int		false	"Price"
-// @Param			max_price				query		int		false	"Price"
-// @Param			have_car				query		bool	false	"Have car"
-// @Param			limit					query		int		false	"Limit"		default(10)
-// @Param			offset					query		int		false	"Offset"	default(0)
-// @Success			200						{object}	model.Response{data=seeker.ResponseSeekers}
-// @Failure			400						{object}	model.Response
-// @Failure			500						{object}	model.Response
-// @Router			/seekers [get]
+// @Summary		get seekers
+// @Description	Get seekers
+// @Tags		seeker
+// @Accept		json
+// @Produce		json
+// @Param		sort_by					query		string	false	"Sort"
+// @Param		sort_order				query		string	false	"Sort"
+// @Param		animal_type				query		string	false	"Animal type"
+// @Param		location				query		string	false	"Location"
+// @Param		min_equipment_rental	query		int		false	"Equipment rental"
+// @Param		max_equipment_rental	query		int		false	"Equipment rental"
+// @Param		have_metal_cage			query		bool	false	"Have metal cage"
+// @Param		have_plastic_cage		query		bool	false	"Have plastic cage"
+// @Param		have_net				query		bool	false	"Have net"
+// @Param		have_ladder				query		bool	false	"Have ladder"
+// @Param		have_other				query		string	false	"Have other"
+// @Param		min_price				query		int		false	"Price"
+// @Param		max_price				query		int		false	"Price"
+// @Param		have_car				query		bool	false	"Have car"
+// @Param		limit					query		int		false	"Limit"		default(10)
+// @Param		offset					query		int		false	"Offset"	default(0)
+// @Success		200						{object}	model.Response{data=seeker.ResponseSeekers}
+// @Failure		400						{object}	model.Response
+// @Failure		500						{object}	model.Response
+// @Router		/seekers [get]
 func (r *Router) getSeekers(ctx *fiber.Ctx) error {
 	var params seeker.GetAllSeekerParams
 
@@ -200,7 +210,6 @@ func (r *Router) getSeekers(ctx *fiber.Ctx) error {
 	}
 
 	coreParams := params.ToCoreGetAllSeekersParams()
-
 	coreSeekers, err := r.seekerService.GetAllSeekers(ctx.UserContext(), coreParams)
 	if err != nil {
 		logger.Log().Error(ctx.UserContext(), err.Error())
