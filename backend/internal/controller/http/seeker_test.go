@@ -3,22 +3,22 @@ package http
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model"
-	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/seeker"
-	"github.com/kotopesp/sos-kotopes/internal/core"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strconv"
 	"testing"
+
+	"github.com/kotopesp/sos-kotopes/internal/controller/http/model/seeker"
+	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 const (
+	route             = "/api/v1/seekers/"
 	bearer            = "Bearer "
 	validUserID       = 1
 	nonExistentUserID = 999
@@ -28,7 +28,7 @@ var mockSeeker = core.Seeker{
 	UserID:           validUserID,
 	AnimalType:       "cat",
 	Description:      "Test description",
-	Location:         "Moscow",
+	LocationId:       1,
 	EquipmentRental:  500,
 	HaveMetalCage:    true,
 	HavePlasticCage:  true,
@@ -43,8 +43,6 @@ var mockSeeker = core.Seeker{
 func TestHttp_GetSeeker(t *testing.T) {
 	t.Parallel()
 	app, dependencies := newTestApp(t)
-
-	const route = "/api/v1/seekers/"
 
 	tests := []struct {
 		name         string
@@ -95,7 +93,7 @@ func TestHttp_GetSeeker(t *testing.T) {
 var mockCreateSeeker = seeker.CreateSeeker{
 	AnimalType:       "cat",
 	Description:      "Test description",
-	Location:         "Moscow",
+	LocationId:       1,
 	EquipmentRental:  500,
 	HaveMetalCage:    true,
 	HavePlasticCage:  true,
@@ -110,8 +108,6 @@ var mockCreateSeeker = seeker.CreateSeeker{
 func TestHttp_CreateSeeker(t *testing.T) {
 	t.Parallel()
 	app, dependencies := newTestApp(t)
-
-	const route = "/api/v1/seekers"
 
 	tests := []struct {
 		name          string
@@ -144,7 +140,7 @@ func TestHttp_CreateSeeker(t *testing.T) {
 			name: "missing location",
 			request: func() seeker.CreateSeeker {
 				req := mockCreateSeeker
-				req.Location = ""
+				req.LocationId = 1000000
 				return req
 			}(),
 			token:         token,
@@ -259,15 +255,18 @@ func TestHttp_CreateSeeker(t *testing.T) {
 	}
 }
 
+func intPtr(i int) *int {
+	return &i
+}
+
 var mockUpdateSeeker = seeker.UpdateSeeker{
-	AnimalType: stringPtr("dog"),
+	AnimalType: stringPtr("cat"),
 }
 
 func TestHttp_UpdateSeeker(t *testing.T) {
 	t.Parallel()
 	app, dependencies := newTestApp(t)
 
-	const route = "/api/v1/seekers"
 	mockSeeker.AnimalType = "dog"
 
 	tests := []struct {
@@ -314,7 +313,7 @@ func TestHttp_UpdateSeeker(t *testing.T) {
 
 			req := httptest.NewRequest(
 				http.MethodPatch,
-				route+"/"+strconv.Itoa(validUserID),
+				route,
 				bytes.NewReader(body),
 			)
 
@@ -338,8 +337,6 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 	t.Parallel()
 	app, dependencies := newTestApp(t)
 
-	const route = "/api/v1/seekers"
-
 	tests := []struct {
 		name          string
 		seekerID      string
@@ -358,7 +355,7 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 					mock.Anything,
 				).Return(nil).Once()
 			},
-			wantCode: http.StatusOK,
+			wantCode: http.StatusNoContent,
 		},
 	}
 
@@ -368,7 +365,7 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 
 			req := httptest.NewRequest(
 				http.MethodDelete,
-				fmt.Sprintf("%s/%s", route, tt.seekerID),
+				route,
 				http.NoBody,
 			)
 
@@ -384,12 +381,8 @@ func TestHttp_DeleteSeeker(t *testing.T) {
 			err = resp.Body.Close()
 			require.NoError(t, err, "Failed to close response body")
 
-			var response model.Response
-			err = json.Unmarshal(bodyBytes, &response)
-			require.NoError(t, err, "Unmarshal failed")
-
 			assert.Equal(t, tt.wantCode, resp.StatusCode)
-			assert.Equal(t, "Delete", response.Data)
+			assert.Empty(t, bodyBytes, "Response body should be empty for 204 status")
 		})
 	}
 }
@@ -398,19 +391,17 @@ func TestHttp_GetSeekers(t *testing.T) {
 	t.Parallel()
 	app, dependencies := newTestApp(t)
 
-	const route = "/api/v1/seekers"
-
 	mockSeekers := []core.Seeker{
 		{
 			ID:         validUserID,
 			AnimalType: "dog",
-			Location:   "Moscow",
+			LocationId: 1,
 			Price:      1000,
 		},
 		{
 			ID:         validUserID + 1,
 			AnimalType: "cat",
-			Location:   "St. Petersburg",
+			LocationId: 2,
 			Price:      800,
 		},
 	}
