@@ -12,7 +12,7 @@ type (
 		User             User      `gorm:"foreignKey:UserID;references:ID"`
 		AnimalType       string    `gorm:"column:animal_type"`
 		Description      string    `gorm:"column:description"`
-		Location         string    `gorm:"column:location"`
+		LocationId       int       `gorm:"column:location_id"`
 		EquipmentRental  int       `gorm:"column:equipment_rental"`
 		HaveMetalCage    bool      `gorm:"column:have_metal_cage"`
 		HavePlasticCage  bool      `gorm:"column:have_plastic_cage"`
@@ -22,8 +22,8 @@ type (
 		Price            int       `gorm:"column:price"`
 		HaveCar          bool      `gorm:"column:have_car"`
 		WillingnessCarry string    `gorm:"column:willingness_carry"`
-		CreatedAt        time.Time `gorm:"default:CURRENT_TIMESTAMP();column:created_at"`
-		UpdatedAt        time.Time `gorm:"autoUpdateTime;column:updated_at"`
+		CreatedAt        time.Time `gorm:"column:created_at"`
+		UpdatedAt        time.Time `gorm:"column:updated_at"`
 		IsDeleted        bool      `gorm:"column:is_deleted"`
 		DeletedAt        time.Time `gorm:"column:deleted_at"`
 	}
@@ -33,7 +33,7 @@ type (
 		UserID           *int      `gorm:"column:user_id"`
 		AnimalType       *string   `gorm:"column:animal_type"`
 		Description      *string   `gorm:"column:description"`
-		Location         *string   `gorm:"column:location"`
+		LocationId       *int      `gorm:"column:location_id"`
 		EquipmentRental  *int      `gorm:"column:equipment_rental"`
 		HaveMetalCage    *bool     `gorm:"column:have_metal_cage"`
 		HavePlasticCage  *bool     `gorm:"column:have_plastic_cage"`
@@ -54,7 +54,7 @@ type (
 		SortBy             *string
 		SortOrder          *string
 		AnimalType         *string
-		Location           *string
+		LocationId         *int
 		MinEquipmentRental *int
 		MaxEquipmentRental *int
 		HaveMetalCage      *bool
@@ -78,15 +78,10 @@ type (
 	}
 
 	SeekersStore interface {
-		CreateSeeker(ctx context.Context, seeker Seeker) (Seeker, error)
+		CreateSeeker(ctx context.Context, seeker Seeker) (createSeeker Seeker, err error)
 		GetSeeker(ctx context.Context, userID int) (Seeker, error)
-		UpdateSeeker(ctx context.Context, userID int, updateSeeker map[string]interface{}) (Seeker, error)
+		UpdateSeeker(ctx context.Context, userID int, updateSeeker map[string]interface{}) (seeker Seeker, err error)
 		DeleteSeeker(ctx context.Context, userID int) error
 		GetAllSeekers(ctx context.Context, params GetAllSeekersParams) ([]Seeker, error)
 	}
 )
-
-// TableName table name in db for gorm
-func (Seeker) TableName() string {
-	return "seekers"
-}
