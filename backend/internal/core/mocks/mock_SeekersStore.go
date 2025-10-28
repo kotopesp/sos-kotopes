@@ -290,8 +290,8 @@ func (_c *MockSeekersStore_UpdateSeeker_Call) Run(run func(ctx context.Context, 
 	return _c
 }
 
-func (_c *MockSeekersStore_UpdateSeeker_Call) Return(_a0 core.Seeker, _a1 error) *MockSeekersStore_UpdateSeeker_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockSeekersStore_UpdateSeeker_Call) Return(seeker core.Seeker, err error) *MockSeekersStore_UpdateSeeker_Call {
+	_c.Call.Return(seeker, err)
 	return _c
 }
 
