@@ -1674,64 +1674,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/model.Response"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/model.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/seekers/{user_id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuthBasic": []
-                    }
-                ],
-                "description": "Get seeker by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "seeker"
-                ],
-                "summary": "Get seeker",
-                "operationId": "get-seeker",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/seeker.ResponseSeeker"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -1763,26 +1707,17 @@ const docTemplate = `{
                 "summary": "Delete seeker",
                 "operationId": "delete-seeker",
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/seeker.ResponseSeeker"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
+                    "204": {
+                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -1844,6 +1779,75 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/seekers/{user_id}": {
+            "get": {
+                "description": "Get seeker by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "seeker"
+                ],
+                "summary": "Get seeker",
+                "operationId": "get-seeker",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/seeker.ResponseSeeker"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.Response"
                         }
@@ -2784,11 +2788,12 @@ const docTemplate = `{
             "required": [
                 "animal_type",
                 "equipment_rental",
-                "location",
+                "location_id",
                 "willingness_carry"
             ],
             "properties": {
                 "animal_type": {
+                    "description": "@Enum(dog,cat,both)",
                     "type": "string",
                     "enum": [
                         "dog",
@@ -2822,14 +2827,15 @@ const docTemplate = `{
                 "have_plastic_cage": {
                     "type": "boolean"
                 },
-                "location": {
-                    "type": "string"
+                "location_id": {
+                    "type": "integer"
                 },
                 "price": {
                     "type": "integer",
                     "minimum": 0
                 },
                 "willingness_carry": {
+                    "description": "@Enum(yes,\tno, situational\")",
                     "type": "string",
                     "enum": [
                         "yes",
@@ -2846,6 +2852,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "animal_type": {
+                    "description": "@Enum(dog,cat,both)",
                     "type": "string"
                 },
                 "description": {
@@ -2853,6 +2860,9 @@ const docTemplate = `{
                 },
                 "equipment_rental": {
                     "type": "integer"
+                },
+                "firstname": {
+                    "type": "string"
                 },
                 "have_car": {
                     "type": "boolean"
@@ -2875,8 +2885,17 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "location": {
+                "lastname": {
                     "type": "string"
+                },
+                "location_id": {
+                    "type": "integer"
+                },
+                "photo": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "price": {
                     "type": "integer"
@@ -2885,6 +2904,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "willingness_carry": {
+                    "description": "@Enum(yes,\tno, situational\")",
                     "type": "string",
                     "enum": [
                         "yes",
@@ -2909,6 +2929,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "animal_type": {
+                    "description": "@Enum(dog,cat,both)",
                     "type": "string",
                     "enum": [
                         "dog",
@@ -2942,13 +2963,14 @@ const docTemplate = `{
                 "have_plastic_cage": {
                     "type": "boolean"
                 },
-                "location": {
-                    "type": "string"
+                "location_id": {
+                    "type": "integer"
                 },
                 "price": {
                     "type": "integer"
                 },
                 "willingness_carry": {
+                    "description": "@Enum(yes,\tno, situational\")",
                     "type": "string",
                     "enum": [
                         "yes",

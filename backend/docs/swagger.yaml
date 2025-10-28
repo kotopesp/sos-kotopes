@@ -195,6 +195,7 @@ definitions:
   seeker.CreateSeeker:
     properties:
       animal_type:
+        description: '@Enum(dog,cat,both)'
         enum:
         - dog
         - cat
@@ -218,12 +219,13 @@ definitions:
         type: string
       have_plastic_cage:
         type: boolean
-      location:
-        type: string
+      location_id:
+        type: integer
       price:
         minimum: 0
         type: integer
       willingness_carry:
+        description: "@Enum(yes,\tno, situational\")"
         enum:
         - "yes"
         - "no"
@@ -232,17 +234,20 @@ definitions:
     required:
     - animal_type
     - equipment_rental
-    - location
+    - location_id
     - willingness_carry
     type: object
   seeker.ResponseSeeker:
     properties:
       animal_type:
+        description: '@Enum(dog,cat,both)'
         type: string
       description:
         type: string
       equipment_rental:
         type: integer
+      firstname:
+        type: string
       have_car:
         type: boolean
       have_ladder:
@@ -257,13 +262,20 @@ definitions:
         type: boolean
       id:
         type: integer
-      location:
+      lastname:
         type: string
+      location_id:
+        type: integer
+      photo:
+        items:
+          type: integer
+        type: array
       price:
         type: integer
       user_id:
         type: integer
       willingness_carry:
+        description: "@Enum(yes,\tno, situational\")"
         enum:
         - "yes"
         - "no"
@@ -282,6 +294,7 @@ definitions:
   seeker.UpdateSeeker:
     properties:
       animal_type:
+        description: '@Enum(dog,cat,both)'
         enum:
         - dog
         - cat
@@ -305,11 +318,12 @@ definitions:
         type: string
       have_plastic_cage:
         type: boolean
-      location:
-        type: string
+      location_id:
+        type: integer
       price:
         type: integer
       willingness_carry:
+        description: "@Enum(yes,\tno, situational\")"
         enum:
         - "yes"
         - "no"
@@ -1287,6 +1301,33 @@ paths:
       tags:
       - post
   /seekers:
+    delete:
+      consumes:
+      - application/json
+      description: Delete seeker
+      operationId: delete-seeker
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Delete seeker
+      tags:
+      - seeker
     get:
       consumes:
       - application/json
@@ -1381,109 +1422,6 @@ paths:
       summary: get seekers
       tags:
       - seeker
-    post:
-      consumes:
-      - application/json
-      description: Create a seeker
-      operationId: create-seeker
-      parameters:
-      - description: Seeker params
-        in: body
-        name: request
-        schema:
-          $ref: '#/definitions/seeker.CreateSeeker'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/seeker.ResponseSeeker'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.Response'
-      security:
-      - ApiKeyAuthBasic: []
-      summary: Create a seeker
-      tags:
-      - seeker
-  /seekers/{user_id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete seeker
-      operationId: delete-seeker
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/seeker.ResponseSeeker'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.Response'
-      security:
-      - ApiKeyAuthBasic: []
-      summary: Delete seeker
-      tags:
-      - seeker
-    get:
-      consumes:
-      - application/json
-      description: Get seeker by id
-      operationId: get-seeker
-      parameters:
-      - description: User ID
-        in: path
-        name: user_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/seeker.ResponseSeeker'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/model.Response'
-      security:
-      - ApiKeyAuthBasic: []
-      summary: Get seeker
-      tags:
-      - seeker
     patch:
       consumes:
       - application/json
@@ -1511,6 +1449,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -1518,6 +1460,85 @@ paths:
       security:
       - ApiKeyAuthBasic: []
       summary: Update a seeker
+      tags:
+      - seeker
+    post:
+      consumes:
+      - application/json
+      description: Create a seeker
+      operationId: create-seeker
+      parameters:
+      - description: Seeker params
+        in: body
+        name: request
+        schema:
+          $ref: '#/definitions/seeker.CreateSeeker'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Create a seeker
+      tags:
+      - seeker
+  /seekers/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get seeker by id
+      operationId: get-seeker
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/seeker.ResponseSeeker'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.Response'
+      summary: Get seeker
       tags:
       - seeker
   /user/{id}/posts:
