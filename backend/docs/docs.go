@@ -2828,7 +2828,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "location_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 18,
+                    "minimum": 1
                 },
                 "price": {
                     "type": "integer",
@@ -2847,9 +2849,6 @@ const docTemplate = `{
         },
         "seeker.ResponseSeeker": {
             "type": "object",
-            "required": [
-                "willingness_carry"
-            ],
             "properties": {
                 "animal_type": {
                     "description": "@Enum(dog,cat,both)",
@@ -2905,12 +2904,7 @@ const docTemplate = `{
                 },
                 "willingness_carry": {
                     "description": "@Enum(yes,\tno, situational\")",
-                    "type": "string",
-                    "enum": [
-                        "yes",
-                        "no",
-                        "situational"
-                    ]
+                    "type": "string"
                 }
             }
         },
@@ -2964,7 +2958,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "location_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 18,
+                    "minimum": 1
                 },
                 "price": {
                     "type": "integer"

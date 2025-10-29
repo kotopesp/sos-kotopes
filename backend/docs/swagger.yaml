@@ -220,6 +220,8 @@ definitions:
       have_plastic_cage:
         type: boolean
       location_id:
+        maximum: 18
+        minimum: 1
         type: integer
       price:
         minimum: 0
@@ -276,13 +278,7 @@ definitions:
         type: integer
       willingness_carry:
         description: "@Enum(yes,\tno, situational\")"
-        enum:
-        - "yes"
-        - "no"
-        - situational
         type: string
-    required:
-    - willingness_carry
     type: object
   seeker.ResponseSeekers:
     properties:
@@ -319,6 +315,8 @@ definitions:
       have_plastic_cage:
         type: boolean
       location_id:
+        maximum: 18
+        minimum: 1
         type: integer
       price:
         type: integer
