@@ -93,7 +93,7 @@ func TestHttp_GetSeeker(t *testing.T) {
 var mockCreateSeeker = seeker.CreateSeeker{
 	AnimalType:       "cat",
 	Description:      "Test description",
-	LocationId:       1,
+	LocationID:       1,
 	EquipmentRental:  500,
 	HaveMetalCage:    true,
 	HavePlasticCage:  true,
@@ -140,7 +140,7 @@ func TestHttp_CreateSeeker(t *testing.T) {
 			name: "missing location",
 			request: func() seeker.CreateSeeker {
 				req := mockCreateSeeker
-				req.LocationId = 1000000
+				req.LocationID = 1000000
 				return req
 			}(),
 			token:         token,

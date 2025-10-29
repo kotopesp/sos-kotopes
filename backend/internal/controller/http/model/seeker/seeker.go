@@ -4,7 +4,7 @@ type CreateSeeker struct {
 	//	@Enum(dog,cat,both)
 	AnimalType      string `json:"animal_type" validate:"required,oneof=dog cat both"`
 	Description     string `json:"description" validate:"omitempty,max=4000"`
-	LocationId      int    `json:"location_id" validate:"required,min=1,max=18"`
+	LocationID      int    `json:"location_id" validate:"required,min=1,max=18"`
 	EquipmentRental int    `json:"equipment_rental" validate:"required,min=-1"`
 	HaveMetalCage   bool   `json:"have_metal_cage"`
 	HavePlasticCage bool   `json:"have_plastic_cage"`
@@ -21,7 +21,7 @@ type UpdateSeeker struct {
 	//	@Enum(dog,cat,both)
 	AnimalType      *string `json:"animal_type" validate:"omitempty,oneof=dog cat both"`
 	Description     *string `json:"description" validate:"omitempty,max=4000"`
-	LocationId      *int    `json:"location_id" validate:"omitempty,min=1,max=18"`
+	LocationID      *int    `json:"location_id" validate:"omitempty,min=1,max=18"`
 	EquipmentRental *int    `json:"equipment_rental" validate:"omitempty,min=-1"`
 	HaveMetalCage   *bool   `json:"have_metal_cage"`
 	HavePlasticCage *bool   `json:"have_plastic_cage"`
@@ -39,7 +39,7 @@ type GetAllSeekerParams struct {
 	SortOrder *string `query:"sort_order" validate:"omitempty,oneof=asc desc"`
 	//	@Enum(dog,cat,both)
 	AnimalType         *string `query:"animal_type" validate:"omitempty,oneof=dog cat both"`
-	LocationId         *int    `json:"location_id" validate:"omitempty,min=1,max=18"`
+	LocationID         *int    `json:"location_id" validate:"omitempty,min=1,max=18"`
 	MinEquipmentRental *int    `query:"min_equipment_rental" validate:"omitempty,min=-1"`
 	MaxEquipmentRental *int    `query:"max_equipment_rental" validate:"omitempty,min=-1"`
 	HaveMetalCage      *bool   `query:"have_metal_cage"`
@@ -63,7 +63,7 @@ type ResponseSeeker struct {
 	//	@Enum(dog,cat,both)
 	AnimalType      string `json:"animal_type"`
 	Description     string `json:"description"`
-	LocationId      int    `json:"location_id"`
+	LocationID      int    `json:"location_id"`
 	EquipmentRental int    `json:"equipment_rental"`
 	HaveMetalCage   bool   `json:"have_metal_cage"`
 	HavePlasticCage bool   `json:"have_plastic_cage"`

@@ -8,7 +8,7 @@ func (seeker *CreateSeeker) ToCoreSeeker() core.Seeker {
 	return core.Seeker{
 		AnimalType:       seeker.AnimalType,
 		Description:      seeker.Description,
-		LocationID:       seeker.LocationId,
+		LocationID:       seeker.LocationID,
 		EquipmentRental:  seeker.EquipmentRental,
 		HaveMetalCage:    seeker.HaveMetalCage,
 		HavePlasticCage:  seeker.HavePlasticCage,
@@ -25,7 +25,7 @@ func (seeker *UpdateSeeker) ToCoreUpdateSeeker() core.UpdateSeeker {
 	return core.UpdateSeeker{
 		AnimalType:       seeker.AnimalType,
 		Description:      seeker.Description,
-		LocationID:       seeker.LocationId,
+		LocationID:       seeker.LocationID,
 		EquipmentRental:  seeker.EquipmentRental,
 		HaveMetalCage:    seeker.HaveMetalCage,
 		HavePlasticCage:  seeker.HavePlasticCage,
@@ -43,7 +43,7 @@ func (p *GetAllSeekerParams) ToCoreGetAllSeekersParams() core.GetAllSeekersParam
 		SortBy:             p.SortBy,
 		SortOrder:          p.SortOrder,
 		AnimalType:         p.AnimalType,
-		LocationID:         p.LocationId,
+		LocationID:         p.LocationID,
 		MinPrice:           p.MinPrice,
 		MaxPrice:           p.MaxPrice,
 		MinEquipmentRental: p.MinEquipmentRental,
@@ -77,7 +77,7 @@ func ToResponseSeeker(seeker *core.Seeker) ResponseSeeker {
 	responseSeeker.ID = seeker.ID
 	responseSeeker.UserID = seeker.UserID
 	responseSeeker.AnimalType = seeker.AnimalType
-	responseSeeker.LocationId = seeker.LocationID
+	responseSeeker.LocationID = seeker.LocationID
 	responseSeeker.EquipmentRental = seeker.EquipmentRental
 	responseSeeker.HaveMetalCage = seeker.HaveMetalCage
 	responseSeeker.HavePlasticCage = seeker.HavePlasticCage
