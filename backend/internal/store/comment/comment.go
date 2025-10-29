@@ -3,11 +3,13 @@ package commentstore
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
 
 	"github.com/kotopesp/sos-kotopes/internal/core"
+	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 )
 
@@ -22,11 +24,12 @@ func New(pg *postgres.Postgres) core.CommentStore {
 func (s *store) GetCommentByID(ctx context.Context, commentID int) (core.Comment, error) {
 	var comment core.Comment
 	if err := s.DB.WithContext(ctx).
-		First(&comment, "id=?", commentID).Error; err != nil {
+		First(&comment).
+		Where("id = ?", commentID).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return comment, core.ErrNoSuchComment
 		}
-		return comment, err
+		return core.Comment{}, err
 	}
 
 	return comment, nil
@@ -97,12 +100,72 @@ func (s *store) UpdateComment(ctx context.Context, comment core.Comment) (core.C
 }
 
 func (s *store) DeleteComment(ctx context.Context, comment core.Comment) error {
-	comment.IsDeleted = true
-	now := time.Now()
-	comment.DeletedAt = &now
+
+	comment.Status = core.Deleted
+	comment.UpdatedAt = time.Now().UTC()
 
 	if err := s.DB.WithContext(ctx).Updates(comment).Error; err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (s *store) SendToModeration(ctx context.Context, commentID int) error {
+	return s.DB.WithContext(ctx).
+		Model(&core.Comment{}).
+		Where("id = ?", commentID).
+		Updates(map[string]interface{}{
+			"status":     core.OnModeration,
+			"updated_at": time.Now().UTC(),
+		}).Error
+}
+
+// GetCommentsForModeration - takes amount of records limited by the constant core.AmountOfCommentsForModeration
+// from comments table which status is "on_moderation"
+func (s *store) GetCommentsForModeration(ctx context.Context, filter core.Filter) ([]core.Comment, error) {
+	var comments []core.Comment
+
+	err := s.DB.WithContext(ctx).
+		Where("status = ?", core.OnModeration).
+		Order("updated_at " + filter).
+		Limit(core.AmountOfCommentsForModeration).
+		Find(&comments).Error
+
+	if err != nil {
+		logger.Log().Error(ctx, "Failed to get comments for moderation: "+err.Error())
+		if errors.Is(err, core.ErrRecordNotFound) {
+			return nil, core.ErrNoCommentsWaitingForModeration
+		}
+		return nil, err
+	}
+
+	return comments, nil
+}
+
+// ApproveCommentFromModeration - changes comment status from "on_moderation" to "published"
+func (s *store) ApproveCommentFromModeration(ctx context.Context, commentID int) error {
+	updates := map[string]interface{}{
+		"status":     core.Published,
+		"updated_at": time.Now().UTC(),
+	}
+
+	result := s.DB.WithContext(ctx).
+		Model(&core.Comment{}).
+		Where("id = ? AND status = ?", commentID, core.OnModeration).
+		Updates(updates)
+
+	if result.Error != nil {
+		logger.Log().Error(ctx, "Failed to approve comment: "+result.Error.Error())
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return core.ErrNoSuchComment
+		}
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		logger.Log().Error(ctx, fmt.Sprintf("Comment not found or not on moderation: %d", commentID))
+		return core.ErrNoSuchComment
 	}
 
 	return nil

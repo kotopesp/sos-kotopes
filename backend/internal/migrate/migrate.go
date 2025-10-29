@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	sslMode          = "?sslmode=disable"
+	sslMode          = "sslmode=disable"
 	dataBase         = "postgres"
 	pathToMigrations = "file://internal/data/"
 )

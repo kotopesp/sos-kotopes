@@ -3,11 +3,12 @@ package role
 import (
 	"context"
 	"errors"
+	"time"
+
 	"github.com/kotopesp/sos-kotopes/internal/core"
 	"github.com/kotopesp/sos-kotopes/pkg/logger"
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 	"gorm.io/gorm"
-	"time"
 )
 
 type store struct {
@@ -49,7 +50,7 @@ func (s *store) GiveRoleToUser(ctx context.Context, id int, givenRole core.Given
 	default:
 		return core.Role{}, core.ErrInvalidRole
 	}
-	now := time.Now()
+	now := time.Now().UTC()
 	role := core.Role{
 		UserID:      id,
 		Description: givenRole.Description,
@@ -122,7 +123,7 @@ func (s *store) UpdateUserRole(ctx context.Context, id int, updateRole core.Upda
 	if len(updates) == 0 {
 		return core.Role{}, core.ErrNoFieldsToUpdate
 	} else {
-		updates["updated_at"] = time.Now()
+		updates["updated_at"] = time.Now().UTC()
 	}
 
 	roleName := updateRole.Name

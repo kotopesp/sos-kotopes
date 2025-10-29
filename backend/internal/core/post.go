@@ -8,19 +8,19 @@ import (
 
 type (
 	Post struct {
-		ID        int       `gorm:"column:id;primaryKey"` // Unique identifier for the post
-		Title     string    `gorm:"column:title"`         // Title of the post
-		Content   string    `gorm:"column:content"`       // Content of the post
-		AuthorID  int       `gorm:"column:author_id"`     // ID of the author of the post
-		AnimalID  int       `gorm:"column:animal_id"`     // ID of the associated animal
-		IsDeleted bool      `gorm:"column:is_deleted"`    // Flag indicating if the post is deleted
-		DeletedAt time.Time `gorm:"column:deleted_at"`    // Timestamp when the post was deleted
-		CreatedAt time.Time `gorm:"column:created_at"`    // Timestamp when the post was created
-		UpdatedAt time.Time `gorm:"column:updated_at"`    // Timestamp when the post was last updated
-		Photo     []byte    `gorm:"column:photo"`         // Photo animal
+		ID        int           `gorm:"column:id;primaryKey"`            // Unique identifier for the post
+		AuthorID  int           `gorm:"column:author_id"`                // ID of the author of the post
+		AnimalID  int           `gorm:"column:animal_id"`                // ID of the associated animal
+		Title     string        `gorm:"column:title"`                    // Title of the post
+		Content   string        `gorm:"column:content"`                  // Content of the post
+		Photo     []byte        `gorm:"column:photo"`                    // Photo animal
+		Status    ContentStatus `gorm:"column:status;default:published"` // Status shows current status of post
+		CreatedAt time.Time     `gorm:"column:created_at"`               // Timestamp when the post was created
+		DeletedAt time.Time     `gorm:"column:deleted_at"`               // Timestamp when the post was deleted
+		UpdatedAt time.Time     `gorm:"column:updated_at"`               // Timestamp when the post was last updated
 	}
 
-	// Post Details joins post, animal, username
+	// PostDetails Post Details joins post, animal, username
 	PostDetails struct {
 		Post     Post
 		Animal   Animal
@@ -42,7 +42,13 @@ type (
 		Status      *string
 	}
 
-	// the GetAllPostsParams are needed for processing posts in the database
+	// PostForModeration structure that holds post and list of reasons why this post was reported.
+	PostForModeration struct {
+		Post    Post
+		Reasons []string
+	}
+
+	// GetAllPostsParams are needed for processing posts in the database
 	GetAllPostsParams struct {
 		Limit      *int    // Limit on the number of posts to retrieve
 		Offset     *int    // Offset for pagination
@@ -60,6 +66,9 @@ type (
 		CreatePost(ctx context.Context, post Post) (Post, error)
 		UpdatePost(ctx context.Context, post Post) (Post, error)
 		DeletePost(ctx context.Context, id int) error
+		SendToModeration(ctx context.Context, postID int) (err error)
+		ApprovePostFromModeration(ctx context.Context, postID int) (err error)
+		GetPostsForModeration(ctx context.Context, filter Filter) (posts []Post, err error)
 	}
 
 	PostService interface {
@@ -69,9 +78,20 @@ type (
 		CreatePost(ctx context.Context, postDetails PostDetails, fileHeader *multipart.FileHeader) (PostDetails, error)
 		UpdatePost(ctx context.Context, postUpdateRequest UpdateRequestBodyPost) (PostDetails, error)
 		DeletePost(ctx context.Context, post Post) error
-
+		BuildPostDetailsList(ctx context.Context, posts []Post, total int) ([]PostDetails, error)
 		PostFavouriteService
 	}
+)
+
+// AmountOfPostsForModeration defines the maximum number of posts that can be fetched for moderation at once.
+const AmountOfPostsForModeration = 10
+
+// Filter is a custom type that specifies the order for retrieving posts: ASC (ascending) or DESC (descending).
+type Filter string
+
+const (
+	FilterDESC Filter = "DESC"
+	FilterASC  Filter = "ASC"
 )
 
 func (Post) TableName() string {

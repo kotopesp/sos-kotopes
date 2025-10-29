@@ -81,7 +81,7 @@ func (s *service) UpdateComment(ctx context.Context, comment core.Comment) (data
 		return comment, core.ErrCommentAuthorIDMismatch
 	} else if dbComment.PostID != comment.PostID {
 		return comment, core.ErrCommentPostIDMismatch
-	} else if dbComment.IsDeleted {
+	} else if dbComment.Status == core.Deleted {
 		return comment, core.ErrCommentIsDeleted
 	}
 
@@ -98,7 +98,7 @@ func (s *service) DeleteComment(ctx context.Context, comment core.Comment) error
 		return core.ErrCommentAuthorIDMismatch
 	} else if dbComment.PostID != comment.PostID {
 		return core.ErrCommentPostIDMismatch
-	} else if dbComment.IsDeleted {
+	} else if dbComment.Status == core.Deleted {
 		return core.ErrCommentIsDeleted
 	}
 

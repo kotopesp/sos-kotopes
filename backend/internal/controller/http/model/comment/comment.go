@@ -12,7 +12,7 @@ type Comment struct {
 	ReplyID   *int      `json:"reply_id" form:"reply_id" example:"3"`
 	User      User      `json:"user" validate:"required"`
 	Content   string    `json:"content" form:"content" validate:"required" example:"Hello, world!"`
-	IsDeleted bool      `json:"is_deleted" example:"false" validate:"required"`
+	Status    string    `json:"status" example:"deleted" oneof:"deleted,published,on_moderation" validate:"required"`
 	CreatedAt time.Time `json:"created_at" example:"2021-09-01T12:00:00Z" validate:"required"`
 }
 

@@ -28,7 +28,7 @@ func (c *Create) ToCoreComment() core.Comment {
 }
 
 func ToModelComment(c core.Comment) Comment {
-	if c.IsDeleted {
+	if c.Status == core.Deleted {
 		c.Content = ""
 	}
 
@@ -41,7 +41,7 @@ func ToModelComment(c core.Comment) Comment {
 			Username: c.Author.Username,
 		},
 		Content:   c.Content,
-		IsDeleted: c.IsDeleted,
+		Status:    string(c.Status),
 		CreatedAt: c.CreatedAt,
 	}
 }

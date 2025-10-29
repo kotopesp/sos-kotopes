@@ -12,10 +12,12 @@ import (
 
 type (
 	appDependencies struct {
-		authService    *mocks.MockAuthService
-		postService    *mocks.MockPostService
-		commentService *mocks.MockCommentService
-		seekerService  *mocks.MockSeekersService
+		authService      *mocks.MockAuthService
+		postService      *mocks.MockPostService
+		commentService   *mocks.MockCommentService
+		moderatorService *mocks.MockModeratorService
+		reportService    *mocks.MockReportService
+    seekerService  *mocks.MockSeekersService
 	}
 )
 
@@ -32,7 +34,9 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 	mockCommentService := mocks.NewMockCommentService(t)
 	mockRoleService := mocks.NewMockRoleService(t)
 	mockUserService := mocks.NewMockUserService(t)
-	mockSeekerService := mocks.NewMockSeekersService(t)
+	mockReportService := mocks.NewMockReportService(t)
+	mockModeratorService := mocks.NewMockModeratorService(t)
+  mockSeekerService := mocks.NewMockSeekersService(t)
 	formValidatorService := validator.New(ctx, baseValidator.New())
 
 	mockAuthService.On("GetJWTSecret").Return(secret)
@@ -45,14 +49,18 @@ func newTestApp(t *testing.T) (*fiber.App, appDependencies) {
 		mockPostService,
 		mockUserService,
 		mockRoleService,
+		mockReportService,
+		mockModeratorService,
 		formValidatorService,
 		mockSeekerService,
 	)
 
 	return app, appDependencies{
-		authService:    mockAuthService,
-		postService:    mockPostService,
-		commentService: mockCommentService,
-		seekerService:  mockSeekerService,
+		authService:      mockAuthService,
+		postService:      mockPostService,
+		commentService:   mockCommentService,
+		moderatorService: mockModeratorService,
+		reportService:    mockReportService,
+    seekerService:  mockSeekerService,
 	}
 }

@@ -46,6 +46,7 @@ func (r *Router) protectedMiddleware() fiber.Handler {
 //	@Failure		422		{object}	model.Response{data=validator.Response}
 //	@Failure		400		{object}	model.Response
 //	@Failure		401		{object}	model.Response
+//	@Failure		403		{object}	model.Response
 //	@Failure		422		{object}	model.Response{data=validator.Response}
 //	@Failure		500		{object}	model.Response
 //	@Router			/auth/login [post]
@@ -65,6 +66,11 @@ func (r *Router) loginBasic(ctx *fiber.Ctx) error {
 		if errors.Is(err, core.ErrInvalidCredentials) {
 			logger.Log().Info(ctx.UserContext(), err.Error())
 			return ctx.Status(fiber.StatusUnauthorized).JSON(model.ErrorResponse(err.Error()))
+		}
+
+		if errors.Is(err, core.ErrUserIsBanned) {
+			logger.Log().Info(ctx.UserContext(), err.Error())
+			return ctx.Status(fiber.StatusForbidden).JSON(model.ErrorResponse(err.Error()))
 		}
 
 		logger.Log().Error(ctx.UserContext(), err.Error())
