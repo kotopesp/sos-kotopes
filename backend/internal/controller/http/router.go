@@ -19,7 +19,7 @@ type Router struct {
 	roleService          core.RoleService
 	reportService        core.ReportService
 	moderatorService     core.ModeratorService
-  seekerService        core.SeekersService
+	seekerService        core.SeekersService
 	userFavouriteService core.UserFavouriteService
 }
 
@@ -33,6 +33,7 @@ func NewRouter(
 	reportService core.ReportService,
 	moderatorService core.ModeratorService,
 	formValidator validator.FormValidatorService,
+	seekerService core.SeekersService,
 ) {
 	router := &Router{
 		app:              app,
@@ -44,7 +45,7 @@ func NewRouter(
 		commentService:   commentService,
 		moderatorService: moderatorService,
 		reportService:    reportService,
-    seekerService:  seekerService,
+		seekerService:    seekerService,
 	}
 
 	router.initRequestMiddlewares()
