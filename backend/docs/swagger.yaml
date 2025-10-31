@@ -1718,6 +1718,57 @@ paths:
       summary: Get favourite posts of user by id
       tags:
       - post
+  /reports:
+    post:
+      consumes:
+      - application/json
+      description: Create a report for a specific
+      parameters:
+      - description: Report data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/report.CreateRequestBodyReport'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Report created successfully
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/model.Response'
+        "401":
+          description: 'Unauthorized: Invalid or missing token'
+          schema:
+            $ref: '#/definitions/model.Response'
+        "404":
+          description: Content not found
+          schema:
+            $ref: '#/definitions/model.Response'
+        "409":
+          description: 'Conflict: Report already exists'
+          schema:
+            $ref: '#/definitions/model.Response'
+        "422":
+          description: Validation error
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/validator.Response'
+              type: object
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/model.Response'
+      security:
+      - ApiKeyAuthBasic: []
+      summary: Create a report
+      tags:
+      - reports
   /seekers:
     delete:
       consumes:
@@ -1959,57 +2010,6 @@ paths:
       summary: Get seeker
       tags:
       - seeker
-  /reports:
-    post:
-      consumes:
-      - application/json
-      description: Create a report for a specific
-      parameters:
-      - description: Report data
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/report.CreateRequestBodyReport'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Report created successfully
-        "400":
-          description: Invalid request body
-          schema:
-            $ref: '#/definitions/model.Response'
-        "401":
-          description: 'Unauthorized: Invalid or missing token'
-          schema:
-            $ref: '#/definitions/model.Response'
-        "404":
-          description: Content not found
-          schema:
-            $ref: '#/definitions/model.Response'
-        "409":
-          description: 'Conflict: Report already exists'
-          schema:
-            $ref: '#/definitions/model.Response'
-        "422":
-          description: Validation error
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/validator.Response'
-              type: object
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/model.Response'
-      security:
-      - ApiKeyAuthBasic: []
-      summary: Create a report
-      tags:
-      - reports
   /user/{id}/posts:
     get:
       consumes:
