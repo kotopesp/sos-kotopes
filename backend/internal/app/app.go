@@ -37,8 +37,8 @@ import (
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 	reportstore "github.com/kotopesp/sos-kotopes/internal/store/report"
 	rolesstore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	seekerstore "github.com/kotopesp/sos-kotopes/internal/store/seeker"
 	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
-  seekerstore "github.com/kotopesp/sos-kotopes/internal/store/seeker"
 )
 
 // Run creates objects via constructors.
@@ -71,8 +71,8 @@ func Run(cfg *config.Config) {
 	refreshSessionStore := refreshsessionstore.New(pg)
 	reportStore := reportstore.New(pg)
 	moderatorStore := moderatorstore.New(pg)
-  seekerStore := seekerstore.New(pg)
-  
+	seekerStore := seekerstore.New(pg)
+
 	// Services
 	commentService := commentservice.New(
 		commentStore,

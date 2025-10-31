@@ -198,7 +198,7 @@ func (s *store) GetAllSeekers(ctx context.Context, params core.GetAllSeekersPara
 	query = createQuery(query, params)
 	err := query.Preload("User",
 		func(db *gorm.DB) *gorm.DB {
-			return db.Where("is_deleted = ?", false)
+			return db.Where("status = ?", core.UserActive)
 		}).Find(&seekers).Error
 	if err != nil {
 		logger.Log().Debug(ctx, err.Error())
