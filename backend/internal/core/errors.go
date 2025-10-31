@@ -27,6 +27,10 @@ var (
 	// animal errors
 	ErrAnimalNotFound = errors.New("animal not found")
 
+	// seeker errors
+	ErrSeekerNotFound = errors.New("seeker not found")
+	ErrSeekerExists   = errors.New("seeker already exists")
+
 	// favourite errors
 	ErrPostAlreadyInFavourites = errors.New("post already added to favourites")
 

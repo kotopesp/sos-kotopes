@@ -28,6 +28,7 @@ import (
 	"github.com/kotopesp/sos-kotopes/pkg/postgres"
 
 	commentservice "github.com/kotopesp/sos-kotopes/internal/service/comment"
+	seekerservice "github.com/kotopesp/sos-kotopes/internal/service/seeker"
 	animalstore "github.com/kotopesp/sos-kotopes/internal/store/animal"
 	commentstore "github.com/kotopesp/sos-kotopes/internal/store/comment"
 	moderatorstore "github.com/kotopesp/sos-kotopes/internal/store/moderator"
@@ -36,6 +37,7 @@ import (
 	refreshsessionstore "github.com/kotopesp/sos-kotopes/internal/store/refresh_session"
 	reportstore "github.com/kotopesp/sos-kotopes/internal/store/report"
 	rolesstore "github.com/kotopesp/sos-kotopes/internal/store/role"
+	seekerstore "github.com/kotopesp/sos-kotopes/internal/store/seeker"
 	userFavouriteStore "github.com/kotopesp/sos-kotopes/internal/store/userfavourite"
 )
 
@@ -69,6 +71,8 @@ func Run(cfg *config.Config) {
 	refreshSessionStore := refreshsessionstore.New(pg)
 	reportStore := reportstore.New(pg)
 	moderatorStore := moderatorstore.New(pg)
+	seekerStore := seekerstore.New(pg)
+
 	// Services
 	commentService := commentservice.New(
 		commentStore,
@@ -91,6 +95,7 @@ func Run(cfg *config.Config) {
 		},
 	)
 	postService := postservice.New(postStore, postFavouriteStore, animalStore, userStore)
+	seekerService := seekerservice.New(seekerStore)
 
 	// Validator
 	formValidator := validator.New(ctx, baseValidator.New())
@@ -118,6 +123,7 @@ func Run(cfg *config.Config) {
 		reportService,
 		moderatorService,
 		formValidator,
+		seekerService,
 	)
 
 	logger.Log().Info(ctx, "server was started on %s", cfg.HTTP.Port)

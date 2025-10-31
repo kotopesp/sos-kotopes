@@ -47,6 +47,6 @@ type (
 	}
 )
 
-const Seeker = "seeker"
+const Seek = "seeker"
 const Keeper = "keeper"
 const Vet = "vet"
