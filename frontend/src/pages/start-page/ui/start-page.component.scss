@@ -1,39 +1,39 @@
 .main_page {
 
   .cat-with-buttons-and-dog {
-    display: grid;
-    align-items: center;
-    justify-content: start;
-    height: 737px;
-    background-repeat: no-repeat;
-    background-image: url(../../../../public/assets/images/cat-and-dog.svg);
-    padding-left: 282px;
+    // display: grid;
+    // align-items: center;
+    // justify-content: start;
+    // height: 737px;
+    // background-repeat: no-repeat;
+    background-image: url(../../../../public/assets/images/cat-and-dog.jpeg);
+    // padding-left: 282px;
 
     .animals-text {
-      display: grid;
-      grid-gap: 12px;
-      padding-bottom: 42px;
+      // display: grid;
+      // grid-gap: 12px;
+      // padding-bottom: 42px;
     }
 
     .animals__buttons {
-      display: grid;
-      row-gap: 30px;
-      grid-template-columns: 270px 270px;
-      column-gap: 40px;
+      // display: grid;
+      // row-gap: 30px;
+      // grid-template-columns: 270px 270px;
+      // column-gap: 40px;
 
       .animals__button {
-        display: flex;
+        // display: flex;
         color: var(--text-brown-light-color);
-        border-radius: 16px;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
+        // border-radius: 16px;
+        // align-items: center;
+        // justify-content: center;
+        // cursor: pointer;
       }
 
       .animals__button__hide {
         background: var(--yellow-color-bg);
-        height: 59px;
-        width: 271px;
+        // height: 59px;
+        // width: 271px;
 
         &:hover {
           background: var(--brown-hover-color);
@@ -44,8 +44,8 @@
 
       .animals__button__find {
         background: var(--pink-color-bg);
-        width: 251px;
-        height: 59px;
+        // width: 251px;
+        // height: 59px;
 
         &:hover {
           background: var(--red-hover-color);
@@ -55,8 +55,8 @@
       }
 
       .animals__button__looking-for-home {
-        width: 277px;
-        height: 59px;
+        // width: 277px;
+        // height: 59px;
         color: var(--white-color);
         border: 1px solid var(--pink-border-color);
         &:hover {
@@ -71,23 +71,23 @@
   .stickers {
 
     background-image: url(../../../../public/assets/images/bg-with-steps.svg);
-    background-repeat: no-repeat;
+    // background-repeat: no-repeat;
 
-    display: grid;
-    min-height: fit-content;
-    height: 220vh;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 64vh);
-    justify-items: end;
-    column-gap: 40px;
+    // display: grid;
+    // min-height: fit-content;
+    // height: 220vh;
+    // grid-template-columns: repeat(2, 1fr);
+    // grid-template-rows: repeat(2, 64vh);
+    // justify-items: end;
+    // column-gap: 40px;
 
     :nth-child(odd) {
-      margin-top: 10vh;
+      // margin-top: 10vh;
     }
 
     :nth-child(even) {
-      margin-top: 30vh;
-      justify-self: start;
+      // margin-top: 30vh;
+      // justify-self: start;
     }
   }
 
